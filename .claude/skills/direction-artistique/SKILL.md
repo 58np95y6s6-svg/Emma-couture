@@ -115,6 +115,40 @@ c'est un reproche qui a déjà été fait.
 - l'**arrière-plan du site** — jugé pas beau. Le fond doit être une vraie matière chaude, travaillée
   (grain de toile, lumière douce), pas un aplat ni une texture appuyée qui salit la lecture.
 
+## ⚠️ « On voit que c'est fait par une IA » — les tics à éliminer
+
+Reproche explicite du client sur la maquette. Les indices, du plus voyant au plus discret :
+
+**1. Les sourcils numérotés (01, 02, 03…).** Le tell numéro un. Un numérotage n'a de sens que si
+le contenu est une **vraie séquence**. « Les créations », « la dentelle libre », « les occasions »,
+« l'atelier », « les avis » ne s'enchaînent dans aucun ordre : le numéro ne dit rien, il décore.
+→ **Les supprimer partout**, sauf sur « Comment ça se passe », où les trois étapes se suivent
+réellement. Remplacer par un simple libellé, ou par rien.
+
+**2. Le gabarit de titre répété.** Sourcil en capitales espacées → grand titre coupé en trois
+lignes par des `<br>` → dernier segment en italique dans la couleur d'accent → paragraphe.
+Une fois c'est une signature, cinq fois c'est un moule.
+→ **Varier** : une section sans sourcil, un titre sur une seule ligne, un titre sans italique,
+un titre posé à droite. L'irrégularité est ce qui fait qu'une page semble composée par quelqu'un.
+
+**3. Le rythme vertical identique.** Toutes les sections au même `padding-block`.
+→ Serrer certaines sections, en aérer d'autres. Une page conçue a des respirations inégales.
+
+**4. La famille chromatique suspecte.** Sable rosé + serif display + accent rouille est une porte
+dérobée vers le combo crème/serif/terracotta déjà banni plus bas. Si la palette reste, il faut
+qu'une couleur franche et inattendue prenne vraiment la parole quelque part.
+
+**5. Fraunces avec `SOFT` et `WONK` exhibés** est devenu la police par défaut de l'artisanal
+généré. À garder seulement si son usage est singulier ; sinon, en changer.
+
+**6. Les tics de détail** : la flèche « → faites défiler » qui pulse, les puces d'icônes toutes
+identiques, un `border-radius` unique partout, les listes de trois éléments systématiques,
+les tirets cadratins en rafale.
+
+Règle générale : **un dispositif structurel doit encoder une information vraie.** S'il est là
+parce que « ça fait design », il trahit la machine. Le doute se tranche ainsi : *qu'est-ce que ce
+numéro / cette icône / ce filet apprend au lecteur ?* Si la réponse est « rien », il saute.
+
 ## Vérité du métier — à ne jamais trahir
 
 ⚠️ **Emmanuelle brode à la MACHINE.** Ne jamais écrire « brodé à la main ».
