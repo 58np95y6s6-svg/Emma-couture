@@ -798,6 +798,10 @@ h2.sourcil { font-weight: 500; }
   overflow: hidden;
   height: clamp(190px, 30vw, 380px);
   display: grid;
+  /* Le haut du bandeau se fond dans le sable de la page, le bas dans le vert
+     de la section « dentelle libre » qui suit : la photo se dissout dans la
+     couleur d'arrivée, pas dans une couleur intermédiaire. */
+  background: linear-gradient(to bottom, var(--sable) 55%, var(--vert-2) 100%);
 }
 .bandeau img {
   grid-area: 1 / 1;
@@ -879,14 +883,16 @@ h2.sourcil { font-weight: 500; }
   row-gap: clamp(2rem, 4vw, 3rem);
   position: relative;
 }
-.nuit::before, .nuit::after {
+/* Pas de voile de sable en haut : la section sombre est précédée du bandeau de
+   bobines, dont le bas se dissout déjà dans ce vert. Deux fondus superposés
+   donnaient une bavure grise. Seul le bas garde sa transition, vers le sable. */
+.nuit::after {
   content: ''; position: absolute; inset-inline: 0; height: 2.5rem;
   background: var(--sable);
   mask-image: linear-gradient(to bottom, #000, transparent);
   pointer-events: none;
+  inset-block-end: 0; transform: scaleY(-1);
 }
-.nuit::before { inset-block-start: 0; }
-.nuit::after { inset-block-end: 0; transform: scaleY(-1); }
 
 .mesure--clair { color: color-mix(in oklab, var(--rose) 62%, #C9BEB6); }
 .nuit__dire {
@@ -901,7 +907,6 @@ h2.sourcil { font-weight: 500; }
 }
 .nuit__fixe { display: grid; gap: clamp(0.9rem, 2vw, 1.4rem); justify-items: start; }
 .nuit .titre-xl em { color: var(--dore); }
-.croix-deco { width: clamp(6rem, 18vw, 10rem); margin-block-start: 0.5rem; }
 
 .nuit__images { display: grid; gap: clamp(1rem, 2.5vw, 1.8rem); }
 .nuit__fig { position: relative; margin: 0; }

@@ -1,0 +1,349 @@
+/* =============================================================================
+   LE MOTEUR DE BRODERIE — feuille de style
+   -----------------------------------------------------------------------------
+   Regle d'or : AUCUN contenu reel n'est masque par cette feuille. Seuls les
+   points de broderie (SVG purement decoratifs, crees par le JS) partent a
+   opacity: 0. Sans JavaScript, la page reste parfaitement lisible.
+============================================================================= */
+
+:root {
+  --broderie-fond: #FFFDFB;
+  --broderie-encre: #2A2320;
+  --broderie-rose: #E8CFC6;
+  --broderie-fil: #6B5560;
+  --broderie-dore: #B89355;
+  --broderie-gris: #8A7E78;
+  --broderie-bois: #C9A97E;
+  --broderie-bois-fonce: #8A6A46;
+  --broderie-metal: #B6AEA8;
+}
+
+/* Texte lu par les lecteurs d'ecran, invisible a l'oeil. */
+.broderie-lu {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* -----------------------------------------------------------------------------
+   1. PRENOM AU POINT DE BOURDON
+----------------------------------------------------------------------------- */
+
+[data-broderie='prenom'] { display: inline; }
+
+.broderie-prenom-pret {
+  display: inline-block;
+  vertical-align: baseline;
+  line-height: 0;
+}
+
+.broderie-prenom {
+  display: inline-block;
+  height: 1.28em;
+  width: auto;
+  max-width: 100%;
+  overflow: visible;            /* l'aiguille peut sortir du cadre */
+  vertical-align: -0.42em;
+}
+
+/* Le trace « crayon » : il montre la forme des lettres des le premier rendu,
+   donc rien n'est jamais invisible en attendant l'animation. */
+.broderie-trace path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 5 6;
+  opacity: 0.2;
+}
+
+/* Une fois le prenom entierement brode, le guide s'efface. */
+.broderie-trace { transition: opacity 600ms ease; }
+.broderie-fini .broderie-trace { opacity: 0; }
+
+/* Les points de bourdon. */
+.broderie-points line {
+  fill: none;
+  stroke-width: 1.95;
+  stroke-linecap: round;
+  opacity: 0;
+}
+.broderie-points line.lustre { opacity: 0; }
+.broderie-points line.mat { opacity: 0; }
+
+.broderie-points line.pique {
+  opacity: 0.97;
+  animation: broderie-piqure 260ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+.broderie-points line.pique.lustre { opacity: 0.78; }
+.broderie-points line.pique.mat { opacity: 1; stroke-width: 2.15; }
+.broderie-points line.pique.sans-anim { animation: none; }
+
+/* La piqure : le point arrive court et large (l'aiguille pousse le fil),
+   puis se pose. Uniquement des proprietes SVG animees. */
+@keyframes broderie-piqure {
+  0%   { stroke-width: 3.3; opacity: 0.35; }
+  45%  { stroke-width: 2.5; opacity: 1; }
+  100% { stroke-width: 1.95; }
+}
+
+.broderie-inconnu {
+  font: italic 72px/1 'Iowan Old Style', Georgia, serif;
+  text-anchor: start;
+}
+
+/* -----------------------------------------------------------------------------
+   L'AIGUILLE (partagee par plusieurs effets)
+----------------------------------------------------------------------------- */
+
+.broderie-aiguille { opacity: 0; transition: opacity 260ms ease; }
+.broderie-en-cours .broderie-aiguille,
+.broderie-fil-actif .broderie-aiguille { opacity: 1; }
+.broderie-curseur .broderie-aiguille { opacity: 1; }
+
+.broderie-aiguille-corps {
+  fill: var(--broderie-metal);
+  stroke: rgba(42, 35, 32, 0.32);
+  stroke-width: 0.18;
+}
+.broderie-aiguille-reflet {
+  stroke: #FFFFFF;
+  stroke-width: 0.42;
+  opacity: 0.75;
+  stroke-linecap: round;
+}
+.broderie-aiguille-chas { fill: var(--broderie-fond); }
+.broderie-aiguille-fil {
+  fill: none;
+  stroke-width: 0.8;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+/* -----------------------------------------------------------------------------
+   2. LE FIL QUI TRAVERSE LA PAGE
+----------------------------------------------------------------------------- */
+
+.broderie-fil-hote { position: relative; }
+
+/* Le fil passe derriere le contenu : la couche est en z-index 0, les enfants
+   directs reels sont remontes en z-index 1. */
+.broderie-fil-hote > .broderie-fil-couche {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.broderie-fil-hote > :not(.broderie-fil-couche) {
+  position: relative;
+  z-index: 1;
+}
+
+.broderie-fil-guide {
+  fill: none;
+  stroke: var(--broderie-rose);
+  stroke-width: 1;
+  opacity: 0.4;
+  stroke-dasharray: 2 5;
+}
+.broderie-fil-points line {
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  opacity: 0;
+}
+.broderie-fil-points line.pique {
+  opacity: 0.72;
+  animation: broderie-piqure-fil 240ms ease-out both;
+}
+.broderie-fil-points line.pique.sans-anim { animation: none; }
+
+@keyframes broderie-piqure-fil {
+  from { stroke-width: 4.2; opacity: 0.2; }
+  to   { stroke-width: 2.6; opacity: 0.72; }
+}
+
+/* -----------------------------------------------------------------------------
+   3. LE TAMBOUR A BRODER
+----------------------------------------------------------------------------- */
+
+.broderie-tambour-pret {
+  position: relative;
+  margin: 0;
+}
+
+.broderie-tambour-disque {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 50%;
+  transform: scale(0.8);
+  transition: transform 1150ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 14px 34px -18px rgba(42, 35, 32, 0.45);
+}
+
+.broderie-tambour-disque > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.26);
+  transition: transform 1350ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.broderie-tambour-serre .broderie-tambour-disque { transform: scale(1); }
+.broderie-tambour-serre .broderie-tambour-disque > img { transform: scale(1); }
+
+/* Au survol : une legere tension du tissu. */
+@media (hover: hover) and (pointer: fine) {
+  .broderie-tambour-serre:hover .broderie-tambour-disque { transform: scale(1.008); }
+  .broderie-tambour-serre:hover .broderie-tambour-disque > img { transform: scale(1.022); }
+}
+
+.broderie-tambour-anneau {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+.broderie-anneau-ombre {
+  fill: none;
+  stroke: rgba(42, 35, 32, 0.16);
+  stroke-width: 11;
+}
+.broderie-anneau-bois {
+  fill: none;
+  stroke: var(--broderie-bois);
+  stroke-width: 8;
+  transform: rotate(-90deg);
+  transform-origin: 100px 100px;
+  transition: stroke-dashoffset 1250ms cubic-bezier(0.22, 0.9, 0.2, 1);
+}
+.broderie-anneau-liserre {
+  fill: none;
+  stroke: rgba(255, 253, 251, 0.55);
+  stroke-width: 1.4;
+  opacity: 0;
+  transition: opacity 700ms ease 500ms;
+}
+.broderie-tambour-serre .broderie-anneau-liserre { opacity: 1; }
+
+.broderie-tambour-vis {
+  fill: var(--broderie-bois-fonce);
+  opacity: 0;
+  transform: scale(0.7);
+  transform-origin: 100px 8px;
+  transition: opacity 400ms ease 900ms, transform 500ms cubic-bezier(0.2, 1.5, 0.4, 1) 900ms;
+}
+.broderie-tambour-serre .broderie-tambour-vis { opacity: 1; transform: scale(1); }
+.broderie-vis-tete { fill: var(--broderie-metal); }
+
+.broderie-tambour-pret.sans-anim .broderie-tambour-disque,
+.broderie-tambour-pret.sans-anim .broderie-tambour-disque > img,
+.broderie-tambour-pret.sans-anim .broderie-anneau-bois,
+.broderie-tambour-pret.sans-anim .broderie-anneau-liserre,
+.broderie-tambour-pret.sans-anim .broderie-tambour-vis { transition: none; }
+
+/* -----------------------------------------------------------------------------
+   4. POINTS DE CROIX
+----------------------------------------------------------------------------- */
+
+.broderie-croix-pret { line-height: 0; }
+.broderie-croix {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  overflow: visible;
+}
+.broderie-croix path {
+  fill: none;
+  stroke-width: 1.85;
+  stroke-linecap: round;
+  opacity: 0;
+}
+.broderie-croix path.pique {
+  opacity: 0.9;
+  animation: broderie-croix-pose 300ms cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+.broderie-croix path.pique.sans-anim { animation: none; }
+
+@keyframes broderie-croix-pose {
+  from { stroke-width: 3.4; opacity: 0.25; }
+  to   { stroke-width: 1.85; opacity: 0.9; }
+}
+
+/* -----------------------------------------------------------------------------
+   5. CURSEUR AIGUILLE (ordinateur uniquement)
+----------------------------------------------------------------------------- */
+
+.broderie-curseur {
+  position: fixed;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 1;
+  transition: opacity 200ms ease;
+}
+.broderie-curseur.broderie-curseur-parti { opacity: 0; }
+.broderie-curseur-fil line {
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  html.broderie-curseur-actif,
+  html.broderie-curseur-actif body { cursor: none; }
+  /* On rend le curseur natif la ou il porte une information (caret texte). */
+  html.broderie-curseur-actif input,
+  html.broderie-curseur-actif textarea,
+  html.broderie-curseur-actif select,
+  html.broderie-curseur-actif [contenteditable='true'] { cursor: auto; }
+}
+
+/* -----------------------------------------------------------------------------
+   6. MOUVEMENT REDUIT
+   Chaque effet s'affiche instantanement dans son etat final.
+----------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .broderie-points line,
+  .broderie-fil-points line,
+  .broderie-croix path {
+    animation: none !important;
+    transition: none !important;
+  }
+  .broderie-points line { opacity: 0.97; }
+  .broderie-points line.lustre { opacity: 0.78; }
+  .broderie-fil-points line { opacity: 0.72; }
+  .broderie-croix path { opacity: 0.9; }
+
+  .broderie-aiguille { display: none; }
+
+  .broderie-tambour-disque,
+  .broderie-tambour-disque > img,
+  .broderie-anneau-bois,
+  .broderie-anneau-liserre,
+  .broderie-tambour-vis {
+    transition: none !important;
+    animation: none !important;
+  }
+  .broderie-tambour-disque { transform: none; }
+  .broderie-tambour-disque > img { transform: none; }
+  .broderie-anneau-bois { stroke-dashoffset: 0 !important; }
+  .broderie-anneau-liserre,
+  .broderie-tambour-vis { opacity: 1; transform: none; }
+
+  .broderie-curseur { display: none; }
+  html.broderie-curseur-actif,
+  html.broderie-curseur-actif body { cursor: auto; }
+}
