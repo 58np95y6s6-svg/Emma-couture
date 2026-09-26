@@ -1,0 +1,27 @@
+{
+  "name": "emma-broderie",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.5"
+  },
+  "devDependencies": {
+    "netlify-cli": "^27.10.0",
+    "sharp": "^0.35.4"
+  },
+  "allowScripts": {
+    "esbuild": true,
+    "sharp": true
+  }
+}

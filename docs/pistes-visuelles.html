@@ -1,0 +1,1241 @@
+<title>Trois pistes pour Emma</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Spectral:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@400;500&family=Petit+Formal+Script&family=Jost:wght@300;400;500;600&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;1,6..96,400&family=Instrument+Sans:wght@400;500;600&display=swap">
+
+<style>
+/* ============================================================
+   COQUILLE — neutre, au service des trois pistes
+   ============================================================ */
+:root{
+  --coq-fond:#F7F7F5;
+  --coq-surface:#FFFFFF;
+  --coq-bord:#DEDDD7;
+  --coq-encre:#1A1B18;
+  --coq-doux:#63655D;
+  --coq-accent:#2F4B3F;
+  --coq-ombre:0 1px 2px rgba(26,27,24,.05), 0 8px 28px rgba(26,27,24,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --coq-fond:#16171A;
+    --coq-surface:#1E2024;
+    --coq-bord:#33363C;
+    --coq-encre:#ECEDE9;
+    --coq-doux:#9A9D96;
+    --coq-accent:#8FB39E;
+    --coq-ombre:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --coq-fond:#16171A;
+  --coq-surface:#1E2024;
+  --coq-bord:#33363C;
+  --coq-encre:#ECEDE9;
+  --coq-doux:#9A9D96;
+  --coq-accent:#8FB39E;
+  --coq-ombre:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--coq-fond);
+  color:var(--coq-encre);
+  font-family:"Familjen Grotesk","Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block;max-width:100%}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--coq-accent);outline-offset:3px;border-radius:2px}
+
+.enveloppe{max-width:1180px;margin:0 auto;padding:0 20px 80px}
+
+/* --- en-tête --- */
+.chapeau{padding:52px 0 26px}
+.chapeau .sur{
+  font-family:"DM Mono",ui-monospace,monospace;
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--coq-doux);margin:0 0 14px;
+}
+.chapeau h1{
+  font-size:clamp(28px,4.4vw,44px);line-height:1.08;margin:0 0 16px;
+  font-weight:700;letter-spacing:-.02em;text-wrap:balance;
+}
+.chapeau p{
+  margin:0;max-width:62ch;font-family:"Spectral",Georgia,serif;
+  font-size:17px;line-height:1.6;color:var(--coq-doux);
+}
+
+/* --- onglets --- */
+.onglets{
+  display:flex;flex-wrap:wrap;gap:8px;
+  padding:22px 0 0;margin-bottom:34px;
+  border-top:1px solid var(--coq-bord);
+  position:sticky;top:0;background:var(--coq-fond);z-index:40;
+  padding-bottom:14px;
+}
+.onglet{
+  appearance:none;border:1px solid var(--coq-bord);background:var(--coq-surface);
+  color:var(--coq-encre);border-radius:999px;padding:9px 17px;cursor:pointer;
+  font-family:inherit;font-size:14px;font-weight:500;letter-spacing:-.01em;
+  display:flex;align-items:center;gap:9px;transition:border-color .15s,background .15s;
+}
+.onglet:hover{border-color:var(--coq-doux)}
+.onglet[aria-selected="true"]{background:var(--coq-encre);color:var(--coq-fond);border-color:var(--coq-encre)}
+.pastille{width:9px;height:9px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.14)}
+
+/* --- fiche d'une piste --- */
+.fiche{display:grid;gap:34px}
+/* `display:grid` ci-dessus gagnerait sur le display:none par défaut de [hidden] */
+.fiche[hidden]{display:none}
+.intro{display:grid;gap:14px;max-width:70ch}
+.intro h2{
+  font-size:clamp(24px,3.2vw,34px);margin:0;font-weight:700;letter-spacing:-.02em;
+}
+.intro .these{
+  font-family:"Spectral",Georgia,serif;font-size:17.5px;line-height:1.62;
+  margin:0;color:var(--coq-encre);
+}
+.intro .pour{
+  font-family:"DM Mono",ui-monospace,monospace;font-size:12px;line-height:1.7;
+  color:var(--coq-doux);margin:0;
+}
+
+/* --- bloc palette + typo --- */
+.specs{
+  display:grid;gap:22px;grid-template-columns:1fr;
+  background:var(--coq-surface);border:1px solid var(--coq-bord);
+  border-radius:14px;padding:22px;
+}
+@media(min-width:820px){.specs{grid-template-columns:1.15fr 1fr 0.95fr}}
+.specs section{display:grid;gap:12px;align-content:start;min-width:0}
+.specs h3{
+  font-family:"DM Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--coq-doux);margin:0;font-weight:500;
+}
+.nuances{display:flex;gap:0;border-radius:8px;overflow:hidden;border:1px solid var(--coq-bord)}
+.nuance{flex:1;height:58px;position:relative}
+.legendes{display:grid;gap:5px}
+.legende{
+  display:grid;grid-template-columns:14px 1fr auto;gap:9px;align-items:center;
+  font-size:12.5px;color:var(--coq-doux);
+}
+.legende i{width:14px;height:14px;border-radius:3px;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.legende code{font-family:"DM Mono",ui-monospace,monospace;font-size:11.5px;font-variant-numeric:tabular-nums}
+.specimen{display:grid;gap:9px}
+.specimen .ligne{line-height:1.05;color:var(--coq-encre)}
+.specimen .role{
+  font-family:"DM Mono",ui-monospace,monospace;font-size:10.5px;color:var(--coq-doux);
+  letter-spacing:.06em;
+}
+
+/* --- démo d'animation --- */
+.anim{display:grid;gap:10px}
+.anim .cadre{
+  border:1px solid var(--coq-bord);border-radius:10px;overflow:hidden;
+  background:var(--coq-fond);
+}
+.anim p{margin:0;font-size:12.5px;line-height:1.55;color:var(--coq-doux)}
+
+/* --- présentation des maquettes --- */
+.rendus{display:grid;gap:28px}
+@media(min-width:1000px){.rendus{grid-template-columns:auto 1fr;align-items:start}}
+.legende-rendu{
+  font-family:"DM Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--coq-doux);margin:0 0 10px;
+}
+.telephone{
+  width:392px;max-width:100%;height:740px;border-radius:40px;
+  border:1px solid var(--coq-bord);background:var(--coq-surface);
+  box-shadow:var(--coq-ombre);overflow:hidden;position:relative;
+}
+.telephone .ecran{height:100%;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin}
+.ordi{
+  border:1px solid var(--coq-bord);border-radius:12px;overflow:hidden;
+  box-shadow:var(--coq-ombre);min-width:0;
+}
+.barre-ordi{
+  display:flex;align-items:center;gap:6px;padding:9px 12px;
+  background:var(--coq-surface);border-bottom:1px solid var(--coq-bord);
+}
+.barre-ordi i{width:9px;height:9px;border-radius:50%;background:var(--coq-bord)}
+.barre-ordi span{
+  margin-left:8px;font-family:"DM Mono",ui-monospace,monospace;
+  font-size:11px;color:var(--coq-doux);
+}
+
+/* --- notes de bas de fiche --- */
+.notes{
+  border-top:1px solid var(--coq-bord);padding-top:20px;
+  display:grid;gap:16px;grid-template-columns:1fr;
+}
+@media(min-width:760px){.notes{grid-template-columns:repeat(3,1fr)}}
+.note h4{
+  font-family:"DM Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--coq-doux);margin:0 0 7px;font-weight:500;
+}
+.note p{margin:0;font-size:13.5px;line-height:1.6;color:var(--coq-encre)}
+
+.avertissement{
+  margin-top:44px;border:1px solid var(--coq-bord);border-radius:12px;
+  background:var(--coq-surface);padding:20px 22px;
+}
+.avertissement h4{
+  font-family:"DM Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--coq-doux);margin:0 0 10px;font-weight:500;
+}
+.avertissement ul{margin:0;padding-left:18px;display:grid;gap:7px}
+.avertissement li{font-size:13.5px;line-height:1.6;color:var(--coq-encre)}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+}
+
+/* ============================================================
+   PISTE 1 — NUANCIER
+   Le mur de bobines devient la grille. Un index de couleurs
+   court le long de la page, chaque création porte sa référence.
+   ============================================================ */
+.p1{
+  --fond:#FBFAF8; --encre:#1C1F1C; --doux:#6E7268;
+  --rouge:#C2453B; --vert:#2F4B3F; --or:#D8A23B; --ligne:#DCDAD2;
+  background:var(--fond);color:var(--encre);
+  font-family:"Spectral",Georgia,serif;
+}
+.p1 .titre{font-family:"Familjen Grotesk",sans-serif;font-weight:700;letter-spacing:-.025em}
+.p1 .ref{font-family:"DM Mono",monospace;font-variant-numeric:tabular-nums}
+
+.p1 .barre{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;border-bottom:1px solid var(--ligne);
+  position:sticky;top:0;background:var(--fond);z-index:10;
+}
+.p1 .marque{font-family:"Familjen Grotesk",sans-serif;font-weight:700;font-size:15px;letter-spacing:-.02em}
+.p1 .marque em{font-style:normal;color:var(--rouge)}
+.p1 .menu{font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.12em;color:var(--doux);text-transform:uppercase}
+
+.p1 .index{display:flex;height:6px}
+.p1 .index i{flex:1}
+
+.p1 .hero{padding:26px 18px 22px}
+.p1 .hero .sur{
+  font-family:"DM Mono",monospace;font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--vert);margin:0 0 12px;
+}
+.p1 .hero h1{
+  font-family:"Familjen Grotesk",sans-serif;font-weight:700;
+  font-size:33px;line-height:1.03;letter-spacing:-.035em;margin:0 0 14px;text-wrap:balance;
+}
+.p1 .hero h1 span{color:var(--rouge)}
+.p1 .hero p{margin:0 0 18px;font-size:15px;line-height:1.58;color:var(--doux);max-width:34ch}
+.p1 .photo-hero{border-radius:3px;overflow:hidden;border:1px solid var(--ligne)}
+.p1 .photo-hero img{width:100%;height:218px;object-fit:cover}
+.p1 .cartouche{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:8px 10px;border:1px solid var(--ligne);border-top:0;
+  font-family:"DM Mono",monospace;font-size:10px;color:var(--doux);
+}
+
+.p1 .actions{display:flex;gap:8px;margin:16px 0 0}
+.p1 .bouton{
+  flex:1;text-align:center;padding:13px 10px;border-radius:2px;
+  font-family:"Familjen Grotesk",sans-serif;font-size:14px;font-weight:600;
+  text-decoration:none;letter-spacing:-.01em;
+}
+.p1 .bouton.plein{background:var(--vert);color:#F7F6F1}
+.p1 .bouton.creux{border:1px solid var(--encre);color:var(--encre)}
+
+.p1 .bandeau{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--ligne);border-bottom:1px solid var(--ligne);
+  margin-top:24px;
+}
+.p1 .bandeau div{padding:13px 10px;border-right:1px solid var(--ligne);text-align:center}
+.p1 .bandeau div:last-child{border-right:0}
+.p1 .bandeau strong{
+  display:block;font-family:"Familjen Grotesk",sans-serif;font-size:17px;
+  font-weight:700;letter-spacing:-.02em;
+}
+.p1 .bandeau small{font-family:"DM Mono",monospace;font-size:9px;letter-spacing:.08em;color:var(--doux);text-transform:uppercase}
+
+.p1 .section{padding:26px 18px}
+.p1 .entete{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:16px;gap:12px}
+.p1 .entete h2{
+  font-family:"Familjen Grotesk",sans-serif;font-size:19px;font-weight:700;
+  letter-spacing:-.025em;margin:0;
+}
+.p1 .entete .ref{font-size:10px;color:var(--doux);white-space:nowrap}
+
+.p1 .grille{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.p1 .piece{text-decoration:none;color:inherit;display:grid;gap:0}
+.p1 .piece img{width:100%;aspect-ratio:4/5;object-fit:cover;border:1px solid var(--ligne)}
+.p1 .piece .pied{
+  border:1px solid var(--ligne);border-top:0;padding:7px 8px;display:grid;gap:3px;
+}
+.p1 .piece .nom{font-family:"Familjen Grotesk",sans-serif;font-size:12.5px;font-weight:600;line-height:1.25;letter-spacing:-.01em}
+.p1 .piece .prix{font-family:"DM Mono",monospace;font-size:10px;color:var(--rouge)}
+.p1 .piece .fil{display:flex;align-items:center;gap:5px;font-family:"DM Mono",monospace;font-size:9px;color:var(--doux)}
+.p1 .piece .fil i{width:8px;height:8px;border-radius:50%}
+
+.p1 .etapes{display:grid;gap:0;border-top:1px solid var(--ligne)}
+.p1 .etape{
+  display:grid;grid-template-columns:34px 1fr;gap:12px;
+  padding:15px 0;border-bottom:1px solid var(--ligne);
+}
+.p1 .etape .num{font-family:"DM Mono",monospace;font-size:10px;color:var(--rouge);padding-top:3px}
+.p1 .etape h3{font-family:"Familjen Grotesk",sans-serif;font-size:14.5px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+.p1 .etape p{margin:0;font-size:13.5px;line-height:1.55;color:var(--doux)}
+
+.p1 .avis{background:#F3F1EA;padding:24px 18px}
+.p1 .avis blockquote{margin:0 0 12px;font-size:16px;line-height:1.6;font-style:italic}
+.p1 .avis cite{font-family:"DM Mono",monospace;font-size:10px;font-style:normal;color:var(--doux);letter-spacing:.06em}
+
+.p1 .final{padding:28px 18px 34px;background:var(--vert);color:#F7F6F1}
+.p1 .final h2{font-family:"Familjen Grotesk",sans-serif;font-size:22px;font-weight:700;margin:0 0 10px;letter-spacing:-.025em;line-height:1.15}
+.p1 .final p{margin:0 0 18px;font-size:14.5px;line-height:1.55;opacity:.82}
+.p1 .final .bouton.plein{background:#F7F6F1;color:var(--vert)}
+.p1 .final .bouton.creux{border-color:rgba(247,246,241,.45);color:#F7F6F1}
+
+/* piste 1 — ordinateur */
+.p1 .ordi-hero{display:grid;grid-template-columns:1.05fr 1fr;min-height:400px}
+.p1 .ordi-hero .gauche{padding:44px 40px;display:flex;flex-direction:column;justify-content:center}
+.p1 .ordi-hero h1{font-size:clamp(34px,4vw,50px);line-height:1.02;margin:0 0 16px}
+.p1 .ordi-hero p{font-size:16px;max-width:38ch}
+.p1 .ordi-hero .droite{position:relative}
+.p1 .ordi-hero .droite img{width:100%;height:100%;object-fit:cover;min-height:340px}
+.p1 .rail{
+  position:absolute;left:0;top:0;bottom:0;width:8px;display:flex;flex-direction:column;
+}
+.p1 .rail i{flex:1}
+@media(max-width:700px){
+  .p1 .ordi-hero{grid-template-columns:1fr}
+  .p1 .ordi-hero .gauche{padding:30px 22px}
+}
+
+/* ============================================================
+   PISTE 2 — LE PRÉNOM
+   Ce qu'Emma vend tient en un mot : un prénom. On lui donne
+   toute la page. Blanc, marges larges, rythme de papeterie.
+   ============================================================ */
+.p2{
+  --fond:#FFFDFB; --encre:#2A2320; --doux:#8A7E78;
+  --rose:#E8CFC6; --mauve:#6B5560; --or:#B89355; --ligne:#EDE4DE;
+  background:var(--fond);color:var(--encre);
+  font-family:"Jost",system-ui,sans-serif;font-weight:300;
+}
+.p2 .scripte{font-family:"Petit Formal Script",cursive}
+.p2 .serif{font-family:"Spectral",Georgia,serif}
+
+.p2 .barre{
+  display:flex;align-items:center;justify-content:center;
+  padding:18px;position:sticky;top:0;background:var(--fond);z-index:10;
+}
+.p2 .marque{
+  font-family:"Spectral",serif;font-weight:300;font-size:13px;
+  letter-spacing:.34em;text-transform:uppercase;
+}
+
+.p2 .hero{padding:16px 26px 34px;text-align:center}
+.p2 .hero .sur{
+  font-size:10px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--doux);margin:0 0 22px;font-weight:400;
+}
+.p2 .hero .prenom{
+  font-family:"Petit Formal Script",cursive;
+  font-size:72px;line-height:.92;color:var(--mauve);margin:0 0 6px;
+}
+.p2 .hero .apres{
+  font-family:"Spectral",serif;font-weight:300;font-style:italic;
+  font-size:15px;color:var(--doux);margin:0 0 26px;
+}
+.p2 .hero h1{
+  font-family:"Spectral",serif;font-weight:300;font-size:25px;line-height:1.28;
+  margin:0 0 16px;letter-spacing:-.005em;text-wrap:balance;
+}
+.p2 .hero p{margin:0 auto 24px;font-size:14.5px;line-height:1.7;color:var(--doux);max-width:30ch}
+
+.p2 .filet{height:1px;background:var(--ligne);margin:0 26px}
+.p2 .bouton{
+  display:block;text-align:center;text-decoration:none;
+  padding:15px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:400;
+}
+.p2 .bouton.plein{background:var(--encre);color:var(--fond)}
+.p2 .bouton.creux{border:1px solid var(--ligne);color:var(--encre);margin-top:9px}
+
+.p2 .portrait{margin:0 26px}
+.p2 .portrait img{width:100%;aspect-ratio:4/5;object-fit:cover}
+.p2 .portrait figcaption{
+  font-family:"Spectral",serif;font-style:italic;font-weight:300;
+  font-size:13.5px;color:var(--doux);padding:11px 0 0;text-align:center;line-height:1.6;
+}
+
+.p2 .section{padding:44px 26px}
+.p2 .section > .sur{
+  font-size:10px;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--or);margin:0 0 16px;text-align:center;font-weight:400;
+}
+.p2 .section h2{
+  font-family:"Spectral",serif;font-weight:300;font-size:23px;
+  text-align:center;margin:0 0 28px;line-height:1.3;
+}
+
+.p2 .colonne{display:grid;gap:40px}
+.p2 .piece{text-decoration:none;color:inherit;display:grid;gap:12px}
+.p2 .piece img{width:100%;aspect-ratio:4/5;object-fit:cover}
+.p2 .piece .nom{font-family:"Spectral",serif;font-weight:400;font-size:18px;line-height:1.3}
+.p2 .piece .desc{font-size:13.5px;line-height:1.65;color:var(--doux);margin:0}
+.p2 .piece .prix{
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--or);
+}
+
+.p2 .etapes{display:grid;gap:30px;text-align:center}
+.p2 .etape .chiffre{
+  font-family:"Petit Formal Script",cursive;font-size:38px;color:var(--rose);line-height:1;margin-bottom:4px;
+}
+.p2 .etape h3{font-family:"Spectral",serif;font-weight:400;font-size:17px;margin:0 0 6px}
+.p2 .etape p{margin:0 auto;font-size:13.5px;line-height:1.65;color:var(--doux);max-width:30ch}
+
+.p2 .avis{background:#FBF5F2;padding:44px 26px;text-align:center}
+.p2 .avis blockquote{
+  font-family:"Spectral",serif;font-weight:300;font-style:italic;
+  font-size:19px;line-height:1.55;margin:0 0 16px;
+}
+.p2 .avis cite{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;font-style:normal;color:var(--doux)}
+
+.p2 .final{padding:50px 26px;text-align:center}
+.p2 .final .scripte{font-size:44px;color:var(--mauve);line-height:1;margin:0 0 14px}
+.p2 .final p{margin:0 auto 26px;font-size:14.5px;line-height:1.7;color:var(--doux);max-width:30ch}
+
+/* piste 2 — ordinateur */
+.p2 .ordi-hero{padding:64px 56px;text-align:center}
+.p2 .ordi-hero .prenom{font-size:clamp(70px,9vw,132px)}
+.p2 .ordi-hero h1{font-size:clamp(24px,2.6vw,34px);max-width:22ch;margin-left:auto;margin-right:auto}
+.p2 .ordi-trio{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;padding:0 56px 60px}
+@media(max-width:700px){
+  .p2 .ordi-hero{padding:40px 22px}
+  .p2 .ordi-trio{grid-template-columns:1fr;padding:0 22px 40px}
+}
+
+/* ============================================================
+   PISTE 3 — AJOURÉE
+   Ses pièces de dentelle libre tiennent toutes seules. Fond
+   sombre de salle d'exposition, filets d'or, photos qui brillent.
+   ============================================================ */
+.p3{
+  --fond:#12140F; --surface:#1B1E17; --os:#EDE8DC; --doux:#8E9384;
+  --or:#C9A227; --rouge:#B8443A; --ligne:#2C3027;
+  background:var(--fond);color:var(--os);
+  font-family:"Instrument Sans",system-ui,sans-serif;
+}
+.p3 .didone{font-family:"Bodoni Moda",Didot,Georgia,serif}
+
+.p3 .barre{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 20px;border-bottom:1px solid var(--ligne);
+  position:sticky;top:0;background:var(--fond);z-index:10;
+}
+.p3 .marque{font-family:"Bodoni Moda",serif;font-size:17px;letter-spacing:.04em}
+.p3 .menu{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--doux)}
+
+.p3 .hero{position:relative}
+.p3 .hero img{width:100%;height:330px;object-fit:cover;opacity:.92}
+.p3 .hero .voile{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(18,20,15,.96) 8%,rgba(18,20,15,.35) 55%,rgba(18,20,15,.55) 100%);
+}
+.p3 .hero .texte{position:absolute;left:0;right:0;bottom:0;padding:22px 20px 24px}
+.p3 .hero .sur{
+  font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--or);margin:0 0 12px;
+}
+.p3 .hero h1{
+  font-family:"Bodoni Moda",serif;font-weight:400;font-size:33px;line-height:1.1;
+  margin:0 0 12px;text-wrap:balance;
+}
+.p3 .hero h1 em{font-style:italic;color:var(--or)}
+.p3 .hero p{margin:0;font-size:14px;line-height:1.6;color:var(--doux);max-width:32ch}
+
+.p3 .actions{display:grid;gap:9px;padding:20px}
+.p3 .bouton{
+  text-align:center;text-decoration:none;padding:14px;font-size:11px;
+  letter-spacing:.18em;text-transform:uppercase;font-weight:500;
+}
+.p3 .bouton.plein{background:var(--or);color:#17190F}
+.p3 .bouton.creux{border:1px solid var(--ligne);color:var(--os)}
+
+.p3 .chiffres{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border-top:1px solid var(--ligne);border-bottom:1px solid var(--ligne);
+}
+.p3 .chiffres div{padding:16px 8px;text-align:center;border-right:1px solid var(--ligne)}
+.p3 .chiffres div:last-child{border-right:0}
+.p3 .chiffres strong{display:block;font-family:"Bodoni Moda",serif;font-size:21px;font-weight:400;color:var(--or)}
+.p3 .chiffres small{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--doux)}
+
+.p3 .section{padding:36px 20px}
+.p3 .section > .sur{font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--or);margin:0 0 12px}
+.p3 .section h2{font-family:"Bodoni Moda",serif;font-weight:400;font-size:25px;margin:0 0 22px;line-height:1.2}
+
+.p3 .mur{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.p3 .piece{text-decoration:none;color:inherit;display:grid;gap:9px}
+.p3 .piece .cadre{border:1px solid var(--ligne);padding:6px;background:var(--surface)}
+.p3 .piece img{width:100%;aspect-ratio:4/5;object-fit:cover}
+.p3 .piece .nom{font-family:"Bodoni Moda",serif;font-size:13.5px;line-height:1.3}
+.p3 .piece .prix{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--or)}
+.p3 .piece.large{grid-column:1 / -1}
+.p3 .piece.large img{aspect-ratio:16/10}
+
+.p3 .etapes{display:grid;gap:0}
+.p3 .etape{padding:18px 0;border-bottom:1px solid var(--ligne);display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start}
+.p3 .etape .chiffre{font-family:"Bodoni Moda",serif;font-style:italic;font-size:26px;color:var(--or);line-height:1}
+.p3 .etape h3{font-family:"Bodoni Moda",serif;font-weight:400;font-size:16px;margin:0 0 5px}
+.p3 .etape p{margin:0;font-size:13.5px;line-height:1.6;color:var(--doux)}
+
+.p3 .avis{padding:38px 20px;background:var(--surface);border-top:1px solid var(--ligne);border-bottom:1px solid var(--ligne)}
+.p3 .avis blockquote{font-family:"Bodoni Moda",serif;font-style:italic;font-size:19px;line-height:1.5;margin:0 0 14px}
+.p3 .avis cite{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;font-style:normal;color:var(--doux)}
+
+.p3 .final{padding:44px 20px 52px;text-align:center}
+.p3 .final h2{font-family:"Bodoni Moda",serif;font-weight:400;font-size:27px;margin:0 0 12px;line-height:1.2}
+.p3 .final h2 em{font-style:italic;color:var(--or)}
+.p3 .final p{margin:0 auto 22px;font-size:14px;line-height:1.65;color:var(--doux);max-width:32ch}
+
+/* piste 3 — ordinateur */
+.p3 .ordi-hero{position:relative;min-height:420px;display:grid}
+.p3 .ordi-hero img{width:100%;height:100%;object-fit:cover;min-height:420px;grid-area:1/1;opacity:.85}
+.p3 .ordi-hero .voile{grid-area:1/1;background:linear-gradient(100deg,rgba(18,20,15,.97) 30%,rgba(18,20,15,.35) 78%)}
+.p3 .ordi-hero .texte{grid-area:1/1;align-self:center;padding:48px 52px;max-width:620px}
+.p3 .ordi-hero h1{font-size:clamp(32px,4.2vw,54px)}
+@media(max-width:700px){.p3 .ordi-hero .texte{padding:30px 22px}}
+
+/* --- bouton WhatsApp flottant, commun aux trois pistes --- */
+.wa{
+  position:sticky;bottom:14px;margin:0 14px -46px;
+  display:flex;align-items:center;gap:9px;justify-content:center;
+  padding:12px;border-radius:999px;text-decoration:none;
+  font-size:13px;font-weight:600;z-index:8;
+  box-shadow:0 6px 22px rgba(0,0,0,.22);
+}
+.wa svg{width:17px;height:17px;flex:none}
+.p1 .wa{background:#1F8B4C;color:#fff;font-family:"Familjen Grotesk",sans-serif}
+.p2 .wa{background:#FFFFFF;color:#2A2320;border:1px solid #EDE4DE;font-family:"Jost",sans-serif;font-weight:400;letter-spacing:.1em;text-transform:uppercase;font-size:11px}
+.p3 .wa{background:#C9A227;color:#17190F;font-family:"Instrument Sans",sans-serif;letter-spacing:.06em}
+
+/* --- animations signature --- */
+.trace{stroke-dasharray:var(--l);stroke-dashoffset:var(--l);animation:broder 3.4s ease-in-out infinite}
+@keyframes broder{
+  0%{stroke-dashoffset:var(--l)}
+  55%{stroke-dashoffset:0}
+  88%{stroke-dashoffset:0;opacity:1}
+  100%{stroke-dashoffset:0;opacity:1}
+}
+.aiguille{animation:suivre 3.4s ease-in-out infinite}
+@keyframes suivre{
+  0%{offset-distance:0%}
+  55%{offset-distance:100%}
+  100%{offset-distance:100%}
+}
+@media (prefers-reduced-motion: reduce){
+  .trace{stroke-dashoffset:0;animation:none}
+  .aiguille{display:none}
+}
+</style>
+
+<div class="enveloppe">
+
+  <header class="chapeau">
+    <p class="sur">emma-broderie.fr · direction artistique · 26 septembre 2026</p>
+    <h1>Trois pistes pour le site d'Emma</h1>
+    <p>Trois façons d'habiller la même structure de page. Les photos, les textes et les prix
+      affichés sont ceux de l'atelier, pas du remplissage&nbsp;: c'est le site réel, à trois
+      températures différentes. Tout est présenté d'abord au téléphone, puisque c'est de là
+      que viendront la plupart des visites.</p>
+  </header>
+
+  <div class="onglets" role="tablist" aria-label="Pistes visuelles">
+    <button class="onglet" role="tab" aria-selected="true" aria-controls="piste-1" id="tab-1">
+      <span class="pastille" style="background:#C2453B"></span>1 · Nuancier</button>
+    <button class="onglet" role="tab" aria-selected="false" aria-controls="piste-2" id="tab-2">
+      <span class="pastille" style="background:#E8CFC6"></span>2 · Le prénom</button>
+    <button class="onglet" role="tab" aria-selected="false" aria-controls="piste-3" id="tab-3">
+      <span class="pastille" style="background:#C9A227"></span>3 · Ajourée</button>
+  </div>
+
+  <!-- ==================== PISTE 1 ==================== -->
+  <div class="fiche" role="tabpanel" id="piste-1" aria-labelledby="tab-1">
+
+    <div class="intro">
+      <h2>Piste 1 — Nuancier</h2>
+      <p class="these">Le mur de bobines d'Emma est déjà une identité graphique&nbsp;: des centaines
+        de couleurs alignées, numérotées, rangées. La page s'organise comme un nuancier d'atelier.
+        Chaque création porte la référence du fil employé, un index de couleurs court en haut de
+        page et se recompose à chaque section. Précis, documenté, un peu industriel — l'inverse
+        du «&nbsp;fait main&nbsp;» attendu.</p>
+      <p class="pour">Pour : rassurer sur le sérieux et la précision du travail. Contre : registre
+        plus froid, qui s'adresse moins à l'émotion du cadeau.</p>
+    </div>
+
+    <div class="specs">
+      <section>
+        <h3>Palette</h3>
+        <div class="nuances">
+          <div class="nuance" style="background:#FBFAF8"></div>
+          <div class="nuance" style="background:#1C1F1C"></div>
+          <div class="nuance" style="background:#6E7268"></div>
+          <div class="nuance" style="background:#2F4B3F"></div>
+          <div class="nuance" style="background:#C2453B"></div>
+          <div class="nuance" style="background:#D8A23B"></div>
+        </div>
+        <div class="legendes">
+          <div class="legende"><i style="background:#FBFAF8"></i><span>Papier</span><code>#FBFAF8</code></div>
+          <div class="legende"><i style="background:#1C1F1C"></i><span>Encre</span><code>#1C1F1C</code></div>
+          <div class="legende"><i style="background:#2F4B3F"></i><span>Vert tapis de coupe</span><code>#2F4B3F</code></div>
+          <div class="legende"><i style="background:#C2453B"></i><span>Rouge fil</span><code>#C2453B</code></div>
+          <div class="legende"><i style="background:#D8A23B"></i><span>Or</span><code>#D8A23B</code></div>
+        </div>
+      </section>
+      <section>
+        <h3>Typographie</h3>
+        <div class="specimen">
+          <div class="ligne" style="font-family:'Familjen Grotesk';font-weight:700;font-size:34px;letter-spacing:-.035em">Prénom brodé</div>
+          <div class="role">Familjen Grotesk 700 — titres</div>
+          <div class="ligne" style="font-family:'Spectral';font-weight:400;font-size:16px;line-height:1.5">Je brode à Vitré depuis onze ans, pièce&nbsp;par&nbsp;pièce.</div>
+          <div class="role">Spectral 400 — texte courant</div>
+          <div class="ligne" style="font-family:'DM Mono';font-size:14px">réf. 1147 · 12 400 points · 180×130 mm</div>
+          <div class="role">DM Mono — références, tailles de cadre</div>
+        </div>
+      </section>
+      <section class="anim">
+        <h3>Animation signature</h3>
+        <div class="cadre">
+          <svg viewBox="0 0 320 120" width="100%" height="120" role="img" aria-label="Un fil se brode le long de la page en changeant de couleur à chaque section">
+            <rect width="320" height="120" fill="#FBFAF8"/>
+            <path id="p1-chemin" d="M24,96 C24,60 60,24 100,24 C140,24 176,60 176,96 C176,60 212,24 252,24 C282,24 298,44 298,64"
+                  fill="none" stroke="#DCDAD2" stroke-width="2"/>
+            <path class="trace" style="--l:420" d="M24,96 C24,60 60,24 100,24 C140,24 176,60 176,96 C176,60 212,24 252,24 C282,24 298,44 298,64"
+                  fill="none" stroke="#C2453B" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7 5"/>
+            <circle class="aiguille" r="4" fill="#2F4B3F"
+                    style="offset-path:path('M24,96 C24,60 60,24 100,24 C140,24 176,60 176,96 C176,60 212,24 252,24 C282,24 298,44 298,64')"/>
+          </svg>
+        </div>
+        <p>Le fil se brode en point avant le long du scroll et change de couleur en entrant dans
+          chaque section, comme un changement de bobine. L'aiguille le précède.</p>
+      </section>
+    </div>
+
+    <div class="rendus">
+      <div>
+        <p class="legende-rendu">Téléphone · 390 px</p>
+        <div class="telephone">
+          <div class="ecran p1">
+            <div class="barre">
+              <span class="marque">Emma<em>.</em> broderie</span>
+              <span class="menu">Menu</span>
+            </div>
+            <div class="index">
+              <i style="background:#C2453B"></i><i style="background:#D8A23B"></i>
+              <i style="background:#2F4B3F"></i><i style="background:#6E7268"></i>
+              <i style="background:#E8CFC6"></i><i style="background:#1C1F1C"></i>
+            </div>
+
+            <div class="hero">
+              <p class="sur">Atelier de broderie · Vitré (35)</p>
+              <h1>Un prénom, une date,<br>un motif&nbsp;: <span>et c'est à vous.</span></h1>
+              <p>Je brode sur le linge, les vêtements et les cadeaux de naissance. Vous m'envoyez
+                le prénom, je m'occupe du reste.</p>
+              <div class="photo-hero">
+                <img src="img/machine-large.webp" alt="Broderie en cours sous la tête de la machine : cerisiers en fleurs et colibri en fil de couleur sur toile blanche" width="1920" height="1080" loading="lazy">
+              </div>
+              <div class="cartouche"><span>Cerisiers &amp; colibri</span><span class="ref">38 200 pts</span></div>
+              <div class="actions">
+                <a class="bouton plein" href="#">Demander un devis</a>
+                <a class="bouton creux" href="#">Voir les créations</a>
+              </div>
+            </div>
+
+            <div class="bandeau">
+              <div><strong>11 ans</strong><small>d'atelier</small></div>
+              <div><strong>8 jours</strong><small>délai actuel</small></div>
+              <div><strong>Vitré</strong><small>remise en main propre</small></div>
+            </div>
+
+            <div class="section">
+              <div class="entete"><h2>Créations récentes</h2><span class="ref">01 — 06</span></div>
+              <div class="grille">
+                <a class="piece" href="#">
+                  <img src="img/doudou.webp" alt="Doudou lapin beige brodé au prénom Aliza et à sa date de naissance" width="1000" height="1250" loading="lazy">
+                  <div class="pied">
+                    <span class="nom">Doudou lapin brodé</span>
+                    <span class="prix">à partir de 32 €</span>
+                    <span class="fil"><i style="background:#2A2320"></i>réf. 1000</span>
+                  </div>
+                </a>
+                <a class="piece" href="#">
+                  <img src="img/cadre-naissance.webp" alt="Cadre de naissance brodé au prénom Ambre, accroché dans une chambre de bébé" width="1000" height="1250" loading="lazy">
+                  <div class="pied">
+                    <span class="nom">Cadre de naissance</span>
+                    <span class="prix">à partir de 45 €</span>
+                    <span class="fil"><i style="background:#C2453B"></i>réf. 1147</span>
+                  </div>
+                </a>
+                <a class="piece" href="#">
+                  <img src="img/serviette.webp" alt="Drap de bain rose poudré brodé au prénom Alicia" width="1000" height="1250" loading="lazy">
+                  <div class="pied">
+                    <span class="nom">Drap de bain au prénom</span>
+                    <span class="prix">à partir de 24 €</span>
+                    <span class="fil"><i style="background:#6B5560"></i>réf. 1921</span>
+                  </div>
+                </a>
+                <a class="piece" href="#">
+                  <img src="img/arbre-de-vie.webp" alt="Arbre de vie brodé en dentelle ajourée fil doré sur fond noir" width="1000" height="1250" loading="lazy">
+                  <div class="pied">
+                    <span class="nom">Arbre de vie ajouré</span>
+                    <span class="prix">à partir de 38 €</span>
+                    <span class="fil"><i style="background:#D8A23B"></i>réf. 1071</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="section" style="padding-top:0">
+              <div class="entete"><h2>Comment ça se passe</h2><span class="ref">3 étapes</span></div>
+              <div class="etapes">
+                <div class="etape"><span class="num">01</span><div>
+                  <h3>Vous me racontez</h3>
+                  <p>Le prénom, l'occasion, la date. Une photo d'inspiration si vous en avez une.</p>
+                </div></div>
+                <div class="etape"><span class="num">02</span><div>
+                  <h3>Je brode</h3>
+                  <p>Je vous envoie le motif avant de lancer la machine. Rien ne part sans votre accord.</p>
+                </div></div>
+                <div class="etape"><span class="num">03</span><div>
+                  <h3>Vous offrez</h3>
+                  <p>Emballage cadeau compris. Remise en main propre à Vitré ou envoi partout en France.</p>
+                </div></div>
+              </div>
+            </div>
+
+            <div class="avis">
+              <blockquote>«&nbsp;J'ai reçu le doudou deux jours avant la naissance. La maman a pleuré.
+                Emma avait même brodé l'heure.&nbsp;»</blockquote>
+              <cite>Marine, Châteaubourg</cite>
+            </div>
+
+            <div class="final">
+              <h2>Une idée en tête&nbsp;?</h2>
+              <p>Écrivez-moi, même si l'idée est encore floue. C'est souvent comme ça que commencent
+                les plus jolies pièces.</p>
+              <div class="actions">
+                <a class="bouton plein" href="#">WhatsApp</a>
+                <a class="bouton creux" href="#">Formulaire</a>
+              </div>
+            </div>
+
+            <a class="wa" href="#">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.7 15l-1.3 4.8 5-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.2 1.3-2 1.4-.5.1-1.2.1-3.6-.8-3-1.3-5-4.4-5.1-4.6-.2-.2-1.3-1.7-1.3-3.2s.8-2.3 1.1-2.6c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.3 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.3.1.4.2.5.3.1.2.1.8-.1 1.4z"/></svg>
+              Écrire sur WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="legende-rendu">Ordinateur · haut de page</p>
+        <div class="ordi">
+          <div class="barre-ordi"><i></i><i></i><i></i><span>emma-broderie.fr</span></div>
+          <div class="p1">
+            <div class="barre">
+              <span class="marque">Emma<em>.</em> broderie</span>
+              <span class="menu">Créations · Sur-mesure · L'atelier · Contact</span>
+            </div>
+            <div class="ordi-hero">
+              <div class="gauche">
+                <p class="sur">Atelier de broderie · Vitré (35)</p>
+                <h1 class="titre">Un prénom, une date,<br>un motif&nbsp;: <span style="color:#C2453B">et c'est à vous.</span></h1>
+                <p>Je brode sur le linge, les vêtements et les cadeaux de naissance. Vous m'envoyez
+                  le prénom, je m'occupe du reste.</p>
+                <div class="actions" style="max-width:380px">
+                  <a class="bouton plein" href="#">Demander un devis</a>
+                  <a class="bouton creux" href="#">Voir les créations</a>
+                </div>
+              </div>
+              <div class="droite">
+                <img src="img/bobines.webp" alt="Mur de l'atelier couvert de bobines de fil à broder de toutes les couleurs" width="1920" height="1080" loading="lazy">
+                <div class="rail">
+                  <i style="background:#C2453B"></i><i style="background:#D8A23B"></i>
+                  <i style="background:#2F4B3F"></i><i style="background:#6E7268"></i>
+                  <i style="background:#E8CFC6"></i>
+                </div>
+              </div>
+            </div>
+            <div class="bandeau">
+              <div><strong>11 ans</strong><small>d'atelier</small></div>
+              <div><strong>8 jours</strong><small>délai actuel</small></div>
+              <div><strong>Vitré</strong><small>remise en main propre</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><h4>Ce qui porte la piste</h4>
+        <p>L'index de couleurs et les références de fil. Ce sont de vrais éléments de l'atelier,
+          pas un motif décoratif&nbsp;: ils disent le métier.</p></div>
+      <div class="note"><h4>Risque</h4>
+        <p>Le registre documentaire peut refroidir une cliente qui cherche un cadeau chargé
+          d'émotion. À compenser par des photos très chaleureuses.</p></div>
+      <div class="note"><h4>Conversion</h4>
+        <p>Les prix «&nbsp;à partir de&nbsp;» tiennent naturellement dans le cartouche de chaque
+          pièce — c'est la piste qui les affiche le plus lisiblement.</p></div>
+    </div>
+  </div>
+
+  <!-- ==================== PISTE 2 ==================== -->
+  <div class="fiche" role="tabpanel" id="piste-2" aria-labelledby="tab-2" hidden>
+
+    <div class="intro">
+      <h2>Piste 2 — Le prénom</h2>
+      <p class="these">Ce qu'Emma vend tient en un mot&nbsp;: un prénom. Alors on lui donne toute la
+        page. Une scripte anglaise énorme, du blanc, des marges larges, un rythme lent de
+        papeterie fine. Les photos respirent, une par écran, jamais en grille serrée.
+        Le site ressemble moins à une boutique qu'à un faire-part.</p>
+      <p class="pour">Pour : registre cadeau, émotion, haut de gamme perçu. Contre : moins de
+        pièces visibles d'un coup, page plus longue à parcourir.</p>
+    </div>
+
+    <div class="specs">
+      <section>
+        <h3>Palette</h3>
+        <div class="nuances">
+          <div class="nuance" style="background:#FFFDFB"></div>
+          <div class="nuance" style="background:#2A2320"></div>
+          <div class="nuance" style="background:#E8CFC6"></div>
+          <div class="nuance" style="background:#6B5560"></div>
+          <div class="nuance" style="background:#B89355"></div>
+          <div class="nuance" style="background:#FBF5F2"></div>
+        </div>
+        <div class="legendes">
+          <div class="legende"><i style="background:#FFFDFB"></i><span>Blanc cassé</span><code>#FFFDFB</code></div>
+          <div class="legende"><i style="background:#2A2320"></i><span>Encre chaude</span><code>#2A2320</code></div>
+          <div class="legende"><i style="background:#E8CFC6"></i><span>Rose poudré</span><code>#E8CFC6</code></div>
+          <div class="legende"><i style="background:#6B5560"></i><span>Mauve profond</span><code>#6B5560</code></div>
+          <div class="legende"><i style="background:#B89355"></i><span>Fil doré</span><code>#B89355</code></div>
+        </div>
+      </section>
+      <section>
+        <h3>Typographie</h3>
+        <div class="specimen">
+          <div class="ligne" style="font-family:'Petit Formal Script';font-size:46px;color:#6B5560;line-height:1">Joséphine</div>
+          <div class="role">Petit Formal Script — le prénom, uniquement</div>
+          <div class="ligne" style="font-family:'Spectral';font-weight:300;font-size:22px;line-height:1.3">Brodé une seule fois</div>
+          <div class="role">Spectral 300 — titres</div>
+          <div class="ligne" style="font-family:'Jost';font-weight:300;font-size:15px;line-height:1.6">Chaque pièce part de l'atelier emballée, prête à offrir.</div>
+          <div class="role">Jost 300 — texte courant</div>
+        </div>
+      </section>
+      <section class="anim">
+        <h3>Animation signature</h3>
+        <div class="cadre">
+          <svg viewBox="0 0 320 120" width="100%" height="120" role="img" aria-label="Une initiale s'écrit en fil, lettre après lettre, comme une broderie en cours">
+            <rect width="320" height="120" fill="#FFFDFB"/>
+            <path class="trace" style="--l:640;animation-duration:4.4s"
+                  d="M58,86 C58,54 74,34 96,34 C112,34 118,46 108,56 C96,68 74,66 74,84 C74,96 88,100 102,92
+                     M132,88 C132,52 150,30 174,34 C190,37 186,56 170,60 C154,64 142,72 142,84 C142,94 156,98 170,90
+                     M204,90 C204,58 216,36 238,34 C256,32 264,46 252,58 C240,70 216,70 216,86 C216,96 232,100 248,90"
+                  fill="none" stroke="#6B5560" stroke-width="2.2" stroke-linecap="round"/>
+            <circle class="aiguille" r="3.5" fill="#B89355" style="animation-duration:4.4s;
+              offset-path:path('M58,86 C58,54 74,34 96,34 C112,34 118,46 108,56 C96,68 74,66 74,84 C74,96 88,100 102,92')"/>
+          </svg>
+        </div>
+        <p>Le prénom s'écrit au fil à mesure qu'on descend, lettre après lettre, comme la machine
+          le broderait. Sur la fiche d'une création, c'est le prénom de la pièce qui s'écrit.</p>
+      </section>
+    </div>
+
+    <div class="rendus">
+      <div>
+        <p class="legende-rendu">Téléphone · 390 px</p>
+        <div class="telephone">
+          <div class="ecran p2">
+            <div class="barre"><span class="marque">Emma — Broderie</span></div>
+
+            <div class="hero">
+              <p class="sur">Vitré · Ille-et-Vilaine</p>
+              <p class="prenom">Ambre</p>
+              <p class="apres">brodé le 16 janvier, 3,85 kg</p>
+              <h1>Je brode les prénoms qu'on n'oublie pas.</h1>
+              <p>Un doudou, un drap de bain, un cadre de naissance. Vous me donnez le prénom,
+                je vous rends un cadeau.</p>
+            </div>
+
+            <div style="padding:0 26px">
+              <a class="bouton plein" href="#">Demander un devis</a>
+              <a class="bouton creux" href="#">Voir les créations</a>
+            </div>
+
+            <div class="section">
+              <figure class="portrait" style="margin:0">
+                <img src="img/portrait.webp" alt="Emma, brodeuse à Vitré, souriante, cheveux longs et lunettes" width="1000" height="1250" loading="lazy">
+                <figcaption>«&nbsp;Je brode seule, chez moi, à Vitré. Je réponds moi-même à chaque message.&nbsp;»</figcaption>
+              </figure>
+            </div>
+
+            <div class="filet"></div>
+
+            <div class="section">
+              <p class="sur">Quelques pièces</p>
+              <h2>Ce qui sort de l'atelier</h2>
+              <div class="colonne">
+                <a class="piece" href="#">
+                  <img src="img/doudou.webp" alt="Doudou lapin beige brodé au prénom Aliza et à sa date de naissance" width="1000" height="1250" loading="lazy">
+                  <div>
+                    <div class="nom">Le doudou de naissance</div>
+                    <p class="desc">Prénom, date, heure, taille et poids brodés sur les oreilles.
+                      C'est la pièce qu'on garde vingt ans.</p>
+                    <span class="prix">à partir de 32 €</span>
+                  </div>
+                </a>
+                <a class="piece" href="#">
+                  <img src="img/serviette.webp" alt="Drap de bain rose poudré brodé au prénom Alicia" width="1000" height="1250" loading="lazy">
+                  <div>
+                    <div class="nom">Le drap de bain au prénom</div>
+                    <p class="desc">Coton épais, prénom en lettres cursives. Le cadeau de
+                      crémaillère ou de fête des mères qui sert tous les jours.</p>
+                    <span class="prix">à partir de 24 €</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <div class="filet"></div>
+
+            <div class="section">
+              <p class="sur">Trois étapes</p>
+              <h2>Comment ça se passe</h2>
+              <div class="etapes">
+                <div class="etape"><div class="chiffre">un</div>
+                  <h3>Vous me racontez</h3>
+                  <p>Le prénom, l'occasion, la date. Même si l'idée est encore floue.</p></div>
+                <div class="etape"><div class="chiffre">deux</div>
+                  <h3>Je brode</h3>
+                  <p>Je vous montre le motif avant de lancer la machine.</p></div>
+                <div class="etape"><div class="chiffre">trois</div>
+                  <h3>Vous offrez</h3>
+                  <p>Emballé, prêt à offrir. À Vitré en main propre, ou par la poste.</p></div>
+              </div>
+            </div>
+
+            <div class="avis">
+              <blockquote>«&nbsp;J'ai reçu le doudou deux jours avant la naissance. La maman a pleuré.&nbsp;»</blockquote>
+              <cite>Marine, Châteaubourg</cite>
+            </div>
+
+            <div class="final">
+              <p class="scripte">On en parle&nbsp;?</p>
+              <p>Écrivez-moi le prénom, je vous dis tout de suite ce qui est possible
+                et sous quel délai.</p>
+              <a class="bouton plein" href="#">Demander un devis</a>
+            </div>
+
+            <a class="wa" href="#">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.7 15l-1.3 4.8 5-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.2 1.3-2 1.4-.5.1-1.2.1-3.6-.8-3-1.3-5-4.4-5.1-4.6-.2-.2-1.3-1.7-1.3-3.2s.8-2.3 1.1-2.6c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.3 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.3.1.4.2.5.3.1.2.1.8-.1 1.4z"/></svg>
+              WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="legende-rendu">Ordinateur · haut de page</p>
+        <div class="ordi">
+          <div class="barre-ordi"><i></i><i></i><i></i><span>emma-broderie.fr</span></div>
+          <div class="p2">
+            <div class="barre"><span class="marque">Emma — Broderie</span></div>
+            <div class="ordi-hero">
+              <p class="sur">Vitré · Ille-et-Vilaine</p>
+              <p class="prenom" style="margin:0 0 6px">Ambre</p>
+              <p class="apres">brodé le 16 janvier, 3,85 kg</p>
+              <h1>Je brode les prénoms qu'on n'oublie pas.</h1>
+              <p style="max-width:44ch;margin:0 auto 26px;color:#8A7E78;line-height:1.7">Un doudou,
+                un drap de bain, un cadre de naissance. Vous me donnez le prénom, je vous rends un cadeau.</p>
+              <a class="bouton plein" href="#" style="display:inline-block;padding:15px 38px">Demander un devis</a>
+            </div>
+            <div class="ordi-trio">
+              <a class="piece" href="#">
+                <img src="img/doudou.webp" alt="Doudou lapin beige brodé au prénom Aliza" width="1000" height="1250" loading="lazy">
+                <div><div class="nom">Le doudou de naissance</div><span class="prix">à partir de 32 €</span></div>
+              </a>
+              <a class="piece" href="#">
+                <img src="img/cadre-naissance.webp" alt="Cadre de naissance brodé au prénom Ambre" width="1000" height="1250" loading="lazy">
+                <div><div class="nom">Le cadre de naissance</div><span class="prix">à partir de 45 €</span></div>
+              </a>
+              <a class="piece" href="#">
+                <img src="img/trousse.webp" alt="Trousse en tissu fleuri cousue main, brodée au prénom Lisa en fil doré" width="1000" height="1250" loading="lazy">
+                <div><div class="nom">La trousse cousue main</div><span class="prix">à partir de 28 €</span></div>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><h4>Ce qui porte la piste</h4>
+        <p>Le prénom en scripte, énorme, isolé. Il change à chaque visite ou à chaque création&nbsp;:
+          c'est littéralement le produit affiché en grand.</p></div>
+      <div class="note"><h4>Risque</h4>
+        <p>Une page plus longue&nbsp;: une pièce par écran. Il faut des photos irréprochables,
+          puisqu'il n'y a nulle part où se cacher.</p></div>
+      <div class="note"><h4>Conversion</h4>
+        <p>C'est la piste la plus «&nbsp;cadeau&nbsp;». Elle parle à une cliente qui cherche une
+          émotion, pas un article de linge.</p></div>
+    </div>
+  </div>
+
+  <!-- ==================== PISTE 3 ==================== -->
+  <div class="fiche" role="tabpanel" id="piste-3" aria-labelledby="tab-3" hidden>
+
+    <div class="intro">
+      <h2>Piste 3 — Ajourée</h2>
+      <p class="these">Les plus belles pièces d'Emma ne sont pas brodées <em>sur</em> quelque chose&nbsp;:
+        elles tiennent toutes seules. L'arbre de vie en fil doré, le papillon, la ballerine — de la
+        dentelle libre, brodée sans support. C'est sa vraie singularité, et à peu près personne ne
+        la revendique en Ille-et-Vilaine. Le site devient une salle d'exposition sombre où ces
+        pièces brillent, filets d'or, bodoni.</p>
+      <p class="pour">Pour : la piste la plus mémorable et la plus différenciante. Contre : le fond
+        sombre convient mal au linge de bain et aux pièces enfant, qui sont le volume de l'activité.</p>
+    </div>
+
+    <div class="specs">
+      <section>
+        <h3>Palette</h3>
+        <div class="nuances">
+          <div class="nuance" style="background:#12140F"></div>
+          <div class="nuance" style="background:#1B1E17"></div>
+          <div class="nuance" style="background:#EDE8DC"></div>
+          <div class="nuance" style="background:#8E9384"></div>
+          <div class="nuance" style="background:#C9A227"></div>
+          <div class="nuance" style="background:#B8443A"></div>
+        </div>
+        <div class="legendes">
+          <div class="legende"><i style="background:#12140F"></i><span>Noir vert</span><code>#12140F</code></div>
+          <div class="legende"><i style="background:#EDE8DC"></i><span>Os</span><code>#EDE8DC</code></div>
+          <div class="legende"><i style="background:#C9A227"></i><span>Fil doré</span><code>#C9A227</code></div>
+          <div class="legende"><i style="background:#8E9384"></i><span>Gris lin</span><code>#8E9384</code></div>
+          <div class="legende"><i style="background:#B8443A"></i><span>Rouge papillon</span><code>#B8443A</code></div>
+        </div>
+      </section>
+      <section>
+        <h3>Typographie</h3>
+        <div class="specimen">
+          <div class="ligne" style="font-family:'Bodoni Moda';font-weight:400;font-size:36px;line-height:1.05">Dentelle libre</div>
+          <div class="role">Bodoni Moda 400 — titres</div>
+          <div class="ligne" style="font-family:'Bodoni Moda';font-style:italic;font-size:22px;color:#B89355">sans support, sans tissu</div>
+          <div class="role">Bodoni Moda italique — accents</div>
+          <div class="ligne" style="font-family:'Instrument Sans';font-size:15px;line-height:1.6">Chaque pièce est brodée puis dégagée à la main, fil par fil.</div>
+          <div class="role">Instrument Sans — texte courant</div>
+        </div>
+      </section>
+      <section class="anim">
+        <h3>Animation signature</h3>
+        <div class="cadre">
+          <svg viewBox="0 0 320 120" width="100%" height="120" role="img" aria-label="Un motif de dentelle se trace en fil doré sur fond sombre">
+            <rect width="320" height="120" fill="#12140F"/>
+            <circle cx="160" cy="60" r="40" fill="none" stroke="#2C3027" stroke-width="1"/>
+            <path class="trace" style="--l:520;animation-duration:4s"
+                  d="M160,100 C160,78 140,74 140,58 C140,44 152,38 160,50 C168,38 180,44 180,58 C180,74 160,78 160,100
+                     M160,60 C144,60 132,52 124,40 M160,60 C176,60 188,52 196,40
+                     M160,74 C148,74 138,80 132,90 M160,74 C172,74 182,80 188,90"
+                  fill="none" stroke="#C9A227" stroke-width="1.6" stroke-linecap="round"/>
+            <circle class="aiguille" r="3" fill="#EDE8DC" style="animation-duration:4s;
+              offset-path:path('M160,100 C160,78 140,74 140,58 C140,44 152,38 160,50 C168,38 180,44 180,58 C180,74 160,78 160,100')"/>
+          </svg>
+        </div>
+        <p>Le motif se trace en fil doré sur le fond sombre, exactement comme la machine le brode&nbsp;:
+          contour d'abord, remplissage ensuite. Le tambour reste visible en filigrane.</p>
+      </section>
+    </div>
+
+    <div class="rendus">
+      <div>
+        <p class="legende-rendu">Téléphone · 390 px</p>
+        <div class="telephone">
+          <div class="ecran p3">
+            <div class="barre">
+              <span class="marque">EMMA</span>
+              <span class="menu">Menu</span>
+            </div>
+
+            <div class="hero">
+              <img src="img/arbre-detail.webp" alt="Arbre de vie brodé en dentelle ajourée fil doré, pièce autoportante sur fond noir" width="1000" height="1000" loading="lazy">
+              <div class="voile"></div>
+              <div class="texte">
+                <p class="sur">Broderie · Vitré (35)</p>
+                <h1>De la dentelle<br>qui tient <em>toute seule</em>.</h1>
+                <p>Brodée sans support, puis dégagée fil par fil. Et aussi&nbsp;: prénoms, linge,
+                  cadeaux de naissance.</p>
+              </div>
+            </div>
+
+            <div class="actions">
+              <a class="bouton plein" href="#">Demander un devis</a>
+              <a class="bouton creux" href="#">Voir les créations</a>
+            </div>
+
+            <div class="chiffres">
+              <div><strong>11</strong><small>ans d'atelier</small></div>
+              <div><strong>8 j</strong><small>délai actuel</small></div>
+              <div><strong>35</strong><small>Vitré &amp; Rennes</small></div>
+            </div>
+
+            <div class="section">
+              <p class="sur">La collection</p>
+              <h2>Pièces ajourées</h2>
+              <div class="mur">
+                <a class="piece large" href="#">
+                  <div class="cadre"><img src="img/papillon-detail.webp" alt="Papillon brodé en relief aux ailes rouges et noires, surmonté de coquelicots" width="1000" height="1000" loading="lazy"></div>
+                  <div><div class="nom">Papillon &amp; coquelicots</div><span class="prix">à partir de 42 €</span></div>
+                </a>
+                <a class="piece" href="#">
+                  <div class="cadre"><img src="img/tambour.webp" alt="Tambour décoratif brodé d'une fée rouge tendant la main à un oiseau" width="1000" height="1250" loading="lazy"></div>
+                  <div><div class="nom">Tambour «&nbsp;La fée&nbsp;»</div><span class="prix">à partir de 36 €</span></div>
+                </a>
+                <a class="piece" href="#">
+                  <div class="cadre"><img src="img/arbre-de-vie.webp" alt="Arbre de vie brodé en dentelle ajourée fil doré" width="1000" height="1250" loading="lazy"></div>
+                  <div><div class="nom">Arbre de vie doré</div><span class="prix">à partir de 38 €</span></div>
+                </a>
+              </div>
+            </div>
+
+            <div class="section" style="padding-top:0">
+              <p class="sur">Aussi à l'atelier</p>
+              <h2>Prénoms &amp; linge</h2>
+              <div class="mur">
+                <a class="piece" href="#">
+                  <div class="cadre"><img src="img/doudou.webp" alt="Doudou lapin beige brodé au prénom Aliza" width="1000" height="1250" loading="lazy"></div>
+                  <div><div class="nom">Doudou de naissance</div><span class="prix">à partir de 32 €</span></div>
+                </a>
+                <a class="piece" href="#">
+                  <div class="cadre"><img src="img/sac-banane.webp" alt="Sac banane en suédine jaune moutarde, cousu main, brodé de trois chats" width="1000" height="1250" loading="lazy"></div>
+                  <div><div class="nom">Sac banane cousu main</div><span class="prix">à partir de 48 €</span></div>
+                </a>
+              </div>
+            </div>
+
+            <div class="section" style="padding-top:0">
+              <p class="sur">Trois étapes</p>
+              <h2>Comment ça se passe</h2>
+              <div class="etapes">
+                <div class="etape"><span class="chiffre">I</span><div>
+                  <h3>Vous me racontez</h3>
+                  <p>Le motif, l'occasion, la date souhaitée.</p></div></div>
+                <div class="etape"><span class="chiffre">II</span><div>
+                  <h3>Je brode</h3>
+                  <p>Motif validé avant de lancer la machine. Puis dégagé à la main.</p></div></div>
+                <div class="etape"><span class="chiffre">III</span><div>
+                  <h3>Vous offrez</h3>
+                  <p>Emballage cadeau compris. Vitré en main propre, ou envoi.</p></div></div>
+              </div>
+            </div>
+
+            <div class="avis">
+              <blockquote>«&nbsp;L'arbre de vie est encadré dans le salon. Tout le monde demande
+                où je l'ai acheté.&nbsp;»</blockquote>
+              <cite>Nathalie, Rennes</cite>
+            </div>
+
+            <div class="final">
+              <h2>Parlons de <em>votre</em> pièce.</h2>
+              <p>Un motif, un prénom, une date&nbsp;: dites-moi ce que vous avez en tête.</p>
+              <a class="bouton plein" href="#" style="display:block">Demander un devis</a>
+            </div>
+
+            <a class="wa" href="#">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.7 15l-1.3 4.8 5-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.2 1.3-2 1.4-.5.1-1.2.1-3.6-.8-3-1.3-5-4.4-5.1-4.6-.2-.2-1.3-1.7-1.3-3.2s.8-2.3 1.1-2.6c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.3 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.3.1.4.2.5.3.1.2.1.8-.1 1.4z"/></svg>
+              Écrire sur WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p class="legende-rendu">Ordinateur · haut de page</p>
+        <div class="ordi">
+          <div class="barre-ordi"><i></i><i></i><i></i><span>emma-broderie.fr</span></div>
+          <div class="p3">
+            <div class="barre">
+              <span class="marque">EMMA</span>
+              <span class="menu">Créations · Sur-mesure · L'atelier · Contact</span>
+            </div>
+            <div class="ordi-hero">
+              <img src="img/machine-large.webp" alt="Broderie en cours sous la tête de la machine : cerisiers en fleurs et colibri" width="1920" height="1080" loading="lazy">
+              <div class="voile"></div>
+              <div class="texte">
+                <p class="sur">Broderie · Vitré (35)</p>
+                <h1 class="didone">De la dentelle<br>qui tient <em>toute seule</em>.</h1>
+                <p style="margin:0 0 22px;max-width:40ch;line-height:1.65;color:#8E9384">Brodée sans
+                  support, puis dégagée fil par fil. Et aussi&nbsp;: prénoms, linge, cadeaux de naissance.</p>
+                <a class="bouton plein" href="#" style="display:inline-block;padding:14px 34px">Demander un devis</a>
+              </div>
+            </div>
+            <div class="chiffres">
+              <div><strong>11</strong><small>ans d'atelier</small></div>
+              <div><strong>8 j</strong><small>délai actuel</small></div>
+              <div><strong>35</strong><small>Vitré &amp; Rennes</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notes">
+      <div class="note"><h4>Ce qui porte la piste</h4>
+        <p>La dentelle libre. Personne autour de Vitré et de Rennes ne met ça en avant&nbsp;: c'est
+          un angle que Google n'a pas encore attribué.</p></div>
+      <div class="note"><h4>Risque</h4>
+        <p>Le fond sombre sert mal les serviettes, les bavoirs et les doudous, qui font le volume.
+          Il faut alors une deuxième ambiance, plus claire, pour ces pages-là.</p></div>
+      <div class="note"><h4>Conversion</h4>
+        <p>Excellente pour la pièce déco à 40-60 €, moins évidente pour le drap de bain à 24 €.</p></div>
+    </div>
+  </div>
+
+  <div class="avertissement">
+    <h4>À savoir sur cette présentation</h4>
+    <ul>
+      <li>Les photos sont celles d'Emma, retouchées légèrement (exposition, netteté) et débarrassées
+        de leurs métadonnées EXIF. Les couleurs des fils n'ont pas été modifiées.</li>
+      <li>Les <strong>prix, délais, nombre d'années d'atelier, références de fil et avis clients sont
+        des exemples</strong> destinés à montrer la mise en page. Rien de tout cela n'a été confirmé
+        par Emma et rien ne doit être publié en l'état.</li>
+      <li>Les prénoms visibles sur les broderies sont ceux de vraies clientes. Avant publication,
+        il faudra leur accord, ou choisir d'autres pièces.</li>
+      <li>L'animation du fil est ici en boucle pour être visible&nbsp;; sur le site, elle sera pilotée
+        par le défilement et désactivée si le système demande moins d'animations.</li>
+    </ul>
+  </div>
+
+</div>
+
+<script>
+  const onglets = Array.from(document.querySelectorAll('.onglet'));
+  function afficher(index){
+    onglets.forEach((onglet, i) => {
+      const actif = i === index;
+      onglet.setAttribute('aria-selected', actif ? 'true' : 'false');
+      document.getElementById(onglet.getAttribute('aria-controls')).hidden = !actif;
+    });
+  }
+  onglets.forEach((onglet, i) => {
+    onglet.addEventListener('click', () => afficher(i));
+    onglet.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      const suivant = (i + (e.key === 'ArrowRight' ? 1 : onglets.length - 1)) % onglets.length;
+      onglets[suivant].focus();
+      afficher(suivant);
+    });
+  });
+</script>

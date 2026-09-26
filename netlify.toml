@@ -1,0 +1,36 @@
+# Configuration Netlify — emma-broderie.fr
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+# --- Espace d'administration secret ---
+# Le chemin n'est volontairement PAS dans robots.txt (fichier public).
+# On empêche l'indexation par en-tête HTTP + balise meta dans les pages.
+# ⚠️ Remplacer /atelier-dev-local/* par le vrai chemin secret au lancement.
+[[headers]]
+  for = "/atelier-dev-local/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow, noarchive"
+    Cache-Control = "no-store"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# Images et assets générés par Astro : empreinte dans le nom → cache long
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"

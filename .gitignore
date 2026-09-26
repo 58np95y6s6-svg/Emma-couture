@@ -1,0 +1,36 @@
+# dépendances
+node_modules/
+
+# build Astro
+dist/
+.astro/
+
+# Netlify
+.netlify/
+
+# photos originales : trop lourdes pour Git (voir CLAUDE.md)
+photos-originales/
+
+# secrets / environnement
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# éditeurs
+.vscode/
+.idea/
+*.swp
+
+# logs
+npm-debug.log*
+*.log
+
+# visuels de la maquette : dérivés de src/assets/creations/
+# régénérés par `node scripts/preparer-maquette.mjs`
+docs/img/

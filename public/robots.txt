@@ -1,0 +1,9 @@
+# emma-broderie.fr
+# Note : le chemin de l'espace d'administration n'est volontairement pas
+# mentionné ici (ce fichier est public). Il est protégé par l'en-tête
+# X-Robots-Tag dans netlify.toml et une balise meta noindex.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://emma-broderie.fr/sitemap-index.xml

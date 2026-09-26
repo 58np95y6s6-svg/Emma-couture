@@ -1,0 +1,467 @@
+[
+  {
+    "numero": "007",
+    "original": "Afficher les photos récentes.PNG",
+    "dimensionsOrigine": "1320x2235",
+    "format": "hero-mobile",
+    "sortie": "src/assets/creations/hero-mobile/emma-brodeuse-vitre-portrait.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (north)",
+      "luminosite": 1.06,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Emma, brodeuse à Vitré, souriante, cheveux longs et lunettes, devant un bord de mer",
+    "categorie": "atelier"
+  },
+  {
+    "numero": "007",
+    "original": "Afficher les photos récentes.PNG",
+    "dimensionsOrigine": "1320x2235",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/emma-brodeuse-vitre-portrait.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (north)",
+      "luminosite": 1.06,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Emma, brodeuse à Vitré, souriante, cheveux longs et lunettes, devant un bord de mer",
+    "categorie": "atelier"
+  },
+  {
+    "numero": "007",
+    "original": "Afficher les photos récentes.PNG",
+    "dimensionsOrigine": "1320x2235",
+    "format": "detail",
+    "sortie": "src/assets/creations/detail/emma-brodeuse-vitre-portrait.webp",
+    "retouches": {
+      "recadrage": "1000x1000 (north)",
+      "luminosite": 1.06,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Emma, brodeuse à Vitré, souriante, cheveux longs et lunettes, devant un bord de mer",
+    "categorie": "atelier"
+  },
+  {
+    "numero": "007",
+    "original": "Afficher les photos récentes.PNG",
+    "dimensionsOrigine": "1320x2235",
+    "format": "og",
+    "sortie": "src/assets/creations/og/emma-brodeuse-vitre-portrait.webp",
+    "retouches": {
+      "recadrage": "1200x630 (north)",
+      "luminosite": 1.06,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Emma, brodeuse à Vitré, souriante, cheveux longs et lunettes, devant un bord de mer",
+    "categorie": "atelier"
+  },
+  {
+    "numero": "011",
+    "original": "IMG_0184.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "hero-large",
+    "sortie": "src/assets/creations/hero-large/atelier-mur-bobines-fil-broderie-vitre.webp",
+    "retouches": {
+      "recadrage": "1920x1080 (centre)",
+      "luminosite": 1.08,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Mur de l'atelier couvert de centaines de bobines de fil à broder de toutes les couleurs, rangées sur des étagères",
+    "categorie": "atelier"
+  },
+  {
+    "numero": "011",
+    "original": "IMG_0184.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/atelier-mur-bobines-fil-broderie-vitre.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (centre)",
+      "luminosite": 1.08,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Mur de l'atelier couvert de centaines de bobines de fil à broder de toutes les couleurs, rangées sur des étagères",
+    "categorie": "atelier"
+  },
+  {
+    "numero": "011",
+    "original": "IMG_0184.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "detail",
+    "sortie": "src/assets/creations/detail/atelier-mur-bobines-fil-broderie-vitre.webp",
+    "retouches": {
+      "recadrage": "1000x1000 (centre)",
+      "luminosite": 1.08,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Mur de l'atelier couvert de centaines de bobines de fil à broder de toutes les couleurs, rangées sur des étagères",
+    "categorie": "atelier"
+  },
+  {
+    "numero": "011",
+    "original": "IMG_0184.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "og",
+    "sortie": "src/assets/creations/og/atelier-mur-bobines-fil-broderie-vitre.webp",
+    "retouches": {
+      "recadrage": "1200x630 (centre)",
+      "luminosite": 1.08,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Mur de l'atelier couvert de centaines de bobines de fil à broder de toutes les couleurs, rangées sur des étagères",
+    "categorie": "atelier"
+  },
+  {
+    "numero": "036",
+    "original": "IMG_3089.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/machine-a-broder-en-cours-atelier-vitre.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (centre)",
+      "luminosite": 1.05,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Broderie en cours sous la tête de la machine : un paysage de cerisiers en fleurs et un colibri en fil de couleur sur toile blanche",
+    "categorie": "atelier"
+  },
+  {
+    "numero": "036",
+    "original": "IMG_3089.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "detail",
+    "sortie": "src/assets/creations/detail/machine-a-broder-en-cours-atelier-vitre.webp",
+    "retouches": {
+      "recadrage": "1000x1000 (centre)",
+      "luminosite": 1.05,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Broderie en cours sous la tête de la machine : un paysage de cerisiers en fleurs et un colibri en fil de couleur sur toile blanche",
+    "categorie": "atelier"
+  },
+  {
+    "numero": "036",
+    "original": "IMG_3089.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "hero-large",
+    "sortie": "src/assets/creations/hero-large/machine-a-broder-en-cours-atelier-vitre.webp",
+    "retouches": {
+      "recadrage": "1920x1080 (centre)",
+      "luminosite": 1.05,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Broderie en cours sous la tête de la machine : un paysage de cerisiers en fleurs et un colibri en fil de couleur sur toile blanche",
+    "categorie": "atelier"
+  },
+  {
+    "numero": "003",
+    "original": "5E31CC2B-5EB9-4D53-A5EB-602E0ACC1485.PNG",
+    "dimensionsOrigine": "1086x1448",
+    "format": "hero-large",
+    "sortie": "src/assets/creations/hero-large/doudou-lapin-brode-prenom-naissance-vitre.webp",
+    "retouches": {
+      "recadrage": "1920x1080 (north)",
+      "luminosite": 1.02,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Doudou lapin en peluche beige, brodé au prénom Aliza et à la date de naissance sur les oreilles, posé devant un bouquet de roses blanches",
+    "categorie": "naissance"
+  },
+  {
+    "numero": "003",
+    "original": "5E31CC2B-5EB9-4D53-A5EB-602E0ACC1485.PNG",
+    "dimensionsOrigine": "1086x1448",
+    "format": "hero-mobile",
+    "sortie": "src/assets/creations/hero-mobile/doudou-lapin-brode-prenom-naissance-vitre.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (north)",
+      "luminosite": 1.02,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Doudou lapin en peluche beige, brodé au prénom Aliza et à la date de naissance sur les oreilles, posé devant un bouquet de roses blanches",
+    "categorie": "naissance"
+  },
+  {
+    "numero": "003",
+    "original": "5E31CC2B-5EB9-4D53-A5EB-602E0ACC1485.PNG",
+    "dimensionsOrigine": "1086x1448",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/doudou-lapin-brode-prenom-naissance-vitre.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (north)",
+      "luminosite": 1.02,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Doudou lapin en peluche beige, brodé au prénom Aliza et à la date de naissance sur les oreilles, posé devant un bouquet de roses blanches",
+    "categorie": "naissance"
+  },
+  {
+    "numero": "003",
+    "original": "5E31CC2B-5EB9-4D53-A5EB-602E0ACC1485.PNG",
+    "dimensionsOrigine": "1086x1448",
+    "format": "og",
+    "sortie": "src/assets/creations/og/doudou-lapin-brode-prenom-naissance-vitre.webp",
+    "retouches": {
+      "recadrage": "1200x630 (north)",
+      "luminosite": 1.02,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Doudou lapin en peluche beige, brodé au prénom Aliza et à la date de naissance sur les oreilles, posé devant un bouquet de roses blanches",
+    "categorie": "naissance"
+  },
+  {
+    "numero": "048",
+    "original": "IMG_3675.JPG",
+    "dimensionsOrigine": "1179x1570",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/cadre-naissance-brode-prenom-chambre-bebe.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (centre)",
+      "luminosite": 1.04,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Cadre de naissance brodé au prénom Ambre avec date, taille et poids, accroché dans une chambre de bébé rose",
+    "categorie": "naissance"
+  },
+  {
+    "numero": "048",
+    "original": "IMG_3675.JPG",
+    "dimensionsOrigine": "1179x1570",
+    "format": "detail",
+    "sortie": "src/assets/creations/detail/cadre-naissance-brode-prenom-chambre-bebe.webp",
+    "retouches": {
+      "recadrage": "1000x1000 (centre)",
+      "luminosite": 1.04,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Cadre de naissance brodé au prénom Ambre avec date, taille et poids, accroché dans une chambre de bébé rose",
+    "categorie": "naissance"
+  },
+  {
+    "numero": "052",
+    "original": "IMG_3763.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/arbre-de-vie-brode-dentelle-ajouree-fil-dore.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (centre)",
+      "luminosite": 1.06,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Arbre de vie brodé en dentelle ajourée fil doré, pièce autoportante sans support tissu, sur fond noir",
+    "categorie": "decoration"
+  },
+  {
+    "numero": "052",
+    "original": "IMG_3763.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "detail",
+    "sortie": "src/assets/creations/detail/arbre-de-vie-brode-dentelle-ajouree-fil-dore.webp",
+    "retouches": {
+      "recadrage": "1000x1000 (centre)",
+      "luminosite": 1.06,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Arbre de vie brodé en dentelle ajourée fil doré, pièce autoportante sans support tissu, sur fond noir",
+    "categorie": "decoration"
+  },
+  {
+    "numero": "079",
+    "original": "IMG_6856.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/papillon-brode-dentelle-ajouree-coquelicots.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (centre)",
+      "luminosite": 1,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Papillon brodé en relief aux ailes rouges et noires, surmonté de coquelicots brodés, posé sur un feuillage",
+    "categorie": "decoration"
+  },
+  {
+    "numero": "079",
+    "original": "IMG_6856.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "detail",
+    "sortie": "src/assets/creations/detail/papillon-brode-dentelle-ajouree-coquelicots.webp",
+    "retouches": {
+      "recadrage": "1000x1000 (centre)",
+      "luminosite": 1,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Papillon brodé en relief aux ailes rouges et noires, surmonté de coquelicots brodés, posé sur un feuillage",
+    "categorie": "decoration"
+  },
+  {
+    "numero": "049",
+    "original": "IMG_3679.HEIC",
+    "dimensionsOrigine": "3574x3023",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/sac-banane-cousu-main-broderie-chats.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (centre)",
+      "luminosite": 1.03,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Sac banane en suédine jaune moutarde, cousu main, brodé de trois chats gris",
+    "categorie": "couture"
+  },
+  {
+    "numero": "049",
+    "original": "IMG_3679.HEIC",
+    "dimensionsOrigine": "3574x3023",
+    "format": "detail",
+    "sortie": "src/assets/creations/detail/sac-banane-cousu-main-broderie-chats.webp",
+    "retouches": {
+      "recadrage": "1000x1000 (centre)",
+      "luminosite": 1.03,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Sac banane en suédine jaune moutarde, cousu main, brodé de trois chats gris",
+    "categorie": "couture"
+  },
+  {
+    "numero": "084",
+    "original": "IMG_7210.JPG",
+    "dimensionsOrigine": "1179x1513",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/sac-a-dos-enfant-brode-prenom-malo.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (centre)",
+      "luminosite": 1.03,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Sac à dos d'enfant en simili bleu marine, brodé au prénom Malo entouré d'étoiles",
+    "categorie": "enfant"
+  },
+  {
+    "numero": "039",
+    "original": "IMG_3203.HEIC",
+    "dimensionsOrigine": "2884x3470",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/serviette-brodee-prenom-alicia-rose.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (centre)",
+      "luminosite": 1.05,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Drap de bain rose poudré brodé au prénom Alicia en lettres cursives violettes",
+    "categorie": "linge"
+  },
+  {
+    "numero": "092",
+    "original": "IMG_9336.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/chaussette-de-noel-brodee-prenom.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (centre)",
+      "luminosite": 1.04,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Chaussette de Noël rouge bordée de fourrure blanche, brodée au prénom Aïdan et à un motif de canne à sucre",
+    "categorie": "noel"
+  },
+  {
+    "numero": "100",
+    "original": "IMG_9938.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/trousse-cousue-main-brodee-prenom-lisa.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (centre)",
+      "luminosite": 1.02,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Trousse en tissu fleuri bleu et blanc, cousue main, brodée au prénom Lisa en fil doré",
+    "categorie": "couture"
+  },
+  {
+    "numero": "020",
+    "original": "IMG_0845.HEIC",
+    "dimensionsOrigine": "3733x2891",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/tambour-decoratif-brode-fee-rouge.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (centre)",
+      "luminosite": 1.03,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Tambour décoratif brodé d'une fée rouge tendant la main à un oiseau, posé sur une planche en bois à côté d'une plante grasse",
+    "categorie": "decoration"
+  },
+  {
+    "numero": "020",
+    "original": "IMG_0845.HEIC",
+    "dimensionsOrigine": "3733x2891",
+    "format": "detail",
+    "sortie": "src/assets/creations/detail/tambour-decoratif-brode-fee-rouge.webp",
+    "retouches": {
+      "recadrage": "1000x1000 (centre)",
+      "luminosite": 1.03,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Tambour décoratif brodé d'une fée rouge tendant la main à un oiseau, posé sur une planche en bois à côté d'une plante grasse",
+    "categorie": "decoration"
+  },
+  {
+    "numero": "087",
+    "original": "IMG_8652.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/doudou-plat-brode-prenom-keanu-naissance.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (centre)",
+      "luminosite": 1.04,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Doudou plat blanc à tête d'ours gris, brodé au prénom Keanu",
+    "categorie": "naissance"
+  },
+  {
+    "numero": "018",
+    "original": "IMG_0425.HEIC",
+    "dimensionsOrigine": "4032x3024",
+    "format": "galerie",
+    "sortie": "src/assets/creations/galerie/sac-de-sport-cousu-brode-baskets.webp",
+    "retouches": {
+      "recadrage": "1000x1250 (centre)",
+      "luminosite": 1.02,
+      "nettete": "sigma 0.6",
+      "metadonnees": "supprimées (EXIF et GPS compris)"
+    },
+    "alt": "Grand sac de sport en jean et simili bleu, cousu main, brodé de plusieurs paires de baskets colorées",
+    "categorie": "couture"
+  }
+]
