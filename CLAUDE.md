@@ -304,6 +304,10 @@ Objectif : un site mémorable, qui donne envie de partager, sans sacrifier la pe
   cadre les images, point de croix qui se remplit au survol/tap.
 
 ### Curseur « point avant » (ordinateur uniquement)
+⚠️ **Le curseur natif est conservé.** Ne pas le remplacer par une aiguille dessinée : on perd le
+repère habituel, et sur une photo sombre on ne le retrouve plus. La flèche du système reste
+visible, on ajoute seulement la traînée derrière elle.
+
 Le curseur laisse derrière lui une **courte traînée de points de broderie**, pas un trait continu :
 c'est un **point avant**, des tirets courts et espacés, exactement comme une couture à la main.
 

@@ -3,526 +3,543 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Emma — broderie & couture à Vitré | Prénoms brodés, dentelle libre</title>
-<meta name="description" content="Je brode les prénoms sur le linge, les doudous et les vêtements, et je couds sacs et trousses. Atelier à Vitré (35). Devis en une journée, envoi partout en France.">
+<title>Emmanuelle Wagner — broderie & couture à Vitré | Prénoms brodés, dentelle libre</title>
+<meta name="description" content="Je brode les prénoms sur le linge, les doudous et les vêtements, et je couds sacs et trousses, chez moi à Vitré (35). Devis dans la journée, remise en main propre à Vitré et Rennes, envoi partout en France.">
+<meta name="theme-color" content="#20291F">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Great+Vibes&family=Jost:wght@300;400;500&family=Playwrite+FR+Moderne:wght@200..400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Jost:ital,wght@0,300..700;1,400&display=swap">
 
-<link rel="stylesheet" href="page.css">
-
-<!-- Moteur d'animation « broderie » (construit séparément).
-     La page doit rester parfaitement lisible si ces deux fichiers sont absents. -->
+<!-- Le moteur d'animation « broderie » (construit à part) : la page est complète et
+     belle sans lui, ses propres animations CSS suffisent. -->
 <link rel="stylesheet" href="broderie.css">
+<link rel="stylesheet" href="page.css">
 <script type="module" src="broderie.js"></script>
 </head>
 
-<!--
-  ============================================================================
-  ⚠️  DONNÉES D'EXEMPLE — NON VALIDÉES PAR EMMA
-  Tous les PRIX (« à partir de … € »), les DÉLAIS (« 2 semaines »,
-  « expédié sous 48 h »), les CHIFFRES (« plus de 400 pièces », « 24 avis »)
-  et les AVIS CLIENTS (Marine, Julien, Sophie, Claire) de cette maquette sont
-  des exemples destinés à juger la mise en page. À remplacer par les vraies
-  valeurs avant toute mise en ligne.
-  Les prénoms brodés visibles (Ambre, Aliza, Alicia, Lisa, Malo, Keanu) sont
-  ceux des photos : vérifier l'accord des client·es avant publication.
-  ============================================================================
--->
+<!-- ===========================================================================
+     ⚠️  MAQUETTE — CONTENU D'EXEMPLE
+     Les PRIX (« à partir de … »), le DÉLAI DE FABRICATION, les AVIS CLIENTS,
+     les CHIFFRES (400 pièces, 24 avis), le NUMÉRO WHATSAPP (33600000000),
+     le TÉLÉPHONE et l'ADRESSE E-MAIL sont des EXEMPLES destinés à juger la
+     mise en page. Tout doit être remplacé par les vraies valeurs d'Emmanuelle
+     avant publication.
+     Vocabulaire : broderie MACHINE. Ne jamais écrire « brodé à la main ».
+     « cousu main » est réservé aux sacs, trousses et tabliers.
+=========================================================================== -->
 
 <body data-broderie="aiguille-curseur">
 
-<a class="saut" href="#principal">Aller au contenu</a>
+<a class="saut" href="#contenu">Aller au contenu</a>
 
-<!-- ───────────────── Bannière événement (pilotée depuis l'admin) ───────────────── -->
-<aside class="annonce" id="annonce" aria-label="Annonce">
-  <p class="annonce__txt">
-    <span class="annonce__pastille" aria-hidden="true"></span>
-    Commandes de Noël&nbsp;: je réserve les créneaux jusqu'au <strong>30&nbsp;novembre</strong>.
-    <a href="#occasions">Voir les idées cadeaux</a>
-  </p>
-  <button class="annonce__fermer" type="button" aria-label="Masquer l'annonce">&times;</button>
-</aside>
+<!-- Fil de progression du défilement (décoratif) -->
+<div class="progression" aria-hidden="true"><span></span></div>
 
-<!-- ───────────────── En-tête ───────────────── -->
 <header class="entete">
   <div class="entete__in">
-    <a class="marque" href="#principal">
-      <span class="marque__nom">Emma</span>
-      <span class="marque__sous">broderie &amp; couture · Vitré</span>
+    <a class="marque" href="#contenu">
+      <span class="marque__nom">Emmanuelle Wagner</span>
+      <span class="marque__sous">Broderie&nbsp;&amp; couture · Vitré</span>
     </a>
 
-    <nav class="nav-ordi" aria-label="Navigation principale">
+    <nav class="nav" aria-label="Navigation principale">
       <a href="#creations">Créations</a>
       <a href="#dentelle">Dentelle libre</a>
-      <a href="#methode">Sur-mesure</a>
+      <a href="#occasions">Occasions</a>
+      <a href="#methode">Comment ça se passe</a>
       <a href="#atelier">L'atelier</a>
     </nav>
 
-    <details class="menu">
-      <summary aria-label="Ouvrir le menu"><span></span><span></span></summary>
-      <nav class="menu__panneau" aria-label="Navigation">
-        <a href="#creations">Créations</a>
-        <a href="#dentelle">Dentelle libre</a>
-        <a href="#occasions">Occasions</a>
-        <a href="#methode">Comment ça se passe</a>
-        <a href="#atelier">L'atelier</a>
-        <a href="#devis">Demander un devis</a>
-      </nav>
-    </details>
+    <a class="btn btn--wa btn--petit entete__cta" href="https://wa.me/33600000000?text=Bonjour%20Emmanuelle%2C%20j%27aimerais%20faire%20broder%20un%20pr%C3%A9nom.">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"/></svg>
+      WhatsApp
+    </a>
 
-    <a class="entete__cta" href="#devis">Devis</a>
+    <button class="burger" type="button" aria-expanded="false" aria-controls="menu-mobile">
+      <span class="burger__traits" aria-hidden="true"><i></i><i></i></span>
+      <span class="burger__mot">Menu</span>
+    </button>
+  </div>
+
+  <div class="menu" id="menu-mobile" hidden>
+    <a href="#creations">Créations</a>
+    <a href="#dentelle">Dentelle libre</a>
+    <a href="#occasions">Occasions</a>
+    <a href="#methode">Comment ça se passe</a>
+    <a href="#atelier">L'atelier</a>
+    <a href="#devis">Demander un devis</a>
   </div>
 </header>
 
-<main id="principal" data-broderie="fil">
+<main id="contenu">
 
-<!-- ═════════════════ HÉROS ═════════════════ -->
-<section class="heros">
-
-  <p class="oeil oeil--heros">Broderie machine &amp; couture — Vitré&nbsp;(35)</p>
-
-  <div class="heros__scene">
-    <p class="prenom prenom--heros"
-       data-broderie="prenom" data-fil="#6B5560" data-duree="2800" data-declencheur="charge">Ambre</p>
-
-    <figure class="heros__photo" data-broderie="tambour">
-      <img src="img/portrait.webp"
-           alt="Emma, brodeuse à Vitré, cheveux longs et lunettes, photographiée en extérieur"
-           width="1000" height="1250" fetchpriority="high" decoding="async">
-      <figcaption>Emma, dans son atelier de Vitré</figcaption>
-    </figure>
-
-    <p class="heros__legende">
-      <span>cadre de naissance</span>
-      <span aria-hidden="true">·</span>
-      <span>brodé le 16 janvier</span>
-      <span aria-hidden="true">·</span>
-      <span>3,85&nbsp;kg</span>
+<!-- ======================= HERO — pleine largeur ======================= -->
+<section class="hero bande">
+  <div class="hero__photo">
+    <img src="img/portrait.webp" width="1000" height="1250"
+         alt="Emmanuelle Wagner dans son atelier de Vitré, devant sa machine à broder."
+         fetchpriority="high" decoding="async">
+    <p class="hero__vignette">
+      <strong>Emmanuelle</strong>
+      <span>Je brode et je couds seule, à Vitré (35), depuis 2021.</span>
     </p>
   </div>
 
-  <div class="heros__dire">
-    <h1>Un prénom brodé,<br>et l'objet devient <em>le sien.</em></h1>
-    <p class="heros__texte">
-      Je m'appelle Emma. Je brode les prénoms sur le linge, les doudous et les vêtements,
-      et je couds des sacs et des trousses — une pièce à la fois, chez moi à Vitré.
-      Vous me donnez le prénom&nbsp;: je m'occupe du reste.
-    </p>
+  <div class="hero__texte">
+    <p class="sourcil sourcil--hero">Broderie machine &amp; couture — Vitré&nbsp;(35)</p>
 
-    <div class="actions">
-      <a class="btn btn--wa" href="https://wa.me/33600000000?text=Bonjour%20Emma%2C%20j%27aimerais%20faire%20broder%20un%20pr%C3%A9nom.">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 2a10 10 0 0 0-8.7 15l-1.3 4.8 5-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.2 1.3-2 1.4-.5.1-1.2.1-3.6-.8-3-1.3-5-4.4-5.1-4.6-.2-.2-1.3-1.7-1.3-3.2s.8-2.3 1.1-2.6c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.3 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.3.1.4.2.5.3.1.2.1.8-.1 1.4z"/></svg>
+    <p class="prenom-geant"
+       data-broderie="prenom" data-fil="#7A4C3A" data-duree="3200" data-declencheur="charge">Ambre</p>
+
+    <p class="prenom-note"><span aria-hidden="true">↑</span> cadre de naissance brodé mardi&nbsp;: prénom, date, 3,85&nbsp;kg.</p>
+
+    <h1>Un prénom brodé,<br>et l'objet devient <em>le sien.</em></h1>
+
+    <p class="chapo">Le linge, les doudous, les vêtements&nbsp;: je brode le prénom.
+      Les sacs et les trousses, je les couds aussi. Vous me donnez le prénom — je m'occupe du reste.</p>
+
+    <p class="actions">
+      <a class="btn btn--wa" href="https://wa.me/33600000000?text=Bonjour%20Emmanuelle%2C%20j%27aimerais%20faire%20broder%20un%20pr%C3%A9nom.">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"/></svg>
         Écrire sur WhatsApp
       </a>
       <a class="btn btn--creux" href="#devis">Demander un devis</a>
-    </div>
+    </p>
 
     <ul class="rassure">
-      <li>Réponse dans la journée</li>
-      <li>Délai actuel&nbsp;: <strong>2&nbsp;semaines</strong></li>
+      <li><b>Réponse dans la journée</b></li>
+      <li>Délai actuel&nbsp;: <b>2 semaines</b></li>
       <li>Main propre à Vitré &amp; Rennes, envoi partout en France</li>
     </ul>
   </div>
 </section>
 
-<!-- ═════════════════ Bandeau preuve ═════════════════ -->
-<section class="preuve" aria-label="En quelques chiffres">
-  <div class="preuve__in">
-    <div class="preuve__item"><b>+400</b><span>pièces brodées depuis 2021</span></div>
-    <div class="preuve__item"><b>5/5</b><span>sur 24 avis clients</span></div>
-    <div class="preuve__item"><b>2&nbsp;j</b><span>d'expédition après finition</span></div>
-    <div class="preuve__item"><b>0&nbsp;€</b><span>l'emballage cadeau</span></div>
+<!-- ============ FRISE DE FILS — pleine largeur, défilement infini ============ -->
+<div class="frise" aria-label="Quelques prénoms brodés cette année">
+  <div class="frise__piste" aria-hidden="true">
+    <span class="frise__lot">
+      <b style="--f:#A8492A">Ambre</b><b style="--f:#3D556B">Malo</b><b style="--f:#6B5560">Lisa</b>
+      <b style="--f:#C98A3E">Keanu</b><b style="--f:#4A6047">Aliza</b><b style="--f:#B03A52">Alicia</b>
+      <b style="--f:#8A6A46">Chloé</b><b style="--f:#2F5D63">Evan</b><b style="--f:#B89355">Camille</b>
+      <b style="--f:#7A4C3A">Carla</b>
+    </span>
+    <span class="frise__lot">
+      <b style="--f:#A8492A">Ambre</b><b style="--f:#3D556B">Malo</b><b style="--f:#6B5560">Lisa</b>
+      <b style="--f:#C98A3E">Keanu</b><b style="--f:#4A6047">Aliza</b><b style="--f:#B03A52">Alicia</b>
+      <b style="--f:#8A6A46">Chloé</b><b style="--f:#2F5D63">Evan</b><b style="--f:#B89355">Camille</b>
+      <b style="--f:#7A4C3A">Carla</b>
+    </span>
   </div>
-</section>
+  <p class="frise__lu">Plus de 400 prénoms brodés depuis 2021&nbsp;: Ambre, Malo, Lisa, Keanu, Aliza, Alicia, Chloé, Evan, Camille, Carla…</p>
+</div>
 
-<!-- ═════════════════ Créations ═════════════════ -->
-<section class="bloc" id="creations">
-  <div class="bloc__tete">
-    <p class="oeil"><i>01</i> Les créations</p>
-    <h2>Ce qui est passé sous la machine<br>cette semaine.</h2>
-    <p class="bloc__chapo">
-      Chaque pièce part d'un prénom et d'une occasion. Le tissu, la police d'écriture et la
-      couleur du fil, on les choisit ensemble avant que je lance la machine.
-    </p>
+<!-- ======================= CRÉATIONS ======================= -->
+<section class="bande creations" id="creations">
+  <div class="tete">
+    <p class="sourcil"><i>01</i> Les créations</p>
+    <h2 class="titre-xl">Ce qui est passé<br>sous la machine<br><em>cette semaine.</em></h2>
+    <p class="mesure">Chaque pièce part d'un prénom et d'une occasion. Le tissu, l'écriture
+      et la couleur du fil, on les choisit ensemble — avant que je lance la machine.</p>
+    <p class="indice"><span aria-hidden="true">→</span> faites défiler la rangée</p>
   </div>
 
-  <ul class="galerie">
-
-    <li class="piece piece--large">
-      <a href="#devis">
-        <figure data-broderie="tambour">
-          <img src="img/doudou.webp"
-               alt="Doudou lapin beige brodé au prénom Aliza et à sa date de naissance sur les oreilles"
-               width="1000" height="1250" loading="lazy" decoding="async">
-        </figure>
-        <div class="piece__dire">
-          <p class="piece__pour">brodé pour <b class="prenom">Aliza</b></p>
-          <h3>Le doudou de naissance</h3>
-          <p>Prénom, date, heure, taille et poids brodés sur les oreilles. C'est la pièce
-             qu'on garde vingt ans dans une boîte.</p>
-          <p class="prix">à partir de 32&nbsp;€</p>
-        </div>
-      </a>
-    </li>
-
-    <li class="piece piece--carre">
-      <a href="#devis">
-        <figure data-broderie="tambour">
-          <img src="img/serviette.webp"
-               alt="Drap de bain rose poudré brodé au prénom Alicia en fil blanc"
-               width="1000" height="1250" loading="lazy" decoding="async">
-        </figure>
-        <div class="piece__dire">
-          <p class="piece__pour">brodé pour <b class="prenom">Alicia</b></p>
-          <h3>Le drap de bain au prénom</h3>
-          <p>Coton épais, prénom en cursive ou en capitales. Il sert tous les jours
-             et il ne se perd plus à la piscine.</p>
-          <p class="prix">à partir de 24&nbsp;€</p>
-        </div>
-      </a>
-    </li>
-
-    <li class="piece">
-      <a href="#devis">
-        <figure data-broderie="tambour">
-          <img src="img/cadre-naissance.webp"
-               alt="Cadre de naissance brodé au prénom Ambre, accroché au mur d'une chambre de bébé"
-               width="1000" height="1250" loading="lazy" decoding="async">
-        </figure>
-        <div class="piece__dire">
-          <p class="piece__pour">brodé pour <b class="prenom">Ambre</b></p>
-          <h3>Le cadre de naissance</h3>
-          <p>Les informations de naissance brodées puis encadrées, prêtes à accrocher
-             au-dessus du lit.</p>
-          <p class="prix">à partir de 45&nbsp;€</p>
-        </div>
-      </a>
-    </li>
-
-    <li class="piece piece--decale">
-      <a href="#devis">
-        <figure data-broderie="tambour">
-          <img src="img/trousse.webp"
-               alt="Trousse en tissu fleuri cousue main, brodée au prénom Lisa en fil doré"
-               width="1000" height="1250" loading="lazy" decoding="async">
-        </figure>
-        <div class="piece__dire">
-          <p class="piece__pour">brodé pour <b class="prenom">Lisa</b></p>
-          <h3>La trousse cousue main</h3>
-          <p>Je choisis le tissu avec vous, je la couds, je brode le prénom.
-             Aucune n'est identique à une autre.</p>
-          <p class="prix">à partir de 28&nbsp;€</p>
-        </div>
-      </a>
-    </li>
-
-    <li class="piece piece--carre">
-      <a href="#devis">
-        <figure data-broderie="tambour">
-          <img src="img/sac-a-dos.webp"
-               alt="Petit sac à dos d'enfant brodé au prénom Malo"
-               width="1000" height="1250" loading="lazy" decoding="async">
-        </figure>
-        <div class="piece__dire">
-          <p class="piece__pour">brodé pour <b class="prenom">Malo</b></p>
-          <h3>Le sac à dos de maternelle</h3>
-          <p>Brodé avant la rentrée, avec le prénom assez grand pour que la maîtresse
-             le lise de loin.</p>
-          <p class="prix">à partir de 34&nbsp;€</p>
-        </div>
-      </a>
-    </li>
-
-    <li class="piece piece--large">
-      <a href="#devis">
-        <figure data-broderie="tambour">
-          <img src="img/sac-banane.webp"
-               alt="Sac banane en tissu moutarde imprimé de chats, cousu et brodé à la main"
-               width="1000" height="1250" loading="lazy" decoding="async">
-        </figure>
-        <div class="piece__dire">
-          <h3>Le sac banane cousu main</h3>
-          <p>Le tissu, la fermeture, la sangle&nbsp;: tout est monté ici. Avec ou sans
-             prénom brodé au dos.</p>
-          <p class="prix">à partir de 38&nbsp;€</p>
-        </div>
-      </a>
-    </li>
-
-  </ul>
-
-  <p class="bloc__suite"><a class="lien-fleche" href="#devis">Voir les autres créations</a></p>
-</section>
-
-<!-- ═════════════════ Dentelle libre — le seul panneau sombre ═════════════════ -->
-<section class="nuit" id="dentelle">
-  <div class="nuit__in">
-
-    <div class="nuit__dire">
-      <p class="oeil oeil--clair"><i>02</i> Ma spécialité</p>
-      <h2>La dentelle libre&nbsp;:<br>de la broderie qui tient<br>sans tissu dessous.</h2>
-      <p>
-        La machine brode dans le vide, sur un support qui disparaît au rinçage.
-        Il ne reste que le fil, ajouré, qui se tient tout seul.
-      </p>
-      <p>
-        Un arbre de vie, un papillon, une initiale, un napperon&nbsp;: ça se glisse dans un cadre,
-        ça s'accroche à une fenêtre, ça se coud sur une robe de mariée. C'est la chose que je
-        préfère faire — et celle qu'on trouve le moins ailleurs.
-      </p>
-      <p class="prix prix--clair">à partir de 38&nbsp;€</p>
-      <p><a class="lien-fleche lien-fleche--clair" href="#devis">Parler d'une pièce en dentelle</a></p>
-    </div>
-
-    <div class="nuit__images">
-      <figure class="nuit__grand" data-broderie="tambour">
-        <img src="img/arbre-de-vie.webp"
-             alt="Arbre de vie brodé en dentelle libre, fil doré et blanc, posé sur un fond sombre"
-             width="1000" height="1250" loading="lazy" decoding="async">
+  <!-- Rangée qui déborde du bord droit : conteneur qui défile, pas la page. -->
+  <div class="rangee" tabindex="0" role="region" aria-label="Créations récentes, rangée défilante">
+    <article class="carte">
+      <figure class="carte__img">
+        <img src="img/doudou.webp" width="1000" height="1250" loading="lazy" decoding="async"
+             alt="Doudou lapin en tissu, avec le prénom Aliza brodé sur une oreille.">
       </figure>
-      <figure class="nuit__petit">
-        <img src="img/papillon-detail.webp"
-             alt="Papillon brodé en dentelle libre, ailes rouges et coquelicots, posé sur un feuillage"
-             width="1000" height="1000" loading="lazy" decoding="async">
-        <figcaption>Le papillon aux coquelicots, 14&nbsp;cm</figcaption>
-      </figure>
-    </div>
+      <div class="carte__txt">
+        <p class="carte__pour">brodé pour <span>Aliza</span></p>
+        <h3>Le doudou de naissance</h3>
+        <p>Prénom, date, heure, taille et poids brodés sur les oreilles. La pièce qu'on garde vingt ans dans une boîte.</p>
+        <p class="prix">à partir de <b>32&nbsp;€</b></p>
+        <p class="carte__cta">
+          <a class="lien-wa" href="https://wa.me/33600000000?text=Bonjour%20Emmanuelle%2C%20j%27ai%20vu%20%C2%AB%20Le%20doudou%20de%20naissance%20%C2%BB%20sur%20votre%20site%20et%20j%27aimerais%20le%20m%C3%AAme.">Je veux le même</a>
+          <a class="lien-fleche" href="#devis">Demander un devis</a>
+        </p>
+      </div>
+    </article>
 
+    <article class="carte">
+      <figure class="carte__img">
+        <img src="img/serviette.webp" width="1000" height="1250" loading="lazy" decoding="async"
+             alt="Drap de bain en coton épais avec le prénom Alicia brodé en lettres cursives.">
+      </figure>
+      <div class="carte__txt">
+        <p class="carte__pour">brodé pour <span>Alicia</span></p>
+        <h3>Le drap de bain au prénom</h3>
+        <p>Coton épais, prénom en cursive ou en capitales. Il sert tous les jours et ne se perd plus à la piscine.</p>
+        <p class="prix">à partir de <b>24&nbsp;€</b></p>
+        <p class="carte__cta">
+          <a class="lien-wa" href="https://wa.me/33600000000?text=Bonjour%20Emmanuelle%2C%20j%27ai%20vu%20%C2%AB%20Le%20drap%20de%20bain%20au%20pr%C3%A9nom%20%C2%BB%20sur%20votre%20site%20et%20j%27aimerais%20le%20m%C3%AAme.">Je veux le même</a>
+          <a class="lien-fleche" href="#devis">Demander un devis</a>
+        </p>
+      </div>
+    </article>
+
+    <article class="carte">
+      <figure class="carte__img">
+        <img src="img/cadre-naissance.webp" width="1000" height="1250" loading="lazy" decoding="async"
+             alt="Cadre de naissance brodé au prénom Ambre, avec la date, la taille et le poids.">
+      </figure>
+      <div class="carte__txt">
+        <p class="carte__pour">brodé pour <span>Ambre</span></p>
+        <h3>Le cadre de naissance</h3>
+        <p>Les informations de naissance brodées puis encadrées, prêtes à accrocher au-dessus du lit.</p>
+        <p class="prix">à partir de <b>45&nbsp;€</b></p>
+        <p class="carte__cta">
+          <a class="lien-wa" href="https://wa.me/33600000000?text=Bonjour%20Emmanuelle%2C%20j%27ai%20vu%20%C2%AB%20Le%20cadre%20de%20naissance%20%C2%BB%20sur%20votre%20site%20et%20j%27aimerais%20le%20m%C3%AAme.">Je veux le même</a>
+          <a class="lien-fleche" href="#devis">Demander un devis</a>
+        </p>
+      </div>
+    </article>
+
+    <article class="carte">
+      <figure class="carte__img">
+        <img src="img/trousse.webp" width="1000" height="1250" loading="lazy" decoding="async"
+             alt="Trousse en tissu cousue et brodée au prénom Lisa.">
+      </figure>
+      <div class="carte__txt">
+        <p class="carte__pour">cousue pour <span>Lisa</span></p>
+        <h3>La trousse cousue main</h3>
+        <p>Je choisis le tissu avec vous, je la couds, je brode le prénom. Aucune n'est identique à une autre.</p>
+        <p class="prix">à partir de <b>28&nbsp;€</b></p>
+        <p class="carte__cta">
+          <a class="lien-wa" href="https://wa.me/33600000000?text=Bonjour%20Emmanuelle%2C%20j%27ai%20vu%20%C2%AB%20La%20trousse%20cousue%20main%20%C2%BB%20sur%20votre%20site%20et%20j%27aimerais%20la%20m%C3%AAme.">Je veux la même</a>
+          <a class="lien-fleche" href="#devis">Demander un devis</a>
+        </p>
+      </div>
+    </article>
+
+    <article class="carte">
+      <figure class="carte__img">
+        <img src="img/sac-a-dos.webp" width="1000" height="1250" loading="lazy" decoding="async"
+             alt="Petit sac à dos d'école brodé au prénom Malo en grandes lettres.">
+      </figure>
+      <div class="carte__txt">
+        <p class="carte__pour">brodé pour <span>Malo</span></p>
+        <h3>Le sac à dos de maternelle</h3>
+        <p>Brodé avant la rentrée, avec le prénom assez grand pour que la maîtresse le lise de loin.</p>
+        <p class="prix">à partir de <b>34&nbsp;€</b></p>
+        <p class="carte__cta">
+          <a class="lien-wa" href="https://wa.me/33600000000?text=Bonjour%20Emmanuelle%2C%20j%27ai%20vu%20%C2%AB%20Le%20sac%20%C3%A0%20dos%20de%20maternelle%20%C2%BB%20sur%20votre%20site%20et%20j%27aimerais%20le%20m%C3%AAme.">Je veux le même</a>
+          <a class="lien-fleche" href="#devis">Demander un devis</a>
+        </p>
+      </div>
+    </article>
+
+    <article class="carte">
+      <figure class="carte__img">
+        <img src="img/sac-banane.webp" width="1000" height="1250" loading="lazy" decoding="async"
+             alt="Sac banane en tissu imprimé, entièrement cousu à l'atelier.">
+      </figure>
+      <div class="carte__txt">
+        <p class="carte__pour">cousu ici</p>
+        <h3>Le sac banane cousu main</h3>
+        <p>Le tissu, la fermeture, la sangle&nbsp;: tout est monté ici. Avec ou sans prénom brodé au dos.</p>
+        <p class="prix">à partir de <b>38&nbsp;€</b></p>
+        <p class="carte__cta">
+          <a class="lien-wa" href="https://wa.me/33600000000?text=Bonjour%20Emmanuelle%2C%20j%27ai%20vu%20%C2%AB%20Le%20sac%20banane%20%C2%BB%20sur%20votre%20site%20et%20j%27aimerais%20le%20m%C3%AAme.">Je veux le même</a>
+          <a class="lien-fleche" href="#devis">Demander un devis</a>
+        </p>
+      </div>
+    </article>
+
+    <article class="carte">
+      <figure class="carte__img">
+        <img src="img/chaussette-noel.webp" width="1000" height="1250" loading="lazy" decoding="async"
+             alt="Chaussette de Noël en tissu, brodée au prénom, accrochée à une cheminée.">
+      </figure>
+      <div class="carte__txt">
+        <p class="carte__pour">brodé pour <span>Keanu</span></p>
+        <h3>La chaussette de Noël</h3>
+        <p>Une par personne, une par année. On ajoute les nouveaux prénoms de la famille au fil du temps.</p>
+        <p class="prix">à partir de <b>26&nbsp;€</b></p>
+        <p class="carte__cta">
+          <a class="lien-wa" href="https://wa.me/33600000000?text=Bonjour%20Emmanuelle%2C%20j%27ai%20vu%20%C2%AB%20La%20chaussette%20de%20No%C3%ABl%20%C2%BB%20sur%20votre%20site%20et%20j%27aimerais%20la%20m%C3%AAme.">Je veux la même</a>
+          <a class="lien-fleche" href="#devis">Demander un devis</a>
+        </p>
+      </div>
+    </article>
+
+    <div class="rangee__fin">
+      <p>Il y en a<br><b>bien d'autres.</b></p>
+      <a class="lien-fleche" href="#devis">Dites-moi ce que vous cherchez</a>
+    </div>
   </div>
 </section>
 
-<!-- ═════════════════ Occasions ═════════════════ -->
-<section class="bloc bloc--tinte" id="occasions">
-  <div class="bloc__tete">
-    <p class="oeil"><i>03</i> Pour quelle occasion&nbsp;?</p>
-    <h2>Il y a toujours un prénom<br>derrière le cadeau.</h2>
+<!-- ============ BANDEAU BOBINES — pleine largeur, mot fondu dans la photo ============ -->
+<div class="bandeau">
+  <img src="img/bobines-bandeau.webp" width="2400" height="620" loading="lazy" decoding="async"
+       alt="Mur de bobines de fil à broder de toutes les couleurs, dans l'atelier.">
+  <p class="bandeau__mot" aria-hidden="true">quatre cents couleurs</p>
+  <p class="bandeau__note">Le rack, derrière la machine. C'est là que commence chaque commande.</p>
+</div>
+
+<!-- ============ DENTELLE LIBRE — section sombre, colonne épinglée ============ -->
+<section class="nuit bande" id="dentelle">
+  <div class="nuit__col">
+    <div class="nuit__fixe">
+      <p class="sourcil sourcil--clair"><i>02</i> Ma spécialité</p>
+      <h2 class="titre-xl">La dentelle libre.</h2>
+      <p class="nuit__dire">La machine brode <em>dans le vide</em>, sur un support qui disparaît
+        au rinçage. Il ne reste que le fil, ajouré, qui se tient tout seul.</p>
+      <p class="mesure mesure--clair">Un arbre de vie, un papillon, une initiale, un napperon&nbsp;:
+        ça se glisse dans un cadre, ça s'accroche à une fenêtre, ça se coud sur une robe de mariée.
+        C'est ce que je préfère faire — et ce qu'on trouve le moins ailleurs.</p>
+      <p class="prix prix--clair">à partir de <b>38&nbsp;€</b></p>
+      <p class="actions">
+        <a class="btn btn--or" href="https://wa.me/33600000000?text=Bonjour%20Emmanuelle%2C%20j%27aimerais%20parler%20d%27une%20pi%C3%A8ce%20en%20dentelle%20libre.">Parler d'une pièce en dentelle</a>
+      </p>
+      <div class="croix-deco" data-broderie="croix" data-fil="#B89355" aria-hidden="true"></div>
+    </div>
   </div>
 
-  <ul class="index">
-    <li>
+  <div class="nuit__images">
+    <figure class="nuit__fig nuit__fig--a">
+      <img src="img/papillon-plein-ecran.webp" width="2400" height="1350" loading="lazy" decoding="async"
+           alt="Papillon en dentelle libre brodé de fil ocre et rouge, posé sur une vitre.">
+      <figcaption>Le papillon aux coquelicots — 14&nbsp;cm</figcaption>
+    </figure>
+    <figure class="nuit__fig nuit__fig--b">
+      <img src="img/arbre-de-vie.webp" width="1000" height="1250" loading="lazy" decoding="async"
+           alt="Arbre de vie en dentelle libre, entièrement brodé de fil, sans tissu de support.">
+      <figcaption>Arbre de vie, encadré — 24&nbsp;cm</figcaption>
+    </figure>
+    <figure class="nuit__fig nuit__fig--c">
+      <img src="img/papillon-detail.webp" width="1000" height="1000" loading="lazy" decoding="async"
+           alt="Détail macro du fil : les points se croisent et forment une dentelle ajourée.">
+      <figcaption>Le détail du fil, de tout près</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ======================= OCCASIONS — grille pleine largeur ======================= -->
+<section class="bande occasions" id="occasions">
+  <div class="tete tete--large">
+    <p class="sourcil"><i>03</i> Pour quelle occasion&nbsp;?</p>
+    <h2 class="titre-xl">Il y a toujours un prénom<br><em>derrière le cadeau.</em></h2>
+  </div>
+
+  <ul class="occ">
+    <li class="occ__item">
       <a href="#devis">
-        <span class="index__img"><img src="img/doudou-plat.webp" alt="Doudou plat brodé au prénom Keanu" width="1000" height="1250" loading="lazy" decoding="async"></span>
-        <span class="index__mot">Une naissance</span>
-        <span class="index__det">Doudou, cadre, bavoir, sortie de bain, cape de bain</span>
-        <span class="index__ex prenom" aria-hidden="true">Aliza</span>
+        <span class="occ__img"><img src="img/doudou-plat.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Doudou plat en tissu brodé au prénom, pour un cadeau de naissance."></span>
+        <span class="occ__txt">
+          <b>Une naissance</b>
+          <em>Doudou, cadre, bavoir, cape de bain</em>
+          <span class="occ__prenom" data-broderie="prenom" data-fil="#4A6047" data-duree="2200">Aliza</span>
+        </span>
       </a>
     </li>
-    <li>
+    <li class="occ__item">
       <a href="#devis">
-        <span class="index__img"><img src="img/papillon.webp" alt="Papillon en dentelle libre posé sur un tissu clair" width="1000" height="1250" loading="lazy" decoding="async"></span>
-        <span class="index__mot">Un mariage</span>
-        <span class="index__det">Pochettes des témoins, mouchoir brodé, dentelle cousue sur la robe</span>
-        <span class="index__ex prenom" aria-hidden="true">Camille</span>
+        <span class="occ__img"><img src="img/tambour.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Tambour à broder décoratif, brodé de fleurs et d'un prénom."></span>
+        <span class="occ__txt">
+          <b>Un mariage</b>
+          <em>Pochettes des témoins, mouchoir, dentelle cousue sur la robe</em>
+          <span class="occ__prenom" data-broderie="prenom" data-fil="#6B5560" data-duree="2200">Camille</span>
+        </span>
       </a>
     </li>
-    <li>
+    <li class="occ__item">
       <a href="#devis">
-        <span class="index__img"><img src="img/tambour.webp" alt="Tambour décoratif brodé d'une fée en robe rouge" width="1000" height="1250" loading="lazy" decoding="async"></span>
-        <span class="index__mot">La fête des mères</span>
-        <span class="index__det">Trousse, tablier, serviettes de plage, tambour décoratif</span>
-        <span class="index__ex prenom" aria-hidden="true">Maman</span>
+        <span class="occ__img"><img src="img/arbre-detail.webp" width="1000" height="1000" loading="lazy" decoding="async" alt="Détail d'un arbre de vie brodé, fil doré sur fond clair."></span>
+        <span class="occ__txt">
+          <b>La fête des mères</b>
+          <em>Trousse, tablier, serviettes de plage, tambour décoratif</em>
+          <span class="occ__prenom" data-broderie="prenom" data-fil="#A8492A" data-duree="2200">Maman</span>
+        </span>
       </a>
     </li>
-    <li>
+    <li class="occ__item">
       <a href="#devis">
-        <span class="index__img"><img src="img/chaussette-noel.webp" alt="Chaussette de Noël brodée d'un prénom, suspendue" width="1000" height="1250" loading="lazy" decoding="async"></span>
-        <span class="index__mot">Noël</span>
-        <span class="index__det">Chaussette de cheminée, pyjama, plaid, boule brodée</span>
-        <span class="index__ex prenom" aria-hidden="true">Keanu</span>
+        <span class="occ__img"><img src="img/chaussette-noel.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Chaussettes de Noël brodées aux prénoms de la famille."></span>
+        <span class="occ__txt">
+          <b>Noël</b>
+          <em>Chaussette de cheminée, pyjama, plaid, boule brodée</em>
+          <span class="occ__prenom" data-broderie="prenom" data-fil="#C98A3E" data-duree="2200">Keanu</span>
+        </span>
       </a>
     </li>
   </ul>
 </section>
 
-<!-- ═════════════════ Comment ça se passe ═════════════════ -->
-<section class="bloc" id="methode">
-  <div class="bloc__tete">
-    <p class="oeil"><i>04</i> Comment ça se passe</p>
-    <h2>Trois messages,<br>et c'est parti.</h2>
+<!-- ======================= MÉTHODE — le fil traverse la section ======================= -->
+<section class="bande methode" id="methode" data-broderie="fil" data-fil="#B89355">
+  <div class="tete">
+    <p class="sourcil"><i>04</i> Comment ça se passe</p>
+    <h2 class="titre-xl">Trois messages,<br><em>et c'est parti.</em></h2>
   </div>
 
   <ol class="etapes">
     <li>
-      <p class="etapes__n plume" aria-hidden="true">un</p>
+      <p class="etapes__n" aria-hidden="true">1</p>
       <h3>Vous me racontez</h3>
-      <p>Le prénom, l'occasion, la date. Par WhatsApp ou par le formulaire. Même si l'idée
-         est encore floue, je vous propose quelque chose.</p>
+      <p>Le prénom, l'occasion, la date. Par WhatsApp ou par le formulaire. Même si l'idée est
+        encore floue, je vous propose quelque chose.</p>
     </li>
     <li>
-      <p class="etapes__n plume" aria-hidden="true">deux</p>
+      <p class="etapes__n" aria-hidden="true">2</p>
       <h3>Je vous montre avant</h3>
-      <p>Je vous envoie le motif, l'écriture et la couleur du fil. Rien ne part sous
-         l'aiguille sans votre accord — et les retouches sont gratuites.</p>
+      <p>Je vous envoie le motif, l'écriture et la couleur du fil. Rien ne part sous l'aiguille
+        sans votre accord, et les retouches du projet sont gratuites.</p>
     </li>
     <li>
-      <p class="etapes__n plume" aria-hidden="true">trois</p>
+      <p class="etapes__n" aria-hidden="true">3</p>
       <h3>Vous offrez</h3>
       <p>Emballé dans du papier de soie, prêt à offrir. En main propre à Vitré ou à Rennes,
-         ou expédié partout en France sous 48&nbsp;heures.</p>
+        ou expédié partout en France sous 48&nbsp;heures.</p>
     </li>
   </ol>
+</section>
 
-  <figure class="ruban">
-    <img src="img/machine-large.webp"
-         alt="Broderie en cours sous la machine, le fil en train de former des lettres"
-         width="1920" height="1080" loading="lazy" decoding="async">
+<!-- ======================= L'ATELIER ======================= -->
+<section class="bande atelier" id="atelier">
+  <figure class="atelier__tambour" data-broderie="tambour" data-declencheur="visible">
+    <img src="img/machine-carre.webp" width="1000" height="1000" loading="lazy" decoding="async"
+         alt="La machine à broder en cours de travail, le fil tendu au-dessus du tissu cadré.">
   </figure>
-</section>
 
-<!-- ═════════════════ L'atelier ═════════════════ -->
-<section class="bloc atelier" id="atelier">
-  <div class="atelier__in">
+  <div class="atelier__dire">
+    <p class="sourcil"><i>05</i> L'atelier</p>
+    <h2 class="titre-xl">Je travaille seule,<br>dans la pièce <em>d'à côté.</em></h2>
+    <p class="mesure">Je brode depuis 2021, chez moi à Vitré. Il n'y a pas d'équipe&nbsp;: c'est moi
+      qui lis vos messages, qui choisis la bobine dans le rack derrière moi, qui lance la machine
+      et qui ferme le paquet.</p>
+    <p class="mesure">C'est plus lent qu'une commande sur une place de marché, et c'est exactement
+      pour ça que le cadeau ne ressemble à aucun autre. Si un détail vous chiffonne, vous me le
+      dites&nbsp;: on recommence.</p>
+    <p class="signature">Emmanuelle</p>
+    <ul class="chiffres">
+      <li><b>+400</b><span>pièces brodées depuis 2021</span></li>
+      <li><b>2 j</b><span>d'expédition après finition</span></li>
+      <li><b>0 €</b><span>l'emballage cadeau</span></li>
+    </ul>
+  </div>
 
-    <div class="atelier__photos">
-      <figure class="atelier__rond" data-broderie="tambour">
-        <img src="img/portrait-carre.webp"
-             alt="Portrait d'Emma, brodeuse à Vitré"
-             width="1000" height="1000" loading="lazy" decoding="async">
-      </figure>
-      <figure class="atelier__bobines">
-        <img src="img/bobines.webp"
-             alt="Mur de bobines de fil à broder de toutes les couleurs, dans l'atelier"
-             width="1920" height="1080" loading="lazy" decoding="async">
-      </figure>
-    </div>
-
-    <div class="atelier__dire">
-      <p class="oeil"><i>05</i> L'atelier</p>
-      <h2>Je travaille seule,<br>dans la pièce d'à côté.</h2>
-      <p>
-        Je brode depuis 2021, chez moi à Vitré. Il n'y a pas d'équipe&nbsp;: c'est moi qui lis
-        vos messages, qui choisis la bobine dans le rack derrière moi, qui lance la machine
-        et qui ferme le paquet.
-      </p>
-      <p>
-        C'est plus lent qu'une commande sur une place de marché, et c'est exactement pour ça
-        que le cadeau ne ressemble à aucun autre. Si un détail vous chiffonne, vous me le
-        dites&nbsp;: on recommence.
-      </p>
-      <p class="signature plume" aria-hidden="true">Emma</p>
-    </div>
-
+  <div class="atelier__bande">
+    <img src="img/machine-plein-ecran.webp" width="2400" height="1350" loading="lazy" decoding="async"
+         alt="Vue large de l'atelier : la machine à broder, le rack de bobines et le tapis de coupe.">
   </div>
 </section>
 
-<!-- ═════════════════ Avis ═════════════════ -->
-<section class="bloc bloc--tinte" id="avis">
-  <div class="bloc__tete">
-    <p class="oeil"><i>06</i> Ce qu'on m'écrit après</p>
-    <h2>Les retours des client·es.</h2>
+<!-- ======================= AVIS ======================= -->
+<section class="bande avis" id="avis">
+  <div class="tete">
+    <p class="sourcil"><i>06</i> Ce qu'on m'écrit après</p>
   </div>
 
-  <div class="avis">
-    <figure class="avis__grand">
-      <blockquote><p>J'ai reçu le doudou deux jours avant la naissance. La maman a pleuré, et moi aussi.</p></blockquote>
-      <figcaption>Marine — Châteaubourg</figcaption>
-    </figure>
-    <figure>
-      <blockquote><p>Emma a brodé le logo de notre club sur dix-huit polos. Tout était prêt en dix jours, et le rendu est net.</p></blockquote>
-      <figcaption>Julien — club de Vitré</figcaption>
-    </figure>
-    <figure>
-      <blockquote><p>La trousse de ma fille a un an, elle est passée cinquante fois en machine, le prénom n'a pas bougé d'un fil.</p></blockquote>
-      <figcaption>Sophie — Rennes</figcaption>
-    </figure>
-    <figure>
-      <blockquote><p>J'ai offert un arbre de vie en dentelle à ma mère. Personne n'a cru que c'était fait à Vitré.</p></blockquote>
-      <figcaption>Claire — Rennes</figcaption>
-    </figure>
-  </div>
+  <blockquote class="avis__grand">
+    <p>J'ai reçu le doudou deux jours avant la naissance. <em>La maman a pleuré, et moi aussi.</em></p>
+    <footer>Marine — Châteaubourg</footer>
+  </blockquote>
+
+  <ul class="avis__liste">
+    <li>
+      <blockquote><p>Emmanuelle a brodé le logo de notre club sur dix-huit polos. Tout était prêt en dix jours, et le rendu est net.</p>
+      <footer>Julien — club de Vitré</footer></blockquote>
+    </li>
+    <li>
+      <blockquote><p>La trousse de ma fille a un an, elle est passée cinquante fois en machine&nbsp;: le prénom n'a pas bougé d'un fil.</p>
+      <footer>Sophie — Rennes</footer></blockquote>
+    </li>
+    <li>
+      <blockquote><p>J'ai offert un arbre de vie en dentelle à ma mère. Personne n'a cru que c'était fait à Vitré.</p>
+      <footer>Claire — Rennes</footer></blockquote>
+    </li>
+  </ul>
+  <p class="avis__note"><b>5/5</b> sur 24 avis · <span>avis d'exemple pour la maquette</span></p>
 </section>
 
-<!-- ═════════════════ Appel final ═════════════════ -->
-<section class="final" id="devis">
-  <p class="final__fantome prenom" aria-hidden="true">Merci</p>
+<!-- ======================= APPEL FINAL — pleine largeur, sombre ======================= -->
+<section class="final bande" id="devis">
+  <img class="final__fond" src="img/tambour-plein-ecran.webp" width="2400" height="1350"
+       loading="lazy" decoding="async" alt="">
   <div class="final__in">
-    <p class="oeil">On commence&nbsp;?</p>
-    <h2>Dites-moi juste le prénom.</h2>
-    <p class="final__texte">
-      Écrivez-moi le prénom et l'occasion. Je vous réponds dans la journée avec un prix,
-      un délai et une proposition de motif. Ça ne vous engage à rien.
-    </p>
-
-    <div class="actions actions--centre">
-      <a class="btn btn--wa" href="https://wa.me/33600000000?text=Bonjour%20Emma%2C%20j%27aimerais%20faire%20broder%20un%20pr%C3%A9nom.">
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 2a10 10 0 0 0-8.7 15l-1.3 4.8 5-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.2 1.3-2 1.4-.5.1-1.2.1-3.6-.8-3-1.3-5-4.4-5.1-4.6-.2-.2-1.3-1.7-1.3-3.2s.8-2.3 1.1-2.6c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.3 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.3.1.4.2.5.3.1.2.1.8-.1 1.4z"/></svg>
+    <p class="sourcil sourcil--clair">On commence&nbsp;?</p>
+    <p class="prenom-geant prenom-geant--clair"
+       data-broderie="prenom" data-fil="#E8CFC6" data-duree="2800" data-declencheur="visible">Keanu</p>
+    <h2 class="titre-xl">Dites-moi juste<br><em>le prénom.</em></h2>
+    <p class="mesure mesure--clair">Écrivez-moi le prénom et l'occasion. Je réponds dans la journée
+      avec un prix, un délai et une proposition de motif. Ça ne vous engage à rien.</p>
+    <p class="actions">
+      <a class="btn btn--wa" href="https://wa.me/33600000000?text=Bonjour%20Emmanuelle%2C%20j%27aimerais%20un%20devis.%20Le%20pr%C3%A9nom%20%3A%20">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"/></svg>
         Écrire sur WhatsApp
       </a>
-      <a class="btn btn--creux" href="#devis">Remplir le formulaire</a>
-    </div>
-
-    <p class="final__note">
-      Ou par téléphone au <a href="tel:+33600000000">06&nbsp;00&nbsp;00&nbsp;00&nbsp;00</a>,
-      du lundi au vendredi, 9&nbsp;h–18&nbsp;h.
+      <a class="btn btn--or" href="#">Remplir le formulaire</a>
     </p>
+    <p class="final__note">Ou par téléphone au <a href="tel:+33600000000">06&nbsp;00&nbsp;00&nbsp;00&nbsp;00</a>,
+      du lundi au vendredi, 9&nbsp;h–18&nbsp;h.</p>
   </div>
 </section>
 
 </main>
 
-<!-- ═════════════════ Pied de page ═════════════════ -->
-<footer class="pied">
+<footer class="pied bande">
   <div class="pied__in">
-
     <div class="pied__marque">
-      <p class="plume pied__scripte" aria-hidden="true">Emma</p>
-      <p class="pied__adresse">
-        Broderie &amp; couture<br>
-        Vitré, 35500 — Ille-et-Vilaine<br>
-        <a href="mailto:bonjour@emma-broderie.fr">bonjour@emma-broderie.fr</a>
-      </p>
+      <p class="pied__nom">Emmanuelle Wagner</p>
+      <p>Broderie machine &amp; couture<br>Vitré, 35500 — Ille-et-Vilaine</p>
+      <p><a href="mailto:bonjour@emma-broderie.fr">bonjour@emma-broderie.fr</a></p>
     </div>
-
-    <nav class="pied__col" aria-label="Créations">
+    <nav class="pied__nav" aria-label="Créations">
       <h2>Créations</h2>
       <a href="#creations">Naissance &amp; enfant</a>
       <a href="#creations">Linge de bain</a>
       <a href="#creations">Sacs &amp; trousses</a>
       <a href="#dentelle">Dentelle libre</a>
     </nav>
-
-    <nav class="pied__col" aria-label="L'atelier">
+    <nav class="pied__nav" aria-label="L'atelier">
       <h2>L'atelier</h2>
       <a href="#atelier">Qui je suis</a>
       <a href="#methode">Comment commander</a>
       <a href="#avis">Avis clients</a>
-      <a href="#devis">Contact</a>
+      <a href="#devis">Demander un devis</a>
     </nav>
-
-    <nav class="pied__col" aria-label="Zone d'intervention">
+    <div class="pied__nav">
       <h2>Où me trouver</h2>
-      <p>Remise en main propre à Vitré, Châteaubourg, Argentré-du-Plessis et Rennes.
-         Envoi postal partout en France.</p>
-    </nav>
-
+      <p>Remise en main propre à Vitré et à Rennes.<br>Envoi partout en France.</p>
+      <p>Micro-entreprise — SIRET à compléter.</p>
+    </div>
   </div>
-
-  <div class="pied__bas">
-    <p>© 2026 Emma — broderie &amp; couture à Vitré. Micro-entreprise.</p>
-    <p><a href="#">Mentions légales</a> · <a href="#">Politique de confidentialité</a></p>
-  </div>
+  <p class="pied__bas">
+    <span>Maquette — prix, délais et avis d'exemple.</span>
+    <a href="#">Mentions légales</a>
+    <a href="#">Politique de confidentialité</a>
+  </p>
 </footer>
 
-<!-- WhatsApp flottant — mobile uniquement -->
-<a class="wa-flottant" href="https://wa.me/33600000000?text=Bonjour%20Emma%2C%20j%27aimerais%20faire%20broder%20un%20pr%C3%A9nom.">
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 2a10 10 0 0 0-8.7 15l-1.3 4.8 5-1.3A10 10 0 1 0 12 2zm5.8 14.2c-.2.7-1.2 1.3-2 1.4-.5.1-1.2.1-3.6-.8-3-1.3-5-4.4-5.1-4.6-.2-.2-1.3-1.7-1.3-3.2s.8-2.3 1.1-2.6c.3-.3.6-.4.8-.4h.6c.2 0 .4 0 .7.5l.9 2.2c.1.2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.3 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.6-.1l.9-1c.2-.2.4-.2.6-.1l2.1 1c.3.1.4.2.5.3.1.2.1.8-.1 1.4z"/></svg>
+<!-- Bouton WhatsApp flottant (mobile) -->
+<a class="flottant" href="https://wa.me/33600000000?text=Bonjour%20Emmanuelle%2C%20j%27aimerais%20faire%20broder%20un%20pr%C3%A9nom.">
+  <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"/></svg>
   <span>WhatsApp</span>
 </a>
 
 <script>
-  /* Deux gestes, rien de plus : fermer l'annonce, refermer le menu après un clic.
-     Aucune animation ici — c'est le rôle de broderie.js. */
-  document.querySelector('.annonce__fermer')?.addEventListener('click', function () {
-    document.getElementById('annonce')?.remove();
+/* Menu mobile — le strict minimum, sans dépendance. */
+(function () {
+  var b = document.querySelector('.burger');
+  var m = document.getElementById('menu-mobile');
+  if (!b || !m) return;
+  b.addEventListener('click', function () {
+    var ouvert = b.getAttribute('aria-expanded') === 'true';
+    b.setAttribute('aria-expanded', String(!ouvert));
+    m.hidden = ouvert;
+    document.documentElement.classList.toggle('menu-ouvert', !ouvert);
   });
-  document.querySelectorAll('.menu__panneau a').forEach(function (a) {
-    a.addEventListener('click', function () {
-      document.querySelector('.menu')?.removeAttribute('open');
-    });
+  m.addEventListener('click', function (e) {
+    if (e.target.tagName !== 'A') return;
+    b.setAttribute('aria-expanded', 'false');
+    m.hidden = true;
+    document.documentElement.classList.remove('menu-ouvert');
   });
+})();
 </script>
-
 </body>
 </html>

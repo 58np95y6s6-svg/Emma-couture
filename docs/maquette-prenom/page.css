@@ -1,750 +1,1253 @@
-/* ==========================================================================
-   emma-broderie.fr — maquette « Le prénom », version poussée
-   --------------------------------------------------------------------------
-   Parti pris : le prénom n'est pas une légende, c'est l'architecture.
-   Il est démesuré, il déborde des marges, il passe derrière les photos,
-   il sert de numérotation et de signature. Tout le reste est une grille
-   éditoriale stricte, alignée à gauche, tenue par des filets d'un pixel.
-   Un seul panneau sombre dans toute la page : la dentelle libre.
+@charset "UTF-8";
+/* =============================================================================
+   emma-broderie.fr — page d'accueil
+   Direction artistique : « l'atelier à la tombée du jour »
+   Fond sable rosé + vert tapis de coupe + rouille + fil doré.
+   Tout est pleine largeur par défaut ; seul le texte long est mis en colonne.
+   Aucune bibliothèque. Les animations sont en CSS.
+============================================================================= */
 
-   Ce fichier ne contient AUCUNE animation d'entrée : rien n'est en
-   opacity:0, rien n'attend un script. broderie.css / broderie.js ajoutent
-   leur couche par-dessus ; la page vit très bien sans eux.
-   ========================================================================== */
-
-/* ---------------------------------------------------------------- jetons -- */
-:root{
-  /* Surfaces */
-  --fond:      #FFFDFB;   /* blanc cassé, très légèrement rosé */
-  --fond-2:    #FAF2ED;   /* tinte rose, pour un bloc sur deux */
-  --nuit:      #241D1C;   /* le seul fond sombre — cale la photo de dentelle */
-  --nuit-2:    #17110F;
+/* -----------------------------------------------------------------------------
+   1. JETONS
+----------------------------------------------------------------------------- */
+:root {
+  /* Matière & lumière */
+  --sable:      #F1E2D6;   /* le fond : sable rosé, chaud, jamais blanc */
+  --sable-haut: #F9F0E7;
+  --sable-bas:  #E5CFBE;
+  --sable-2:    #EAD5C5;   /* bande tintée */
+  --coquille:   #FBF4EC;   /* clair sur fond sombre */
 
   /* Encres */
-  --encre:     #241E1B;   /* titres */
-  --texte:     #443A35;   /* texte courant : 9,3:1 sur le fond */
-  --doux:      #7A6C65;   /* mentions secondaires : 4,6:1 */
-  --mauve:     #6B5560;   /* le prénom */
-  --rose:      #E8CFC6;
-  --rose-vif:  #D2A091;
+  --encre:      #241C18;
+  --encre-doux: #4C3C34;
+  --gris:       #8A7E78;
 
-  /* Or : deux valeurs. Le #B89355 d'origine ne passe pas en texte
-     (2,6:1 sur blanc) — il reste décoratif, le texte prend --or-txt. */
-  --or:        #B89355;
-  --or-txt:    #8A6626;   /* 5,1:1 sur --fond */
-  --or-clair:  #D8B678;   /* or lisible sur --nuit */
+  /* Les fils, pris dans ses photos */
+  --vert:       #1E2620;   /* tapis de coupe, presque noir */
+  --vert-2:     #2B3A2C;
+  --rouille:    #A8492A;
+  --brique:     #7A4C3A;
+  --ocre:       #C98A3E;
+  --dore:       #B89355;
+  --mauve:      #6B5560;
+  --rose:       #E8CFC6;
+  --jean:       #3D556B;
+  --olive:      #4A6047;
 
-  --ligne:     #E8DCD4;
-  --ligne-nuit:#3E332F;
+  /* Le moteur de broderie lit ces variables : on les accorde à la palette. */
+  --broderie-fond: var(--sable);
+  --broderie-encre: var(--encre);
+  --broderie-rose: var(--rose);
+  --broderie-fil: var(--mauve);
+  --broderie-dore: var(--dore);
+  --broderie-gris: var(--gris);
 
-  /* Mesures */
-  --marge:  clamp(18px, 5.2vw, 84px);
-  --large:  1320px;
-  --rythme: clamp(60px, 11vw, 132px);
+  /* Mise en page */
+  --marge: clamp(1.25rem, 5vw, 5rem);
+  --large: 72rem;
+  --demi:  36rem;
+  --mesure: 34rem;
+  --respire: clamp(4.5rem, 10vw, 9.5rem);
 
-  /* Typographie */
-  --titre: "Fraunces", "Spectral", Georgia, "Times New Roman", serif;
-  --corps: "Jost", "Helvetica Neue", system-ui, sans-serif;
-  /* Deux registres d'écriture, jamais interchangeables :
-     --brode  = ce que la MACHINE écrit (le produit : prénoms, occasions, « Merci »)
-     --plume  = ce qu'EMMA écrit à la main (numéros d'étape, signature, pied de page) */
-  --brode: "Great Vibes", "Petit Formal Script", cursive;
-  --plume: "Playwrite FR Moderne", "Segoe Script", cursive;
-}
+  /* Typographie fluide, sans point de rupture */
+  --t-micro: clamp(0.7rem, 0.66rem + 0.2vw, 0.8rem);
+  --t-petit: clamp(0.875rem, 0.84rem + 0.2vw, 0.95rem);
+  --t-corps: clamp(1rem, 0.96rem + 0.3vw, 1.125rem);
+  --t-chapo: clamp(1.125rem, 1.02rem + 0.6vw, 1.4rem);
+  --t-h3:    clamp(1.25rem, 1.1rem + 0.8vw, 1.7rem);
+  --t-h2:    clamp(2.1rem, 1.35rem + 3.6vw, 4.9rem);
+  --t-h1:    clamp(2rem, 1.35rem + 2.9vw, 3.9rem);
+  --t-geant: clamp(4.2rem, 2rem + 13vw, 11.5rem);
 
-*,*::before,*::after{box-sizing:border-box}
-
-html{
-  -webkit-text-size-adjust:100%;
-  scroll-behavior:smooth;
-  overflow-x:clip;           /* le prénom déborde volontairement : jamais de scroll latéral */
-}
-@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
-
-body{
-  margin:0;
-  overflow-x:clip;
-  background:var(--fond);
-  color:var(--texte);
-  font-family:var(--corps);
-  font-weight:400;
-  font-size:16.5px;
-  line-height:1.72;
-  letter-spacing:.002em;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:optimizeLegibility;
-}
-@media (min-width:768px){ body{font-size:17px} }
-
-img{max-width:100%;height:auto;display:block}
-figure{margin:0}
-ul,ol{margin:0;padding:0;list-style:none}
-h1,h2,h3{margin:0}
-a{color:inherit}
-
-/* Focus clavier : un liseré or franc, jamais masqué. */
-:focus-visible{
-  outline:2.5px solid var(--or-txt);
-  outline-offset:3px;
-  border-radius:1px;
+  /* Grain de toile : bruit fractal, à peine perceptible, mais la page
+     cesse d'être plate. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23g)' opacity='0.5'/%3E%3C/svg%3E");
+  /* Trame de tissage : chaîne et trame, 3 px. */
+  --tissage:
+    repeating-linear-gradient(90deg, rgba(36,28,24,.035) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(0deg,  rgba(36,28,24,.028) 0 1px, transparent 1px 3px);
 }
 
-.saut{
-  position:absolute;left:-9999px;top:0;z-index:100;
-  background:var(--encre);color:var(--fond);
-  padding:14px 20px;text-decoration:none;font-size:15px;
-}
-.saut:focus{left:0}
+/* -----------------------------------------------------------------------------
+   2. SOCLE
+----------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
 
-/* ------------------------------------------------------- Fraunces réglée --
-   opsz basse + SOFT haut : les empattements s'arrondissent comme le bout
-   d'un point de bourdon. C'est ce qui évite le serif « template ». */
-.titre-serif,h1,h2,h3,blockquote{
-  font-family:var(--titre);
-  font-optical-sizing:none;
-  font-variation-settings:"SOFT" 70,"WONK" 1,"opsz" 40;
-  font-weight:350;
-  color:var(--encre);
-  letter-spacing:-.018em;
-  line-height:1.08;
-  text-wrap:balance;
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  color-scheme: light;
 }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
-/* ------------------------------------------------------------- le prénom -- */
-/* Le prénom brodé : Great Vibes a de vrais pleins et déliés, comme le point
-   de bourdon d'une machine. C'est exactement ce qu'on voit sur les photos. */
-.prenom{
-  font-family:var(--brode);
-  font-weight:400;
-  color:var(--mauve);
-  margin:0;
-  line-height:1;
-  letter-spacing:.005em;
-}
-/* L'écriture d'Emma : cursive scolaire française, monoline, un peu hésitante.
-   Réservée à sa voix — jamais au produit. */
-.plume{
-  font-family:var(--plume);
-  font-weight:300;
-  color:var(--mauve);
-  margin:0;
-  line-height:1.15;
+body {
+  margin: 0;
+  background-color: var(--sable);
+  color: var(--encre);
+  font-family: 'Jost', 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
+  font-size: var(--t-corps);
+  line-height: 1.62;
+  font-weight: 400;
+  overflow-x: clip;          /* filet de sécurité : ne crée pas de conteneur de défilement */
+
+  /* La lumière d'atelier : deux foyers chauds, puis le grain et la trame. */
+  background-image:
+    var(--grain),
+    var(--tissage),
+    radial-gradient(90% 60% at 12% -4%, color-mix(in oklab, var(--sable-haut) 92%, #fff) 0%, transparent 62%),
+    radial-gradient(70% 45% at 96% 8%, color-mix(in oklab, var(--rose) 55%, var(--sable)) 0%, transparent 60%),
+    linear-gradient(176deg, var(--sable-haut) 0%, var(--sable) 42%, var(--sable-bas) 100%);
+  background-repeat: repeat, repeat, no-repeat, no-repeat, no-repeat;
+  background-size: 260px 260px, auto, auto, auto, auto;
+  background-attachment: fixed, fixed, fixed, fixed, fixed;
+  background-blend-mode: multiply, normal, normal, normal, normal;
 }
 
-/* --------------------------------------------------------------- surtitre -- */
-.oeil{
-  margin:0 0 18px;
-  font-size:11px;
-  font-weight:500;
-  letter-spacing:.24em;
-  text-transform:uppercase;
-  color:var(--doux);
-  display:flex;align-items:center;gap:12px;
-}
-.oeil i{
-  font-style:normal;font-family:var(--corps);
-  color:var(--or-txt);font-weight:500;
-  padding-right:12px;border-right:1px solid var(--ligne);
-}
-.oeil--clair{color:#BEADA6}
-.oeil--clair i{color:var(--or-clair);border-right-color:var(--ligne-nuit)}
+img, svg { max-width: 100%; }
+img { display: block; height: auto; }
 
-/* ============================================================== ANNONCE == */
-.annonce{
-  background:var(--encre);color:#EFE5DF;
-  display:flex;align-items:center;gap:8px;
-  padding:9px var(--marge);
-}
-.annonce__txt{
-  margin:0;flex:1;
-  font-size:13.5px;line-height:1.5;letter-spacing:.005em;
-}
-.annonce__txt strong{font-weight:500;color:#fff}
-.annonce__txt a{
-  color:var(--or-clair);text-decoration:none;
-  border-bottom:1px solid rgba(216,182,120,.45);
-  white-space:nowrap;margin-left:4px;
-}
-.annonce__txt a:hover{border-bottom-color:var(--or-clair)}
-.annonce__pastille{
-  display:inline-block;width:6px;height:6px;border-radius:50%;
-  background:var(--or-clair);margin-right:9px;vertical-align:1px;
-}
-.annonce__fermer{
-  flex:none;width:44px;height:44px;margin:-8px -12px -8px 0;
-  background:none;border:0;color:#B4A49C;
-  font-size:24px;line-height:1;cursor:pointer;
-}
-.annonce__fermer:hover{color:#fff}
+h1, h2, h3, blockquote, p, ul, ol, figure, dl { margin: 0; }
+ul, ol { padding: 0; list-style: none; }
 
-/* =============================================================== EN-TÊTE == */
-.entete{
-  position:sticky;top:0;z-index:40;
-  background:color-mix(in srgb,var(--fond) 88%,transparent);
-  backdrop-filter:saturate(1.2) blur(14px);
-  border-bottom:1px solid var(--ligne);
-}
-.entete__in{
-  max-width:var(--large);margin:0 auto;
-  padding:0 var(--marge);
-  min-height:62px;
-  display:flex;align-items:center;gap:14px;
-}
-.marque{text-decoration:none;display:grid;line-height:1;margin-right:auto}
-.marque__nom{
-  font-family:var(--titre);
-  font-variation-settings:"SOFT" 70,"WONK" 1,"opsz" 22;
-  font-weight:400;font-size:21px;color:var(--encre);letter-spacing:-.01em;
-}
-.marque__sous{
-  font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--doux);margin-top:5px;
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2.5px solid var(--rouille);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
-.nav-ordi{display:none;gap:30px}
-.nav-ordi a{
-  text-decoration:none;font-size:14px;color:var(--texte);
-  padding:6px 0;position:relative;
-}
-.nav-ordi a::after{
-  content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;
-  background:var(--or);transition:right .34s cubic-bezier(.2,.7,.3,1);
-}
-.nav-ordi a:hover::after{right:0}
+::selection { background: var(--rose); color: var(--encre); }
 
-.entete__cta{
-  flex:none;text-decoration:none;
-  background:var(--encre);color:var(--fond);
-  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
-  padding:0 20px;height:44px;display:inline-flex;align-items:center;
+.saut {
+  position: fixed; inset-block-start: 0.5rem; inset-inline-start: 0.5rem;
+  z-index: 200;
+  transform: translateY(-160%);
+  background: var(--vert); color: var(--coquille);
+  padding: 0.8rem 1.2rem; border-radius: 999px;
+  font-size: var(--t-petit); text-decoration: none;
 }
-.entete__cta:hover{background:var(--mauve)}
+.saut:focus { transform: none; }
 
-/* menu mobile : <details>, zéro JS pour l'ouverture */
-.menu{position:relative}
-.menu summary{
-  list-style:none;cursor:pointer;
-  width:44px;height:44px;display:grid;align-content:center;justify-items:center;gap:6px;
+/* -----------------------------------------------------------------------------
+   3. GRILLE DE MISE EN PAGE
+   Une seule grille, 3 pistes nommées. Aucune unité vw dans la largeur des
+   pistes : impossible de déborder à cause de la barre de défilement.
+----------------------------------------------------------------------------- */
+.bande {
+  display: grid;
+  grid-template-columns:
+    [bord-d] minmax(var(--marge), 1fr)
+    [large-d] minmax(0, var(--large))
+    [large-f] minmax(var(--marge), 1fr) [bord-f];
+  align-content: start;
 }
-.menu summary::-webkit-details-marker{display:none}
-.menu summary span{width:20px;height:1.5px;background:var(--encre);display:block;transition:transform .25s}
-.menu[open] summary span:first-child{transform:translateY(3.75px) rotate(45deg)}
-.menu[open] summary span:last-child{transform:translateY(-3.75px) rotate(-45deg)}
-.menu__panneau{
-  position:absolute;right:-8px;top:52px;z-index:50;
-  background:var(--fond);border:1px solid var(--ligne);
-  min-width:min(76vw,268px);
-  display:grid;
-  box-shadow:0 24px 50px -24px rgba(36,30,27,.28);
-}
-.menu__panneau a{
-  text-decoration:none;padding:15px 22px;font-size:15px;
-  border-bottom:1px solid var(--ligne);
-}
-.menu__panneau a:last-child{border-bottom:0;color:var(--or-txt)}
-.menu__panneau a:hover{background:var(--fond-2)}
+.bande > * { grid-column: large-d / large-f; min-width: 0; }
+.bande > .plein { grid-column: bord-d / bord-f; }
 
-@media (min-width:1000px){
-  .menu{display:none}
-  .nav-ordi{display:flex}
-  .entete__in{min-height:76px;gap:36px}
+.mesure { max-width: var(--mesure); }
+
+/* -----------------------------------------------------------------------------
+   4. TYPOGRAPHIE
+----------------------------------------------------------------------------- */
+h1, h2, h3, .titre-xl, .prenom-geant, .signature, blockquote p, .frise b {
+  font-family: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  font-optical-sizing: none;
 }
 
-/* ================================================================ BOUTONS == */
-.actions{display:flex;flex-wrap:wrap;gap:10px}
-.actions--centre{justify-content:center}
-
-.btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:10px;
-  min-height:52px;padding:0 26px;
-  text-decoration:none;font-family:var(--corps);
-  font-size:12.5px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;
-  transition:background .25s,color .25s,border-color .25s,transform .25s;
+h1 {
+  font-size: var(--t-h1);
+  line-height: 1.02;
+  letter-spacing: -0.018em;
+  font-variation-settings: 'wght' 520, 'SOFT' 22, 'WONK' 0, 'opsz' 90;
+  text-wrap: balance;
 }
-.btn svg{width:18px;height:18px;flex:none}
-.btn--wa{background:var(--encre);color:#FFFDFB}
-.btn--wa:hover{background:var(--mauve)}
-.btn--creux{border:1px solid var(--encre);color:var(--encre)}
-.btn--creux:hover{background:var(--encre);color:var(--fond)}
-@media (prefers-reduced-motion:no-preference){
-  .btn:active{transform:translateY(1px)}
+h1 em {
+  font-style: italic;
+  color: var(--rouille);
+  font-variation-settings: 'wght' 430, 'SOFT' 90, 'WONK' 1, 'opsz' 110;
 }
 
-.lien-fleche{
-  display:inline-flex;align-items:center;gap:10px;
-  min-height:44px;
-  text-decoration:none;color:var(--or-txt);
-  font-size:13px;letter-spacing:.13em;text-transform:uppercase;font-weight:500;
+.titre-xl {
+  font-size: var(--t-h2);
+  line-height: 0.95;
+  letter-spacing: -0.024em;
+  font-variation-settings: 'wght' 480, 'SOFT' 18, 'WONK' 0, 'opsz' 120;
+  text-wrap: balance;
 }
-.lien-fleche::after{
-  content:"";width:30px;height:1px;background:currentColor;
-  transition:width .34s cubic-bezier(.2,.7,.3,1);
-}
-.lien-fleche:hover::after{width:52px}
-.lien-fleche--clair{color:var(--or-clair)}
-
-.prix{
-  margin:0;
-  font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--or-txt);font-weight:500;
-}
-.prix--clair{color:var(--or-clair);margin:26px 0 20px}
-
-/* ================================================================= HÉROS ==
-   Le prénom occupe toute la largeur, sa dernière boucle passe PAR-DESSUS le
-   portrait : le nom est littéralement brodé sur la photo. En dessous, deux
-   colonnes inégales — la légende de la pièce à gauche, le portrait à droite. */
-.heros{
-  max-width:var(--large);margin:0 auto;
-  padding:clamp(24px,5.5vw,56px) var(--marge) clamp(44px,7vw,78px);
-}
-.oeil--heros{margin-bottom:clamp(12px,2.4vw,24px)}
-
-.heros__scene{
-  position:relative;overflow:clip;
-  display:grid;
-  grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);
-  column-gap:clamp(14px,4vw,32px);
+.titre-xl em {
+  font-style: italic;
+  color: var(--rouille);
+  font-variation-settings: 'wght' 400, 'SOFT' 96, 'WONK' 1, 'opsz' 140;
 }
 
-.prenom--heros{
-  grid-column:1/-1;
-  font-size:clamp(4.1rem,20.5vw,15.5rem);
-  line-height:1;
-  margin-left:-.045em;              /* la panse du A vient lécher la marge */
-  white-space:nowrap;
-  position:relative;z-index:3;      /* au-dessus de la photo : c'est le point */
-  pointer-events:none;
+h3 {
+  font-size: var(--t-h3);
+  line-height: 1.1;
+  letter-spacing: -0.012em;
+  font-variation-settings: 'wght' 520, 'SOFT' 24, 'WONK' 0, 'opsz' 60;
 }
 
-.heros__legende{
-  grid-column:1;align-self:start;
-  margin:clamp(10px,3vw,22px) 0 0;
-  font-family:var(--titre);font-style:italic;font-weight:300;
-  font-variation-settings:"SOFT" 70,"opsz" 20;
-  font-size:clamp(12.5px,3.4vw,15px);color:var(--doux);letter-spacing:0;
-  line-height:1.45;
-  display:grid;gap:2px;
+/* Le sourcil : petite majuscule espacée, avec un numéro en rouille. */
+.sourcil {
+  display: flex; align-items: center; gap: 0.7rem;
+  font-size: var(--t-micro);
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--brique);
 }
-.heros__legende span[aria-hidden]{display:none}
+.sourcil i {
+  font-style: normal;
+  font-family: 'Fraunces', Georgia, serif;
+  font-variation-settings: 'wght' 700, 'opsz' 20;
+  font-size: 1.1em;
+  letter-spacing: 0.04em;
+  color: var(--rouille);
+  border-bottom: 2px solid color-mix(in oklab, var(--rouille) 40%, transparent);
+  padding-bottom: 1px;
+}
+.sourcil::after {
+  content: ''; flex: 1 1 4rem; height: 1px; max-width: 8rem;
+  background: repeating-linear-gradient(90deg, currentColor 0 5px, transparent 5px 10px);
+  opacity: 0.45;
+}
+.sourcil--clair { color: color-mix(in oklab, var(--rose) 82%, #fff); }
+.sourcil--clair i { color: var(--dore); border-color: color-mix(in oklab, var(--dore) 50%, transparent); }
 
-.heros__photo{
-  grid-column:2;
-  margin-top:clamp(-72px,-13vw,-26px);   /* la photo remonte sous le prénom */
-  position:relative;z-index:1;
-}
-.heros__photo img{
-  width:100%;aspect-ratio:4/5;object-fit:cover;object-position:52% 30%;
-  background:var(--fond-2);
-}
-.heros__photo figcaption{
-  font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;
-  color:var(--doux);padding-top:11px;line-height:1.5;
-}
-
-.heros__dire{margin-top:clamp(34px,6.5vw,52px);max-width:52ch}
-.heros h1{
-  font-size:clamp(2.05rem,7.4vw,3.55rem);
-  line-height:1.04;
-  margin:0 0 22px;
-}
-.heros h1 em{
-  font-style:italic;color:var(--mauve);
-  font-variation-settings:"SOFT" 90,"WONK" 1,"opsz" 60;
-}
-.heros__texte{
-  margin:0 0 30px;
-  font-size:1.03rem;line-height:1.75;color:var(--texte);
-  max-width:46ch;
+.chapo {
+  font-size: var(--t-chapo);
+  line-height: 1.5;
+  color: var(--encre-doux);
+  max-width: 32rem;
 }
 
-.rassure{
-  margin-top:30px;padding-top:20px;border-top:1px solid var(--ligne);
-  display:grid;gap:10px;
-  font-size:13.5px;color:var(--doux);line-height:1.5;
+.prix {
+  font-size: var(--t-petit);
+  letter-spacing: 0.02em;
+  color: var(--gris);
 }
-.rassure li{display:flex;gap:11px;align-items:baseline}
-.rassure li::before{
-  content:"";flex:none;width:5px;height:5px;margin-top:.5em;
-  background:var(--rose-vif);border-radius:50%;
+.prix b {
+  font-family: 'Fraunces', Georgia, serif;
+  font-variation-settings: 'wght' 650, 'opsz' 30;
+  font-size: 1.22em;
+  color: var(--encre);
+  letter-spacing: -0.01em;
 }
-.rassure strong{color:var(--texte);font-weight:500}
+.prix--clair { color: color-mix(in oklab, var(--rose) 70%, var(--gris)); }
+.prix--clair b { color: var(--coquille); }
 
-/* héros — ordinateur : le prénom prend toute la largeur utile, le portrait
-   se réduit à une vignette calée à droite, le texte se met en deux colonnes. */
-@media (min-width:860px){
-  .heros__scene{grid-template-columns:minmax(0,1fr) minmax(0,.3fr)}
-  .prenom--heros{font-size:clamp(8rem,17.5vw,15.5rem)}
-  .heros__legende{
-    margin-top:clamp(-40px,-3vw,-10px);
-    font-size:15px;max-width:26ch;
-  }
-  .heros__photo{margin-top:clamp(-190px,-15vw,-90px)}
-  .heros__dire{
-    margin-top:clamp(30px,4vw,54px);
-    display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
-    gap:clamp(30px,5vw,72px);align-items:start;max-width:none;
-  }
-  .heros h1{grid-column:1;margin:0}
-  .heros__dire > .heros__texte{grid-column:2;margin:0}
-  .heros__dire > .actions{grid-column:2;margin-top:26px}
-  .rassure{
-    grid-column:1/-1;margin-top:46px;
-    grid-template-columns:repeat(3,minmax(0,1fr));gap:18px 34px;
+/* -----------------------------------------------------------------------------
+   5. BOUTONS & LIENS
+----------------------------------------------------------------------------- */
+.actions { display: flex; flex-wrap: wrap; gap: 0.75rem 0.9rem; }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.55rem;
+  min-height: 3.1rem;
+  padding: 0.75rem 1.55rem;
+  border-radius: 999px;
+  font-size: var(--t-petit);
+  font-weight: 500;
+  letter-spacing: 0.035em;
+  text-decoration: none;
+  border: 1.5px solid transparent;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition: transform 260ms cubic-bezier(.2,.9,.3,1), box-shadow 260ms ease, color 200ms ease;
+}
+.btn .ico { width: 1.15em; height: 1.15em; fill: currentColor; flex: none; }
+.btn::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  transform: translateY(101%);
+  transition: transform 420ms cubic-bezier(.16,1,.3,1);
+}
+.btn:hover { transform: translateY(-2px); }
+.btn:hover::before { transform: none; }
+.btn:active { transform: translateY(0); }
+
+.btn--wa {
+  background: var(--vert); color: var(--coquille);
+  box-shadow: 0 10px 26px -14px color-mix(in oklab, var(--vert) 75%, transparent);
+}
+.btn--wa::before { background: var(--rouille); }
+
+.btn--creux {
+  color: var(--encre);
+  border-color: color-mix(in oklab, var(--encre) 30%, transparent);
+  background: color-mix(in oklab, var(--coquille) 45%, transparent);
+  backdrop-filter: blur(6px);
+}
+.btn--creux::before { background: var(--encre); }
+.btn--creux:hover { color: var(--coquille); border-color: var(--encre); }
+
+.btn--or {
+  background: var(--dore); color: #1E1509;
+  box-shadow: 0 10px 26px -14px color-mix(in oklab, var(--dore) 80%, transparent);
+}
+.btn--or::before { background: var(--coquille); }
+
+.btn--petit { min-height: 2.6rem; padding: 0.45rem 1.05rem; font-size: var(--t-micro); }
+
+/* Lien-flèche */
+.lien-fleche, .lien-wa {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  min-height: 2.75rem;
+  font-size: var(--t-petit);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  color: var(--encre);
+}
+.lien-fleche::after {
+  content: '→';
+  transition: transform 300ms cubic-bezier(.2,.9,.3,1);
+}
+.lien-fleche:hover::after { transform: translateX(5px); }
+.lien-fleche { border-bottom: 1.5px solid color-mix(in oklab, var(--encre) 26%, transparent); }
+.lien-fleche:hover { border-color: var(--rouille); color: var(--rouille); }
+.lien-fleche--clair { color: var(--coquille); border-color: color-mix(in oklab, var(--rose) 45%, transparent); }
+
+.lien-wa {
+  color: var(--vert);
+  background: color-mix(in oklab, var(--olive) 16%, transparent);
+  border-radius: 999px;
+  padding-inline: 0.95rem;
+  transition: background 220ms ease, color 220ms ease;
+}
+.lien-wa::before { content: '✽'; color: var(--olive); }
+.lien-wa:hover { background: var(--vert); color: var(--coquille); }
+.lien-wa:hover::before { color: var(--dore); }
+
+/* -----------------------------------------------------------------------------
+   6. FIL DE PROGRESSION (scroll-driven)
+----------------------------------------------------------------------------- */
+.progression {
+  position: fixed; inset-block-start: 0; inset-inline: 0;
+  height: 3px; z-index: 120; pointer-events: none;
+}
+.progression span {
+  display: block; height: 100%;
+  background: linear-gradient(90deg, var(--rouille), var(--ocre) 45%, var(--dore) 70%, var(--mauve));
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .progression span {
+      animation: fil-avance linear both;
+      animation-timeline: scroll(root block);
+    }
   }
 }
+@keyframes fil-avance { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
-/* =============================================================== PREUVE === */
-.preuve{border-block:1px solid var(--ligne);background:var(--fond)}
-.preuve__in{
-  max-width:var(--large);margin:0 auto;padding:0 var(--marge);
-  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+/* -----------------------------------------------------------------------------
+   7. EN-TÊTE
+----------------------------------------------------------------------------- */
+.entete {
+  position: sticky; inset-block-start: 0; z-index: 100;
+  isolation: isolate;
 }
-.preuve__item{
-  padding:22px 0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+.entete::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: color-mix(in oklab, var(--sable-haut) 78%, transparent);
+  backdrop-filter: blur(14px) saturate(1.3);
+  border-bottom: 1px solid color-mix(in oklab, var(--brique) 20%, transparent);
+  opacity: 0;
 }
-.preuve__item:nth-child(odd){padding-right:16px}
-.preuve__item:nth-child(even){
-  padding-left:16px;border-left:1px solid var(--ligne);
-}
-.preuve__item:nth-child(-n+2){border-bottom:1px solid var(--ligne)}
-.preuve__item b{
-  font-family:var(--titre);font-variation-settings:"SOFT" 70,"opsz" 40;
-  font-weight:400;font-size:clamp(1.6rem,5.4vw,2rem);color:var(--encre);
-  letter-spacing:-.02em;line-height:1;
-}
-.preuve__item span{font-size:12.5px;color:var(--doux);line-height:1.4;max-width:17ch}
-
-@media (min-width:860px){
-  .preuve__in{grid-template-columns:repeat(4,minmax(0,1fr))}
-  .preuve__item{padding:30px 0 30px 28px;border-left:1px solid var(--ligne)}
-  .preuve__item:first-child{padding-left:0;border-left:0}
-  .preuve__item:nth-child(-n+2){border-bottom:0}
-  .preuve__item:nth-child(odd),
-  .preuve__item:nth-child(even){padding-right:22px}
-  .preuve__item:first-child{padding-left:0}
-}
-
-/* ================================================================= BLOCS == */
-.bloc{
-  max-width:var(--large);margin:0 auto;
-  padding:var(--rythme) var(--marge);
-}
-.bloc--tinte{
-  max-width:none;background:var(--fond-2);
-  padding-inline:max(var(--marge),calc(50vw - var(--large)/2 + var(--marge)));
-}
-.bloc__tete{max-width:34ch;margin-bottom:clamp(34px,6vw,64px)}
-.bloc__tete h2,.final h2,.nuit h2,.atelier h2{
-  font-size:clamp(1.85rem,6.2vw,3.05rem);
-  line-height:1.07;margin:0;
-}
-.bloc__chapo{
-  margin:20px 0 0;color:var(--doux);font-size:1rem;line-height:1.72;max-width:44ch;
-}
-.bloc__suite{margin:clamp(30px,5vw,50px) 0 0;padding-top:24px;border-top:1px solid var(--ligne)}
-
-/* ============================================================== GALERIE === */
-.galerie{display:grid;gap:clamp(44px,8vw,72px)}
-.piece a{text-decoration:none;color:inherit;display:grid;gap:18px}
-
-.piece figure{
-  position:relative;overflow:clip;background:var(--fond-2);
-}
-.piece img{
-  width:100%;aspect-ratio:4/5;object-fit:cover;
-  transition:transform .8s cubic-bezier(.2,.7,.3,1);
-}
-@media (prefers-reduced-motion:no-preference){
-  .piece a:hover img,.piece a:focus-visible img{transform:scale(1.035)}
-}
-.piece--carre img{aspect-ratio:1/1}
-
-/* « brodé pour Lisa » : la mention qui rappelle, à chaque pièce, que le
-   produit c'est un prénom — et pas un article de catalogue. */
-.piece__pour{
-  margin:0 0 2px;
-  font-size:12px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--doux);
-  display:flex;align-items:baseline;gap:9px;
-}
-.piece__pour b{
-  font-weight:400;
-  font-size:2.15rem;letter-spacing:.005em;text-transform:none;
-  color:var(--mauve);line-height:.9;
-  transform:translateY(.08em);
-}
-
-.piece__dire{display:grid;gap:9px}
-.piece h3{
-  font-size:clamp(1.18rem,4.4vw,1.42rem);
-  line-height:1.2;font-weight:400;
-}
-.piece__dire p{margin:0;font-size:.95rem;line-height:1.66;color:var(--doux);max-width:40ch}
-.piece .prix{margin-top:3px}
-
-/* Rythme irrégulier, y compris sur mobile : une pièce sur deux est
-   rentrée à droite. C'est ce décalage qui casse l'effet « catalogue ». */
-@media (min-width:420px){
-  .piece--carre,.piece--decale{margin-left:14%}
-}
-
-@media (min-width:860px){
-  .galerie{
-    grid-template-columns:repeat(12,minmax(0,1fr));
-    gap:clamp(42px,5vw,72px) clamp(24px,3vw,46px);
-    align-items:start;
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .entete::before {
+      animation: entete-pose linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 12px 140px;
+    }
   }
-  .piece--carre,.piece--decale{margin-left:0}
-  .galerie > li:nth-child(1){grid-column:1/8}
-  .galerie > li:nth-child(2){grid-column:9/13;margin-top:clamp(50px,8vw,120px)}
-  .galerie > li:nth-child(3){grid-column:2/6}
-  .galerie > li:nth-child(4){grid-column:7/12;margin-top:clamp(-120px,-8vw,-40px)}
-  .galerie > li:nth-child(5){grid-column:1/5;margin-top:clamp(-40px,-3vw,0px)}
-  .galerie > li:nth-child(6){grid-column:6/13}
+}
+@supports not (animation-timeline: scroll()) {
+  .entete::before { opacity: 1; }
+}
+@keyframes entete-pose { from { opacity: 0; } to { opacity: 1; } }
+
+.entete__in {
+  display: flex; align-items: center; gap: 1rem;
+  padding: clamp(0.7rem, 1.6vw, 1.1rem) var(--marge);
 }
 
-/* ============================================ NUIT — la dentelle libre === */
-.nuit{
-  background:var(--nuit);color:#E7DCD6;
-  background-image:radial-gradient(120% 80% at 78% 12%,#33292610 0,transparent 60%);
+.marque { text-decoration: none; display: grid; gap: 0.1rem; margin-inline-end: auto; }
+.marque__nom {
+  font-family: 'Fraunces', Georgia, serif;
+  font-variation-settings: 'wght' 600, 'SOFT' 40, 'WONK' 1, 'opsz' 30;
+  font-size: clamp(1rem, 0.94rem + 0.35vw, 1.2rem);
+  letter-spacing: -0.01em;
+  line-height: 1;
 }
-.nuit__in{
-  max-width:var(--large);margin:0 auto;
-  padding:var(--rythme) var(--marge);
-  display:grid;gap:clamp(38px,6vw,64px);
-}
-.nuit h2{color:#FFF9F4}
-.nuit__dire p{color:#BCACA4;max-width:46ch;margin:22px 0 0;font-size:1rem;line-height:1.75}
-.nuit__dire h2{margin-bottom:4px}
-
-.nuit__images{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
-.nuit__grand img{width:100%;aspect-ratio:4/5;object-fit:cover}
-.nuit__petit{
-  width:62%;margin-left:auto;margin-top:-22%;position:relative;
-  border:1px solid var(--ligne-nuit);
-}
-.nuit__petit img{width:100%;aspect-ratio:1/1;object-fit:cover}
-.nuit__petit figcaption{
-  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  color:#9C8C84;padding:11px 0 0;
+.marque__sous {
+  font-size: var(--t-micro);
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--brique);
 }
 
-@media (min-width:860px){
-  .nuit__in{
-    grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
-    align-items:center;gap:clamp(40px,6vw,96px);
+.nav { display: none; gap: clamp(0.9rem, 1.8vw, 1.9rem); }
+.nav a {
+  font-size: var(--t-petit); text-decoration: none; letter-spacing: 0.01em;
+  padding-block: 0.65rem;
+  position: relative;
+}
+.nav a::after {
+  content: ''; position: absolute; inset-block-end: 0.35rem; inset-inline: 0;
+  height: 1.5px; background: var(--rouille);
+  transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform 300ms cubic-bezier(.2,.9,.3,1);
+}
+.nav a:hover::after { transform: scaleX(1); }
+
+.entete__cta { display: none; }
+
+.burger {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; min-width: 44px;
+  padding: 0.4rem 0.85rem;
+  background: color-mix(in oklab, var(--coquille) 60%, transparent);
+  border: 1.5px solid color-mix(in oklab, var(--encre) 22%, transparent);
+  border-radius: 999px;
+  font: inherit; font-size: var(--t-micro); letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--encre); cursor: pointer;
+}
+.burger__traits { display: grid; gap: 4px; width: 17px; }
+.burger__traits i { display: block; height: 1.6px; background: currentColor; }
+.burger[aria-expanded='true'] { background: var(--encre); color: var(--sable-haut); }
+
+.menu {
+  display: grid;
+  padding: 0.5rem var(--marge) 1.4rem;
+  background: color-mix(in oklab, var(--sable-haut) 96%, transparent);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid color-mix(in oklab, var(--brique) 22%, transparent);
+}
+.menu a {
+  padding: 0.85rem 0; min-height: 44px;
+  text-decoration: none;
+  font-family: 'Fraunces', Georgia, serif;
+  font-variation-settings: 'wght' 500, 'SOFT' 40, 'opsz' 40;
+  font-size: 1.25rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--brique) 15%, transparent);
+}
+.menu a:last-child { color: var(--rouille); }
+
+@media (min-width: 62rem) {
+  .nav, .entete__cta { display: inline-flex; }
+  .burger, .menu { display: none !important; }
+}
+
+/* -----------------------------------------------------------------------------
+   8. HERO — pleine largeur, asymétrique
+----------------------------------------------------------------------------- */
+.hero {
+  position: relative;
+  padding-block-end: clamp(2.5rem, 5vw, 4rem);
+  row-gap: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.hero__photo {
+  grid-column: bord-d / bord-f;
+  position: relative;
+  height: clamp(200px, 33svh, 330px);
+  overflow: hidden;
+  background: var(--brique);
+}
+.hero__photo img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: 50% 26%;
+}
+.hero__photo::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(190deg, transparent 40%, color-mix(in oklab, var(--vert) 55%, transparent));
+  pointer-events: none;
+}
+
+.hero__vignette {
+  position: absolute; inset-block-end: 0.85rem; inset-inline-start: var(--marge);
+  z-index: 2;
+  display: grid; gap: 0.1rem;
+  max-width: 21rem;
+  padding: 0.7rem 1.05rem;
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--sable-haut) 68%, transparent);
+  backdrop-filter: blur(10px) saturate(1.2);
+  border: 1px solid color-mix(in oklab, var(--coquille) 45%, transparent);
+  box-shadow: 0 14px 34px -22px rgba(30, 22, 18, .7);
+}
+.hero__vignette strong {
+  font-family: 'Fraunces', Georgia, serif;
+  font-variation-settings: 'wght' 620, 'SOFT' 50, 'WONK' 1, 'opsz' 30;
+  font-size: 1rem; line-height: 1.1;
+}
+.hero__vignette span { font-size: var(--t-micro); line-height: 1.4; color: var(--encre-doux); }
+
+.hero__texte { display: grid; gap: clamp(0.85rem, 1.6vw, 1.15rem); align-content: center; }
+.sourcil--hero { color: var(--brique); }
+
+/* Le prénom géant : le produit lui-même, en grand. */
+.prenom-geant {
+  font-size: var(--t-geant);
+  line-height: 0.82;
+  font-style: italic;
+  font-variation-settings: 'wght' 330, 'SOFT' 100, 'WONK' 1, 'opsz' 144;
+  letter-spacing: -0.03em;
+  color: var(--brique);
+  margin-block: clamp(-0.2rem, -0.5vw, 0rem) -0.1em;
+  overflow: visible;
+}
+.prenom-geant--clair { color: var(--rose); }
+
+.prenom-note {
+  display: flex; gap: 0.5rem; align-items: baseline;
+  font-size: var(--t-micro);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gris);
+  padding-inline-start: 0.15rem;
+}
+.prenom-note span { color: var(--rouille); font-size: 1.1em; }
+
+.rassure {
+  display: flex; flex-wrap: wrap; gap: 0.35rem 1.1rem;
+  font-size: var(--t-petit);
+  color: var(--encre-doux);
+  padding-block-start: 0.3rem;
+}
+.rassure li { display: flex; align-items: center; gap: 0.5rem; }
+.rassure li + li::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--dore); flex: none;
+  margin-inline-end: 0.25rem;
+}
+.rassure b { font-weight: 500; color: var(--encre); }
+
+@media (min-width: 62rem) {
+  .hero {
+    grid-template-columns:
+      [bord-d] minmax(var(--marge), 1fr)
+      [large-d] minmax(0, var(--demi))
+      [mi] minmax(0, var(--demi))
+      [large-f] minmax(var(--marge), 1fr) [bord-f];
+    min-height: min(100svh, 54rem);
+    align-content: center;
+    padding-block: 2rem clamp(3rem, 6vw, 5rem);
   }
-  .nuit__petit{width:54%;margin-top:-30%}
-}
-
-/* ============================================= INDEX DES OCCASIONS ====== */
-.index{border-top:1px solid var(--ligne)}
-.index li{border-bottom:1px solid var(--ligne)}
-.index a{
-  display:grid;
-  grid-template-columns:64px minmax(0,1fr);
-  grid-template-areas:"img mot" "img det";
-  align-items:center;
-  gap:2px 18px;
-  padding:20px 0;
-  text-decoration:none;color:inherit;position:relative;
-}
-.index__img{grid-area:img;overflow:clip;background:var(--fond);align-self:start}
-.index__img img{width:64px;height:64px;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
-.index__mot{
-  grid-area:mot;
-  font-family:var(--titre);font-variation-settings:"SOFT" 70,"WONK" 1,"opsz" 60;
-  font-weight:350;font-size:clamp(1.35rem,5.6vw,1.9rem);
-  color:var(--encre);letter-spacing:-.02em;line-height:1.15;
-}
-.index__det{grid-area:det;font-size:13.5px;color:var(--doux);line-height:1.5}
-.index__ex{
-  display:none;grid-area:ex;
-  font-size:2.6rem;color:var(--rose-vif);text-align:right;
-  transition:color .3s,transform .5s cubic-bezier(.2,.7,.3,1);
-}
-@media (prefers-reduced-motion:no-preference){
-  .index a:hover .index__img img,
-  .index a:focus-visible .index__img img{transform:scale(1.08)}
-  .index a:hover .index__ex{color:var(--mauve);transform:translateX(-10px)}
-}
-
-@media (min-width:768px){
-  .index a{
-    grid-template-columns:96px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,.7fr);
-    grid-template-areas:"img mot det ex";
-    gap:0 clamp(20px,3vw,44px);
-    padding:26px 0;
+  .hero__texte {
+    grid-column: large-d / mi; grid-row: 1;
+    padding-inline-end: clamp(1.5rem, 3vw, 3rem);
+    padding-block: clamp(1rem, 3vw, 3rem);
   }
-  .index__img img{width:96px;height:96px}
-  .index__ex{display:block}
-  .index__det{font-size:14.5px}
-}
-
-/* ================================================================ ÉTAPES == */
-.etapes{
-  display:grid;gap:clamp(34px,5vw,48px);
-  counter-reset:pas;
-}
-.etapes li{
-  padding-left:clamp(56px,14vw,86px);position:relative;
-  border-top:1px solid var(--ligne);padding-top:22px;
-}
-.etapes__n{
-  position:absolute;left:0;top:16px;
-  font-size:clamp(1.25rem,4.4vw,1.55rem);color:var(--rose-vif);
-  line-height:1;margin:0;
-}
-.etapes h3{
-  font-size:clamp(1.15rem,4.4vw,1.36rem);font-weight:400;margin:0 0 9px;line-height:1.2;
-}
-.etapes li > p:last-child{margin:0;color:var(--doux);font-size:.97rem;line-height:1.7;max-width:42ch}
-
-@media (min-width:860px){
-  .etapes{grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(26px,3vw,48px)}
-  .etapes li{padding-left:0;padding-top:26px}
-  .etapes__n{position:static;margin-bottom:12px}
-}
-
-.ruban{margin-top:var(--rythme)}
-.ruban img{
-  width:100%;aspect-ratio:16/7;object-fit:cover;object-position:center 58%;
-}
-
-/* =============================================================== ATELIER == */
-.atelier__in{display:grid;gap:clamp(34px,6vw,64px)}
-.atelier__photos{position:relative}
-.atelier__bobines img{width:100%;aspect-ratio:16/10;object-fit:cover}
-.atelier__rond{
-  position:absolute;z-index:2;
-  left:4%;bottom:-13%;
-  width:min(40%,190px);
-  border-radius:50%;overflow:clip;
-  border:6px solid var(--fond);
-  box-shadow:0 18px 42px -22px rgba(36,30,27,.5);
-}
-.atelier__rond img{width:100%;aspect-ratio:1/1;object-fit:cover;object-position:52% 30%}
-.atelier__dire{padding-top:clamp(40px,10vw,60px)}
-.atelier__dire p{margin:22px 0 0;max-width:46ch;color:var(--texte)}
-.signature{
-  font-size:clamp(1.9rem,6.6vw,2.4rem);
-  margin-top:34px !important;color:var(--mauve);
-}
-
-@media (min-width:860px){
-  .atelier__in{
-    grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
-    align-items:center;gap:clamp(48px,7vw,96px);
+  .hero__photo {
+    grid-column: mi / bord-f; grid-row: 1;
+    height: auto; align-self: stretch;
+    min-height: 32rem;
+    border-start-start-radius: 180px;
+    box-shadow: -30px 0 60px -50px rgba(30, 22, 18, .8);
   }
-  .atelier__dire{padding-top:0}
-  .atelier__rond{left:-8%;bottom:-16%;width:min(42%,220px)}
-}
-
-/* ================================================================== AVIS == */
-.avis{display:grid;gap:26px}
-.avis figure{
-  border-top:1px solid var(--ligne);padding-top:22px;
-}
-.avis blockquote{margin:0}
-.avis blockquote p{
-  margin:0;
-  font-family:var(--titre);font-style:italic;font-weight:300;
-  font-variation-settings:"SOFT" 80,"opsz" 40;
-  font-size:1.08rem;line-height:1.5;color:var(--encre);letter-spacing:-.01em;
-}
-.avis figcaption{
-  margin-top:14px;font-family:var(--corps);
-  font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--doux);
-}
-.avis__grand{border-top-color:var(--rose-vif) !important}
-.avis__grand blockquote p{font-size:clamp(1.35rem,5.4vw,1.85rem);line-height:1.32}
-
-@media (min-width:768px){
-  .avis{grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(26px,3vw,46px)}
-  .avis__grand{grid-column:1/4;grid-row:1/3}
-  .avis figure:nth-child(2){grid-column:4/7}
-  .avis figure:nth-child(3){grid-column:4/7}
-  .avis figure:nth-child(4){grid-column:1/4}
-}
-
-/* ================================================================= FINAL == */
-.final{
-  position:relative;overflow:clip;
-  background:var(--fond);
-  border-top:1px solid var(--ligne);
-  padding:var(--rythme) var(--marge);
-}
-.final__fantome{
-  position:absolute;right:-.14em;top:-.12em;
-  font-size:clamp(9rem,34vw,24rem);
-  color:var(--rose);opacity:.5;
-  white-space:nowrap;pointer-events:none;user-select:none;
-}
-.final__in{position:relative;z-index:1;max-width:var(--large);margin:0 auto;text-align:center}
-.final .oeil{justify-content:center}
-.final__texte{
-  margin:22px auto 34px;max-width:42ch;color:var(--doux);font-size:1.02rem;line-height:1.72;
-}
-.final__note{margin:26px 0 0;font-size:13.5px;color:var(--doux)}
-.final__note a{color:var(--encre);text-decoration:none;border-bottom:1px solid var(--rose-vif)}
-
-/* =================================================================== PIED == */
-.pied{background:var(--encre);color:#C9BAB2;padding-top:clamp(50px,8vw,80px)}
-.pied__in{
-  max-width:var(--large);margin:0 auto;padding:0 var(--marge) clamp(40px,6vw,64px);
-  display:grid;gap:36px;
-}
-.pied__scripte{font-size:2rem;color:var(--or-clair);margin-bottom:18px}
-.pied__adresse{margin:0;font-size:14.5px;line-height:1.85}
-.pied__adresse a{color:#E6DAD3}
-.pied__col h2{
-  font-family:var(--corps);font-variation-settings:normal;
-  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
-  color:#8E7D75;margin:0 0 16px;font-weight:500;
-}
-.pied__col{display:grid;gap:2px;align-content:start}
-.pied__col a{
-  text-decoration:none;font-size:14.5px;padding:7px 0;color:#C9BAB2;
-  width:fit-content;border-bottom:1px solid transparent;
-}
-.pied__col a:hover{color:#fff;border-bottom-color:var(--or)}
-.pied__col p{margin:0;font-size:14px;line-height:1.7;color:#9E8D85;max-width:30ch}
-
-.pied__bas{
-  border-top:1px solid var(--ligne-nuit);
-  max-width:var(--large);margin:0 auto;
-  padding:22px var(--marge) calc(22px + env(safe-area-inset-bottom));
-  display:flex;flex-wrap:wrap;gap:6px 26px;justify-content:space-between;
-  font-size:12.5px;color:#8E7D75;
-}
-.pied__bas p{margin:0}
-.pied__bas a{color:#8E7D75;text-decoration:none;border-bottom:1px solid #3E332F}
-.pied__bas a:hover{color:#fff}
-
-@media (min-width:768px){
-  .pied__in{grid-template-columns:minmax(0,1.5fr) repeat(3,minmax(0,1fr));gap:clamp(24px,4vw,56px)}
-}
-
-/* ================================================== WHATSAPP FLOTTANT ==== */
-.wa-flottant{
-  position:fixed;z-index:45;
-  right:14px;bottom:calc(14px + env(safe-area-inset-bottom));
-  display:inline-flex;align-items:center;gap:9px;
-  min-height:48px;padding:0 18px 0 15px;
-  background:var(--encre);color:#FFFDFB;
-  text-decoration:none;
-  font-size:12.5px;font-weight:500;letter-spacing:.11em;text-transform:uppercase;
-  box-shadow:0 12px 30px -12px rgba(36,30,27,.55);
-}
-.wa-flottant svg{width:20px;height:20px;flex:none;color:var(--or-clair)}
-@media (min-width:1000px){ .wa-flottant{display:none} }
-
-/* ============================================ mouvement réduit / impression */
-@media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{
-    animation-duration:.001ms !important;
-    animation-iteration-count:1 !important;
-    transition-duration:.001ms !important;
+  .hero__photo img { object-position: 50% 22%; }
+  .hero__photo::after {
+    background: linear-gradient(200deg, transparent 52%, color-mix(in oklab, var(--vert) 48%, transparent));
   }
+  .hero__vignette { inset-inline-start: 1.5rem; inset-block-end: 1.5rem; }
+  /* Un bloc rouille glissé sous la photo : la rupture asymétrique. */
+  .hero::after {
+    content: ''; position: absolute; z-index: -1;
+    inset-block: 6rem 1rem;
+    inset-inline: 48% calc(var(--marge) * -0.2);
+    background: linear-gradient(160deg, var(--rouille), var(--brique));
+    border-start-start-radius: 200px;
+    opacity: 0.16;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   9. FRISE DE FILS — pleine largeur, défilement infini
+----------------------------------------------------------------------------- */
+.frise {
+  background: var(--vert);
+  color: var(--coquille);
+  overflow: hidden;
+  padding-block: clamp(0.6rem, 1.3vw, 0.9rem);
+  border-block: 1px solid color-mix(in oklab, var(--dore) 28%, transparent);
+  position: relative;
+  mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+}
+.frise__piste { display: flex; width: max-content; }
+.frise__lot {
+  display: flex; align-items: center; gap: clamp(1.4rem, 3.5vw, 3.2rem);
+  padding-inline-end: clamp(1.4rem, 3.5vw, 3.2rem);
+}
+.frise b {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  font-size: clamp(1.1rem, 0.9rem + 0.9vw, 1.8rem);
+  font-style: italic;
+  font-variation-settings: 'wght' 380, 'SOFT' 100, 'WONK' 1, 'opsz' 90;
+  letter-spacing: -0.01em;
+  color: color-mix(in oklab, var(--f, var(--rose)) 62%, var(--coquille));
+  white-space: nowrap;
+}
+.frise b::before {
+  content: ''; width: 0.6em; height: 0.6em; border-radius: 50%;
+  background: var(--f, var(--rose));
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--f, var(--rose)) 22%, transparent);
+  flex: none;
+}
+.frise__lu {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .frise__piste { animation: defile 46s linear infinite; }
+  .frise:hover .frise__piste { animation-play-state: paused; }
+}
+@keyframes defile { to { transform: translateX(-50%); } }
+
+/* -----------------------------------------------------------------------------
+   10. EN-TÊTES DE SECTION
+----------------------------------------------------------------------------- */
+.creations, .occasions, .methode, .atelier, .avis { padding-block: var(--respire); }
+
+.tete { display: grid; gap: clamp(1rem, 2vw, 1.5rem); justify-items: start; }
+.tete .titre-xl { max-width: 24ch; }
+.tete--large .titre-xl { max-width: 32ch; }
+
+.indice {
+  display: flex; align-items: center; gap: 0.45rem;
+  font-size: var(--t-micro); letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--gris);
+}
+.indice span { color: var(--rouille); font-size: 1.2em; }
+@media (prefers-reduced-motion: no-preference) {
+  .indice span { animation: pousse 2.6s ease-in-out infinite; }
+}
+@keyframes pousse { 0%, 100% { transform: none; } 50% { transform: translateX(6px); } }
+
+/* Révélation au défilement (scroll-driven, avec repli : état final par défaut) */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .tete > *, .etapes > li, .avis__liste > li, .atelier__dire > *, .nuit__fixe > * {
+      animation: monte linear both;
+      animation-timeline: view();
+      animation-range: entry 8% entry 62%;
+    }
+  }
+}
+@keyframes monte {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* -----------------------------------------------------------------------------
+   11. CRÉATIONS — rangée qui déborde du bord droit, avec accrochage
+----------------------------------------------------------------------------- */
+.creations { row-gap: clamp(2rem, 4vw, 3.2rem); }
+
+.rangee {
+  grid-column: bord-d / bord-f;
+  display: flex;
+  gap: clamp(0.9rem, 2vw, 1.6rem);
+  padding: 0.5rem var(--marge) 1.5rem;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline-start: var(--marge);
+  scrollbar-color: color-mix(in oklab, var(--brique) 55%, transparent) transparent;
+  scrollbar-width: thin;
+}
+@media (min-width: 62rem) {
+  .rangee { grid-column: large-d / bord-f; padding-inline: 0 var(--marge); }
+}
+
+.carte {
+  container-type: inline-size;
+  flex: 0 0 auto;
+  width: clamp(15rem, 74vw, 23rem);
+  scroll-snap-align: start;
+  display: grid;
+  gap: 0.9rem;
+  align-content: start;
+}
+.carte__img {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 6px 6px 120px 6px;
+  background: color-mix(in oklab, var(--brique) 22%, var(--sable));
+  box-shadow: 0 22px 44px -32px rgba(30, 22, 18, .75);
+}
+.carte__img img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 900ms cubic-bezier(.16,1,.3,1), filter 500ms ease;
+}
+.carte__img::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(200deg, transparent 55%, color-mix(in oklab, var(--vert) 42%, transparent));
+  opacity: 0; transition: opacity 500ms ease;
+}
+.carte:hover .carte__img img { transform: scale(1.055); }
+.carte:hover .carte__img::after { opacity: 1; }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .carte__img img {
+      animation: devoile linear both;
+      animation-timeline: view(inline);
+      animation-range: entry 0% entry 92%;
+    }
+  }
+}
+@keyframes devoile {
+  from { clip-path: inset(0 0 42% 0); transform: scale(1.1); }
+  to   { clip-path: inset(0 0 0 0);   transform: scale(1); }
+}
+
+.carte__txt { display: grid; gap: 0.5rem; }
+.carte__pour {
+  font-size: var(--t-micro); letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--gris);
+}
+.carte__pour span {
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic; text-transform: none; letter-spacing: 0;
+  font-size: 1.45em;
+  font-variation-settings: 'wght' 420, 'SOFT' 100, 'WONK' 1, 'opsz' 60;
+  color: var(--mauve);
+}
+.carte h3 {
+  transition: font-variation-settings 450ms cubic-bezier(.2,.9,.3,1), color 300ms ease;
+}
+.carte:hover h3 {
+  font-variation-settings: 'wght' 760, 'SOFT' 100, 'WONK' 1, 'opsz' 100;
+  color: var(--rouille);
+}
+.carte__txt > p:not(.prix):not(.carte__pour) {
+  font-size: var(--t-petit); color: var(--encre-doux); line-height: 1.55;
+}
+.carte__cta { display: flex; flex-wrap: wrap; gap: 0.4rem 0.8rem; padding-block-start: 0.15rem; }
+
+/* La carte s'adapte à son conteneur, pas à l'écran. */
+@container (min-width: 20rem) {
+  .carte h3 { font-size: clamp(1.35rem, 6.5cqi, 1.8rem); }
+  .carte__img { border-radius: 8px 8px 150px 8px; }
+}
+
+.rangee__fin {
+  flex: 0 0 auto;
+  width: clamp(12rem, 52vw, 16rem);
+  display: grid; align-content: center; gap: 1rem;
+  padding-inline-start: clamp(0.5rem, 2vw, 1.5rem);
+  border-inline-start: 1px dashed color-mix(in oklab, var(--brique) 40%, transparent);
+  scroll-snap-align: end;
+}
+.rangee__fin p {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
+  line-height: 1.05;
+  font-variation-settings: 'wght' 400, 'SOFT' 40, 'opsz' 60;
+  color: var(--encre-doux);
+}
+.rangee__fin b {
+  font-style: italic; color: var(--rouille);
+  font-variation-settings: 'wght' 500, 'SOFT' 100, 'WONK' 1, 'opsz' 90;
+}
+
+/* -----------------------------------------------------------------------------
+   12. BANDEAU BOBINES — pleine largeur, bords fondus, mot fusionné
+----------------------------------------------------------------------------- */
+.bandeau {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: clamp(190px, 30vw, 380px);
+  display: grid;
+}
+.bandeau img {
+  grid-area: 1 / 1;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  mask-image: linear-gradient(to bottom, transparent 0, #000 16%, #000 84%, transparent 100%);
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .bandeau img {
+      animation: derive linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+@keyframes derive {
+  from { transform: scale(1.16) translateY(-3.5%); }
+  to   { transform: scale(1.16) translateY(3.5%); }
+}
+
+.bandeau__mot {
+  grid-area: 1 / 1;
+  align-self: center; justify-self: center;
+  margin: 0; padding-inline: var(--marge);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.9rem, 7.5vw, 6.5rem);
+  font-style: italic;
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  text-align: center;
+  font-variation-settings: 'wght' 340, 'SOFT' 100, 'WONK' 1, 'opsz' 144;
+  color: var(--coquille);
+  mix-blend-mode: soft-light;
+  text-wrap: balance;
+}
+.bandeau__note {
+  grid-area: 1 / 1;
+  align-self: end; justify-self: start;
+  margin: 0 0 0.9rem var(--marge);
+  max-width: 24rem;
+  font-size: var(--t-micro);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: color-mix(in oklab, var(--coquille) 88%, var(--brique));
+  text-shadow: 0 1px 14px rgba(20, 14, 10, .65);
+}
+
+/* -----------------------------------------------------------------------------
+   13. DENTELLE LIBRE — section sombre, colonne épinglée
+----------------------------------------------------------------------------- */
+.nuit {
+  background:
+    var(--grain),
+    radial-gradient(80% 50% at 10% 0%, color-mix(in oklab, var(--vert-2) 90%, var(--dore)) 0%, transparent 60%),
+    radial-gradient(60% 60% at 95% 100%, color-mix(in oklab, var(--mauve) 45%, var(--vert)) 0%, transparent 65%),
+    linear-gradient(170deg, var(--vert-2), var(--vert) 60%, #151B16);
+  background-size: 260px 260px, auto, auto, auto;
+  background-blend-mode: overlay, normal, normal, normal;
+  color: var(--coquille);
+  padding-block: var(--respire);
+  row-gap: clamp(2rem, 4vw, 3rem);
+  position: relative;
+}
+.nuit::before, .nuit::after {
+  content: ''; position: absolute; inset-inline: 0; height: 2.5rem;
+  background: var(--sable);
+  mask-image: linear-gradient(to bottom, #000, transparent);
+  pointer-events: none;
+}
+.nuit::before { inset-block-start: 0; }
+.nuit::after { inset-block-end: 0; transform: scaleY(-1); }
+
+.mesure--clair { color: color-mix(in oklab, var(--rose) 62%, #C9BEB6); }
+.nuit__dire {
+  font-size: var(--t-chapo);
+  line-height: 1.45;
+  max-width: 26rem;
+  color: color-mix(in oklab, var(--coquille) 92%, var(--rose));
+}
+.nuit__dire em {
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic; color: var(--dore);
+  font-variation-settings: 'wght' 430, 'SOFT' 100, 'WONK' 1, 'opsz' 90;
+}
+.nuit__fixe { display: grid; gap: clamp(0.9rem, 2vw, 1.4rem); justify-items: start; }
+.nuit .titre-xl em { color: var(--dore); }
+.croix-deco { width: clamp(6rem, 18vw, 10rem); margin-block-start: 0.5rem; }
+
+.nuit__images { display: grid; gap: clamp(1rem, 2.5vw, 1.8rem); }
+.nuit__fig { position: relative; margin: 0; }
+.nuit__fig img {
+  width: 100%; border-radius: 4px;
+  box-shadow: 0 30px 60px -40px #000;
+}
+.nuit__fig figcaption {
+  padding-block-start: 0.6rem;
+  font-size: var(--t-micro);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: color-mix(in oklab, var(--rose) 66%, var(--gris));
+}
+.nuit__fig--a img { border-radius: 4px 4px 4px 90px; }
+.nuit__fig--c img { border-radius: 50% 4px 4px 4px; }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .nuit__fig {
+      animation: glisse linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 38%;
+    }
+  }
+}
+@keyframes glisse {
+  from { opacity: 0; transform: translateY(46px) scale(0.97); clip-path: inset(0 0 26% 0); }
+  to   { opacity: 1; transform: none; clip-path: inset(0 0 0 0); }
+}
+
+@media (min-width: 62rem) {
+  .nuit {
+    grid-template-columns:
+      [bord-d] minmax(var(--marge), 1fr)
+      [large-d] minmax(0, 27rem)
+      [mi] minmax(0, 45rem)
+      [large-f] minmax(var(--marge), 1fr) [bord-f];
+    column-gap: clamp(2rem, 4vw, 4.5rem);
+  }
+  .nuit__col { grid-column: large-d / mi; grid-row: 1; }
+  .nuit__images { grid-column: mi / bord-f; grid-row: 1; padding-inline-end: var(--marge); }
+  /* La colonne de texte reste épinglée pendant que les images défilent. */
+  .nuit__fixe {
+    position: sticky;
+    inset-block-start: clamp(6rem, 12vh, 9rem);
+    padding-block-end: 2rem;
+  }
+  .nuit__fig--b { margin-inline-start: clamp(3rem, 12%, 9rem); }
+  .nuit__fig--c { width: min(60%, 22rem); }
+}
+
+/* -----------------------------------------------------------------------------
+   14. OCCASIONS — grille pleine largeur, révélation en tambour au survol
+----------------------------------------------------------------------------- */
+.occasions { row-gap: clamp(2rem, 4vw, 3.2rem); }
+.occ {
+  grid-column: bord-d / bord-f;
+  display: grid;
+  gap: 2px;
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+  background: color-mix(in oklab, var(--brique) 30%, transparent);
+}
+.occ__item { min-width: 0; background: var(--sable); }
+.occ__item > a {
+  display: grid; gap: 0;
+  text-decoration: none;
+  height: 100%;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.occ__img { display: block; position: relative; aspect-ratio: 1 / 1; overflow: hidden; }
+.occ__img img {
+  width: 100%; height: 100%; object-fit: cover;
+  clip-path: circle(76% at 50% 42%);
+  transition: clip-path 800ms cubic-bezier(.16,1,.3,1), transform 900ms cubic-bezier(.16,1,.3,1), filter 500ms ease;
+  filter: saturate(0.92);
+}
+.occ__item > a:hover .occ__img img,
+.occ__item > a:focus-visible .occ__img img {
+  clip-path: circle(100% at 50% 42%);
+  transform: scale(1.06);
+  filter: saturate(1.08);
+}
+.occ__txt {
+  display: grid; gap: 0.3rem;
+  padding: clamp(1rem, 2vw, 1.5rem) clamp(1rem, 2vw, 1.5rem) clamp(1.3rem, 2.5vw, 2rem);
+  border-block-start: 1px solid color-mix(in oklab, var(--brique) 22%, transparent);
+}
+.occ__txt b {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
+  font-variation-settings: 'wght' 560, 'SOFT' 30, 'opsz' 50;
+  line-height: 1.1;
+  transition: color 280ms ease;
+}
+.occ__item > a:hover .occ__txt b { color: var(--rouille); }
+.occ__txt em {
+  font-style: normal;
+  font-size: var(--t-petit);
+  color: var(--encre-doux);
+  line-height: 1.45;
+}
+.occ__prenom {
+  display: block;
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-size: clamp(2rem, 1.2rem + 3.4vw, 3.4rem);
+  line-height: 0.95;
+  font-variation-settings: 'wght' 330, 'SOFT' 100, 'WONK' 1, 'opsz' 120;
+  letter-spacing: -0.025em;
+  color: var(--mauve);
+  padding-block-start: 0.5rem;
+}
+
+/* -----------------------------------------------------------------------------
+   15. MÉTHODE — trois étapes, gros numéros
+----------------------------------------------------------------------------- */
+.methode { row-gap: clamp(2.5rem, 5vw, 4rem); position: relative; }
+.etapes {
+  display: grid;
+  gap: clamp(2rem, 4vw, 3rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+}
+.etapes > li { display: grid; gap: 0.55rem; align-content: start; min-width: 0; }
+.etapes__n {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(4.5rem, 2rem + 9vw, 9rem);
+  line-height: 0.74;
+  font-style: italic;
+  font-variation-settings: 'wght' 300, 'SOFT' 100, 'WONK' 1, 'opsz' 144;
+  color: transparent;
+  -webkit-text-stroke: 1.4px var(--brique);
+  margin-block-end: 0.2rem;
+  transition: color 500ms ease, -webkit-text-stroke-color 500ms ease;
+}
+.etapes > li:hover .etapes__n { color: color-mix(in oklab, var(--rouille) 22%, transparent); }
+.etapes > li p:not(.etapes__n) { font-size: var(--t-petit); color: var(--encre-doux); max-width: 28rem; }
+
+/* -----------------------------------------------------------------------------
+   16. ATELIER — tambour + texte + bande photo pleine largeur
+----------------------------------------------------------------------------- */
+.atelier { row-gap: clamp(2rem, 4vw, 3.5rem); }
+
+.atelier__tambour { margin: 0; max-width: 24rem; }
+.atelier__tambour img {
+  width: 100%; aspect-ratio: 1 / 1; object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 30px 60px -40px rgba(30, 22, 18, .85),
+              0 0 0 10px color-mix(in oklab, var(--ocre) 55%, var(--sable)),
+              0 0 0 12px color-mix(in oklab, var(--brique) 60%, transparent);
+}
+.atelier__dire { display: grid; gap: clamp(0.9rem, 2vw, 1.3rem); justify-items: start; }
+
+.signature {
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-size: clamp(2rem, 1.3rem + 2.6vw, 3.2rem);
+  line-height: 1;
+  font-variation-settings: 'wght' 330, 'SOFT' 100, 'WONK' 1, 'opsz' 120;
+  color: var(--mauve);
+  padding-block-start: 0.3rem;
+}
+
+.chiffres {
+  display: flex; flex-wrap: wrap; gap: clamp(1.2rem, 3vw, 2.6rem);
+  padding-block-start: 0.8rem;
+  border-block-start: 1px solid color-mix(in oklab, var(--brique) 22%, transparent);
+  width: 100%;
+}
+.chiffres li { display: grid; gap: 0.1rem; }
+.chiffres b {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.4rem);
+  line-height: 1;
+  font-variation-settings: 'wght' 620, 'SOFT' 20, 'opsz' 60;
+  color: var(--rouille);
+}
+.chiffres span { font-size: var(--t-micro); letter-spacing: 0.08em; text-transform: uppercase; color: var(--gris); max-width: 11rem; }
+
+.atelier__bande {
+  grid-column: bord-d / bord-f;
+  height: clamp(200px, 32vw, 420px);
+  overflow: hidden;
+  border-radius: 0;
+}
+.atelier__bande img {
+  width: 100%; height: 100%; object-fit: cover;
+  mask-image: linear-gradient(to bottom, transparent, #000 20%, #000 86%, transparent);
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .atelier__bande img {
+      animation: derive linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+
+@media (min-width: 62rem) {
+  .atelier {
+    grid-template-columns:
+      [bord-d] minmax(var(--marge), 1fr)
+      [large-d] minmax(0, 24rem)
+      [mi] minmax(0, 48rem)
+      [large-f] minmax(var(--marge), 1fr) [bord-f];
+    column-gap: clamp(2rem, 4vw, 4rem);
+  }
+  .atelier__tambour { grid-column: large-d / mi; grid-row: 1; max-width: none; margin-block-start: 3rem; }
+  .atelier__dire { grid-column: mi / large-f; grid-row: 1; }
+  .atelier__bande { grid-row: 2; margin-block-start: clamp(2rem, 4vw, 4rem); }
+}
+
+/* -----------------------------------------------------------------------------
+   17. AVIS — bande tintée pleine largeur
+----------------------------------------------------------------------------- */
+.avis {
+  background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--rose) 42%, var(--sable)) 22%, color-mix(in oklab, var(--rose) 42%, var(--sable)) 78%, transparent);
+  row-gap: clamp(2rem, 4vw, 3rem);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 720px;
+}
+.avis__grand { margin: 0; max-width: 46rem; }
+.avis__grand p {
+  font-size: clamp(1.5rem, 1rem + 2.6vw, 3rem);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'wght' 420, 'SOFT' 40, 'WONK' 0, 'opsz' 120;
+  text-wrap: pretty;
+}
+.avis__grand p::before { content: '« '; color: var(--brique); }
+.avis__grand p::after { content: ' »'; color: var(--brique); }
+.avis__grand em {
+  font-style: italic; color: var(--rouille);
+  font-variation-settings: 'wght' 420, 'SOFT' 100, 'WONK' 1, 'opsz' 144;
+}
+.avis__grand footer, .avis__liste footer {
+  padding-block-start: 0.7rem;
+  font-family: 'Jost', sans-serif;
+  font-size: var(--t-micro);
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--brique);
+}
+.avis__liste {
+  display: grid; gap: clamp(1.4rem, 3vw, 2.5rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+}
+.avis__liste li { min-width: 0; }
+.avis__liste blockquote { margin: 0; padding-inline-start: 1.1rem; border-inline-start: 2px solid color-mix(in oklab, var(--dore) 65%, transparent); }
+.avis__liste p { font-size: var(--t-petit); line-height: 1.6; color: var(--encre-doux); font-family: 'Jost', sans-serif; }
+.avis__note { font-size: var(--t-micro); letter-spacing: 0.1em; text-transform: uppercase; color: var(--gris); }
+.avis__note b { color: var(--rouille); font-size: 1.15em; }
+
+/* -----------------------------------------------------------------------------
+   18. APPEL FINAL — pleine largeur, sombre
+----------------------------------------------------------------------------- */
+.final {
+  position: relative;
+  isolation: isolate;
+  padding-block: clamp(4rem, 9vw, 8rem);
+  color: var(--coquille);
+  background: var(--vert);
+  overflow: hidden;
+}
+.final__fond {
+  position: absolute; inset: 0; z-index: -2;
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: 0.32;
+  filter: saturate(0.75) contrast(1.05);
+}
+.final::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background:
+    radial-gradient(70% 60% at 18% 20%, color-mix(in oklab, var(--brique) 55%, transparent), transparent 70%),
+    linear-gradient(175deg, color-mix(in oklab, var(--vert) 74%, transparent), color-mix(in oklab, var(--vert) 94%, transparent));
+}
+.final__in { display: grid; gap: clamp(0.9rem, 2vw, 1.3rem); justify-items: start; }
+.final .titre-xl em { color: var(--dore); }
+.final__note { font-size: var(--t-petit); color: color-mix(in oklab, var(--rose) 60%, var(--gris)); padding-block-start: 0.4rem; }
+.final__note a { text-decoration-color: color-mix(in oklab, var(--dore) 70%, transparent); text-underline-offset: 3px; }
+
+/* -----------------------------------------------------------------------------
+   19. PIED
+----------------------------------------------------------------------------- */
+.pied {
+  background: #191F1A;
+  color: color-mix(in oklab, var(--coquille) 82%, var(--gris));
+  padding-block: clamp(2.5rem, 5vw, 4.5rem) 1.5rem;
+  row-gap: 2rem;
+  font-size: var(--t-petit);
+  content-visibility: auto;
+  contain-intrinsic-size: auto 420px;
+}
+.pied__in {
+  display: grid; gap: clamp(1.6rem, 3vw, 3rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+}
+.pied__in > * { min-width: 0; display: grid; gap: 0.45rem; align-content: start; }
+.pied__nom {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 1.4rem; line-height: 1;
+  font-variation-settings: 'wght' 560, 'SOFT' 50, 'WONK' 1, 'opsz' 40;
+  color: var(--coquille);
+}
+.pied h2 {
+  font-family: 'Jost', sans-serif;
+  font-size: var(--t-micro); letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--dore); font-weight: 500;
+  margin-block-end: 0.3rem;
+}
+.pied a { text-decoration: none; text-underline-offset: 3px; min-height: 1.9rem; display: inline-flex; align-items: center; }
+.pied a:hover { text-decoration: underline; color: var(--rose); }
+.pied__bas {
+  display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem;
+  padding-block-start: 1.4rem;
+  border-block-start: 1px solid rgba(251, 244, 236, .14);
+  font-size: var(--t-micro); letter-spacing: 0.06em;
+  color: color-mix(in oklab, var(--coquille) 55%, var(--gris));
+}
+
+/* -----------------------------------------------------------------------------
+   20. BOUTON WHATSAPP FLOTTANT (mobile)
+----------------------------------------------------------------------------- */
+.flottant {
+  position: fixed;
+  inset-block-end: 1rem; inset-inline-end: 1rem;
+  z-index: 110;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 52px; padding: 0.7rem 1.15rem;
+  border-radius: 999px;
+  background: var(--vert); color: var(--coquille);
+  text-decoration: none;
+  font-size: var(--t-petit); font-weight: 500; letter-spacing: 0.03em;
+  box-shadow: 0 14px 30px -12px rgba(20, 26, 20, .75);
+  border: 1px solid color-mix(in oklab, var(--dore) 45%, transparent);
+}
+.flottant .ico { width: 1.3em; height: 1.3em; fill: var(--dore); }
+.flottant:active { transform: scale(0.97); }
+@media (prefers-reduced-motion: no-preference) {
+  .flottant { animation: arrive-bas 600ms cubic-bezier(.16,1,.3,1) 900ms both; }
+}
+@keyframes arrive-bas { from { opacity: 0; transform: translateY(150%); } to { opacity: 1; transform: none; } }
+@media (min-width: 62rem) { .flottant { display: none; } }
+
+/* -----------------------------------------------------------------------------
+   21. ARRIVÉE (animations de chargement, courtes et sans attente de script)
+----------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  .hero__texte > * { animation: arrive 620ms cubic-bezier(.16,1,.3,1) both; }
+  .sourcil--hero      { animation-delay: 40ms; }
+  .prenom-geant       { animation-delay: 0ms; }
+  .prenom-note        { animation-delay: 240ms; }
+  .hero h1            { animation-delay: 60ms; }
+  .chapo              { animation-delay: 180ms; }
+  .hero .actions      { animation-delay: 280ms; }
+  .rassure            { animation-delay: 360ms; }
+  .hero__photo        { animation: arrive-photo 900ms cubic-bezier(.16,1,.3,1) both; }
+  .hero__vignette     { animation: arrive 700ms cubic-bezier(.16,1,.3,1) 620ms both; }
+}
+@keyframes arrive { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes arrive-photo {
+  from { opacity: 0; clip-path: inset(0 0 0 22%); transform: scale(1.04); }
+  to   { opacity: 1; clip-path: inset(0 0 0 0); transform: none; }
+}
+
+/* -----------------------------------------------------------------------------
+   22. MOUVEMENT RÉDUIT — tout dans son état final, rien ne bouge
+----------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+  .progression span { transform: scaleX(0); }
+  .frise__piste { transform: none; }
+  .carte__img img, .nuit__fig, .hero__photo, .hero__texte > *, .flottant,
+  .tete > *, .etapes > li, .avis__liste > li, .atelier__dire > *, .nuit__fixe > * {
+    opacity: 1 !important;
+    transform: none !important;
+    clip-path: none !important;
+  }
+  .bandeau img, .atelier__bande img { transform: scale(1.02); }
+  .occ__img img { clip-path: circle(100% at 50% 42%); }
+  .entete::before { opacity: 1; }
+  .nuit__fixe { position: static; }
+}
+
+/* -----------------------------------------------------------------------------
+   23. IMPRESSION (au cas où Emmanuelle imprime la maquette)
+----------------------------------------------------------------------------- */
+@media print {
+  .entete, .flottant, .progression, .frise { display: none; }
+  body { background: #fff; color: #000; }
 }

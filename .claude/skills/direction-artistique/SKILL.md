@@ -100,14 +100,15 @@ L'animation est **structurante, pas décorative**. Le moteur maison
 | `data-broderie="fil"` | un fil continu traverse la page et se brode au défilement |
 | `data-broderie="tambour"` | révélation d'image à travers un tambour à broder |
 | `data-broderie="croix"` | grille de points de croix qui se remplit |
-| `data-broderie="aiguille-curseur"` | curseur « point avant » sur ordinateur |
+| `data-broderie="aiguille-curseur"` | traînée de points derrière le curseur natif, sur ordinateur |
 
 Options : `data-fil="#6B5560"`, `data-duree="2600"`, `data-declencheur="visible|charge|survol"`.
 
 Le **prénom brodé est le fil conducteur** : énorme sur ordinateur, il se brode dès l'arrivée et
 revient plusieurs fois dans la page avec un prénom différent — c'est littéralement le produit.
 
-Réglages du curseur « point avant » : douze points maximum, opacité décroissante jusqu'à **zéro**
+Réglages du curseur « point avant » (le curseur natif est CONSERVÉ, on n'ajoute que la traînée) :
+douze points maximum, opacité décroissante jusqu'à **zéro**
 sur le dernier, dépôt tous les ~18 px parcourus (sinon les points s'agglutinent quand la souris
 est lente), chaque point orienté dans le sens du déplacement, effacement automatique à l'arrêt.
 
