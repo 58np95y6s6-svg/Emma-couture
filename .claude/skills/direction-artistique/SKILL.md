@@ -298,6 +298,48 @@ noms SEO, journal dans `docs/journal-retouches.json`.
 L'image Open Graph n'est pas optionnelle : c'est elle qui porte la photo dans l'aperçu WhatsApp
 quand une visiteuse clique « Je veux la même ».
 
+## Budget de performance — chiffré, à tenir
+
+Le cahier des charges exige d'excellents scores Lighthouse, **animations comprises**. Ce n'est pas
+un vœu : la majorité des visites viendra d'un téléphone en 4G, et Google utilise ces signaux pour
+le référencement local. La performance est donc un sujet de conversion, pas de confort technique.
+
+| Indicateur | Cible | Pourquoi |
+|---|---|---|
+| Lighthouse performance, accessibilité, SEO | ≥ 95 | exigence du CDC |
+| LCP | < 2,5 s | c'est la photo du haut de page |
+| CLS | < 0,1 | le carrousel de prénoms est le principal suspect |
+| INP | < 200 ms | les animations ne doivent pas bloquer le fil principal |
+| JavaScript total (gzip) | < 50 Ko | dont **moins de 15 Ko** pour le moteur de broderie |
+| CSS total (gzip) | < 30 Ko | une feuille de 45 Ko non compressée est à auditer |
+| Familles de polices | 3 maximum | chaque famille coûte un aller-retour réseau |
+
+Règles à vérifier à l'audit :
+- Polices : `preconnect` vers Google Fonts, `display=swap`, sous-ensemble latin uniquement.
+  Une police variable vaut mieux que quatre graisses statiques.
+- Images : WebP, dimensions `width`/`height` sur **toutes** (sinon CLS), `loading="lazy"` partout
+  **sauf** la photo du haut de page qui prend `fetchpriority="high"` et pas de `lazy`.
+  Un `srcset` doit exister dès qu'une image est servie à des largeurs très différentes — envoyer
+  un fichier de 2400 px à un téléphone de 390 px gaspille la bande passante, qui est **facturée
+  sur les 300 crédits mensuels**.
+- Animations : uniquement `transform`, `opacity`, `clip-path`, `filter`. Aucun reflow en boucle.
+  Une seule boucle `requestAnimationFrame` partagée, arrêtée dès que plus rien n'est visible.
+- `content-visibility: auto` sur les sections basses.
+- Rien d'essentiel en `opacity: 0` en attente d'un observer : mauvais pour le LCP **et** risqué
+  si le JavaScript échoue.
+- Vérifier le rendu **JavaScript désactivé** : la page doit rester lisible et vendable.
+
+## Revue finale par un regard neuf
+
+Quand la page et le moteur sont terminés, les faire challenger par un agent qui n'a pas participé
+à leur écriture. Sa mission : contester les choix, pas les valider. Axes imposés —
+**direction artistique** (est-ce que ça pourrait être le site de n'importe quel artisan ?),
+**conversion** (combien de gestes entre l'arrivée et le message à Emmanuelle ?),
+**textes** (appliquer les deux tests de ton, traquer les impressions non vérifiables et les
+chiffres inventés), **performance** (mesurer, pas supposer), **accessibilité** (navigation au
+clavier, contrastes, lecteur d'écran), **responsive** aux cinq largeurs, et **robustesse**
+(JavaScript coupé, réseau lent, `prefers-reduced-motion`).
+
 ## Avant de livrer — liste de vérification
 
 1. Ouvrir la page **à 1440 px** et regarder. Si le verdict est « c'est correct », **ce n'est pas
