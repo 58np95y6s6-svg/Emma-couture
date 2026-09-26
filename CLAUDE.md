@@ -116,12 +116,29 @@ Organisation :
 - Grosse volumétrie : travailler dossier par dossier (Claude Code en local), pas tout d'un coup.
 
 ## Stratégie SEO & plan de site
+### Ce qu'Emma fait réellement (constaté sur ses photos, septembre 2026)
+⚠️ **Emma fait de la broderie MACHINE, pas de la broderie main.** Matériel professionnel visible
+sur ses photos : machine à broder, mur de bobines, tapis de coupe. Elle **coud également** ses
+propres pièces (sacs, trousses, pochettes, tabliers, bavoirs, doudous) : la couture est une offre
+à part entière, pas un accessoire.
+
+Sa singularité réelle : la **dentelle libre / broderie ajourée** — des pièces brodées sans support
+tissu, qui tiennent toutes seules (arbre de vie, papillon, ballerine). Presque personne ne
+revendique cet angle en Ille-et-Vilaine.
+
+**Positionnement retenu : particuliers uniquement.** Emma a déjà quelques clients professionnels
+(polos de club, sweats associatifs, serviettes de sapeurs-pompiers) mais le site ne les cible pas :
+le message cadeau resterait dilué. À rouvrir plus tard si le besoin se confirme.
+
+Voir `docs/inventaire-photos.md` pour le détail par catégorie.
+
 ### Constat concurrentiel (recherche septembre 2026)
-- **National** : les sites de broderie personnalisée les plus visibles sont des **boutiques de textile
-  brodé à la machine** (peignoirs, doudous, serviettes au prénom), avec des centaines de fiches produit.
-  Inutile de les attaquer frontalement sur « serviette brodée prénom ».
-- Les **artisans de broderie main** qui se positionnent bien jouent sur la **pièce unique sur-mesure** :
-  tambour brodé personnalisé, portrait brodé (y compris d'après un dessin d'enfant), cadre de naissance.
+- **National** : les sites les plus visibles sont de **grosses boutiques de textile brodé à la
+  machine** (peignoirs, doudous, serviettes au prénom), avec des centaines de fiches produit et des
+  prix bas. Emma joue dans la même technique mais pas dans le même métier : inutile de les attaquer
+  frontalement sur « serviette brodée prénom ». Sa différence est la **pièce unique**, le conseil,
+  la couture sur mesure et la proximité.
+- Les artisans qui se positionnent bien jouent tous sur le **sur-mesure d'une seule pièce**.
   Leurs pages qui convertissent ont toutes : format précis, délai, prix « à partir de », étapes de
   commande, formulaire de devis, ville d'origine mise en avant, emballage cadeau.
 - **Local** : à Rennes et autour de Vitré, les résultats sont dominés par des **ateliers de marquage
@@ -132,19 +149,24 @@ Organisation :
   positionne et comment. À valider après lancement avec Google Search Console
   (+ Google Keyword Planner, gratuit, pour les volumes).
 
-### Mots-clés (à ajuster selon les types de broderie confirmés)
-- **Local** : brodeuse Vitré, broderie Vitré, broderie personnalisée Rennes, broderie main Rennes,
-  cadeau personnalisé Vitré, cadeau fait main Rennes, cadeau naissance Rennes.
-- **National (longue traîne, pièce unique)** : broderie main personnalisée, tambour brodé personnalisé,
-  cadeau naissance brodé main, portrait brodé personnalisé, broderie d'après dessin d'enfant,
-  prénom brodé à la main, cadeau brodé fête des mères, cadeau mariage brodé.
+### Mots-clés
+⚠️ Ne jamais écrire « brodé à la main » : ce serait faux. Formulations justes : « brodé à Vitré »,
+« brodé sur mesure », « personnalisé au prénom », « cousu main » (vrai pour les sacs et trousses).
+
+- **Local** : brodeuse Vitré, broderie Vitré, broderie personnalisée Rennes, cadeau personnalisé
+  Vitré, cadeau naissance Rennes, broderie prénom Ille-et-Vilaine, couturière Vitré.
+- **National (longue traîne, pièce personnalisée)** : broderie personnalisée prénom, cadeau de
+  naissance personnalisé brodé, doudou brodé prénom, drap de bain brodé prénom, trousse personnalisée
+  prénom, cadre de naissance brodé, chaussette de Noël brodée prénom, cadeau fête des mères brodé.
+- **Angle différenciant (peu concurrencé)** : broderie ajourée, dentelle libre brodée, arbre de vie
+  brodé, décoration brodée sans support. À tester en priorité dans la Search Console.
 - Chaque page cible **une** intention principale ; pas de cannibalisation entre pages.
 
 ### Arborescence
 ```
 /                                   Accueil
 /creations/                         Galerie (filtres par catégorie)
-/creations/[categorie]/             ex. tambours-brodes, naissance, linge, portraits
+/creations/[categorie]/             naissance, linge-de-bain, vetements, couture, decoration-ajouree, noel
 /creations/[slug]/                  Fiche création (photos, prix « à partir de », délai, CTA)
 /cadeaux/naissance/                 Pages occasions (landing SEO + conversion)
 /cadeaux/mariage/
@@ -366,7 +388,11 @@ Une page « Comment faire ? » avec 5-6 fiches très courtes et illustrées.
 
 ## Informations à compléter
 - Nom complet, SIRET, adresse pro : [À COMPLÉTER]
-- Types de broderie (main, machine, personnalisation…) : [À COMPLÉTER] (conditionne les mots-clés)
+- Types de broderie : ✅ **broderie machine + couture**, particuliers uniquement (constaté sur les
+  photos en septembre 2026, à faire confirmer par Emma)
+- Depuis combien de temps Emma brode-t-elle ? : [À COMPLÉTER] (affiché en réassurance)
+- Fait-elle de la dentelle libre sur commande, ou seulement pour elle ? : [À COMPLÉTER]
+  (conditionne l'angle SEO le plus différenciant)
 - Numéro WhatsApp (idéalement WhatsApp Business, gratuit) : [À COMPLÉTER]
 - Réseaux sociaux : [À COMPLÉTER]
 - Remise en main propre possible à Rennes ? Marchés habituels ? : [À COMPLÉTER]

@@ -34,3 +34,4 @@ npm-debug.log*
 # visuels de la maquette : dérivés de src/assets/creations/
 # régénérés par `node scripts/preparer-maquette.mjs`
 docs/img/
+docs/maquette-prenom/img/
