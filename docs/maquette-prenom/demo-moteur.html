@@ -150,7 +150,10 @@
   /* Mesures */
   table.mesures { border-collapse: collapse; width: 100%; font-size: 13.5px; }
   table.mesures th, table.mesures td { text-align: left; padding: 9px 12px; border-bottom: 1px solid rgba(42,35,32,.08); }
-  table.mesures th { font-weight: 500; color: var(--gris); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; }
+  table.mesures th { font-weight: 500; color: var(--gris); font-size: 11.5px; letter-spacing: .1em; text-transform: uppercase; vertical-align: top; white-space: nowrap; }
+  #api table.mesures th { text-transform: none; letter-spacing: 0; font: 12.5px/1.5 ui-monospace, Menlo, Consolas, monospace; color: var(--mauve); }
+  #api table.mesures td { font-family: var(--sans); font-size: 13px; color: var(--gris); }
+  #api table.mesures { display: block; overflow-x: auto; }
   table.mesures td:last-child { font: 13px ui-monospace, monospace; color: var(--mauve); }
 
   .bandeau-mvt {
@@ -218,6 +221,7 @@
       Cette page les isole un par un, avec les réglages pour les voir dans tous leurs états.
     </p>
     <nav class="sommaire">
+      <a href="#api">Le contrat</a>
       <a href="#prenom">1. Point de bourdon</a>
       <a href="#alphabet">Alphabet</a>
       <a href="#fil">2. Le fil</a>
@@ -229,6 +233,32 @@
     </nav>
   </div>
 </header>
+
+<!-- ===================== CONTRAT D'API ===================== -->
+<section class="bloc" id="api">
+  <div class="enveloppe">
+    <h2>Le contrat</h2>
+    <p class="note">
+      Deux fichiers à inclure, rien d’autre :
+      <code>&lt;link rel="stylesheet" href="broderie.css"&gt;</code> et
+      <code>&lt;script type="module" src="broderie.js"&gt;&lt;/script&gt;</code>.
+      Le moteur scanne les attributs <code>data-broderie</code> au chargement et s’active seul.
+    </p>
+    <table class="mesures">
+      <tbody>
+        <tr><th>data-broderie="prenom"</th><td>sur un élément dont le texte est un prénom · data-fil, data-duree, data-declencheur (visible·charge·survol), data-epaisseur, data-pas, data-espacement</td></tr>
+        <tr><th>data-broderie="fil"</th><td>sur un conteneur de sections · data-fil</td></tr>
+        <tr><th>data-broderie="tambour"</th><td>sur une &lt;figure&gt; contenant une &lt;img&gt; · data-declencheur</td></tr>
+        <tr><th>data-broderie="croix"</th><td>sur un élément décoratif vide · data-colonnes, data-lignes, data-motif, data-fil, data-duree, data-declencheur</td></tr>
+        <tr><th>data-broderie="aiguille-curseur"</th><td>sur &lt;body&gt; · ordinateur uniquement</td></tr>
+        <tr><th>window.Broderie.init(racine)</th><td>active les éléments ajoutés après coup (idempotent)</td></tr>
+        <tr><th>window.Broderie.rafraichir()</th><td>recalcule la géométrie (appelé seul au redimensionnement)</td></tr>
+        <tr><th>element.__broderie.rejouer()</th><td>rejoue l’effet depuis le début</td></tr>
+        <tr><th>element.__broderie.poser(f)</th><td>fige l’effet à l’avancement f (0 → 1), sans animation</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
 <!-- ===================== 1. POINT DE BOURDON ===================== -->
 <section class="bloc" id="prenom">
