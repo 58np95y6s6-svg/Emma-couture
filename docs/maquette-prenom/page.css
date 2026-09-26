@@ -945,67 +945,172 @@ h3 {
 }
 
 /* -----------------------------------------------------------------------------
-   14. OCCASIONS — grille pleine largeur, révélation en tambour au survol
+   14. OCCASIONS — quatre tambours enfilés sur un fil
+
+   Une grille de quatre carrés identiques lisait comme un catalogue. Ici chaque
+   occasion devient un tambour à broder : un cercle cerclé de bois, de taille
+   inégale, décalé verticalement, posé sur un fil en point avant qui traverse la
+   section. Le cercle unifie des photos très hétérogènes (gris, feuillage, bois,
+   rouge) que rien ne reliait, et c'est l'objet même du métier.
 ----------------------------------------------------------------------------- */
-.occasions { row-gap: clamp(2rem, 4vw, 3.2rem); }
+.occasions { row-gap: clamp(2.5rem, 5vw, 4rem); }
+
 .occ {
   grid-column: bord-d / bord-f;
+  padding-inline: var(--marge);
   display: grid;
-  gap: 2px;
-  grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
-  background: color-mix(in oklab, var(--brique) 30%, transparent);
-}
-.occ__item { min-width: 0; background: var(--sable); }
-.occ__item > a {
-  display: grid; gap: 0;
-  text-decoration: none;
-  height: 100%;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.8rem, 2.4vw, 2.4rem);
+  align-items: start;
   position: relative;
-  isolation: isolate;
-  overflow: hidden;
+  list-style: none;
+  margin: 0;
 }
-.occ__img { display: block; position: relative; aspect-ratio: 1 / 1; overflow: hidden; }
+
+/* Le fil en point avant qui enfile les tambours, derrière tout le reste. */
+.occ::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: var(--fil-y, 26%);
+  border-block-start: 2px dashed color-mix(in oklab, var(--brique) 42%, transparent);
+  z-index: 0;
+}
+
+.occ__item {
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+  /* Tailles inégales et décalages : c'est ce qui casse l'alignement de catalogue. */
+  margin-block-start: var(--y, 0);
+}
+.occ__item:nth-child(1) { --y: clamp(0.6rem, 2vw, 2rem); }
+.occ__item:nth-child(2) { --y: 0; }
+.occ__item:nth-child(3) { --y: clamp(1.2rem, 3.4vw, 3.4rem); }
+.occ__item:nth-child(4) { --y: clamp(0.3rem, 1vw, 1rem); }
+
+.occ__item > a {
+  display: grid;
+  gap: clamp(0.7rem, 1.6vw, 1.1rem);
+  text-decoration: none;
+  justify-items: center;
+  text-align: center;
+  color: inherit;
+}
+
+/* Le tambour : l'image ronde, son cercle de bois, et la vis en haut. */
+.occ__img {
+  display: block;
+  position: relative;
+  inline-size: var(--d, 100%);
+  margin-inline: auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  overflow: hidden;
+  isolation: isolate;
+  /* cercle de bois + ombre portée douce */
+  box-shadow:
+    0 0 0 clamp(5px, 0.7vw, 9px) var(--bois, #B08A5E),
+    0 0 0 calc(clamp(5px, 0.7vw, 9px) + 1px) color-mix(in oklab, #6B4A28 45%, transparent),
+    0 14px 30px -14px color-mix(in oklab, var(--encre) 45%, transparent);
+  transition: transform 700ms cubic-bezier(.16, 1, .3, 1),
+              box-shadow 700ms cubic-bezier(.16, 1, .3, 1);
+}
+.occ__item:nth-child(1) .occ__img { --d: 92%; }
+.occ__item:nth-child(2) .occ__img { --d: 100%; }
+.occ__item:nth-child(3) .occ__img { --d: 86%; }
+.occ__item:nth-child(4) .occ__img { --d: 97%; }
+
+/* La vis de serrage du tambour, en haut du cercle. */
+.occ__img::after {
+  content: '';
+  position: absolute;
+  inset-block-start: calc(-1 * clamp(9px, 1.3vw, 15px));
+  inset-inline-start: 50%;
+  translate: -50% 0;
+  inline-size: clamp(14px, 1.9vw, 21px);
+  block-size: clamp(11px, 1.5vw, 16px);
+  border-radius: 3px;
+  background: linear-gradient(180deg, #C89B68, #8C6636);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35);
+  z-index: 2;
+}
+
 .occ__img img {
-  width: 100%; height: 100%; object-fit: cover;
-  clip-path: circle(54% at 50% 42%);
-  transition: clip-path 800ms cubic-bezier(.16,1,.3,1), transform 900ms cubic-bezier(.16,1,.3,1), filter 500ms ease;
-  filter: saturate(0.92);
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  /* Traitement commun : les quatre photos viennent de contextes très
+     différents, une légère désaturation les fait tenir ensemble. */
+  filter: saturate(0.88) contrast(1.02);
+  transition: transform 800ms cubic-bezier(.16, 1, .3, 1), filter 500ms ease;
+}
+
+/* Au survol, le tambour se serre : le cercle se resserre, le tissu se tend. */
+.occ__item > a:hover .occ__img,
+.occ__item > a:focus-visible .occ__img {
+  transform: scale(0.975);
+  box-shadow:
+    0 0 0 clamp(7px, 1vw, 12px) var(--bois, #B08A5E),
+    0 0 0 calc(clamp(7px, 1vw, 12px) + 1px) color-mix(in oklab, #6B4A28 55%, transparent),
+    0 18px 34px -14px color-mix(in oklab, var(--encre) 52%, transparent);
 }
 .occ__item > a:hover .occ__img img,
 .occ__item > a:focus-visible .occ__img img {
-  clip-path: circle(78% at 50% 42%);
-  transform: scale(1.06);
-  filter: saturate(1.08);
+  transform: scale(1.07);
+  filter: saturate(1.04) contrast(1.02);
 }
-.occ__txt {
-  display: grid; gap: 0.3rem;
-  padding: clamp(1rem, 2vw, 1.5rem) clamp(1rem, 2vw, 1.5rem) clamp(1.3rem, 2.5vw, 2rem);
-  border-block-start: 1px solid color-mix(in oklab, var(--brique) 22%, transparent);
-}
+
+.occ__txt { display: grid; gap: 0.3rem; justify-items: center; }
+
 .occ__txt b {
   font-family: 'Fraunces', Georgia, serif;
-  font-size: clamp(1.15rem, 1rem + 0.6vw, 1.5rem);
-  font-variation-settings: 'wght' 560, 'SOFT' 30, 'opsz' 50;
-  line-height: 1.1;
+  font-size: clamp(1.1rem, 0.95rem + 0.75vw, 1.6rem);
+  font-variation-settings: 'wght' 600, 'SOFT' 40, 'opsz' 60;
+  line-height: 1.08;
   transition: color 280ms ease;
 }
-.occ__item > a:hover .occ__txt b { color: var(--rouille); }
+.occ__item > a:hover .occ__txt b,
+.occ__item > a:focus-visible .occ__txt b { color: var(--f, var(--rouille)); }
+
 .occ__txt em {
   font-style: normal;
-  font-size: var(--t-petit);
+  font-size: var(--t-micro);
+  letter-spacing: 0.02em;
   color: var(--encre-doux);
-  line-height: 1.45;
+  line-height: 1.5;
+  max-inline-size: 22ch;
 }
+
+/* Le prénom brodé : c'est le moteur qui le remplace par un SVG de points. */
 .occ__prenom {
   display: block;
   font-family: 'Fraunces', Georgia, serif;
   font-style: italic;
-  font-size: clamp(2rem, 1.2rem + 3.4vw, 3.4rem);
-  line-height: 0.95;
+  font-size: clamp(1.6rem, 1rem + 2.2vw, 2.6rem);
+  line-height: 1;
   font-variation-settings: 'wght' 330, 'SOFT' 100, 'WONK' 1, 'opsz' 120;
   letter-spacing: -0.025em;
-  color: var(--mauve);
-  padding-block-start: 0.5rem;
+  color: var(--f, var(--mauve));
+  padding-block-start: 0.35rem;
+  /* La hauteur est réservée : sans ça, la ligne saute quand le SVG remplace
+     le texte, et les quatre tambours se désalignent. */
+  min-block-size: 1.15em;
+}
+
+/* --- Tablette : deux colonnes, le fil passe entre les deux rangées --- */
+@media (max-width: 62rem) {
+  .occ { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: clamp(2rem, 6vw, 3rem); }
+  .occ::before { display: none; }
+  .occ__item:nth-child(3) { --y: 0; }
+}
+
+/* --- Téléphone : on garde deux colonnes, les tambours restent lisibles --- */
+@media (max-width: 30rem) {
+  .occ { gap: 1rem 0.9rem; }
+  .occ__item { --y: 0 !important; }
+  .occ__img { --d: 100% !important; }
+  .occ__txt em { display: none; }
 }
 
 /* -----------------------------------------------------------------------------
