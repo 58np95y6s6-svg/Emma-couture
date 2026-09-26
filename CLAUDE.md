@@ -301,7 +301,29 @@ Objectif : un site mémorable, qui donne envie de partager, sans sacrifier la pe
   Technique : `stroke-dasharray` / `stroke-dashoffset` piloté par les **CSS scroll-driven animations**
   (`animation-timeline`), avec un petit script de repli pour les navigateurs non compatibles.
 - Autres idées à proposer : apparitions douces des photos, effet « tambour à broder » (cercle) qui
-  cadre les images, point de croix qui se remplit au survol/tap, curseur « aiguille » sur ordinateur.
+  cadre les images, point de croix qui se remplit au survol/tap.
+
+### Curseur « point avant » (ordinateur uniquement)
+Le curseur laisse derrière lui une **courte traînée de points de broderie**, pas un trait continu :
+c'est un **point avant**, des tirets courts et espacés, exactement comme une couture à la main.
+
+Règles de réglage — l'effet doit rester discret, c'est un clin d'œil, pas une démonstration :
+- **Peu de points** : une douzaine au maximum dans la traînée. Au-delà, ça devient lourd et ça
+  brouille la lecture.
+- **Fin en transparence** : l'opacité décroît le long de la traînée jusqu'à **zéro** sur le
+  dernier point. Aucune coupure nette, jamais de point qui disparaît brutalement.
+- Les points s'**effacent d'eux-mêmes** en moins d'une seconde quand la souris s'arrête.
+- Chaque point est **orienté dans le sens du déplacement**, comme une vraie aiguille qui pique.
+- Espacement régulier : on ne dépose un point que tous les ~18 px parcourus, pas à chaque
+  mouvement — sinon les points s'agglutinent quand la souris est lente.
+- Trait fin, couleur de fil de la page, opacité maximale modérée.
+
+Contraintes :
+- **Pointeur fin uniquement** (`@media (pointer: fine)`) : jamais sur tactile.
+- Désactivé sous `prefers-reduced-motion: reduce`.
+- **Aucune création d'élément DOM par image** : réserve de points recyclée, ou `<canvas>`.
+  Une seule boucle `requestAnimationFrame`, arrêtée dès que la traînée est vide.
+- Ne doit jamais intercepter les clics (`pointer-events: none`) ni masquer du texte.
 - Contraintes :
   - Respecter `prefers-reduced-motion` (tracé affiché directement, sans mouvement).
   - Animer uniquement `transform`, `opacity` et les propriétés SVG (pas de reflow).
