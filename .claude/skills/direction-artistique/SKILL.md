@@ -1,0 +1,187 @@
+---
+name: direction-artistique
+description: Direction artistique et vocabulaire technique du site emma-broderie.fr. À charger avant toute création ou modification d'interface, de page, de composant, de CSS ou d'animation sur ce projet — que la demande parle de design, de maquette, de mise en page, de style, d'animation, de typographie, de couleurs, ou simplement de « rendre ça plus beau ». Contient la palette, les typographies, les règles de mise en page pleine largeur, le vocabulaire d'animation lié à la broderie, la bibliothèque de techniques CSS modernes retenues, les pièges connus de ce projet et la liste de vérification avant livraison.
+---
+
+# Direction artistique — emma-broderie.fr
+
+Site d'Emmanuelle Wagner, **broderie machine et couture** à Vitré (35). Micro-entreprise,
+elle travaille seule. Le site vend à sa place.
+
+Lire aussi `CLAUDE.md` (cahier des charges) et `docs/inventaire-photos.md` (ce qu'elle fait).
+
+## Les trois mots du client
+
+**Design. Chaleureux. Dynamique.** Plus une attente explicite de savoir-faire technique visible.
+
+Deux propositions ont déjà été rejetées, dans ces termes :
+> « Hyper fade, pas de design en full width, pas d'animation. »
+> « Ça ne me plaisait pas du tout. Je veux quelque chose de design, chaleureux et dynamique,
+> plein de technologie de webdesign. »
+
+Si une maquette pourrait passer pour celle d'un autre artisan, elle est ratée.
+
+## Vérité du métier — à ne jamais trahir
+
+⚠️ **Emmanuelle brode à la MACHINE.** Ne jamais écrire « brodé à la main ».
+Formulations justes : « brodé à Vitré », « brodé sur mesure », « personnalisé au prénom ».
+« Cousu main » est vrai, mais **uniquement** pour les sacs, trousses et tabliers qu'elle confectionne.
+
+Sa singularité : la **dentelle libre** — des pièces brodées sans support tissu, qui tiennent
+toutes seules. Presque personne ne revendique cet angle en Ille-et-Vilaine.
+
+Son monde matériel, à puiser pour toute décision visuelle : un mur de centaines de bobines de fil,
+une machine à broder, un tapis de coupe vert quadrillé en centimètres, des cadres (tambours) en
+millimètres, du fil polyester 40, des densités de points, des prénoms en lettres cursives.
+
+## Couleur
+
+Le fond blanc clinique est **banni** : c'est ce qui rendait les propositions froides.
+
+| Rôle | Valeur | D'où ça vient |
+|---|---|---|
+| Encre | `#2A2320` | brun chaud, jamais du noir pur |
+| Rose poudré | `#E8CFC6` | le drap de bain « Alicia » |
+| Mauve profond | `#6B5560` | la broderie du prénom « Alicia » |
+| Fil doré | `#B89355` | l'arbre de vie en dentelle |
+| Gris doux | `#8A7E78` | texte secondaire |
+
+À **enrichir** en puisant dans ses photos, c'est là qu'est la chaleur : ocre, rouille brûlée,
+vert de tapis de coupe (`#2F4B3F`), bleu de jean, rouge de la fée (`#C2453B`).
+Prévoir une couleur profonde pour les sections de rupture.
+
+Le neutre doit être **choisi**, jamais un gris pur : le biaiser vers l'accent de la page.
+
+⚠️ **Combinaison interdite**, parce qu'elle signe un site généré : crème `#F4F1EA` + serif display
++ accent terracotta. Également bannis : dégradé violet-bleu, Inter, Space Grotesk, emoji en puces
+de section, tout centré, un seul `border-radius` partout, cartes à liseré coloré.
+
+## Typographie
+
+Google Fonts est le seul hébergeur autorisé (contrainte CSP des artefacts, et performance).
+
+- **Prénoms** : `Petit Formal Script` — réservée aux prénoms, jamais pour autre chose.
+- **Titres** : `Spectral` (axes variables disponibles).
+- **Texte courant** : `Jost`.
+- **Chiffres techniques** (références de fil, tailles de cadre, nombre de points) : une chasse fixe.
+
+Règles : texte courant proche de 65 caractères par ligne, échelle fluide en `clamp()` sans points
+de rupture brutaux, `text-wrap: balance` sur les titres, interlettrage léger sur les capitales.
+Les **ruptures d'échelle franches** font partie de la direction : un mot énorme contre un texte
+minuscule.
+
+## Mise en page : le plein écran est la norme
+
+Le conteneur centré étroit est **réservé aux blocs de texte long**. Tout le reste — images, bandes
+de couleur, galerie, hero, séparateurs — touche les deux bords de l'écran.
+
+Rythme attendu : pleine largeur → colonne étroite → pleine largeur → section sombre en rupture.
+C'est cette respiration qui distingue un vrai site d'une page de gabarit.
+
+Prévoir au minimum : un hero full-bleed, une bande photo pleine largeur, une galerie qui déborde
+du bord droit avec `scroll-snap`, une section sombre pleine largeur au milieu.
+
+## Chaleur : quatre leviers, à utiliser ensemble
+
+1. **La matière** — un grain de toile très léger en fond (SVG `feTurbulence`, opacité faible),
+   ou une trame de tissage. On doit à peine le remarquer, mais la page cesse d'être plate.
+2. **La lumière** — dégradés très doux et chauds, comme un atelier en fin de journée.
+3. **Les photos** — grandes, qui respirent, jamais rognées à l'étouffée.
+4. **Les mots** — première personne, concrets, qui sonnent comme quelqu'un qui parle.
+
+## Animation : le vocabulaire est celui de la broderie
+
+L'animation est **structurante, pas décorative**. Le moteur maison
+(`docs/maquette-prenom/broderie.js`) s'active par attributs :
+
+| Attribut | Effet |
+|---|---|
+| `data-broderie="prenom"` | le prénom s'écrit en point de bourdon, point par point |
+| `data-broderie="fil"` | un fil continu traverse la page et se brode au défilement |
+| `data-broderie="tambour"` | révélation d'image à travers un tambour à broder |
+| `data-broderie="croix"` | grille de points de croix qui se remplit |
+| `data-broderie="aiguille-curseur"` | curseur « point avant » sur ordinateur |
+
+Options : `data-fil="#6B5560"`, `data-duree="2600"`, `data-declencheur="visible|charge|survol"`.
+
+Le **prénom brodé est le fil conducteur** : énorme sur ordinateur, il se brode dès l'arrivée et
+revient plusieurs fois dans la page avec un prénom différent — c'est littéralement le produit.
+
+Réglages du curseur « point avant » : douze points maximum, opacité décroissante jusqu'à **zéro**
+sur le dernier, dépôt tous les ~18 px parcourus (sinon les points s'agglutinent quand la souris
+est lente), chaque point orienté dans le sens du déplacement, effacement automatique à l'arrêt.
+
+## Bibliothèque de techniques CSS modernes
+
+Le client attend qu'on voie le savoir-faire. En utiliser **au moins six**, et dire lesquelles.
+
+- **`animation-timeline: view()` / `scroll()`** — animations pilotées par le défilement, en CSS pur.
+  C'est l'outil naturel du fil qui se brode. Envelopper dans `@supports` avec un repli propre.
+- **`position: sticky`** — une section épinglée pendant que le contenu défile par-dessus.
+- **`clip-path`** animé — révélations d'images ; `circle()` pour l'effet tambour.
+- **`mask-image`** — bords fondus, transitions de section douces.
+- **`mix-blend-mode`** — du texte qui se fond dans une photo.
+- **`scroll-snap`** — galerie horizontale qui déborde du bord droit.
+- **Polices variables** — graisse ou axe optique animé.
+- **`clamp()`** — échelle typographique entièrement fluide.
+- **`color-mix()` / `oklch()`** — dégradés qui ne virent pas au gris.
+- **`backdrop-filter`** — barre de navigation posée sur les photos.
+- **Marquee CSS** — frise infinie de couleurs de fil ou de prénoms.
+- **`content-visibility: auto`** — performance sur les sections basses.
+- **`@container`** — une carte qui s'adapte à son conteneur, pas à l'écran.
+
+## Pièges déjà rencontrés sur ce projet
+
+- **Grilles CSS** : une piste `auto` ou `1fr` a pour minimum implicite `min-content`. Un seul enfant
+  récalcitrant élargit toute la page. **Toujours `minmax(0, …)`.** Ce bug a déjà cassé une maquette
+  (214 px de débordement).
+- **`display` et `[hidden]`** : `.classe { display: grid }` écrase le `display: none` par défaut de
+  l'attribut `hidden`. Ajouter explicitement `.classe[hidden] { display: none }`.
+- **`width: 100vw`** inclut la barre de défilement et provoque un débordement horizontal.
+  Préférer une grille avec une piste pleine largeur, ou `margin-inline: calc(50% - 50vw)`, et vérifier.
+- **Agrandissement d'image** : les photos viennent d'un téléphone. `scripts/traiter-photos.mjs`
+  refuse tout recadrage exigeant plus de 5 % d'agrandissement — ne pas contourner ce garde-fou,
+  il a déjà révélé deux images agrandies de 73 % et 77 %.
+
+## Contraintes non négociables
+
+- **Mobile first.** Aucun défilement horizontal du corps de page à **320, 390, 768, 1024, 1440 px**.
+  Une galerie qui défile horizontalement est un conteneur qui défile, pas la page.
+- Zones tactiles ≥ 44 px. Texte courant ≥ 16 px sur mobile. Utilisable à 200 % de zoom.
+- **Le H1 est lisible immédiatement.** Rien d'essentiel en `opacity: 0` en attente d'un observer.
+  Le premier écran doit être beau à l'arrêt, sans défilement.
+- `prefers-reduced-motion: reduce` : tout s'affiche dans son état final, sans mouvement.
+- Un seul `<h1>`, hiérarchie propre, `alt` descriptif partout, focus clavier visible.
+- N'animer que `transform`, `opacity`, `clip-path`, `filter`. Jamais de reflow dans une boucle.
+- **Aucune bibliothèque JS d'animation.** Le poids compte pour Lighthouse.
+- Images en `loading="lazy"` sauf le hero, avec `width`/`height` pour éviter les sauts de mise en page.
+
+## Images disponibles
+
+Produites par `scripts/traiter-photos.mjs` dans `src/assets/creations/`, EXIF supprimées,
+noms SEO, journal dans `docs/journal-retouches.json`.
+
+| Format | Dimensions | Usage |
+|---|---|---|
+| `plein-ecran/` | 2400×1350 | sections full-bleed |
+| `bandeau/` | 2400×620 | bande pleine largeur entre deux sections |
+| `hero-large/` | 1920×1080 | haut de page ordinateur |
+| `hero-mobile/` | 1000×1250 | haut de page téléphone |
+| `galerie/` | 1000×1250 | vignettes 4:5 |
+| `detail/` | 1000×1000 | gros plans |
+| `og/` | 1200×630 | partage — **obligatoire par création** |
+
+L'image Open Graph n'est pas optionnelle : c'est elle qui porte la photo dans l'aperçu WhatsApp
+quand une visiteuse clique « Je veux la même ».
+
+## Avant de livrer — liste de vérification
+
+1. Ouvrir la page **à 1440 px** et regarder. Si le verdict est « c'est correct », **ce n'est pas
+   assez** : recommencer. Prévoir au moins trois cycles de correction.
+2. Regarder **à 390 px**.
+3. Vérifier aux cinq largeurs : `document.documentElement.scrollWidth > window.innerWidth`
+   doit être `false` partout.
+4. Tester `prefers-reduced-motion` pour de vrai.
+5. Couper JavaScript : la page reste-t-elle lisible et belle ?
+6. Relire les textes : aucune mention de « brodé à la main ».
+7. Les prix, délais et avis sont-ils signalés comme des exemples non validés ?
