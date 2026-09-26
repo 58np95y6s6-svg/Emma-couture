@@ -9,7 +9,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Jost:ital,wght@0,300..700;1,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Jost:wght@400..500&display=swap">
 
 <!-- Le moteur d'animation « broderie » (construit à part) : la page est complète et
      belle sans lui, ses propres animations CSS suffisent. -->
@@ -20,11 +20,16 @@
 
 <!-- ===========================================================================
      ⚠️  MAQUETTE — CONTENU D'EXEMPLE
-     Les PRIX (« à partir de … »), le DÉLAI DE FABRICATION, les AVIS CLIENTS,
-     les CHIFFRES (400 pièces, 24 avis), le NUMÉRO WHATSAPP (33600000000),
-     le TÉLÉPHONE et l'ADRESSE E-MAIL sont des EXEMPLES destinés à juger la
-     mise en page. Tout doit être remplacé par les vraies valeurs d'Emmanuelle
-     avant publication.
+     Sont des EXEMPLES, à remplacer par les vraies valeurs d'Emmanuelle
+     avant publication :
+       - les PRIX « à partir de … » (7 cartes + dentelle) ;
+       - « Délai actuel : 2 semaines », « Réponse dans la journée »,
+         « expédié … sous 48 heures », « 2 j d'expédition », « 0 € l'emballage » ;
+       - « Je brode depuis 2021 » (année d'installation à confirmer) ;
+       - les 4 AVIS et le « 5/5 sur 24 avis » ;
+       - le NUMÉRO WHATSAPP (33600000000), le TÉLÉPHONE, l'ADRESSE E-MAIL
+         et le compte Instagram ;
+       - les prénoms de la frise et des cartes : vérifier l'accord des clientes.
      Vocabulaire : broderie MACHINE. Ne jamais écrire « brodé à la main ».
      « cousu main » est réservé aux sacs, trousses et tabliers.
 =========================================================================== -->
@@ -77,14 +82,19 @@
 <!-- ======================= HERO — pleine largeur ======================= -->
 <section class="hero bande">
   <div class="hero__photo">
-    <img src="img/portrait.webp" width="1000" height="1250"
+    <img srcset="img/portrait-320w.webp 320w, img/portrait-480w.webp 480w, img/portrait-620w.webp 620w, img/portrait-800w.webp 800w, img/portrait.webp 1000w"
+         sizes="(min-width: 62rem) 46vw, 100vw"
+         src="img/portrait.webp" width="1000" height="1250"
          alt="Emma, brodeuse et couturière à Vitré."
          fetchpriority="high" decoding="async">
-    <p class="hero__vignette">
-      <strong>Emma</strong>
-      <span>C'est moi qui réponds, qui brode et qui emballe.</span>
-    </p>
   </div>
+
+  <!-- Hors de .hero__photo : ce cadre est en overflow:hidden et avalait
+       entierement la vignette sur mobile. -->
+  <p class="hero__vignette">
+    <strong>Emma</strong>
+    <span>C'est moi qui réponds, qui brode et qui emballe.</span>
+  </p>
 
   <div class="hero__texte">
     <p class="sourcil sourcil--hero">Broderie machine &amp; couture — Vitré&nbsp;(35)</p>
@@ -138,7 +148,7 @@
 <!-- ======================= CRÉATIONS ======================= -->
 <section class="bande creations" id="creations">
   <div class="tete">
-    <p class="sourcil"><i>01</i> Les créations</p>
+    <p class="sourcil">Les créations</p>
     <h2 class="titre-xl">Ce qui est passé<br>sous la machine<br><em>cette semaine.</em></h2>
     <p class="mesure">Chaque pièce part d'un prénom et d'une occasion. Le tissu, l'écriture
       et la couleur du fil, on les choisit ensemble — avant que je lance la machine.</p>
@@ -149,13 +159,15 @@
   <div class="rangee" tabindex="0" role="region" aria-label="Créations récentes, rangée défilante">
     <article class="carte">
       <figure class="carte__img">
-        <img src="img/doudou.webp" width="1000" height="1250" loading="lazy" decoding="async"
+        <img srcset="img/doudou-320w.webp 320w, img/doudou-480w.webp 480w, img/doudou-620w.webp 620w, img/doudou-800w.webp 800w, img/doudou.webp 1000w"
+         sizes="(min-width: 31rem) 368px, 74vw"
+         src="img/doudou.webp" width="1000" height="1250" loading="lazy" decoding="async"
              alt="Doudou en tissu doux, prénom brodé, posé sur un lange.">
       </figure>
       <div class="carte__txt">
         <p class="carte__pour">brodé pour <span>Aliza</span></p>
         <h3>Le doudou de naissance</h3>
-        <p>Prénom, date, heure, taille et poids brodés sur les oreilles. La pièce qu'on garde vingt ans dans une boîte.</p>
+        <p>Prénom, date, heure, taille et poids brodés sur les oreilles. Il passe en machine à 30°&nbsp;: le prénom ne bouge pas.</p>
         <p class="prix">à partir de <b>32&nbsp;€</b></p>
         <p class="carte__cta">
           <a class="lien-wa" href="https://wa.me/33600000000?text=Bonjour%20Emma%2C%20j%27ai%20vu%20%C2%AB%20Le%20doudou%20de%20naissance%20%C2%BB%20sur%20votre%20site%20et%20j%27aimerais%20le%20m%C3%AAme.">Je veux le même</a>
@@ -166,7 +178,9 @@
 
     <article class="carte">
       <figure class="carte__img">
-        <img src="img/serviette.webp" width="1000" height="1250" loading="lazy" decoding="async"
+        <img srcset="img/serviette-320w.webp 320w, img/serviette-480w.webp 480w, img/serviette-620w.webp 620w, img/serviette-800w.webp 800w, img/serviette.webp 1000w"
+         sizes="(min-width: 31rem) 368px, 74vw"
+         src="img/serviette.webp" width="1000" height="1250" loading="lazy" decoding="async"
              alt="Drap de bain en coton épais avec le prénom Alicia brodé en lettres cursives.">
       </figure>
       <div class="carte__txt">
@@ -183,7 +197,9 @@
 
     <article class="carte">
       <figure class="carte__img">
-        <img src="img/cadre-naissance.webp" width="1000" height="1250" loading="lazy" decoding="async"
+        <img srcset="img/cadre-naissance-320w.webp 320w, img/cadre-naissance-480w.webp 480w, img/cadre-naissance-620w.webp 620w, img/cadre-naissance-800w.webp 800w, img/cadre-naissance.webp 1000w"
+         sizes="(min-width: 31rem) 368px, 74vw"
+         src="img/cadre-naissance.webp" width="1000" height="1250" loading="lazy" decoding="async"
              alt="Cadre de naissance brodé au prénom Ambre, avec la date, la taille et le poids.">
       </figure>
       <div class="carte__txt">
@@ -200,13 +216,15 @@
 
     <article class="carte">
       <figure class="carte__img">
-        <img src="img/trousse.webp" width="1000" height="1250" loading="lazy" decoding="async"
+        <img srcset="img/trousse-320w.webp 320w, img/trousse-480w.webp 480w, img/trousse-620w.webp 620w, img/trousse-800w.webp 800w, img/trousse.webp 1000w"
+         sizes="(min-width: 31rem) 368px, 74vw"
+         src="img/trousse.webp" width="1000" height="1250" loading="lazy" decoding="async"
              alt="Trousse en tissu cousue et brodée au prénom Lisa.">
       </figure>
       <div class="carte__txt">
         <p class="carte__pour">cousue pour <span>Lisa</span></p>
         <h3>La trousse cousue main</h3>
-        <p>Je choisis le tissu avec vous, je la couds, je brode le prénom. Aucune n'est identique à une autre.</p>
+        <p>Je choisis le tissu avec vous, je la couds, je brode le prénom. Vous prenez dans mes coupons, ou vous m'apportez le vôtre.</p>
         <p class="prix">à partir de <b>28&nbsp;€</b></p>
         <p class="carte__cta">
           <a class="lien-wa" href="https://wa.me/33600000000?text=Bonjour%20Emma%2C%20j%27ai%20vu%20%C2%AB%20La%20trousse%20cousue%20main%20%C2%BB%20sur%20votre%20site%20et%20j%27aimerais%20la%20m%C3%AAme.">Je veux la même</a>
@@ -217,7 +235,9 @@
 
     <article class="carte">
       <figure class="carte__img">
-        <img src="img/sac-a-dos.webp" width="1000" height="1250" loading="lazy" decoding="async"
+        <img srcset="img/sac-a-dos-320w.webp 320w, img/sac-a-dos-480w.webp 480w, img/sac-a-dos-620w.webp 620w, img/sac-a-dos-800w.webp 800w, img/sac-a-dos.webp 1000w"
+         sizes="(min-width: 31rem) 368px, 74vw"
+         src="img/sac-a-dos.webp" width="1000" height="1250" loading="lazy" decoding="async"
              alt="Petit sac à dos d'école brodé au prénom Malo en grandes lettres.">
       </figure>
       <div class="carte__txt">
@@ -234,7 +254,9 @@
 
     <article class="carte">
       <figure class="carte__img">
-        <img src="img/sac-banane.webp" width="1000" height="1250" loading="lazy" decoding="async"
+        <img srcset="img/sac-banane-320w.webp 320w, img/sac-banane-480w.webp 480w, img/sac-banane-620w.webp 620w, img/sac-banane-800w.webp 800w, img/sac-banane.webp 1000w"
+         sizes="(min-width: 31rem) 368px, 74vw"
+         src="img/sac-banane.webp" width="1000" height="1250" loading="lazy" decoding="async"
              alt="Sac banane en tissu imprimé, entièrement cousu à l'atelier.">
       </figure>
       <div class="carte__txt">
@@ -251,7 +273,9 @@
 
     <article class="carte">
       <figure class="carte__img">
-        <img src="img/chaussette-noel.webp" width="1000" height="1250" loading="lazy" decoding="async"
+        <img srcset="img/chaussette-noel-320w.webp 320w, img/chaussette-noel-480w.webp 480w, img/chaussette-noel-620w.webp 620w, img/chaussette-noel-800w.webp 800w, img/chaussette-noel.webp 1000w"
+         sizes="(min-width: 31rem) 368px, 74vw"
+         src="img/chaussette-noel.webp" width="1000" height="1250" loading="lazy" decoding="async"
              alt="Chaussette de Noël rouge, prénom et motifs brodés, devant le rack de bobines.">
       </figure>
       <div class="carte__txt">
@@ -275,7 +299,9 @@
 
 <!-- ============ BANDEAU BOBINES — pleine largeur, mot fondu dans la photo ============ -->
 <div class="bandeau">
-  <img src="img/bobines-bandeau.webp" width="2400" height="620" loading="lazy" decoding="async"
+  <img srcset="img/bobines-bandeau-480w.webp 480w, img/bobines-bandeau-620w.webp 620w, img/bobines-bandeau-800w.webp 800w, img/bobines-bandeau-1000w.webp 1000w, img/bobines-bandeau-1400w.webp 1400w, img/bobines-bandeau-2000w.webp 2000w, img/bobines-bandeau.webp 2400w"
+         sizes="100vw"
+         src="img/bobines-bandeau.webp" width="2400" height="620" loading="lazy" decoding="async"
        alt="Mur de bobines de fil à broder de toutes les couleurs, dans l'atelier.">
   <p class="bandeau__mot" aria-hidden="true">un mur de bobines</p>
   <p class="bandeau__note">Le rack, derrière la machine. C'est là que commence chaque commande.</p>
@@ -285,7 +311,7 @@
 <section class="nuit bande" id="dentelle">
   <div class="nuit__col">
     <div class="nuit__fixe">
-      <p class="sourcil sourcil--clair"><i>02</i> Ma spécialité</p>
+      <p class="sourcil sourcil--clair">Ma spécialité</p>
       <h2 class="titre-xl">La dentelle libre.</h2>
       <p class="nuit__dire">La machine brode <em>dans le vide</em>, sur un support qui disparaît
         au rinçage. Il ne reste que le fil, ajouré, qui se tient tout seul.</p>
@@ -302,17 +328,23 @@
 
   <div class="nuit__images">
     <figure class="nuit__fig nuit__fig--a">
-      <img src="img/papillon-plein-ecran.webp" width="2400" height="1350" loading="lazy" decoding="async"
+      <img srcset="img/papillon-plein-ecran-480w.webp 480w, img/papillon-plein-ecran-620w.webp 620w, img/papillon-plein-ecran-800w.webp 800w, img/papillon-plein-ecran-1000w.webp 1000w, img/papillon-plein-ecran-1400w.webp 1400w, img/papillon-plein-ecran-2000w.webp 2000w, img/papillon-plein-ecran.webp 2400w"
+         sizes="(min-width: 62rem) 47vw, calc(100vw - 2.5rem)"
+         src="img/papillon-plein-ecran.webp" width="2400" height="1350" loading="lazy" decoding="async"
            alt="Papillon en dentelle libre brodé de fil ocre et rouge, posé sur une vitre.">
       <figcaption>Le papillon aux coquelicots — 14&nbsp;cm</figcaption>
     </figure>
     <figure class="nuit__fig nuit__fig--b">
-      <img src="img/arbre-de-vie.webp" width="1000" height="1250" loading="lazy" decoding="async"
+      <img srcset="img/arbre-de-vie-320w.webp 320w, img/arbre-de-vie-480w.webp 480w, img/arbre-de-vie-620w.webp 620w, img/arbre-de-vie-800w.webp 800w, img/arbre-de-vie.webp 1000w"
+         sizes="(min-width: 62rem) 42vw, calc(100vw - 2.5rem)"
+         src="img/arbre-de-vie.webp" width="1000" height="1250" loading="lazy" decoding="async"
            alt="Arbre de vie en dentelle libre, entièrement brodé de fil, sans tissu de support.">
       <figcaption>Arbre de vie, encadré — 24&nbsp;cm</figcaption>
     </figure>
     <figure class="nuit__fig nuit__fig--c">
-      <img src="img/papillon-detail.webp" width="1000" height="1000" loading="lazy" decoding="async"
+      <img srcset="img/papillon-detail-320w.webp 320w, img/papillon-detail-480w.webp 480w, img/papillon-detail-620w.webp 620w, img/papillon-detail-800w.webp 800w, img/papillon-detail.webp 1000w"
+         sizes="(min-width: 62rem) 352px, calc(100vw - 2.5rem)"
+         src="img/papillon-detail.webp" width="1000" height="1000" loading="lazy" decoding="async"
            alt="Détail macro du fil : les points se croisent et forment une dentelle ajourée.">
       <figcaption>Le détail du fil, de tout près</figcaption>
     </figure>
@@ -322,7 +354,7 @@
 <!-- ======================= OCCASIONS — grille pleine largeur ======================= -->
 <section class="bande occasions" id="occasions">
   <div class="tete tete--large">
-    <p class="sourcil"><i>03</i> Pour quelle occasion&nbsp;?</p>
+    <p class="sourcil">Pour quelle occasion&nbsp;?</p>
     <h2 class="titre-xl">Naissance, mariage,<br>fête des mères, <em>Noël…</em></h2>
     <p class="mesure">Et tout le reste&nbsp;: un baptême, un départ en retraite, un anniversaire,
       un cadeau d'équipe. Donnez-moi la date, je vous dis ce qui tient dans le délai.</p>
@@ -334,7 +366,9 @@
         <span class="occ__n">01</span>
         <span class="occ__nom">Une naissance</span>
         <span class="occ__liste">Doudou, cadre de naissance, bavoir, cape de bain</span>
-        <span class="occ__img"><img src="img/doudou-plat.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Doudou plat en tissu, prénom brodé au centre, cadeau de naissance."></span>
+        <span class="occ__img"><img srcset="img/doudou-plat-320w.webp 320w, img/doudou-plat-480w.webp 480w, img/doudou-plat-620w.webp 620w, img/doudou-plat-800w.webp 800w, img/doudou-plat.webp 1000w"
+         sizes="(max-width: 34rem) calc(100vw - 2.5rem), (max-width: 83rem) 18vw, 240px"
+         src="img/doudou-plat.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Doudou plat en tissu, prénom brodé au centre, cadeau de naissance."></span>
         <span class="occ__fleche" aria-hidden="true">→</span>
       </a>
     </li>
@@ -343,7 +377,9 @@
         <span class="occ__n">02</span>
         <span class="occ__nom">Un mariage</span>
         <span class="occ__liste">Pochettes des témoins, mouchoir, dentelle cousue sur la robe</span>
-        <span class="occ__img"><img src="img/papillon.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Papillon en dentelle libre, entièrement brodé de fil, à coudre sur une robe."></span>
+        <span class="occ__img"><img srcset="img/papillon-320w.webp 320w, img/papillon-480w.webp 480w, img/papillon-620w.webp 620w, img/papillon-800w.webp 800w, img/papillon.webp 1000w"
+         sizes="(max-width: 34rem) calc(100vw - 2.5rem), (max-width: 83rem) 18vw, 240px"
+         src="img/papillon.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Papillon en dentelle libre, entièrement brodé de fil, à coudre sur une robe."></span>
         <span class="occ__fleche" aria-hidden="true">→</span>
       </a>
     </li>
@@ -352,7 +388,9 @@
         <span class="occ__n">03</span>
         <span class="occ__nom">La fête des mères</span>
         <span class="occ__liste">Trousse, tablier, serviettes de plage, tambour décoratif</span>
-        <span class="occ__img"><img src="img/tambour.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Tambour à broder décoratif, brodé et prêt à accrocher au mur."></span>
+        <span class="occ__img"><img srcset="img/tambour-320w.webp 320w, img/tambour-480w.webp 480w, img/tambour-620w.webp 620w, img/tambour-800w.webp 800w, img/tambour.webp 1000w"
+         sizes="(max-width: 34rem) calc(100vw - 2.5rem), (max-width: 83rem) 18vw, 240px"
+         src="img/tambour.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Tambour à broder décoratif, brodé et prêt à accrocher au mur."></span>
         <span class="occ__fleche" aria-hidden="true">→</span>
       </a>
     </li>
@@ -361,7 +399,9 @@
         <span class="occ__n">04</span>
         <span class="occ__nom">Noël</span>
         <span class="occ__liste">Chaussette de cheminée, pyjama, plaid, boule brodée</span>
-        <span class="occ__img"><img src="img/chaussette-noel.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Chaussette de Noël en feutrine rouge, prénom brodé sur le revers."></span>
+        <span class="occ__img"><img srcset="img/chaussette-noel-320w.webp 320w, img/chaussette-noel-480w.webp 480w, img/chaussette-noel-620w.webp 620w, img/chaussette-noel-800w.webp 800w, img/chaussette-noel.webp 1000w"
+         sizes="(max-width: 34rem) calc(100vw - 2.5rem), (max-width: 83rem) 18vw, 240px"
+         src="img/chaussette-noel.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Chaussette de Noël en feutrine rouge, prénom brodé sur le revers."></span>
         <span class="occ__fleche" aria-hidden="true">→</span>
       </a>
     </li>
@@ -371,7 +411,7 @@
 <!-- ======================= MÉTHODE — le fil traverse la section ======================= -->
 <section class="bande methode" id="methode" data-broderie="fil" data-fil="#B89355">
   <div class="tete">
-    <p class="sourcil"><i>04</i> Comment ça se passe</p>
+    <p class="sourcil">Comment ça se passe</p>
     <h2 class="titre-xl">Trois messages,<br><em>et c'est parti.</em></h2>
   </div>
 
@@ -386,7 +426,7 @@
       <p class="etapes__n" aria-hidden="true">2</p>
       <h3>Je vous montre avant</h3>
       <p>Je vous envoie le motif, l'écriture et la couleur du fil. Rien ne part sous l'aiguille
-        sans votre accord, et les retouches du projet sont gratuites.</p>
+        sans votre accord.</p>
     </li>
     <li>
       <p class="etapes__n" aria-hidden="true">3</p>
@@ -400,13 +440,14 @@
 <!-- ======================= L'ATELIER ======================= -->
 <section class="bande atelier" id="atelier">
   <figure class="atelier__tambour" data-broderie="tambour" data-declencheur="visible">
-    <img src="img/machine-carre.webp" width="1000" height="1000" loading="lazy" decoding="async"
+    <img srcset="img/machine-carre-320w.webp 320w, img/machine-carre-480w.webp 480w, img/machine-carre-620w.webp 620w, img/machine-carre-800w.webp 800w, img/machine-carre.webp 1000w"
+         sizes="(max-width: 27rem) calc(100vw - 2.5rem), 384px"
+         src="img/machine-carre.webp" width="1000" height="1000" loading="lazy" decoding="async"
          alt="La machine à broder en cours de travail, le fil tendu au-dessus du tissu cadré.">
   </figure>
 
   <div class="atelier__dire">
-    <p class="sourcil"><i>05</i> L'atelier</p>
-    <h2 class="titre-xl">Pas d'équipe.<br>Moi, ma machine,<br>et <em>un mur de bobines.</em></h2>
+        <h2 class="titre-xl">Pas d'équipe.<br>Moi, ma machine,<br>et <em>un mur de bobines.</em></h2>
     <p class="mesure">Je brode depuis 2021, chez moi à Vitré. Il n'y a pas d'équipe&nbsp;: c'est moi
       qui lis vos messages, qui choisis la bobine dans le rack derrière moi, qui lance la machine
       et qui ferme le paquet.</p>
@@ -421,7 +462,9 @@
   </div>
 
   <div class="atelier__bande">
-    <img src="img/machine-plein-ecran.webp" width="2400" height="1350" loading="lazy" decoding="async"
+    <img srcset="img/machine-plein-ecran-480w.webp 480w, img/machine-plein-ecran-620w.webp 620w, img/machine-plein-ecran-800w.webp 800w, img/machine-plein-ecran-1000w.webp 1000w, img/machine-plein-ecran-1400w.webp 1400w, img/machine-plein-ecran-2000w.webp 2000w, img/machine-plein-ecran.webp 2400w"
+         sizes="100vw"
+         src="img/machine-plein-ecran.webp" width="2400" height="1350" loading="lazy" decoding="async"
          alt="Vue large de l'atelier : la machine à broder, le rack de bobines et le tapis de coupe.">
   </div>
 </section>
@@ -429,7 +472,7 @@
 <!-- ======================= AVIS ======================= -->
 <section class="bande avis" id="avis">
   <div class="tete">
-    <p class="sourcil"><i>06</i> Ce qu'on m'écrit après</p>
+    <h2 class="sourcil">Ce qu'on m'écrit après</h2>
   </div>
 
   <blockquote class="avis__grand">
@@ -439,7 +482,7 @@
 
   <ul class="avis__liste">
     <li>
-      <blockquote><p>Emmanuelle a brodé le logo de notre club sur dix-huit polos. Tout était prêt en dix jours, et le rendu est net.</p>
+      <blockquote><p>Emma a brodé le logo de notre club sur dix-huit polos. Tout était prêt en dix jours, et le rendu est net.</p>
       <footer>Julien — club de Vitré</footer></blockquote>
     </li>
     <li>
@@ -462,8 +505,7 @@
 ============================================================================ -->
 <section class="bande insta" id="instagram" aria-labelledby="insta-titre">
   <div class="tete insta__tete">
-    <p class="sourcil"><i>07</i> Des nouvelles de l'atelier</p>
-    <h2 class="titre-xl" id="insta-titre">Ce qui sort de<br>la machine, <em>au jour le jour.</em></h2>
+    <h2 class="titre-xl titre-xl--pose" id="insta-titre">Des nouvelles de l'atelier</h2>
     <p class="mesure">Je poste les pièces au fur et à mesure. C'est le meilleur endroit
       pour voir ce que je sais faire — et pour attraper une idée.</p>
     <p class="insta__lien">
@@ -478,20 +520,38 @@
 
   <!-- Conteneur qui défile, pas la page. -->
   <ul class="insta__mur" tabindex="0" role="region" aria-label="Dernières publications Instagram, rangée défilante">
-    <li><img src="img/doudou.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Doudou lapin brodé au prénom, posé devant un bouquet."></li>
-    <li><img src="img/sac-banane.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Sac banane en suédine moutarde brodé de trois chats."></li>
-    <li><img src="img/papillon.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Papillon brodé en dentelle libre, posé sur un feuillage."></li>
-    <li><img src="img/trousse.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Trousse fleurie cousue main, prénom brodé en fil doré."></li>
-    <li><img src="img/chaussette-noel.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Chaussette de Noël rouge brodée au prénom."></li>
-    <li><img src="img/sac-a-dos.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Sac à dos d'enfant en simili bleu, prénom brodé entouré d'étoiles."></li>
-    <li><img src="img/arbre-de-vie.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Arbre de vie brodé en dentelle ajourée fil doré."></li>
-    <li><img src="img/serviette.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Drap de bain rose poudré brodé au prénom."></li>
+    <li><img srcset="img/doudou-320w.webp 320w, img/doudou-480w.webp 480w, img/doudou-620w.webp 620w"
+         sizes="(max-width: 40rem) 62vw, (max-width: 71.4rem) 21vw, 240px"
+         src="img/doudou.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Doudou lapin brodé au prénom, posé devant un bouquet."></li>
+    <li><img srcset="img/sac-banane-320w.webp 320w, img/sac-banane-480w.webp 480w, img/sac-banane-620w.webp 620w"
+         sizes="(max-width: 40rem) 62vw, (max-width: 71.4rem) 21vw, 240px"
+         src="img/sac-banane.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Sac banane en suédine moutarde brodé de trois chats."></li>
+    <li><img srcset="img/papillon-320w.webp 320w, img/papillon-480w.webp 480w, img/papillon-620w.webp 620w"
+         sizes="(max-width: 40rem) 62vw, (max-width: 71.4rem) 21vw, 240px"
+         src="img/papillon.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Papillon brodé en dentelle libre, posé sur un feuillage."></li>
+    <li><img srcset="img/trousse-320w.webp 320w, img/trousse-480w.webp 480w, img/trousse-620w.webp 620w"
+         sizes="(max-width: 40rem) 62vw, (max-width: 71.4rem) 21vw, 240px"
+         src="img/trousse.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Trousse fleurie cousue main, prénom brodé en fil doré."></li>
+    <li><img srcset="img/chaussette-noel-320w.webp 320w, img/chaussette-noel-480w.webp 480w, img/chaussette-noel-620w.webp 620w"
+         sizes="(max-width: 40rem) 62vw, (max-width: 71.4rem) 21vw, 240px"
+         src="img/chaussette-noel.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Chaussette de Noël rouge brodée au prénom."></li>
+    <li><img srcset="img/sac-a-dos-320w.webp 320w, img/sac-a-dos-480w.webp 480w, img/sac-a-dos-620w.webp 620w"
+         sizes="(max-width: 40rem) 62vw, (max-width: 71.4rem) 21vw, 240px"
+         src="img/sac-a-dos.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Sac à dos d'enfant en simili bleu, prénom brodé entouré d'étoiles."></li>
+    <li><img srcset="img/arbre-de-vie-320w.webp 320w, img/arbre-de-vie-480w.webp 480w, img/arbre-de-vie-620w.webp 620w"
+         sizes="(max-width: 40rem) 62vw, (max-width: 71.4rem) 21vw, 240px"
+         src="img/arbre-de-vie.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Arbre de vie brodé en dentelle ajourée fil doré."></li>
+    <li><img srcset="img/serviette-320w.webp 320w, img/serviette-480w.webp 480w, img/serviette-620w.webp 620w"
+         sizes="(max-width: 40rem) 62vw, (max-width: 71.4rem) 21vw, 240px"
+         src="img/serviette.webp" width="1000" height="1250" loading="lazy" decoding="async" alt="Drap de bain rose poudré brodé au prénom."></li>
   </ul>
 </section>
 
 <!-- ======================= APPEL FINAL — pleine largeur, sombre ======================= -->
 <section class="final bande" id="devis">
-  <img class="final__fond" src="img/tambour-plein-ecran.webp" width="2400" height="1350"
+  <img srcset="img/tambour-plein-ecran-480w.webp 480w, img/tambour-plein-ecran-620w.webp 620w, img/tambour-plein-ecran-800w.webp 800w, img/tambour-plein-ecran-1000w.webp 1000w, img/tambour-plein-ecran-1400w.webp 1400w"
+         sizes="100vw"
+         class="final__fond" src="img/tambour-plein-ecran.webp" width="2400" height="1350"
        loading="lazy" decoding="async" alt="">
   <div class="final__in">
     <p class="sourcil sourcil--clair">On commence&nbsp;?</p>
@@ -506,7 +566,9 @@
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"/></svg>
         Écrire sur WhatsApp
       </a>
-      <a class="btn btn--or" href="#">Remplir le formulaire</a>
+      <!-- deviendra /contact quand le formulaire guide existera ; en attendant,
+           un canal qui fonctionne vraiment plutot qu'une ancre morte. -->
+      <a class="btn btn--or" href="mailto:bonjour@emma-broderie.fr?subject=Demande%20de%20devis%20broderie">Écrire un e-mail</a>
     </p>
     <p class="final__note">Ou par téléphone au <a href="tel:+33600000000">06&nbsp;00&nbsp;00&nbsp;00&nbsp;00</a>,
       du lundi au vendredi, 9&nbsp;h–18&nbsp;h.</p>

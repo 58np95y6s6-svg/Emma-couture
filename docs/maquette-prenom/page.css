@@ -21,7 +21,9 @@
   /* Encres */
   --encre:      #241C18;
   --encre-doux: #4C3C34;
-  --gris:       #8A7E78;
+  /* Mesure : #8A7E78 sur le sable ne donnait que 3,11:1 (AA demande 4,5).
+     Neutre biaise vers la brique, comme le demande la direction. */
+  --gris:       #6A5C55;
 
   /* Les fils, pris dans ses photos */
   --vert:       #1E2620;   /* tapis de coupe, presque noir */
@@ -171,33 +173,33 @@ h1 {
   font-size: var(--t-h1);
   line-height: 1.02;
   letter-spacing: -0.018em;
-  font-variation-settings: 'wght' 520, 'SOFT' 22, 'WONK' 0, 'opsz' 90;
+  font-variation-settings: 'wght' 520, 'opsz' 90;
   text-wrap: balance;
 }
 h1 em {
   font-style: italic;
   color: var(--rouille);
-  font-variation-settings: 'wght' 430, 'SOFT' 90, 'WONK' 1, 'opsz' 110;
+  font-variation-settings: 'wght' 430, 'opsz' 110;
 }
 
 .titre-xl {
   font-size: var(--t-h2);
   line-height: 0.95;
   letter-spacing: -0.024em;
-  font-variation-settings: 'wght' 480, 'SOFT' 18, 'WONK' 0, 'opsz' 120;
+  font-variation-settings: 'wght' 480, 'opsz' 120;
   text-wrap: balance;
 }
 .titre-xl em {
   font-style: italic;
   color: var(--rouille);
-  font-variation-settings: 'wght' 400, 'SOFT' 96, 'WONK' 1, 'opsz' 140;
+  font-variation-settings: 'wght' 400, 'opsz' 140;
 }
 
 h3 {
   font-size: var(--t-h3);
   line-height: 1.1;
   letter-spacing: -0.012em;
-  font-variation-settings: 'wght' 520, 'SOFT' 24, 'WONK' 0, 'opsz' 60;
+  font-variation-settings: 'wght' 520, 'opsz' 60;
 }
 
 /* Le sourcil : petite majuscule espacée, avec un numéro en rouille. */
@@ -212,23 +214,13 @@ h3 {
 }
 .sourcil--hero { white-space: normal; line-height: 1.5; }
 @media (max-width: 61.999rem) { .sourcil--hero::after { display: none; } }
-.sourcil i {
-  font-style: normal;
-  font-family: 'Fraunces', Georgia, serif;
-  font-variation-settings: 'wght' 700, 'opsz' 20;
-  font-size: 1.1em;
-  letter-spacing: 0.04em;
-  color: var(--rouille);
-  border-bottom: 2px solid color-mix(in oklab, var(--rouille) 40%, transparent);
-  padding-bottom: 1px;
-}
 .sourcil::after {
   content: ''; flex: 1 1 4rem; height: 1px; max-width: 8rem;
   background: repeating-linear-gradient(90deg, currentColor 0 5px, transparent 5px 10px);
   opacity: 0.45;
 }
 .sourcil--clair { color: color-mix(in oklab, var(--rose) 82%, #fff); }
-.sourcil--clair i { color: var(--dore); border-color: color-mix(in oklab, var(--dore) 50%, transparent); }
+h2.sourcil { font-weight: 500; }
 
 .chapo {
   font-size: var(--t-chapo);
@@ -394,7 +386,7 @@ h3 {
 .marque { text-decoration: none; display: grid; gap: 0.1rem; margin-inline-end: auto; }
 .marque__nom {
   font-family: 'Fraunces', Georgia, serif;
-  font-variation-settings: 'wght' 600, 'SOFT' 40, 'WONK' 1, 'opsz' 30;
+  font-variation-settings: 'wght' 600, 'opsz' 30;
   font-size: clamp(1rem, 0.94rem + 0.35vw, 1.2rem);
   letter-spacing: -0.01em;
   line-height: 1;
@@ -447,7 +439,7 @@ h3 {
   padding: 0.85rem 0; min-height: 44px;
   text-decoration: none;
   font-family: 'Fraunces', Georgia, serif;
-  font-variation-settings: 'wght' 500, 'SOFT' 40, 'opsz' 40;
+  font-variation-settings: 'wght' 500, 'opsz' 40;
   font-size: 1.25rem;
   border-bottom: 1px solid color-mix(in oklab, var(--brique) 15%, transparent);
 }
@@ -487,16 +479,19 @@ h3 {
   pointer-events: none;
 }
 
-/* Sur mobile : une légende sous la photo, qui ne mange pas son visage. */
+/* Sur mobile : une légende sous la photo, qui ne mange pas son visage.
+   Elle est enfant direct de .hero : dans .hero__photo (overflow:hidden) elle
+   etait entierement rognee, donc invisible sur telephone. */
 .hero__vignette {
   grid-column: large-d / large-f;
+  margin-inline: var(--marge);
   display: grid; gap: 0.15rem;
   padding-block-start: 0.7rem;
   border-block-start: 1px solid color-mix(in oklab, var(--brique) 28%, transparent);
 }
 .hero__vignette strong {
   font-family: 'Fraunces', Georgia, serif;
-  font-variation-settings: 'wght' 620, 'SOFT' 50, 'WONK' 1, 'opsz' 30;
+  font-variation-settings: 'wght' 620, 'opsz' 30;
   font-size: 1rem; line-height: 1.1;
 }
 .hero__vignette span { font-size: var(--t-micro); line-height: 1.4; color: var(--encre-doux); }
@@ -509,7 +504,7 @@ h3 {
   font-size: var(--t-geant);
   line-height: 0.82;
   font-style: italic;
-  font-variation-settings: 'wght' 330, 'SOFT' 100, 'WONK' 1, 'opsz' 144;
+  font-variation-settings: 'wght' 330, 'opsz' 144;
   letter-spacing: -0.03em;
   color: var(--brique);
   margin-block: clamp(-0.2rem, -0.5vw, 0rem) -0.1em;
@@ -568,11 +563,15 @@ h3 {
   .hero__photo::after {
     background: linear-gradient(200deg, transparent 52%, color-mix(in oklab, var(--vert) 48%, transparent));
   }
-  /* Sur ordinateur : une carte de verre posée sur la photo. */
+  /* Sur ordinateur : une carte de verre posée sur la photo. Placee dans la
+     meme cellule de grille que la photo, sans position absolue : plus rien
+     ne depend du rognage du cadre. */
   .hero__vignette {
-    position: absolute; z-index: 2;
-    inset-inline-start: 1.5rem; inset-block-end: 1.5rem;
+    grid-column: mi / bord-f; grid-row: 1; z-index: 2;
+    align-self: end; justify-self: start;
+    margin: 0 0 1.5rem 1.5rem;
     max-width: 21rem;
+    border-block-start: 0;
     padding: 0.7rem 1.05rem;
     border: 1px solid color-mix(in oklab, var(--coquille) 45%, transparent);
     border-radius: 14px;
@@ -613,7 +612,7 @@ h3 {
   display: inline-flex; align-items: center; gap: 0.6rem;
   font-size: clamp(1.1rem, 0.9rem + 0.9vw, 1.8rem);
   font-style: italic;
-  font-variation-settings: 'wght' 380, 'SOFT' 100, 'WONK' 1, 'opsz' 90;
+  font-variation-settings: 'wght' 380, 'opsz' 90;
   letter-spacing: -0.01em;
   color: color-mix(in oklab, var(--f, var(--rose)) 62%, var(--coquille));
   white-space: nowrap;
@@ -637,7 +636,14 @@ h3 {
 /* -----------------------------------------------------------------------------
    10. EN-TÊTES DE SECTION
 ----------------------------------------------------------------------------- */
-.creations, .occasions, .methode, .atelier, .avis { padding-block: var(--respire); }
+/* Le rythme vertical est volontairement inegal : sept sections au meme
+   padding-block se lisent comme un gabarit. On serre ce qui est dense
+   (avis, methode, instagram) et on aere ce qui porte une grande image. */
+.creations { padding-block: var(--respire); }
+.occasions { padding-block: calc(var(--respire) * 0.62) var(--respire); }
+.methode   { padding-block: calc(var(--respire) * 0.72); }
+.atelier   { padding-block: calc(var(--respire) * 1.12) var(--respire); }
+.avis      { padding-block: calc(var(--respire) * 0.7); }
 
 .tete { display: grid; gap: clamp(1rem, 2vw, 1.5rem); justify-items: start; }
 .tete .titre-xl { max-width: 24ch; }
@@ -663,10 +669,6 @@ h3 {
   color: var(--gris);
 }
 .indice span { color: var(--rouille); font-size: 1.2em; }
-@media (prefers-reduced-motion: no-preference) {
-  .indice span { animation: pousse 2.6s ease-in-out infinite; }
-}
-@keyframes pousse { 0%, 100% { transform: none; } 50% { transform: translateX(6px); } }
 
 /* Révélation au défilement (scroll-driven, avec repli : état final par défaut) */
 @supports (animation-timeline: view()) {
@@ -756,14 +758,14 @@ h3 {
   font-family: 'Fraunces', Georgia, serif;
   font-style: italic; text-transform: none; letter-spacing: 0;
   font-size: 1.45em;
-  font-variation-settings: 'wght' 420, 'SOFT' 100, 'WONK' 1, 'opsz' 60;
+  font-variation-settings: 'wght' 420, 'opsz' 60;
   color: var(--mauve);
 }
 .carte h3 {
   transition: font-variation-settings 450ms cubic-bezier(.2,.9,.3,1), color 300ms ease;
 }
 .carte:hover h3 {
-  font-variation-settings: 'wght' 760, 'SOFT' 100, 'WONK' 1, 'opsz' 100;
+  font-variation-settings: 'wght' 760, 'opsz' 100;
   color: var(--rouille);
 }
 .carte__txt > p:not(.prix):not(.carte__pour) {
@@ -788,12 +790,12 @@ h3 {
   font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
   line-height: 1.05;
-  font-variation-settings: 'wght' 400, 'SOFT' 40, 'opsz' 60;
+  font-variation-settings: 'wght' 400, 'opsz' 60;
   color: var(--encre-doux);
 }
 .rangee__fin b {
   font-style: italic; color: var(--rouille);
-  font-variation-settings: 'wght' 500, 'SOFT' 100, 'WONK' 1, 'opsz' 90;
+  font-variation-settings: 'wght' 500, 'opsz' 90;
 }
 
 /* -----------------------------------------------------------------------------
@@ -851,7 +853,7 @@ h3 {
   line-height: 0.9;
   letter-spacing: -0.03em;
   text-align: center;
-  font-variation-settings: 'wght' 420, 'SOFT' 90, 'WONK' 1, 'opsz' 144;
+  font-variation-settings: 'wght' 420, 'opsz' 144;
   /* Plus de mix-blend-mode : sur un fond aussi bariolé, il rendait le mot
      illisible. Un blanc chaud posé sur le voile, avec une ombre douce. */
   color: #FBF3E9;
@@ -906,7 +908,7 @@ h3 {
 .nuit__dire em {
   font-family: 'Fraunces', Georgia, serif;
   font-style: italic; color: var(--dore);
-  font-variation-settings: 'wght' 430, 'SOFT' 100, 'WONK' 1, 'opsz' 90;
+  font-variation-settings: 'wght' 430, 'opsz' 90;
 }
 .nuit__fixe { display: grid; gap: clamp(0.9rem, 2vw, 1.4rem); justify-items: start; }
 .nuit .titre-xl em { color: var(--dore); }
@@ -987,7 +989,9 @@ h3 {
 
 .occ__item > a {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) minmax(0, 0.95fr) auto;
+  /* cinq enfants : sans la cinquieme piste, la fleche retombait a la ligne
+     sous le numero au lieu de finir la ligne a droite. */
+  grid-template-columns: auto minmax(0, 1fr) minmax(0, 0.95fr) auto auto;
   align-items: center;
   column-gap: clamp(1rem, 3vw, 2.75rem);
   padding-block: clamp(1.1rem, 2.2vw, 1.9rem);
@@ -1004,7 +1008,9 @@ h3 {
   font-family: 'Fraunces', Georgia, serif;
   font-size: var(--t-micro);
   font-variation-settings: 'wght' 500;
-  color: var(--gris);
+  /* Le numero porte la couleur du fil de la piece photographiee a sa droite :
+     il encode une information vraie au lieu de decorer. */
+  color: var(--f, var(--gris));
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.1em;
 }
@@ -1014,7 +1020,7 @@ h3 {
   font-size: clamp(1.5rem, 0.9rem + 2.4vw, 3.1rem);
   line-height: 1;
   letter-spacing: -0.022em;
-  font-variation-settings: 'wght' 470, 'SOFT' 20, 'opsz' 120;
+  font-variation-settings: 'wght' 470, 'opsz' 120;
   transition: color 300ms ease;
 }
 .occ__item > a:hover .occ__nom,
@@ -1112,7 +1118,7 @@ h3 {
   font-size: clamp(4.5rem, 2rem + 9vw, 9rem);
   line-height: 0.74;
   font-style: italic;
-  font-variation-settings: 'wght' 300, 'SOFT' 100, 'WONK' 1, 'opsz' 144;
+  font-variation-settings: 'wght' 300, 'opsz' 144;
   color: transparent;
   -webkit-text-stroke: 1.4px var(--brique);
   margin-block-end: 0.2rem;
@@ -1141,7 +1147,7 @@ h3 {
   font-style: italic;
   font-size: clamp(2rem, 1.3rem + 2.6vw, 3.2rem);
   line-height: 1;
-  font-variation-settings: 'wght' 330, 'SOFT' 100, 'WONK' 1, 'opsz' 120;
+  font-variation-settings: 'wght' 330, 'opsz' 120;
   color: var(--mauve);
   padding-block-start: 0.3rem;
 }
@@ -1157,7 +1163,7 @@ h3 {
   font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.4rem);
   line-height: 1;
-  font-variation-settings: 'wght' 620, 'SOFT' 20, 'opsz' 60;
+  font-variation-settings: 'wght' 620, 'opsz' 60;
   color: var(--rouille);
 }
 .chiffres span { font-size: var(--t-micro); letter-spacing: 0.08em; text-transform: uppercase; color: var(--gris); max-width: 11rem; }
@@ -1223,14 +1229,14 @@ h3 {
   font-size: clamp(1.6rem, 1rem + 3.2vw, 3.5rem);
   line-height: 1.1;
   letter-spacing: -0.02em;
-  font-variation-settings: 'wght' 420, 'SOFT' 40, 'WONK' 0, 'opsz' 120;
+  font-variation-settings: 'wght' 420, 'opsz' 120;
   text-wrap: pretty;
 }
 .avis__grand p::before { content: '« '; color: var(--brique); }
 .avis__grand p::after { content: '\00a0»'; color: var(--brique); }
 .avis__grand em {
   font-style: italic; color: var(--rouille);
-  font-variation-settings: 'wght' 420, 'SOFT' 100, 'WONK' 1, 'opsz' 144;
+  font-variation-settings: 'wght' 420, 'opsz' 144;
 }
 .avis__grand footer, .avis__liste footer {
   padding-block-start: 0.7rem;
@@ -1244,8 +1250,8 @@ h3 {
   grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
 }
 .avis__liste li { min-width: 0; }
-.avis__liste blockquote { margin: 0; padding-inline-start: 1.1rem; border-inline-start: 2px solid color-mix(in oklab, var(--dore) 65%, transparent); }
-.avis__liste p { font-size: var(--t-petit); line-height: 1.6; color: var(--encre-doux); font-family: 'Jost', sans-serif; }
+.avis__liste blockquote { margin: 0; padding-inline-start: 1.1rem; border-inline-start: 2px solid color-mix(in oklab, var(--brique) 55%, transparent); }
+.avis__liste p { font-size: var(--t-petit); line-height: 1.6; color: color-mix(in oklab, var(--encre) 82%, var(--brique)); font-family: 'Jost', sans-serif; }
 .avis__note {
   display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap;
   font-size: var(--t-micro); letter-spacing: 0.14em; text-transform: uppercase;
@@ -1258,10 +1264,6 @@ h3 {
   color: var(--rouille);
 }
 .avis__note span { opacity: 0.7; }
-.avis__liste blockquote {
-  border-inline-start-color: color-mix(in oklab, var(--brique) 55%, transparent);
-}
-.avis__liste p { color: color-mix(in oklab, var(--encre) 82%, var(--brique)); }
 
 /* -----------------------------------------------------------------------------
    18. APPEL FINAL — pleine largeur, sombre
@@ -1313,7 +1315,7 @@ h3 {
 .pied__nom {
   font-family: 'Fraunces', Georgia, serif;
   font-size: 1.4rem; line-height: 1;
-  font-variation-settings: 'wght' 560, 'SOFT' 50, 'WONK' 1, 'opsz' 40;
+  font-variation-settings: 'wght' 560, 'opsz' 40;
   color: var(--coquille);
 }
 .pied h2 {
@@ -1352,6 +1354,19 @@ h3 {
 .flottant:active { transform: scale(0.97); }
 @media (prefers-reduced-motion: no-preference) {
   .flottant { animation: arrive-bas 600ms cubic-bezier(.16,1,.3,1) 900ms both; }
+}
+/* Il arrivait au bout de 900 ms et se posait sur « Demander un devis », dans
+   le premier ecran, alors que le hero porte deja son propre bouton WhatsApp.
+   Il ne monte donc qu'une fois le hero passe. */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .flottant {
+      animation: arrive-bas linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 55svh 85svh;
+      animation-delay: 0s;
+    }
+  }
 }
 @keyframes arrive-bas { from { opacity: 0; transform: translateY(150%); } to { opacity: 1; transform: none; } }
 @media (min-width: 62rem) { .flottant { display: none; } }
@@ -1396,7 +1411,6 @@ h3 {
     clip-path: none !important;
   }
   .bandeau img, .atelier__bande img { transform: scale(1.02); }
-  .occ__img img { clip-path: circle(54% at 50% 42%); }
   .entete::before { opacity: 1; }
   .nuit__fixe { position: static; }
 }
@@ -1410,19 +1424,32 @@ h3 {
 }
 
 /* -----------------------------------------------------------------------------
-   18. INSTAGRAM — bande pleine largeur, mur qui déborde du bord droit
+   24. INSTAGRAM — bande pleine largeur, mur qui déborde du bord droit
 
    Section secondaire : elle montre l'activité, elle ne remplace pas les fiches
    créations. Les images viendront de l'import Instagram décrit dans CLAUDE.md,
    recopiées chez nous et validées une à une par Emma dans l'admin.
 ----------------------------------------------------------------------------- */
 .insta {
-  row-gap: clamp(2rem, 4vw, 3rem);
-  background: color-mix(in oklab, var(--sable) 62%, var(--fond));
-  padding-block: var(--respire);
+  row-gap: clamp(1.4rem, 3vw, 2.2rem);
+  /* --fond n'a jamais existe : le color-mix etait invalide et la bande
+     n'avait aucun fond. Teinte vers le vert du tapis de coupe. */
+  background: color-mix(in oklab, var(--sable) 88%, var(--olive));
+  padding-block: calc(var(--respire) * 0.66);
 }
 
 .insta__tete { position: relative; }
+/* Section secondaire : un titre court, sur une ligne, sans sourcil ni
+   italique d'accent. Le gabarit « sourcil / titre en trois lignes / dernier
+   segment en italique » ne doit pas se repeter d'une section a l'autre. */
+.titre-xl--pose {
+  font-size: clamp(1.6rem, 1.1rem + 1.6vw, 2.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  font-variation-settings: 'wght' 430, 'opsz' 60;
+  color: var(--encre-doux);
+  max-width: 20ch;
+}
 .insta__lien { margin-block-start: clamp(0.6rem, 1.5vw, 1rem); }
 .insta__lien .btn { gap: 0.5rem; }
 
