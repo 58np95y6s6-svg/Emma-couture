@@ -359,8 +359,12 @@ Emmanuelle poste déjà ses créations sur Instagram. Le site réutilise ces pho
 ait à les republier**, mais **rien ne s'affiche sans son accord**.
 
 Fonctionnement :
-- Une **fonction planifiée** (1 à 2 fois par jour, jamais à chaque visite) interroge l'API,
+- Une **fonction planifiée (1 à 2 fois par semaine, jamais à chaque visite)** interroge l'API,
   récupère les derniers posts, **recopie les images dans Netlify Blobs** et stocke la légende.
+  Un nouveau post peut donc mettre quelques jours à remonter dans l'admin : c'est voulu, la
+  fraîcheur à l'heure près n'a aucun intérêt ici et chaque exécution coûte des crédits.
+- Prévoir un bouton **« Chercher les nouveautés maintenant »** dans l'admin, pour le jour où
+  Emmanuelle veut afficher un post tout de suite sans attendre le prochain passage.
 - Dans l'admin, une file « Nouveautés Instagram » : chaque post a deux gros boutons,
   **« Afficher sur le site »** / **« Masquer »**. Défaut = masqué. Possibilité de corriger le
   texte alternatif et de rattacher le post à une création existante.
@@ -372,9 +376,10 @@ Contraintes techniques à respecter :
 - ⚠️ L'API **Basic Display a été coupée par Meta le 4 décembre 2024**. Il n'existe plus de voie
   officielle pour un compte personnel : **le compte d'Emmanuelle doit être professionnel**
   (Créateur ou Business). Utiliser l'*Instagram API with Instagram Login*.
-- ⚠️ Le **jeton longue durée expire au bout de 60 jours**. Le renouveler automatiquement tous les
-  ~50 jours depuis la fonction planifiée, et **prévenir Emmanuelle dans l'admin** si le
-  renouvellement échoue — sinon la galerie se vide sans que personne ne comprenne pourquoi.
+- ⚠️ Le **jeton longue durée expire au bout de 60 jours**. Un passage hebdomadaire laisse
+  largement la marge : renouveler le jeton dès qu'il a plus de ~40 jours, à chaque exécution
+  de la fonction planifiée. **Prévenir Emmanuelle dans l'admin** si le renouvellement échoue —
+  sinon la galerie se vide sans que personne ne comprenne pourquoi.
 - ⚠️ Les **URL d'images d'Instagram sont temporaires** (quelques heures à quelques jours) : ne
   jamais les stocker telles quelles ni les servir aux visiteuses. On sert **nos propres copies**.
 - Les images ne doivent **jamais** être chargées depuis le CDN de Meta côté visiteuse : cela ferait
