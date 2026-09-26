@@ -400,6 +400,28 @@ graphiques simples), filtre semaine / mois / année :
 - Avis clients (ajouter, masquer).
 - Prochains marchés / salons (date, lieu).
 
+### 5 bis. Gestion des créations depuis l'admin
+Emmanuelle doit pouvoir **tenir sa vitrine elle-même**, sans rebuild et sans toucher à un fichier :
+
+- **Prix affichés** : modifier le « à partir de » de chaque création. C'est ce qui change le plus
+  souvent (coût des fournitures, saison) et ça ne doit jamais demander une intervention technique.
+- **Photos** : ajouter, remplacer, supprimer les photos d'une création, et **choisir la photo
+  principale**. Compression dans le navigateur avant envoi, EXIF supprimées, stockage en Blobs.
+- **Ordre des créations** : réordonner par glisser-déposer, ou par de gros boutons monter/descendre
+  (plus sûr au doigt sur un téléphone). L'ordre détermine l'affichage de la galerie et de l'accueil.
+- **Mettre en avant / masquer** une création en un geste, sans la supprimer : utile pour retirer
+  une pièce dont elle n'a plus le tissu, ou pousser une occasion de saison.
+- Modifier titre, description, catégorie, occasion et délai.
+
+⚠️ Conséquence sur l'architecture : les créations **ne peuvent pas être uniquement des fichiers
+Markdown figés au build**. Deux couches :
+- le **contenu de fond** (texte long, images optimisées par `astro:assets`) reste en Content
+  Collections, pour le SEO et la performance ;
+- les **champs pilotés par Emmanuelle** (prix, ordre, mise en avant, visibilité, photo principale,
+  photos ajoutées) sont lus à l'exécution depuis Blobs via `/api/reglages`, et **fusionnés** avec
+  le contenu du build côté client ou au niveau du CDN.
+- Si la fonction échoue, le site retombe sur les valeurs du build : jamais de page cassée.
+
 ### 6. Bannière événement (Noël, Halloween, fête des mères, Saint-Valentin…)
 - Texte + photo optionnelle + lien, date de début et date de fin (affichage automatique).
 - Photo compressée dans le navigateur avant envoi (WebP, taille raisonnable), EXIF supprimées,

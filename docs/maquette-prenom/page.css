@@ -62,11 +62,12 @@
 
   /* Grain de toile : bruit fractal, à peine perceptible, mais la page
      cesse d'être plate. */
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23g)' opacity='0.5'/%3E%3C/svg%3E");
-  /* Trame de tissage : chaîne et trame, 3 px. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23g)' opacity='0.38'/%3E%3C/svg%3E");
+  /* Trame de tissage : un bruit étiré, chaîne puis trame. Du bruit, jamais
+     de filets de 1 px — ceux-là moirent dès qu'on redimensionne. */
   --tissage:
-    repeating-linear-gradient(90deg, rgba(36,28,24,.035) 0 1px, transparent 1px 3px),
-    repeating-linear-gradient(0deg,  rgba(36,28,24,.028) 0 1px, transparent 1px 3px);
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23t)' opacity='0.16'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='u'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1 0.02' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23u)' opacity='0.13'/%3E%3C/svg%3E");
 }
 
 /* -----------------------------------------------------------------------------
@@ -91,17 +92,20 @@ body {
   font-weight: 400;
   overflow-x: clip;          /* filet de sécurité : ne crée pas de conteneur de défilement */
 
-  /* La lumière d'atelier : deux foyers chauds, puis le grain et la trame. */
+  /* Le grain de toile et la trame sont fixes (aucune bande visible au
+     défilement) ; la lumière, elle, suit la page : la journée avance. */
   background-image:
     var(--grain),
     var(--tissage),
-    radial-gradient(90% 60% at 12% -4%, color-mix(in oklab, var(--sable-haut) 92%, #fff) 0%, transparent 62%),
-    radial-gradient(70% 45% at 96% 8%, color-mix(in oklab, var(--rose) 55%, var(--sable)) 0%, transparent 60%),
-    linear-gradient(176deg, var(--sable-haut) 0%, var(--sable) 42%, var(--sable-bas) 100%);
-  background-repeat: repeat, repeat, no-repeat, no-repeat, no-repeat;
-  background-size: 260px 260px, auto, auto, auto, auto;
-  background-attachment: fixed, fixed, fixed, fixed, fixed;
-  background-blend-mode: multiply, normal, normal, normal, normal;
+    linear-gradient(180deg,
+      var(--sable-haut) 0%,
+      var(--sable) 26%,
+      color-mix(in oklab, var(--rose) 26%, var(--sable)) 58%,
+      var(--sable-bas) 100%);
+  background-repeat: repeat, repeat, repeat, no-repeat;
+  background-size: 260px 260px, 300px 300px, 300px 300px, 100% 100%;
+  background-attachment: fixed, fixed, fixed, scroll;
+  background-blend-mode: multiply, multiply, multiply, normal;
 }
 
 img, svg { max-width: 100%; }
@@ -197,7 +201,9 @@ h3 {
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--brique);
+  white-space: nowrap;
 }
+.sourcil--hero { white-space: normal; }
 .sourcil i {
   font-style: normal;
   font-family: 'Fraunces', Georgia, serif;
@@ -450,6 +456,9 @@ h3 {
   position: relative;
   padding-block-end: clamp(2.5rem, 5vw, 4rem);
   row-gap: clamp(1.5rem, 4vw, 2.5rem);
+  background-image:
+    radial-gradient(70% 55% at 6% 6%, color-mix(in oklab, var(--sable-haut) 88%, #fff) 0%, transparent 64%),
+    radial-gradient(55% 45% at 52% 96%, color-mix(in oklab, var(--rose) 62%, var(--sable)) 0%, transparent 70%);
 }
 
 .hero__photo {
@@ -488,7 +497,7 @@ h3 {
 }
 .hero__vignette span { font-size: var(--t-micro); line-height: 1.4; color: var(--encre-doux); }
 
-.hero__texte { display: grid; gap: clamp(0.85rem, 1.6vw, 1.15rem); align-content: center; }
+.hero__texte { position: relative; display: grid; gap: clamp(0.85rem, 1.6vw, 1.15rem); align-content: center; }
 .sourcil--hero { color: var(--brique); }
 
 /* Le prénom géant : le produit lui-même, en grand. */
@@ -532,8 +541,8 @@ h3 {
   .hero {
     grid-template-columns:
       [bord-d] minmax(var(--marge), 1fr)
-      [large-d] minmax(0, var(--demi))
-      [mi] minmax(0, var(--demi))
+      [large-d] minmax(0, 40rem)
+      [mi] minmax(0, 32rem)
       [large-f] minmax(var(--marge), 1fr) [bord-f];
     min-height: min(100svh, 54rem);
     align-content: center;
@@ -556,14 +565,15 @@ h3 {
     background: linear-gradient(200deg, transparent 52%, color-mix(in oklab, var(--vert) 48%, transparent));
   }
   .hero__vignette { inset-inline-start: 1.5rem; inset-block-end: 1.5rem; }
-  /* Un bloc rouille glissé sous la photo : la rupture asymétrique. */
-  .hero::after {
-    content: ''; position: absolute; z-index: -1;
-    inset-block: 6rem 1rem;
-    inset-inline: 48% calc(var(--marge) * -0.2);
-    background: linear-gradient(160deg, var(--rouille), var(--brique));
-    border-start-start-radius: 200px;
-    opacity: 0.16;
+  /* Un filet de fil vertical le long de la colonne de texte. */
+  .hero__texte::before {
+    content: ''; position: absolute;
+    inset-block: 1.5rem 1.5rem;
+    inset-inline-start: calc(var(--marge) * -0.42);
+    width: 2px;
+    background: repeating-linear-gradient(180deg,
+      var(--rouille) 0 10px, transparent 10px 18px);
+    opacity: 0.4;
   }
 }
 
@@ -744,7 +754,6 @@ h3 {
   display: grid; align-content: center; gap: 1rem;
   padding-inline-start: clamp(0.5rem, 2vw, 1.5rem);
   border-inline-start: 1px dashed color-mix(in oklab, var(--brique) 40%, transparent);
-  scroll-snap-align: end;
 }
 .rangee__fin p {
   font-family: 'Fraunces', Georgia, serif;
@@ -800,8 +809,9 @@ h3 {
   text-align: center;
   font-variation-settings: 'wght' 340, 'SOFT' 100, 'WONK' 1, 'opsz' 144;
   color: var(--coquille);
-  mix-blend-mode: soft-light;
+  mix-blend-mode: overlay;
   text-wrap: balance;
+  text-shadow: 0 2px 40px rgba(255, 248, 240, .35);
 }
 .bandeau__note {
   grid-area: 1 / 1;
@@ -928,13 +938,13 @@ h3 {
 .occ__img { display: block; position: relative; aspect-ratio: 1 / 1; overflow: hidden; }
 .occ__img img {
   width: 100%; height: 100%; object-fit: cover;
-  clip-path: circle(76% at 50% 42%);
+  clip-path: circle(54% at 50% 42%);
   transition: clip-path 800ms cubic-bezier(.16,1,.3,1), transform 900ms cubic-bezier(.16,1,.3,1), filter 500ms ease;
   filter: saturate(0.92);
 }
 .occ__item > a:hover .occ__img img,
 .occ__item > a:focus-visible .occ__img img {
-  clip-path: circle(100% at 50% 42%);
+  clip-path: circle(78% at 50% 42%);
   transform: scale(1.06);
   filter: saturate(1.08);
 }
@@ -1239,7 +1249,7 @@ h3 {
     clip-path: none !important;
   }
   .bandeau img, .atelier__bande img { transform: scale(1.02); }
-  .occ__img img { clip-path: circle(100% at 50% 42%); }
+  .occ__img img { clip-path: circle(54% at 50% 42%); }
   .entete::before { opacity: 1; }
   .nuit__fixe { position: static; }
 }

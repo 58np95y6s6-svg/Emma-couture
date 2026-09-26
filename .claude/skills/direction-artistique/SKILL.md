@@ -21,6 +21,49 @@ Deux propositions ont déjà été rejetées, dans ces termes :
 
 Si une maquette pourrait passer pour celle d'un autre artisan, elle est ratée.
 
+## Retours du client, à respecter au mot
+
+**Le nom affiché est « Emma Broderie »**, jamais « Emmanuelle Wagner ». C'est le nom commercial.
+Le nom légal complet n'apparaît que dans les mentions légales, avec le SIRET.
+
+**Le ton est moderne, direct et FUN.** Jamais kitsch, jamais solennel. Rejeté explicitement :
+> « Un prénom brodé, et l'objet devient le sien » → « c'est kitsch, pas moderne ».
+> Et la phrase de sous-titre : « pas fun non plus ».
+
+À bannir : les tournures sentimentales à rallonge, les formules poétiques sur l'objet qui « prend
+vie », « devient unique » ou « traverse le temps », les phrases qui **expliquent** l'émotion au
+lieu de la provoquer, le vocabulaire de plaquette (« savoir-faire d'exception », « pièce unique
+chargée de sens »).
+
+Ce qu'on cherche : des phrases **courtes**, **concrètes**, à la **première personne**, avec un peu
+de caractère. Le concret émeut, la poésie explicative non. Un trait d'humour discret vaut mieux
+qu'une envolée. On vend un cadeau, pas un mausolée.
+
+Réserve de formules dans la bonne direction, à adapter :
+- « Dites-moi le prénom. Je sors les bobines. »
+- « Écrivez-moi un prénom. Je m'occupe du reste. »
+- « Je brode des prénoms. Beaucoup de prénoms. »
+- « Un prénom, cinq cents couleurs de fil, une seule pièce. »
+- « Vous m'envoyez le prénom. Je brode. Vous offrez. »
+- « Le cadeau qu'on ne peut offrir qu'une fois. »
+- « Ça part de chez moi emballé. Vous n'avez plus qu'à sourire. »
+
+Test à appliquer à chaque phrase : est-ce qu'une femme de 35 ans qui cherche un cadeau de
+naissance la lirait à voix haute à une copine ? Si la phrase sonne comme un carton d'invitation
+de mariage, elle est à réécrire.
+
+**Le prénom en grand est un prénom de CLIENTE, et il défile** (Ambre, puis Malo, puis Lisa…),
+avec une légende qui l'ancre dans une vraie commande (« brodé le 16 janvier, 3,85 kg »).
+Jamais « Emma » en énorme : ça se lirait comme un logo et l'argument de vente disparaîtrait.
+Un prénom de cliente est une démonstration — « votre prénom peut être là ». Sans le défilement
+ni la légende, le visiteur ne comprend pas pourquoi un prénom inconnu s'étale à l'écran ;
+c'est un reproche qui a déjà été fait.
+
+**Points déjà jugés ratés, à refaire autrement :**
+- la section « occasions » (naissance / mariage / fête des mères / Noël) — mise en page à revoir ;
+- l'**arrière-plan du site** — jugé pas beau. Le fond doit être une vraie matière chaude, travaillée
+  (grain de toile, lumière douce), pas un aplat ni une texture appuyée qui salit la lecture.
+
 ## Vérité du métier — à ne jamais trahir
 
 ⚠️ **Emmanuelle brode à la MACHINE.** Ne jamais écrire « brodé à la main ».
