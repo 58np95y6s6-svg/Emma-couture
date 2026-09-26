@@ -27,7 +27,7 @@ const wa = lienWhatsApp(
 
 <article class="carte">
   <a class="carte__lien" href={urlFiche}>
-    <figure class="carte__img" data-broderie="tambour">
+    <figure class="carte__img">
       <Image
         src={data.photo}
         alt={data.alt}
@@ -44,8 +44,8 @@ const wa = lienWhatsApp(
     </div>
   </a>
 
-  <p class="carte__actions">
+  <p class="carte__cta">
     <a class="lien-wa" href={wa}>Je veux le même</a>
-    <a class="lien-devis" href={`/contact/?creation=${id}`}>Demander un devis</a>
+    <a class="lien-fleche" href={`/contact/?creation=${id}`}>Demander un devis</a>
   </p>
 </article>
