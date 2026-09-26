@@ -185,6 +185,24 @@
 </head>
 <body>
 
+<script>
+/* Simulation de prefers-reduced-motion, AVANT le chargement du moteur :
+   un module ES est evalue des son import, donc le patch doit le preceder.
+   (Sert uniquement a verifier ce chemin de code sans toucher aux reglages
+   du systeme ; en production, seule la vraie media-query compte.) */
+(function () {
+  var p = new URLSearchParams(location.search);
+  if (p.get('mouvement') !== 'reduit') return;
+  document.documentElement.dataset.mouvement = 'reduit';
+  var vrai = window.matchMedia.bind(window);
+  window.matchMedia = function (q) {
+    return /prefers-reduced-motion:\s*reduce/.test(q)
+      ? { matches: true, media: q, addEventListener: function () {}, removeEventListener: function () {}, addListener: function () {}, removeListener: function () {} }
+      : vrai(q);
+  };
+})();
+</script>
+
 <div class="bandeau-mvt" id="bandeau" hidden>
   Mode <strong>mouvement réduit</strong> simulé : chaque effet doit s’afficher d’emblée dans son état final, sans mouvement.
   <a href="./demo-moteur.html">revenir au mode normal</a>
@@ -472,14 +490,9 @@ import { init, rafraichir, ALPHABET } from './broderie.js';
 const params = new URLSearchParams(location.search);
 const reduit = params.get('mouvement') === 'reduit';
 
-/* --- Simulation du mouvement reduit, pour verifier ce chemin de code --- */
-if (reduit) {
-  document.documentElement.dataset.mouvement = 'reduit';
-  document.getElementById('bandeau').hidden = false;
-  const vrai = window.matchMedia.bind(window);
-  window.matchMedia = (q) =>
-    /prefers-reduced-motion:\s*reduce/.test(q) ? { matches: true, addEventListener() {}, removeEventListener() {} } : vrai(q);
-}
+/* Le patch de matchMedia est fait plus haut, dans un script classique :
+   il doit precéder l'evaluation du module. */
+if (reduit) document.getElementById('bandeau').hidden = false;
 
 /* Le curseur aiguille : on l'active sur le body (hors mouvement reduit). */
 if (!reduit) document.body.dataset.broderie = 'aiguille-curseur';

@@ -92,20 +92,27 @@ body {
   font-weight: 400;
   overflow-x: clip;          /* filet de sécurité : ne crée pas de conteneur de défilement */
 
-  /* Le grain de toile et la trame sont fixes (aucune bande visible au
-     défilement) ; la lumière, elle, suit la page : la journée avance. */
-  background-image:
-    var(--grain),
-    var(--tissage),
-    linear-gradient(180deg,
-      var(--sable-haut) 0%,
-      var(--sable) 26%,
-      color-mix(in oklab, var(--rose) 26%, var(--sable)) 58%,
-      var(--sable-bas) 100%);
-  background-repeat: repeat, repeat, repeat, no-repeat;
-  background-size: 260px 260px, 300px 300px, 300px 300px, 100% 100%;
-  background-attachment: fixed, fixed, fixed, scroll;
-  background-blend-mode: multiply, multiply, multiply, normal;
+  /* La lumière suit la page : la journée avance en descendant. */
+  background-image: linear-gradient(180deg,
+    var(--sable-haut) 0%,
+    var(--sable) 26%,
+    color-mix(in oklab, var(--rose) 26%, var(--sable)) 58%,
+    var(--sable-bas) 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+/* La matière : une seule couche fixe, derrière tout le contenu.
+   Un seul calque composité — pas trois fonds « fixed » à repeindre. */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: -1;
+  pointer-events: none;
+  background-image: var(--grain), var(--tissage);
+  background-size: 260px 260px, 300px 300px, 300px 300px;
+  background-repeat: repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.85;
 }
 
 img, svg { max-width: 100%; }

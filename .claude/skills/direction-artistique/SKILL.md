@@ -39,8 +39,19 @@ Ce qu'on cherche : des phrases **courtes**, **concrètes**, à la **première pe
 de caractère. Le concret émeut, la poésie explicative non. Un trait d'humour discret vaut mieux
 qu'une envolée. On vend un cadeau, pas un mausolée.
 
-Réserve de formules dans la bonne direction, à adapter :
-- « Dites-moi le prénom. Je sors les bobines. »
+### ✅ Accroche retenue par le client
+
+> **« Dites-moi le prénom. Je sors les bobines. »**
+
+C'est le `<h1>` de la page d'accueil. Elle donne le ton de tout le reste du site : deux phrases
+courtes, une action de la visiteuse puis une action d'Emmanuelle, un détail concret d'atelier.
+Toute autre accroche de la page doit être écrite à cette hauteur-là.
+
+⚠️ Elle ne contient aucun mot-clé : compenser juste en dessous par un paragraphe d'introduction
+qui porte « broderie personnalisée », « couture sur mesure » et « Vitré », et par une balise
+`<title>` explicite. Le H1 vend, le paragraphe qui suit référence.
+
+Autres formules validées dans la même direction, réutilisables ailleurs dans le site :
 - « Écrivez-moi un prénom. Je m'occupe du reste. »
 - « Je brode des prénoms. Beaucoup de prénoms. »
 - « Un prénom, cinq cents couleurs de fil, une seule pièce. »
