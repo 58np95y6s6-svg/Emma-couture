@@ -399,6 +399,27 @@ graphiques simples), filtre semaine / mois / année :
 - Interrupteur « Commandes ouvertes / complet / en congés jusqu'au … ».
 - Avis clients (ajouter, masquer).
 - Prochains marchés / salons (date, lieu).
+- **Horaires**, modifiables jour par jour (voir ci-dessous).
+
+#### Horaires modifiables
+Saisie **jour par jour**, avec pour chaque jour : fermé, ou une ou deux plages horaires
+(pour couper le midi). Gros sélecteurs d'heure, pas de saisie libre : Emmanuelle règle ça au doigt.
+- Un bouton **« Fermé aujourd'hui »** en un geste, qui ne touche pas aux horaires habituels.
+- **Fermetures exceptionnelles** avec date de début et de fin (congés, salon), affichées en clair
+  sur le site et prioritaires sur les horaires normaux.
+- Ces horaires alimentent **`openingHoursSpecification`** dans le JSON-LD `LocalBusiness` et
+  doivent rester cohérents avec la fiche Google Business Profile — un écart entre les deux nuit
+  au référencement local.
+
+⚠️ **Emmanuelle travaille chez elle.** Ne pas présenter ces horaires comme ceux d'une boutique où
+l'on pousse la porte : ce serait inviter des inconnus à son domicile et exposer son adresse
+personnelle (le CDC interdit déjà de la révéler via les photos). Deux libellés à distinguer,
+elle choisit dans l'admin :
+- **« Je réponds aux messages »** — le cas par défaut, sans notion de lieu ;
+- **« Retrait sur rendez-vous »** — pour la remise en main propre, avec adresse communiquée
+  seulement après accord.
+Si elle dispose un jour d'un atelier distinct de son domicile, on pourra basculer sur de vrais
+horaires d'ouverture et publier l'adresse.
 
 ### 5 bis. Gestion des créations depuis l'admin
 Emmanuelle doit pouvoir **tenir sa vitrine elle-même**, sans rebuild et sans toucher à un fichier :
