@@ -211,6 +211,38 @@ Organisation :
 - Proposer 2 ou 3 pistes visuelles (palette + typographies + mise en page d'accueil + principe
   d'animation) **sous forme de maquettes visuelles**, avant de tout construire.
 
+### Responsive : exigence non négociable
+Le site doit être irréprochable sur **toutes** les tailles d'écran, pas seulement « acceptable »
+sur téléphone. Aucune page ne part en production sans avoir été vérifiée aux largeurs suivantes.
+
+- **320 px** (iPhone SE, vieux Android) : plus petit cas à supporter. Rien ne doit déborder.
+- **390 px** (iPhone courant) : c'est la largeur de référence du design.
+- **768 px** (tablette, portrait) : ne jamais laisser une mise en page téléphone s'étirer bêtement.
+- **1024 px** (tablette paysage, petit portable).
+- **1440 px et au-delà** : le contenu se cale sur une largeur maximale, il ne s'étale pas
+  sur toute la dalle.
+
+Règles :
+- **Jamais de défilement horizontal du corps de page**, à aucune largeur. Les contenus larges
+  (tableaux, galeries, blocs de code) défilent dans leur propre conteneur `overflow-x: auto`.
+- Mise en page en **flex / grid avec `gap`**, unités relatives, `max-width: 100%` sur les images.
+  Pas de largeur fixe en pixels sur un bloc de contenu.
+- **Zones tactiles d'au moins 44 × 44 px** (boutons, liens du menu, champs de formulaire,
+  bouton WhatsApp flottant), avec assez d'espace entre elles pour ne pas se tromper au pouce.
+- Le texte reste lisible sans zoomer : 16 px minimum pour le texte courant sur téléphone
+  (en dessous, iOS zoome automatiquement sur les champs de formulaire).
+- Le site doit rester utilisable **jusqu'à 200 % de zoom navigateur** (critère d'accessibilité).
+- **Direction artistique des images** selon la largeur (`<picture>`), pas un simple
+  redimensionnement : le cadrage change entre téléphone et ordinateur.
+- Tenir compte des **encoches et barres système** (`viewport-fit=cover` + `env(safe-area-inset-*)`)
+  pour le bouton WhatsApp flottant et les barres fixes.
+- **Orientation paysage** sur téléphone : vérifier que le haut de page ne mange pas tout l'écran.
+- Vérifier aussi l'**administration PWA** aux mêmes largeurs : Emma s'en servira au téléphone,
+  parfois d'une seule main.
+
+Vérification : contrôler chaque page aux cinq largeurs ci-dessus avant tout déploiement en
+production, et signaler tout point qui n'a pas pu être testé.
+
 ## Animations
 Objectif : un site mémorable, qui donne envie de partager, sans sacrifier la performance.
 - **Animation signature : un fil qui se brode au fil du scroll.** Un tracé SVG (point avant / point
