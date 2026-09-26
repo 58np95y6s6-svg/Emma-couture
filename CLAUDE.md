@@ -30,7 +30,7 @@ Règles de conversion :
 - **Prix « à partir de »** visibles sur les créations et la page Sur-mesure : c'est la première question
   des client·es ; les sites d'artisans qui convertissent l'affichent.
 - Preuve sociale : avis clients (saisis par Emma dans l'admin), nombre de créations réalisées.
-- Réassurance : délai de fabrication actuel, « brodé à la main à Vitré », remise en main propre
+- Réassurance : délai de fabrication actuel, « brodé à Vitré, pièce par pièce », remise en main propre
   (Vitré / Rennes) ou envoi partout en France, emballage cadeau.
 
 ## Mailing (sans outil d'emailing)
@@ -142,7 +142,7 @@ Voir `docs/inventaire-photos.md` pour le détail par catégorie.
   Leurs pages qui convertissent ont toutes : format précis, délai, prix « à partir de », étapes de
   commande, formulaire de devis, ville d'origine mise en avant, emballage cadeau.
 - **Local** : à Rennes et autour de Vitré, les résultats sont dominés par des **ateliers de marquage
-  pour entreprises** (logos brodés sur vêtements de travail). La **broderie main cadeau pour
+  pour entreprises** (logos brodés sur vêtements de travail). La **broderie cadeau pour
   particuliers** y est peu occupée → vraie opportunité. Certains concurrents créent une page dédiée
   « broderie personnalisée à Rennes » même situés loin : le format page locale fonctionne.
 - Limite : les chiffres de trafic des concurrents ne sont pas publics ; ce constat repose sur qui se
