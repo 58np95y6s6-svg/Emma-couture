@@ -826,8 +826,23 @@ h3 {
   to   { transform: scale(1.16) translateY(3.5%); }
 }
 
+/* Un voile sombre sous le mot : sans lui, le texte se perd dans les bobines
+   multicolores. Il s'arrête avant les bords, qui restent fondus dans la page. */
+.bandeau::after {
+  content: '';
+  grid-area: 1 / 1;
+  background: radial-gradient(
+    ellipse 70% 78% at 50% 50%,
+    rgb(28 24 20 / 0.62) 0%,
+    rgb(28 24 20 / 0.42) 45%,
+    rgb(28 24 20 / 0) 78%
+  );
+  pointer-events: none;
+}
+
 .bandeau__mot {
   grid-area: 1 / 1;
+  z-index: 1;
   align-self: center; justify-self: center;
   margin: 0; padding-inline: var(--marge);
   font-family: 'Fraunces', Georgia, serif;
@@ -836,11 +851,14 @@ h3 {
   line-height: 0.9;
   letter-spacing: -0.03em;
   text-align: center;
-  font-variation-settings: 'wght' 340, 'SOFT' 100, 'WONK' 1, 'opsz' 144;
-  color: var(--coquille);
-  mix-blend-mode: overlay;
+  font-variation-settings: 'wght' 420, 'SOFT' 90, 'WONK' 1, 'opsz' 144;
+  /* Plus de mix-blend-mode : sur un fond aussi bariolé, il rendait le mot
+     illisible. Un blanc chaud posé sur le voile, avec une ombre douce. */
+  color: #FBF3E9;
   text-wrap: balance;
-  text-shadow: 0 2px 40px rgba(255, 248, 240, .35);
+  text-shadow:
+    0 1px 2px rgb(28 24 20 / 0.55),
+    0 8px 34px rgb(28 24 20 / 0.45);
 }
 .bandeau__note {
   grid-area: 1 / 1;
