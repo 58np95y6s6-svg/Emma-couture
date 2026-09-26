@@ -392,31 +392,25 @@ Contraintes techniques à respecter :
 - Consentement : la validation manuelle est aussi le garde-fou contre la republication de photos
   d'enfants ou de clientes sans accord.
 
-#### Préalable : type de compte **à confirmer** (septembre 2026)
-Probablement personnel, mais non vérifié. **Comment trancher en dix secondes**, depuis
-l'application Instagram sur le téléphone d'Emmanuelle :
-Profil → menu ☰ → *Paramètres* → *Type de compte et outils*.
-- « **Passer à un compte professionnel** » → le compte est **personnel**.
-- « **Changer de type de compte** » (ou présence d'un *Tableau de bord professionnel* et de
-  *Statistiques* sur le profil) → il est **déjà professionnel**, il n'y a rien à faire.
+#### Type de compte : **déjà professionnel** ✅ (vérifié septembre 2026)
+Le profil affiche la catégorie « Vêtements (Marque) » : seuls les comptes professionnels en
+affichent une. **Aucune bascule à faire**, le préalable est levé. Le compte est donc public, et
+l'*Instagram API with Instagram Login* fonctionne sans page Facebook liée.
 
-Si le compte est personnel, rien ne peut être développé tant qu'il n'est pas passé en
-**compte Créateur**. C'est gratuit, réversible, et ça se fait en deux minutes.
+Volume constaté : **468 publications**, 138 abonnés. Nom affiché : **Emmanuelle Wagner**
+(à confirmer comme nom légal avant de l'utiliser dans les mentions légales).
 
-⚠️ **Un compte professionnel ne peut pas être privé.** Si le compte d'Emmanuelle est actuellement
-en privé, la bascule rendra **toutes ses publications passées visibles par n'importe qui**.
-À vérifier avec elle AVANT de basculer :
-- passer en revue les anciennes publications (photos de famille, d'enfants, de son domicile) ;
-- archiver ou supprimer ce qui ne doit pas devenir public ;
-- si le compte mélange vie privée et créations, **créer un second compte dédié à l'activité**
-  est la meilleure option — le compte perso reste privé, le compte pro alimente le site.
+⚠️ **Le compte mélange créations et vie personnelle** (photos de vacances, de famille, de
+paysages au milieu des créations). C'est la confirmation qu'il ne faut **jamais** brancher la
+galerie en automatique intégral : la validation en un geste dans l'admin n'est pas une précaution
+théorique, c'est une nécessité.
 
-**Créateur plutôt qu'Entreprise** : le compte Créateur est pensé pour les personnes (artisans,
-artistes) et conserve l'accès à la bibliothèque musicale complète, ce que le compte Entreprise
-restreint pour raisons de droits commerciaux — ça compte si elle publie des reels. Les deux
-fonctionnent avec l'*Instagram API with Instagram Login*, qui n'exige pas de page Facebook liée.
-Le compte Entreprise ne deviendrait utile que si une boutique Instagram était ajoutée un jour,
-ce qui est hors périmètre.
+Conséquences pour l'import :
+- Ne récupérer que les **N derniers posts** (20 à 30), pas les 468 : inutile et coûteux.
+- Prévoir dans l'admin un **filtre « déjà traité »** pour qu'Emmanuelle ne revoie pas
+  indéfiniment les mêmes publications déjà masquées.
+- Les posts multi-images (carrousels) sont fréquents : gérer `children` et ne recopier que la
+  première image, ou laisser Emmanuelle choisir laquelle afficher.
 
 ### 8. Aide intégrée
 Une page « Comment faire ? » avec 5-6 fiches très courtes et illustrées.
@@ -451,7 +445,8 @@ Une page « Comment faire ? » avec 5-6 fiches très courtes et illustrées.
 - Checklist de lancement : Google Business Profile, Search Console, liens réseaux, QR codes.
 
 ## Informations à compléter
-- Nom complet, SIRET, adresse pro : [À COMPLÉTER]
+- Nom complet, SIRET, adresse pro : [À COMPLÉTER] — le profil Instagram affiche
+  « Emmanuelle Wagner », à confirmer comme nom légal.
 - Types de broderie : ✅ **broderie machine + couture**, particuliers uniquement (constaté sur les
   photos en septembre 2026, à faire confirmer par Emma)
 - Depuis combien de temps Emma brode-t-elle ? : [À COMPLÉTER] (affiché en réassurance)
