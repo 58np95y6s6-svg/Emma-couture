@@ -165,41 +165,36 @@ a { color: inherit; }
    4. TYPOGRAPHIE
 ----------------------------------------------------------------------------- */
 h1, h2, h3, .titre-xl, .prenom-geant, .signature, blockquote p, .frise b {
-  font-family: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
-  font-optical-sizing: none;
+  font-family: 'Instrument Serif', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  /* Instrument Serif n'a pas d'axe optique : rien à neutraliser. */
 }
 
 h1 {
   font-size: var(--t-h1);
   line-height: 1.02;
   letter-spacing: -0.018em;
-  font-variation-settings: 'wght' 520, 'opsz' 90;
   text-wrap: balance;
 }
 h1 em {
   font-style: italic;
   color: var(--rouille);
-  font-variation-settings: 'wght' 430, 'opsz' 110;
 }
 
 .titre-xl {
   font-size: var(--t-h2);
   line-height: 0.95;
   letter-spacing: -0.024em;
-  font-variation-settings: 'wght' 480, 'opsz' 120;
   text-wrap: balance;
 }
 .titre-xl em {
   font-style: italic;
   color: var(--rouille);
-  font-variation-settings: 'wght' 400, 'opsz' 140;
 }
 
 h3 {
   font-size: var(--t-h3);
   line-height: 1.1;
   letter-spacing: -0.012em;
-  font-variation-settings: 'wght' 520, 'opsz' 60;
 }
 
 /* Le sourcil : petite majuscule espacée, avec un numéro en rouille. */
@@ -235,8 +230,7 @@ h2.sourcil { font-weight: 500; }
   color: var(--gris);
 }
 .prix b {
-  font-family: 'Fraunces', Georgia, serif;
-  font-variation-settings: 'wght' 650, 'opsz' 30;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: 1.22em;
   color: var(--encre);
   letter-spacing: -0.01em;
@@ -385,8 +379,7 @@ h2.sourcil { font-weight: 500; }
 
 .marque { text-decoration: none; display: grid; gap: 0.1rem; margin-inline-end: auto; }
 .marque__nom {
-  font-family: 'Fraunces', Georgia, serif;
-  font-variation-settings: 'wght' 600, 'opsz' 30;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: clamp(1rem, 0.94rem + 0.35vw, 1.2rem);
   letter-spacing: -0.01em;
   line-height: 1;
@@ -438,8 +431,7 @@ h2.sourcil { font-weight: 500; }
 .menu a {
   padding: 0.85rem 0; min-height: 44px;
   text-decoration: none;
-  font-family: 'Fraunces', Georgia, serif;
-  font-variation-settings: 'wght' 500, 'opsz' 40;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: 1.25rem;
   border-bottom: 1px solid color-mix(in oklab, var(--brique) 15%, transparent);
 }
@@ -462,16 +454,20 @@ h2.sourcil { font-weight: 500; }
     radial-gradient(55% 45% at 52% 96%, color-mix(in oklab, var(--rose) 62%, var(--sable)) 0%, transparent 70%);
 }
 
+/* La photo source est un portrait 4:5. Écrasée dans un bandeau de 280 px de
+   haut sur une largeur de 800 px, elle ne montrait plus qu'une tranche : le
+   crâne et le menton d'Emma étaient coupés. Le cahier des charges l'interdit.
+   Bandeau plus haut, et point d'ancrage remonté pour garder le visage entier. */
 .hero__photo {
   grid-column: bord-d / bord-f;
   position: relative;
-  height: clamp(168px, 25svh, 280px);
+  height: clamp(260px, 42svh, 430px);
   overflow: hidden;
   background: var(--brique);
 }
 .hero__photo img {
   width: 100%; height: 100%;
-  object-fit: cover; object-position: 50% 42%;
+  object-fit: cover; object-position: 50% 18%;
 }
 .hero__photo::after {
   content: ''; position: absolute; inset: 0;
@@ -490,8 +486,7 @@ h2.sourcil { font-weight: 500; }
   border-block-start: 1px solid color-mix(in oklab, var(--brique) 28%, transparent);
 }
 .hero__vignette strong {
-  font-family: 'Fraunces', Georgia, serif;
-  font-variation-settings: 'wght' 620, 'opsz' 30;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: 1rem; line-height: 1.1;
 }
 .hero__vignette span { font-size: var(--t-micro); line-height: 1.4; color: var(--encre-doux); }
@@ -504,7 +499,6 @@ h2.sourcil { font-weight: 500; }
   font-size: var(--t-geant);
   line-height: 0.82;
   font-style: italic;
-  font-variation-settings: 'wght' 330, 'opsz' 144;
   letter-spacing: -0.03em;
   color: var(--brique);
   margin-block: clamp(-0.2rem, -0.5vw, 0rem) -0.1em;
@@ -612,7 +606,6 @@ h2.sourcil { font-weight: 500; }
   display: inline-flex; align-items: center; gap: 0.6rem;
   font-size: clamp(1.1rem, 0.9rem + 0.9vw, 1.8rem);
   font-style: italic;
-  font-variation-settings: 'wght' 380, 'opsz' 90;
   letter-spacing: -0.01em;
   color: color-mix(in oklab, var(--f, var(--rose)) 62%, var(--coquille));
   white-space: nowrap;
@@ -755,17 +748,17 @@ h2.sourcil { font-weight: 500; }
   color: var(--gris);
 }
 .carte__pour span {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-style: italic; text-transform: none; letter-spacing: 0;
   font-size: 1.45em;
-  font-variation-settings: 'wght' 420, 'opsz' 60;
   color: var(--mauve);
 }
 .carte h3 {
-  transition: font-variation-settings 450ms cubic-bezier(.2,.9,.3,1), color 300ms ease;
+  /* Instrument Serif n'a qu'une graisse : plus d'animation d'axe possible.
+     La couleur porte seule le survol. */
+  transition: color 300ms ease;
 }
 .carte:hover h3 {
-  font-variation-settings: 'wght' 760, 'opsz' 100;
   color: var(--rouille);
 }
 .carte__txt > p:not(.prix):not(.carte__pour) {
@@ -787,15 +780,13 @@ h2.sourcil { font-weight: 500; }
   border-inline-start: 1px dashed color-mix(in oklab, var(--brique) 40%, transparent);
 }
 .rangee__fin p {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
   line-height: 1.05;
-  font-variation-settings: 'wght' 400, 'opsz' 60;
   color: var(--encre-doux);
 }
 .rangee__fin b {
   font-style: italic; color: var(--rouille);
-  font-variation-settings: 'wght' 500, 'opsz' 90;
 }
 
 /* -----------------------------------------------------------------------------
@@ -847,13 +838,12 @@ h2.sourcil { font-weight: 500; }
   z-index: 1;
   align-self: center; justify-self: center;
   margin: 0; padding-inline: var(--marge);
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: clamp(1.9rem, 7.5vw, 6.5rem);
   font-style: italic;
   line-height: 0.9;
   letter-spacing: -0.03em;
   text-align: center;
-  font-variation-settings: 'wght' 420, 'opsz' 144;
   /* Plus de mix-blend-mode : sur un fond aussi bariolé, il rendait le mot
      illisible. Un blanc chaud posé sur le voile, avec une ombre douce. */
   color: #FBF3E9;
@@ -906,9 +896,8 @@ h2.sourcil { font-weight: 500; }
   color: color-mix(in oklab, var(--coquille) 92%, var(--rose));
 }
 .nuit__dire em {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-style: italic; color: var(--dore);
-  font-variation-settings: 'wght' 430, 'opsz' 90;
 }
 .nuit__fixe { display: grid; gap: clamp(0.9rem, 2vw, 1.4rem); justify-items: start; }
 .nuit .titre-xl em { color: var(--dore); }
@@ -1005,9 +994,8 @@ h2.sourcil { font-weight: 500; }
 .occ__item > a:focus-visible { padding-inline-start: clamp(0.4rem, 1.2vw, 1rem); }
 
 .occ__n {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: var(--t-micro);
-  font-variation-settings: 'wght' 500;
   /* Le numero porte la couleur du fil de la piece photographiee a sa droite :
      il encode une information vraie au lieu de decorer. */
   color: var(--f, var(--gris));
@@ -1016,11 +1004,10 @@ h2.sourcil { font-weight: 500; }
 }
 
 .occ__nom {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: clamp(1.5rem, 0.9rem + 2.4vw, 3.1rem);
   line-height: 1;
   letter-spacing: -0.022em;
-  font-variation-settings: 'wght' 470, 'opsz' 120;
   transition: color 300ms ease;
 }
 .occ__item > a:hover .occ__nom,
@@ -1114,11 +1101,10 @@ h2.sourcil { font-weight: 500; }
 }
 .etapes > li { display: grid; gap: 0.55rem; align-content: start; min-width: 0; }
 .etapes__n {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: clamp(4.5rem, 2rem + 9vw, 9rem);
   line-height: 0.74;
   font-style: italic;
-  font-variation-settings: 'wght' 300, 'opsz' 144;
   color: transparent;
   -webkit-text-stroke: 1.4px var(--brique);
   margin-block-end: 0.2rem;
@@ -1143,11 +1129,10 @@ h2.sourcil { font-weight: 500; }
 .atelier__dire { display: grid; gap: clamp(0.9rem, 2vw, 1.3rem); justify-items: start; }
 
 .signature {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-style: italic;
   font-size: clamp(2rem, 1.3rem + 2.6vw, 3.2rem);
   line-height: 1;
-  font-variation-settings: 'wght' 330, 'opsz' 120;
   color: var(--mauve);
   padding-block-start: 0.3rem;
 }
@@ -1160,10 +1145,9 @@ h2.sourcil { font-weight: 500; }
 }
 .chiffres li { display: grid; gap: 0.1rem; }
 .chiffres b {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.4rem);
   line-height: 1;
-  font-variation-settings: 'wght' 620, 'opsz' 60;
   color: var(--rouille);
 }
 .chiffres span { font-size: var(--t-micro); letter-spacing: 0.08em; text-transform: uppercase; color: var(--gris); max-width: 11rem; }
@@ -1229,14 +1213,12 @@ h2.sourcil { font-weight: 500; }
   font-size: clamp(1.6rem, 1rem + 3.2vw, 3.5rem);
   line-height: 1.1;
   letter-spacing: -0.02em;
-  font-variation-settings: 'wght' 420, 'opsz' 120;
   text-wrap: pretty;
 }
 .avis__grand p::before { content: '« '; color: var(--brique); }
 .avis__grand p::after { content: '\00a0»'; color: var(--brique); }
 .avis__grand em {
   font-style: italic; color: var(--rouille);
-  font-variation-settings: 'wght' 420, 'opsz' 144;
 }
 .avis__grand footer, .avis__liste footer {
   padding-block-start: 0.7rem;
@@ -1258,8 +1240,7 @@ h2.sourcil { font-weight: 500; }
   color: color-mix(in oklab, var(--brique) 78%, var(--encre));
 }
 .avis__note b {
-  font-family: 'Fraunces', Georgia, serif;
-  font-variation-settings: 'wght' 650, 'opsz' 40;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: 2.1em; letter-spacing: -0.02em;
   color: var(--rouille);
 }
@@ -1313,9 +1294,8 @@ h2.sourcil { font-weight: 500; }
 }
 .pied__in > * { min-width: 0; display: grid; gap: 0.45rem; align-content: start; }
 .pied__nom {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: 'Instrument Serif', Georgia, serif;
   font-size: 1.4rem; line-height: 1;
-  font-variation-settings: 'wght' 560, 'opsz' 40;
   color: var(--coquille);
 }
 .pied h2 {
@@ -1446,7 +1426,6 @@ h2.sourcil { font-weight: 500; }
   font-size: clamp(1.6rem, 1.1rem + 1.6vw, 2.6rem);
   line-height: 1.05;
   letter-spacing: -0.015em;
-  font-variation-settings: 'wght' 430, 'opsz' 60;
   color: var(--encre-doux);
   max-width: 20ch;
 }
