@@ -453,8 +453,8 @@ Une page « Comment faire ? » avec 5-6 fiches très courtes et illustrées.
 - Fait-elle de la dentelle libre sur commande, ou seulement pour elle ? : [À COMPLÉTER]
   (conditionne l'angle SEO le plus différenciant)
 - Numéro WhatsApp (idéalement WhatsApp Business, gratuit) : [À COMPLÉTER]
-- Réseaux sociaux : Instagram **@emma_couture_broderie** — reste à confirmer si le compte est
-  personnel ou déjà professionnel (l'import automatique exige un compte professionnel).
+- Réseaux sociaux : Instagram **@emma_couture_broderie** ✅ compte professionnel
+  (catégorie « Vêtements (Marque) »), 468 publications, 138 abonnés.
   Facebook : [À COMPLÉTER]
 - Remise en main propre possible à Rennes ? Marchés habituels ? : [À COMPLÉTER]
 - Photo portrait d'Emma (haute qualité, lumière naturelle) : [À FOURNIR]
