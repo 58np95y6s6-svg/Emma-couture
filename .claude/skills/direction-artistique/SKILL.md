@@ -59,9 +59,49 @@ Autres formules validées dans la même direction, réutilisables ailleurs dans 
 - « Le cadeau qu'on ne peut offrir qu'une fois. »
 - « Ça part de chez moi emballé. Vous n'avez plus qu'à sourire. »
 
-Test à appliquer à chaque phrase : est-ce qu'une femme de 35 ans qui cherche un cadeau de
-naissance la lirait à voix haute à une copine ? Si la phrase sonne comme un carton d'invitation
-de mariage, elle est à réécrire.
+### Formules rejetées, et pourquoi
+
+| Rejeté | Le défaut |
+|---|---|
+| « Un prénom brodé, et l'objet devient le sien » | kitsch, explique l'émotion au lieu de la provoquer |
+| « Je travaille seule, dans la pièce d'à côté » | ne veut rien dire : à côté de quoi ? Proximité invérifiable |
+| « C'est plus lent qu'une commande sur une place de marché… » | **s'excuse d'être lente** : on ouvre sur le point faible. « Place de marché » est du jargon. « Ne ressemble à aucun autre » est invérifiable |
+
+⚠️ **Ne jamais s'excuser du délai ni du prix.** Transformer la contrainte en avantage réel et
+vérifiable. Ici l'avantage existe : **la validation du motif avant broderie**, que les grosses
+boutiques ne proposent pas.
+Remplacement retenu : « Je vous montre le motif avant de lancer la machine. Si quelque chose ne
+va pas, on le change : tant que ce n'est pas piqué, tout est possible. »
+
+Titre de la section atelier : **« Pas d'équipe. Moi, ma machine, et un mur de bobines. »**
+
+### ⚠️ Règle des chiffres : la photo doit prouver la phrase
+« Quatre cents bobines » a été rejeté parce qu'on n'en distingue qu'une soixantaine sur la photo :
+le chiffre invite à vérifier, la vérification échoue, et l'image perd sa force. « Un mur de
+bobines » est prouvé par l'image, donc plus efficace qu'un nombre.
+
+Deux règles :
+1. **Aucun chiffre inventé.** Nombre de pièces, d'années d'activité, de couleurs de fil, d'avis :
+   tout vient d'Emmanuelle. Tant qu'elle n'a pas confirmé, marquer le chiffre comme exemple dans
+   un commentaire HTML — au même titre que les prix, les délais et les avis.
+2. **Un chiffre placé à côté d'une photo doit être cohérent avec ce qu'on y voit.** Sinon,
+   préférer une formule qualitative que l'image démontre.
+
+À garder tel quel, c'est le bon registre : « c'est moi qui lis vos messages, qui choisis la bobine
+dans le rack derrière moi, qui lance la machine et qui ferme le paquet ».
+
+Le défaut commun aux phrases rejetées : elles décrivent une **impression** au lieu d'énoncer un **fait**.
+Remplacer par du vérifiable. Pour dire la petite structure et le travail à domicile :
+- « Je travaille seule, chez moi, à Vitré. »
+- « Pas d'équipe, pas d'usine : moi, ma machine et quatre cents bobines. »
+- **« C'est moi qui réponds, qui brode et qui emballe. »** ← la meilleure : trois gestes concrets,
+  et elle répond à la vraie question de la cliente, « à qui je parle ? ».
+
+### Deux tests avant de garder une phrase
+1. Est-ce qu'une femme de 35 ans qui cherche un cadeau de naissance la lirait à voix haute à une
+   copine ? Si ça sonne comme un carton d'invitation de mariage, réécrire.
+2. Est-ce que la phrase énonce un **fait vérifiable**, ou seulement une impression ? Si on ne peut
+   ni la photographier ni la chiffrer, elle est probablement creuse.
 
 **Le prénom en grand est un prénom de CLIENTE, et il défile** (Ambre, puis Malo, puis Lisa…),
 avec une légende qui l'ancre dans une vraie commande (« brodé le 16 janvier, 3,85 kg »).

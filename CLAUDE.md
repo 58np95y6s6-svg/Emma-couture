@@ -421,6 +421,44 @@ elle choisit dans l'admin :
 Si elle dispose un jour d'un atelier distinct de son domicile, on pourra basculer sur de vrais
 horaires d'ouverture et publier l'adresse.
 
+### 5 ter. Tous les textes du site modifiables
+Emmanuelle doit pouvoir **réécrire n'importe quel texte de n'importe quelle section**, sans
+toucher à un fichier ni appeler qui que ce soit. Chaque bloc de texte du site porte un
+identifiant stable, et l'admin présente les pages section par section, dans l'ordre où elles
+apparaissent, avec un aperçu.
+
+⚠️ **Le piège SEO.** Si un texte est injecté par JavaScript à l'exécution, il arrive après le
+chargement. Google sait exécuter du JavaScript, mais plus tard et moins fiablement — mettre un
+H1 ou un paragraphe d'introduction derrière un appel réseau abîme le référencement, c'est-à-dire
+exactement ce que le site doit produire.
+
+**Deux vitesses, et l'admin dit laquelle s'applique :**
+
+| | Textes « vitrine » | Textes « vivants » |
+|---|---|---|
+| Exemples | H1, titres de section, paragraphes, balises title et description, textes des pages occasions et locales | bannière événement, délai de fabrication, avis, prix « à partir de », horaires, marchés |
+| Stockés dans | Blobs, **et intégrés au build** | Blobs uniquement |
+| Visibles | après publication (quelques minutes) | tout de suite |
+| Coût | 15 crédits par publication | gratuit |
+
+**Le bouton « Publier mes modifications ».** Les textes vitrine modifiés restent en attente, avec
+un compteur (« 6 modifications en attente ») et un aperçu. Emmanuelle écrit quand elle veut,
+autant qu'elle veut, puis publie **une seule fois** : un seul build pour l'ensemble.
+C'est ce qui rend la fonctionnalité compatible avec les 300 crédits mensuels — dix textes modifiés
+et publiés ensemble coûtent 15 crédits, pas 150. Déclenchement par **build hook Netlify** appelé
+depuis une fonction authentifiée, jamais depuis le navigateur.
+
+Garde-fous, parce qu'elle sera seule face à son site :
+- **Aperçu avant publication**, et indication claire de la page et de l'endroit concernés.
+- **« Restaurer le texte d'origine »** sur chaque bloc, plus une restauration globale.
+- **Historique des dix dernières versions** de chaque bloc, avec retour en arrière en un geste.
+- Un texte obligatoire (H1, title) **ne peut pas être vidé** : message d'erreur explicite.
+- Longueurs conseillées affichées pour les balises title (~60 caractères) et description (~155),
+  sous forme de jauge, sans blocage.
+- Aucune saisie HTML : mise en forme limitée à gras, italique et lien.
+- Prévenir si aucune publication n'a eu lieu depuis plus de 30 jours alors que des modifications
+  attendent.
+
 ### 5 bis. Gestion des créations depuis l'admin
 Emmanuelle doit pouvoir **tenir sa vitrine elle-même**, sans rebuild et sans toucher à un fichier :
 

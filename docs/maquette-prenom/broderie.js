@@ -570,7 +570,7 @@ function effetPrenom(noeud) {
     svg.classList.toggle('broderie-fini', cible >= total);
   }
 
-  noeud.__broderie = { rejouer: () => demarrer(false), poser, points: total };
+  noeud.__broderie = { rejouer: () => demarrer(mouvementReduit()), poser, points: total };
   cableDeclencheur(noeud, demarrer);
 }
 
@@ -755,7 +755,7 @@ function effetTambour(noeud) {
       trait.style.strokeDashoffset = C.toFixed(1);
       /* force un reflow volontaire, hors boucle d'animation */
       void noeud.offsetWidth;
-      demarrer(false);
+      demarrer(mouvementReduit());
     },
     /** 0 = tambour desserre, 1 = tambour serre, sans transition. */
     poser(f) {
@@ -851,7 +851,7 @@ function effetCroix(noeud) {
     }
     i = cible;
   }
-  noeud.__broderie = { rejouer: () => demarrer(false), poser, points: liste.length };
+  noeud.__broderie = { rejouer: () => demarrer(mouvementReduit()), poser, points: liste.length };
   cableDeclencheur(noeud, demarrer);
 }
 

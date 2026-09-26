@@ -58,7 +58,7 @@
   --t-h3:    clamp(1.25rem, 1.1rem + 0.8vw, 1.7rem);
   --t-h2:    clamp(2.1rem, 1.35rem + 3.6vw, 4.9rem);
   --t-h1:    clamp(2rem, 1.35rem + 2.9vw, 3.9rem);
-  --t-geant: clamp(4.2rem, 2rem + 13vw, 11.5rem);
+  --t-geant: clamp(3.4rem, 1.4rem + 12vw, 11.5rem);
 
   /* Grain de toile : bruit fractal, à peine perceptible, mais la page
      cesse d'être plate. */
@@ -210,7 +210,8 @@ h3 {
   color: var(--brique);
   white-space: nowrap;
 }
-.sourcil--hero { white-space: normal; }
+.sourcil--hero { white-space: normal; line-height: 1.5; }
+@media (max-width: 61.999rem) { .sourcil--hero::after { display: none; } }
 .sourcil i {
   font-style: normal;
   font-family: 'Fraunces', Georgia, serif;
@@ -441,6 +442,7 @@ h3 {
   backdrop-filter: blur(16px);
   border-bottom: 1px solid color-mix(in oklab, var(--brique) 22%, transparent);
 }
+.menu[hidden] { display: none; }
 .menu a {
   padding: 0.85rem 0; min-height: 44px;
   text-decoration: none;
@@ -461,8 +463,8 @@ h3 {
 ----------------------------------------------------------------------------- */
 .hero {
   position: relative;
-  padding-block-end: clamp(2.5rem, 5vw, 4rem);
-  row-gap: clamp(1.5rem, 4vw, 2.5rem);
+  padding-block-end: clamp(2rem, 5vw, 4rem);
+  row-gap: clamp(1rem, 3.5vw, 2.5rem);
   background-image:
     radial-gradient(70% 55% at 6% 6%, color-mix(in oklab, var(--sable-haut) 88%, #fff) 0%, transparent 64%),
     radial-gradient(55% 45% at 52% 96%, color-mix(in oklab, var(--rose) 62%, var(--sable)) 0%, transparent 70%);
@@ -471,13 +473,13 @@ h3 {
 .hero__photo {
   grid-column: bord-d / bord-f;
   position: relative;
-  height: clamp(200px, 33svh, 330px);
+  height: clamp(168px, 25svh, 280px);
   overflow: hidden;
   background: var(--brique);
 }
 .hero__photo img {
   width: 100%; height: 100%;
-  object-fit: cover; object-position: 50% 26%;
+  object-fit: cover; object-position: 50% 42%;
 }
 .hero__photo::after {
   content: ''; position: absolute; inset: 0;
@@ -485,17 +487,12 @@ h3 {
   pointer-events: none;
 }
 
+/* Sur mobile : une légende sous la photo, qui ne mange pas son visage. */
 .hero__vignette {
-  position: absolute; inset-block-end: 0.85rem; inset-inline-start: var(--marge);
-  z-index: 2;
-  display: grid; gap: 0.1rem;
-  max-width: 21rem;
-  padding: 0.7rem 1.05rem;
-  border-radius: 14px;
-  background: color-mix(in oklab, var(--sable-haut) 68%, transparent);
-  backdrop-filter: blur(10px) saturate(1.2);
-  border: 1px solid color-mix(in oklab, var(--coquille) 45%, transparent);
-  box-shadow: 0 14px 34px -22px rgba(30, 22, 18, .7);
+  grid-column: large-d / large-f;
+  display: grid; gap: 0.15rem;
+  padding-block-start: 0.7rem;
+  border-block-start: 1px solid color-mix(in oklab, var(--brique) 28%, transparent);
 }
 .hero__vignette strong {
   font-family: 'Fraunces', Georgia, serif;
@@ -504,7 +501,7 @@ h3 {
 }
 .hero__vignette span { font-size: var(--t-micro); line-height: 1.4; color: var(--encre-doux); }
 
-.hero__texte { position: relative; display: grid; gap: clamp(0.85rem, 1.6vw, 1.15rem); align-content: center; }
+.hero__texte { position: relative; display: grid; gap: clamp(0.6rem, 1.6vw, 1.15rem); align-content: center; }
 .sourcil--hero { color: var(--brique); }
 
 /* Le prénom géant : le produit lui-même, en grand. */
@@ -571,7 +568,18 @@ h3 {
   .hero__photo::after {
     background: linear-gradient(200deg, transparent 52%, color-mix(in oklab, var(--vert) 48%, transparent));
   }
-  .hero__vignette { inset-inline-start: 1.5rem; inset-block-end: 1.5rem; }
+  /* Sur ordinateur : une carte de verre posée sur la photo. */
+  .hero__vignette {
+    position: absolute; z-index: 2;
+    inset-inline-start: 1.5rem; inset-block-end: 1.5rem;
+    max-width: 21rem;
+    padding: 0.7rem 1.05rem;
+    border: 1px solid color-mix(in oklab, var(--coquille) 45%, transparent);
+    border-radius: 14px;
+    background: color-mix(in oklab, var(--sable-haut) 68%, transparent);
+    backdrop-filter: blur(10px) saturate(1.2);
+    box-shadow: 0 14px 34px -22px rgba(30, 22, 18, .7);
+  }
   /* Un filet de fil vertical le long de la colonne de texte. */
   .hero__texte::before {
     content: ''; position: absolute;
@@ -1089,21 +1097,34 @@ h3 {
    17. AVIS — bande tintée pleine largeur
 ----------------------------------------------------------------------------- */
 .avis {
-  background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--rose) 42%, var(--sable)) 22%, color-mix(in oklab, var(--rose) 42%, var(--sable)) 78%, transparent);
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(60% 70% at 88% 12%, color-mix(in oklab, var(--ocre) 30%, transparent), transparent 70%),
+    linear-gradient(172deg,
+      color-mix(in oklab, var(--rose) 72%, var(--sable)),
+      color-mix(in oklab, var(--brique) 20%, var(--rose)) 100%);
   row-gap: clamp(2rem, 4vw, 3rem);
-  content-visibility: auto;
-  contain-intrinsic-size: auto 720px;
 }
-.avis__grand { margin: 0; max-width: 46rem; }
+/* Un liseré de fil doré en haut et en bas de la bande. */
+.avis::before, .avis::after {
+  content: ''; position: absolute; inset-inline: 0; height: 2px; z-index: 1;
+  background: repeating-linear-gradient(90deg,
+    var(--brique) 0 12px, transparent 12px 22px);
+  opacity: 0.5;
+}
+.avis::before { inset-block-start: 0; }
+.avis::after  { inset-block-end: 0; }
+.avis__grand { margin: 0; max-width: 52rem; }
 .avis__grand p {
-  font-size: clamp(1.5rem, 1rem + 2.6vw, 3rem);
-  line-height: 1.12;
+  font-size: clamp(1.6rem, 1rem + 3.2vw, 3.5rem);
+  line-height: 1.1;
   letter-spacing: -0.02em;
   font-variation-settings: 'wght' 420, 'SOFT' 40, 'WONK' 0, 'opsz' 120;
   text-wrap: pretty;
 }
 .avis__grand p::before { content: '« '; color: var(--brique); }
-.avis__grand p::after { content: ' »'; color: var(--brique); }
+.avis__grand p::after { content: '\00a0»'; color: var(--brique); }
 .avis__grand em {
   font-style: italic; color: var(--rouille);
   font-variation-settings: 'wght' 420, 'SOFT' 100, 'WONK' 1, 'opsz' 144;
@@ -1122,8 +1143,22 @@ h3 {
 .avis__liste li { min-width: 0; }
 .avis__liste blockquote { margin: 0; padding-inline-start: 1.1rem; border-inline-start: 2px solid color-mix(in oklab, var(--dore) 65%, transparent); }
 .avis__liste p { font-size: var(--t-petit); line-height: 1.6; color: var(--encre-doux); font-family: 'Jost', sans-serif; }
-.avis__note { font-size: var(--t-micro); letter-spacing: 0.1em; text-transform: uppercase; color: var(--gris); }
-.avis__note b { color: var(--rouille); font-size: 1.15em; }
+.avis__note {
+  display: flex; align-items: baseline; gap: 0.6rem; flex-wrap: wrap;
+  font-size: var(--t-micro); letter-spacing: 0.14em; text-transform: uppercase;
+  color: color-mix(in oklab, var(--brique) 78%, var(--encre));
+}
+.avis__note b {
+  font-family: 'Fraunces', Georgia, serif;
+  font-variation-settings: 'wght' 650, 'opsz' 40;
+  font-size: 2.1em; letter-spacing: -0.02em;
+  color: var(--rouille);
+}
+.avis__note span { opacity: 0.7; }
+.avis__liste blockquote {
+  border-inline-start-color: color-mix(in oklab, var(--brique) 55%, transparent);
+}
+.avis__liste p { color: color-mix(in oklab, var(--encre) 82%, var(--brique)); }
 
 /* -----------------------------------------------------------------------------
    18. APPEL FINAL — pleine largeur, sombre
@@ -1139,7 +1174,7 @@ h3 {
 .final__fond {
   position: absolute; inset: 0; z-index: -2;
   width: 100%; height: 100%; object-fit: cover;
-  opacity: 0.32;
+  opacity: 0.28;
   filter: saturate(0.75) contrast(1.05);
 }
 .final::before {
@@ -1162,8 +1197,10 @@ h3 {
   padding-block: clamp(2.5rem, 5vw, 4.5rem) 1.5rem;
   row-gap: 2rem;
   font-size: var(--t-petit);
+  /* Le pied n'est presque jamais à l'écran : on n'en paie le rendu
+     qu'au moment où il arrive. */
   content-visibility: auto;
-  contain-intrinsic-size: auto 420px;
+  contain-intrinsic-size: auto 480px;
 }
 .pied__in {
   display: grid; gap: clamp(1.6rem, 3vw, 3rem);
