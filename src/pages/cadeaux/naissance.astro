@@ -1,0 +1,709 @@
+---
+/**
+ * /cadeaux/naissance/ — page d'atterrissage.
+ * Intention unique : « cadeau de naissance personnalisé brodé ».
+ *
+ * ⚠️ MAQUETTE. Prix et délais viennent de src/config.ts et du contenu des
+ * créations : ils sont provisoires tant qu'Emma ne les a pas confirmés.
+ * Vocabulaire : broderie MACHINE. Jamais « brodé à la main ».
+ */
+import { Image, getImage } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import CarteCreation from '../../components/CarteCreation.astro';
+import { SITE, ATELIER, lienWhatsApp } from '../../config';
+
+import photoHero from '../../assets/creations/hero-mobile/doudou-lapin-brode-prenom-naissance-vitre.webp';
+import photoCadre from '../../assets/creations/detail/cadre-naissance-brode-prenom-chambre-bebe.webp';
+import photoKeanu from '../../assets/creations/galerie/doudou-plat-brode-prenom-keanu-naissance.webp';
+import photoSac from '../../assets/creations/galerie/sac-a-dos-enfant-brode-prenom-malo.webp';
+import photoFinal from '../../assets/creations/plein-ecran/machine-a-broder-en-cours-atelier-vitre.webp';
+
+const toutes = (await getCollection('creations', ({ data }) => !data.masquee)).sort(
+  (a, b) => a.data.ordre - b.data.ordre,
+);
+const pour = toutes.filter((c) => c.data.occasions.includes('naissance'));
+/* Si l'occasion est peu fournie, on complète avec des pièces voisines — et on
+   le dit. Jamais de carte inventée pour combler une grille. */
+const voisines = pour.length >= 3 ? [] : toutes.filter((c) => !pour.includes(c)).slice(0, 2);
+
+const prix = pour.map((c) => c.data.prixDepart).filter((n): n is number => typeof n === 'number');
+const prixMini = prix.length ? Math.min(...prix) : null;
+const delais = pour.map((c) => c.data.delaiJours).filter((n): n is number => typeof n === 'number');
+const delaiMax = delais.length ? Math.max(...delais) : null;
+
+const wa = lienWhatsApp(
+  `Bonjour ${SITE.nom}, c'est pour une naissance. J'aimerais une pièce brodée au prénom.`,
+);
+
+const og = await getImage({ src: photoCadre, width: 1200, height: 630, format: 'jpeg' });
+
+const titre = `Cadeau de naissance brodé au prénom — ${SITE.ville} & Rennes | ${SITE.nom}`;
+const description = `Cadeau de naissance personnalisé, brodé à ${SITE.ville} (35) : doudou, cadre, bavoir, cape de bain. Prénom, date, poids et taille${prixMini ? `, à partir de ${prixMini} €` : ''}.`;
+
+/* Questions réellement posées avant une commande de naissance. */
+const faq = [
+  {
+    q: 'Je peux commander avant la naissance ?',
+    r: `Oui, et c'est même le plus confortable. Dites-moi la date du terme : on choisit le support, l'écriture et la couleur du fil, je vous montre le motif, et je garde tout prêt. Le jour J vous m'envoyez le prénom et les mesures, je lance la machine.`,
+  },
+  {
+    q: 'Combien de temps faut-il pour recevoir la pièce ?',
+    r: delaiMax
+      ? `Le délai d'atelier est aujourd'hui de ${ATELIER.delaiActuel}. Une fois le motif validé, comptez jusqu'à ${delaiMax} jours ouvrés pour une pièce de naissance, expédition comprise.`
+      : `Le délai d'atelier est aujourd'hui de ${ATELIER.delaiActuel}. Je vous confirme une date dès que le motif est validé.`,
+  },
+  {
+    q: 'Qu\'est-ce qui peut être brodé exactement ?',
+    r: `Le prénom, la date, l'heure, le poids, la taille, et un petit motif à côté si vous voulez. En cursive ou en lettres bâton, dans la couleur de fil de votre choix. Tout ne tient pas forcément sur le même support : je vous dis ce qui passe.`,
+  },
+  {
+    q: 'Le doudou brodé passe en machine ?',
+    r: `Oui, à 30 degrés. C'est du fil polyester : il ne rétrécit pas et il ne déteint pas. C'est la question que les parents posent le plus souvent, et c'est justement pour ça que je brode plutôt que je peins.`,
+  },
+  {
+    q: 'Vous livrez, ou il faut venir chercher ?',
+    r: `${ATELIER.zones}. L'emballage cadeau est compris — beaucoup de pièces partent directement à la maternité.`,
+  },
+];
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.r },
+  })),
+};
+---
+
+<Base
+  titre={titre}
+  description={description}
+  imageOg={og.src}
+  fil={[{ nom: 'Cadeau de naissance', url: '/cadeaux/naissance/' }]}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} is:inline />
+
+  <!-- ===================== EN-TÊTE ===================== -->
+  <section class="bande nais-tete">
+    <div class="nais-mot">
+      <p class="sourcil">Naissance — {SITE.ville} &amp; Rennes</p>
+      <h1>Le prénom, la date, le poids.<br /><em>Je brode les trois.</em></h1>
+      <p class="chapo">
+        Cadeau de naissance personnalisé, brodé à {SITE.ville}&nbsp;(35)&nbsp;: doudou, cadre de
+        naissance, bavoir, cape de bain, sac à dos. Vous m'envoyez le prénom et les mesures, je vous
+        montre le motif, je brode.{prixMini && ` À partir de ${prixMini} €.`}
+      </p>
+      <p class="actions">
+        <a class="btn btn--wa" href={wa}>Écrire sur WhatsApp</a>
+        <a class="btn btn--creux" href="/contact/?occasion=naissance#devis">Demander un devis</a>
+      </p>
+      <ul class="rassure">
+        <li><b>{ATELIER.delaiReponse}</b></li>
+        <li>Délai actuel&nbsp;: <b>{ATELIER.delaiActuel}</b></li>
+        <li>Lavable en machine à&nbsp;<b>30°</b></li>
+      </ul>
+    </div>
+
+    <figure class="nais-photo">
+      <Image
+        src={photoHero}
+        alt="Doudou lapin beige brodé au prénom et à la date de naissance sur les oreilles, posé devant des roses blanches"
+        widths={[390, 620, 800, 1000]}
+        sizes="(max-width: 62rem) 100vw, 32rem"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+      <figcaption>Le doudou, brodé sur les deux oreilles&nbsp;: le prénom d'un côté, les mesures de l'autre.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ===================== LA FICHE ===================== -->
+  <section class="bande nais-fiche">
+    <div class="nais-fiche__dire">
+      <h2 class="titre-xl">Ce que je brode dessus.</h2>
+      <p class="mesure">
+        Cinq lignes suffisent. Vous me les envoyez par message, je vous renvoie le dessin avant de
+        piquer&nbsp;: tant que ce n'est pas brodé, on peut tout changer.
+      </p>
+    </div>
+
+    {/* ⚠️ Valeurs de droite = EXEMPLES DE FORMAT, pas des données clientes. */}
+    <dl class="fiche">
+      <div class="fiche__l">
+        <dt>Le prénom</dt>
+        <dd>En cursive ou en bâton <span>avec l'orthographe exacte&nbsp;: c'est la seule chose que je ne peux pas deviner</span></dd>
+      </div>
+      <div class="fiche__l">
+        <dt>La date</dt>
+        <dd><b>16.01.2026</b> <span>ou « 16 janvier 2026 »</span></dd>
+      </div>
+      <div class="fiche__l">
+        <dt>L'heure</dt>
+        <dd><b>04 h 12</b></dd>
+      </div>
+      <div class="fiche__l">
+        <dt>Le poids</dt>
+        <dd><b>3,85 kg</b></dd>
+      </div>
+      <div class="fiche__l">
+        <dt>La taille</dt>
+        <dd><b>49 cm</b></dd>
+      </div>
+      <div class="fiche__l fiche__l--plus">
+        <dt>Et si vous voulez</dt>
+        <dd>un petit motif à côté du prénom</dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- ===================== LA PLANCHE ===================== -->
+  <div class="bande nais-bande">
+    <ul class="planche plein" tabindex="0" role="region" aria-label="Pièces de naissance brodées, rangée défilante">
+      <li>
+        <Image
+          src={photoCadre}
+          alt="Cadre de naissance brodé au prénom, avec la date, la taille et le poids, accroché dans une chambre de bébé"
+          widths={[320, 480, 700]}
+          sizes="(max-width: 48rem) 78vw, 30vw"
+          loading="lazy"
+          decoding="async"
+        />
+        <p>Le cadre, pour le mur de la chambre</p>
+      </li>
+      <li>
+        <Image
+          src={photoKeanu}
+          alt="Doudou plat en tissu étoilé, prénom brodé au centre en fil bleu"
+          widths={[320, 480, 700]}
+          sizes="(max-width: 48rem) 78vw, 30vw"
+          loading="lazy"
+          decoding="async"
+        />
+        <p>Le doudou plat, celui qui part en poussette</p>
+      </li>
+      <li>
+        <Image
+          src={photoSac}
+          alt="Sac à dos d'enfant brodé au prénom Malo"
+          widths={[320, 480, 700]}
+          sizes="(max-width: 48rem) 78vw, 30vw"
+          loading="lazy"
+          decoding="async"
+        />
+        <p>Le sac à dos, pour plus tard — la crèche arrive vite</p>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ===================== LE CALENDRIER DU TERME ===================== -->
+  <section class="bande nais-terme">
+    <p class="sourcil">Le nerf de la guerre</p>
+    <h2 class="titre-xl">Un bébé n'attend pas<br /><em>un délai de fabrication.</em></h2>
+
+    <ol class="terme">
+      <li>
+        <p class="terme__q">Vous êtes enceinte</p>
+        <p>
+          C'est le bon moment. Dites-moi la date du terme&nbsp;: on choisit le support, l'écriture et
+          la couleur du fil dès maintenant, et je garde le motif prêt. Le jour de la naissance, vous
+          m'envoyez le prénom et les mesures par WhatsApp{delaiMax
+            ? `, et je brode dans les ${delaiMax} jours ouvrés`
+            : ''}.
+        </p>
+      </li>
+      <li>
+        <p class="terme__q">Le bébé est déjà né</p>
+        <p>
+          Très bien aussi&nbsp;: j'ai tout ce qu'il faut du premier coup. Le délai d'atelier est
+          aujourd'hui de <b>{ATELIER.delaiActuel}</b>, motif validé compris.
+        </p>
+      </li>
+      <li>
+        <p class="terme__q">Vous allez à la maternité demain</p>
+        <p>
+          Dites-le-moi tout de suite au lieu de remplir le formulaire. Je regarde ce qui tient dans
+          le temps qui reste, et je vous réponds franchement si ce n'est pas jouable.
+        </p>
+      </li>
+    </ol>
+
+    <p class="actions">
+      <a class="btn btn--wa" href={wa}>Donner ma date sur WhatsApp</a>
+    </p>
+  </section>
+
+  <!-- ===================== LES CRÉATIONS ===================== -->
+  <section class="bande nais-creations">
+    <div class="tete">
+      <h2 class="titre-xl">Les pièces de naissance<br /><em>déjà passées sous la machine.</em></h2>
+      <p class="mesure">
+        Vous pouvez partir de l'une d'elles et changer le support, le fil ou l'écriture. C'est
+        presque toujours comme ça que ça commence.
+      </p>
+      <p class="indice"><span aria-hidden="true">→</span> faites défiler la rangée</p>
+    </div>
+
+    <div class="rangee" tabindex="0" role="region" aria-label="Créations pour une naissance">
+      {pour.map((c, i) => <CarteCreation creation={c} prioritaire={i === 0} />)}
+      {voisines.map((c) => <CarteCreation creation={c} />)}
+      <div class="rangee__fin">
+        <p>Le bavoir, la cape de bain et la gigoteuse, <b>je les brode aussi</b>.</p>
+        <p class="rangee__note">
+          Ils ne sont pas encore photographiés sur le site. Demandez-moi, je vous envoie des photos
+          par message.
+        </p>
+      </div>
+    </div>
+
+    <p class="nais-lien">
+      <a class="btn btn--creux" href="/creations/">Voir toutes les créations</a>
+      <a class="btn btn--creux" href="/sur-mesure/">Comment se passe une commande</a>
+    </p>
+  </section>
+
+  <!-- ===================== ENTRETIEN ===================== -->
+  <section class="bande nais-lavage">
+    <h2>Et après, ça se lave.</h2>
+    <p>
+      Machine à 30 degrés, fil polyester&nbsp;: il ne rétrécit pas, il ne déteint pas sur le tissu
+      clair. C'est tout l'intérêt de la broderie sur un objet de bébé — parce qu'un doudou, ça finit
+      toujours par retourner dans le tambour de la machine à laver.
+    </p>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section class="bande nais-faq" id="questions">
+    <h2 class="titre-xl">Les questions qu'on me pose<br /><em>avant de commander.</em></h2>
+    <div class="faq">
+      {
+        faq.map((f, i) => (
+          <details open={i === 0}>
+            <summary>{f.q}</summary>
+            <p>{f.r}</p>
+          </details>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ===================== APPEL FINAL ===================== -->
+  <section class="final bande" id="devis">
+    <Image
+      class="final__fond"
+      src={photoFinal}
+      alt=""
+      aria-hidden="true"
+      widths={[800, 1400]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="final__in">
+      <p class="sourcil sourcil--clair">On commence&nbsp;?</p>
+      <h2 class="titre-xl">Vous attendez quelqu'un&nbsp;?<br /><em>Donnez-moi son prénom.</em></h2>
+      <p class="mesure mesure--clair">
+        Ou juste la date du terme, si le prénom est encore secret. Je réponds dans la journée avec un
+        prix, un délai et une proposition de motif. Ça ne vous engage à rien.
+      </p>
+      <p class="actions">
+        <a class="btn btn--or" href={wa}>Écrire sur WhatsApp</a>
+        <a class="btn btn--nuit" href="/contact/?occasion=naissance#devis">Remplir le formulaire</a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Le sourcil global est en `white-space: nowrap` : les libellés d'une page
+     occasion sont plus longs que ceux de l'accueil et débordaient à 320 px.
+     Ici, ils passent à la ligne, et le filet disparaît sur petit écran. */
+  /* Sur fond sombre, le vert de `.btn--wa` disparaît dans la section : le
+     bouton principal passe en doré (fort contraste), le secondaire prend un
+     liseré clair. */
+  .btn--nuit {
+    color: var(--coquille);
+    border-color: color-mix(in oklab, var(--coquille) 48%, transparent);
+    background: rgb(255 255 255 / 0.06);
+  }
+  .btn--nuit::before {
+    background: var(--coquille);
+  }
+  .btn--nuit:hover {
+    color: var(--encre);
+    border-color: var(--coquille);
+  }
+
+  .sourcil {
+    /* `flex-wrap` d'abord : le filet pointillé passe à la ligne suivante
+       plutôt que d'écraser le libellé, qui ne se coupe donc que s'il est
+       vraiment trop long pour toute la largeur. */
+    white-space: normal;
+    flex-wrap: wrap;
+    line-height: 1.5;
+  }
+  @media (max-width: 40rem) {
+    .sourcil::after {
+      display: none;
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
+     EN-TÊTE — texte à gauche, photo qui sort par le bord droit sur ordinateur.
+  --------------------------------------------------------------------------- */
+  .nais-tete {
+    padding-block: clamp(2rem, 5vw, 3.5rem) clamp(2.5rem, 6vw, 4.5rem);
+    row-gap: clamp(1.75rem, 4vw, 2.5rem);
+    background-image: radial-gradient(
+      64% 52% at 4% 4%,
+      color-mix(in oklab, var(--sable-haut) 92%, #fff) 0%,
+      transparent 62%
+    );
+  }
+  .nais-mot {
+    min-width: 0;
+    display: grid;
+    gap: clamp(0.8rem, 2vw, 1.25rem);
+    justify-items: start;
+    align-content: center;
+  }
+  .nais-mot h1 em {
+    color: var(--olive);
+  }
+  .nais-photo {
+    grid-column: bord-d / bord-f;
+    min-width: 0;
+    margin: 0;
+  }
+  .nais-photo :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: 50% 42%;
+    border-radius: 0;
+    box-shadow: 0 26px 50px -38px rgb(30 22 18 / 0.7);
+  }
+  .nais-photo figcaption {
+    padding: 0.7rem var(--marge) 0;
+    font-size: var(--t-micro);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gris);
+    max-width: 30rem;
+  }
+  .nais-tete .sourcil {
+    color: color-mix(in oklab, var(--olive) 80%, var(--encre));
+  }
+
+  @media (min-width: 62rem) {
+    .nais-tete {
+      grid-template-columns:
+        [bord-d] minmax(var(--marge), 1fr)
+        [large-d] minmax(0, 36rem)
+        [mi] minmax(0, 28rem)
+        [large-f] minmax(var(--marge), 1fr) [bord-f];
+      column-gap: clamp(2rem, 4vw, 4rem);
+      align-items: center;
+      padding-block-start: clamp(3rem, 5vw, 4.5rem);
+    }
+    .nais-mot {
+      grid-column: large-d / mi;
+      grid-row: 1;
+    }
+    .nais-photo {
+      grid-column: mi / bord-f;
+      grid-row: 1;
+    }
+    .nais-photo :global(img) {
+      aspect-ratio: 4 / 5;
+      border-start-start-radius: 160px;
+    }
+    .nais-photo figcaption {
+      padding-inline: 0;
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
+     LA FICHE — le dispositif propre à cette page : les cinq champs brodés,
+     posés comme une fiche d'atelier. Chiffres en chasse fixe.
+  --------------------------------------------------------------------------- */
+  .nais-fiche {
+    padding-block: clamp(2.5rem, 6vw, 4.5rem);
+    row-gap: clamp(1.5rem, 3.5vw, 2.5rem);
+  }
+  .nais-fiche__dire {
+    min-width: 0;
+    display: grid;
+    gap: 0.9rem;
+  }
+  .fiche {
+    min-width: 0;
+    display: grid;
+    gap: 0;
+    border-block-start: 1px solid color-mix(in oklab, var(--olive) 34%, transparent);
+    max-width: 44rem;
+  }
+  .fiche__l {
+    display: grid;
+    grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr);
+    gap: 0.2rem 1.25rem;
+    align-items: baseline;
+    padding-block: 0.85rem;
+    border-block-end: 1px solid color-mix(in oklab, var(--olive) 22%, transparent);
+  }
+  .fiche dt {
+    font-size: var(--t-micro);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+  .fiche dd {
+    margin: 0;
+    min-width: 0;
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.9rem);
+    line-height: 1.15;
+    color: var(--encre);
+  }
+  .fiche dd b {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.72em;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+    color: color-mix(in oklab, var(--olive) 74%, var(--encre));
+  }
+  .fiche dd span {
+    display: block;
+    font-family: 'Jost', sans-serif;
+    font-size: var(--t-petit);
+    color: var(--gris);
+  }
+  .fiche__l--plus dd {
+    font-style: italic;
+    color: var(--encre-doux);
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.4rem);
+  }
+  @media (max-width: 30rem) {
+    .fiche__l {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
+     LA PLANCHE — trois supports, rangée qui déborde du bord droit.
+  --------------------------------------------------------------------------- */
+  .nais-bande {
+    padding-block: clamp(0.5rem, 2vw, 1.5rem) clamp(2rem, 5vw, 3.5rem);
+  }
+  .planche {
+    display: flex;
+    gap: clamp(0.7rem, 1.8vw, 1.3rem);
+    margin: 0;
+    padding: 0.25rem var(--marge) 1rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline-start: var(--marge);
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--brique) 55%, transparent) transparent;
+  }
+  .planche > li {
+    flex: 0 0 auto;
+    inline-size: min(78vw, 22rem);
+    scroll-snap-align: start;
+    min-width: 0;
+  }
+  .planche :global(img) {
+    inline-size: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  .planche > li:first-child :global(img) {
+    border-end-end-radius: 90px;
+  }
+  .planche > li:last-child :global(img) {
+    border-start-start-radius: 90px;
+  }
+  .planche p {
+    padding-block-start: 0.6rem;
+    font-size: var(--t-petit);
+    color: var(--encre-doux);
+  }
+  .planche:focus-visible {
+    outline: 2.5px solid var(--rouille);
+    outline-offset: 4px;
+  }
+
+  /* ---------------------------------------------------------------------------
+     LE CALENDRIER DU TERME — trois situations, pas trois étapes.
+  --------------------------------------------------------------------------- */
+  .nais-terme {
+    padding-block: clamp(2.75rem, 6.5vw, 5rem);
+    row-gap: clamp(1.25rem, 3vw, 2rem);
+    background: color-mix(in oklab, var(--sable) 86%, var(--olive));
+  }
+  .nais-terme > * {
+    min-width: 0;
+  }
+  .nais-terme .titre-xl em {
+    color: var(--olive);
+  }
+  .terme {
+    display: grid;
+    gap: clamp(1.1rem, 2.5vw, 1.8rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr));
+    padding-block-start: clamp(0.5rem, 1.5vw, 1rem);
+  }
+  .terme > li {
+    min-width: 0;
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+    padding-inline-start: 1.1rem;
+    border-inline-start: 2px solid color-mix(in oklab, var(--olive) 45%, transparent);
+  }
+  .terme__q {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.3rem, 1.1rem + 0.7vw, 1.75rem);
+    line-height: 1.1;
+    color: var(--encre);
+  }
+  .terme > li > p:not(.terme__q) {
+    font-size: var(--t-petit);
+    line-height: 1.6;
+    color: var(--encre-doux);
+  }
+  .terme b {
+    font-weight: 500;
+    color: var(--encre);
+  }
+
+  /* ---------------------------------------------------------------------------
+     CRÉATIONS / LIENS
+  --------------------------------------------------------------------------- */
+  .nais-creations {
+    padding-block: clamp(2.75rem, 6.5vw, 5rem);
+    row-gap: clamp(1.75rem, 4vw, 3rem);
+  }
+  .rangee__note {
+    font-family: 'Jost', sans-serif;
+    font-size: var(--t-micro);
+    line-height: 1.5;
+    color: var(--gris);
+  }
+  .nais-lien {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 0.9rem;
+  }
+
+  /* ---------------------------------------------------------------------------
+     ENTRETIEN — une section volontairement courte et serrée.
+  --------------------------------------------------------------------------- */
+  .nais-lavage {
+    padding-block: clamp(1.5rem, 3.5vw, 2.5rem) clamp(2.5rem, 6vw, 4rem);
+    row-gap: 0.8rem;
+  }
+  .nais-lavage > * {
+    min-width: 0;
+    max-width: 38rem;
+  }
+  .nais-lavage h2 {
+    font-size: clamp(1.5rem, 1.15rem + 1.5vw, 2.4rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+  }
+  .nais-lavage p {
+    color: var(--encre-doux);
+  }
+
+  /* ---------------------------------------------------------------------------
+     FAQ
+  --------------------------------------------------------------------------- */
+  .nais-faq {
+    padding-block: clamp(2.5rem, 6vw, 4.5rem);
+    row-gap: clamp(1.5rem, 3.5vw, 2.25rem);
+  }
+  .nais-faq > * {
+    min-width: 0;
+  }
+  .faq {
+    display: grid;
+    max-width: 48rem;
+    border-block-start: 1px solid color-mix(in oklab, var(--brique) 26%, transparent);
+  }
+  .faq details {
+    border-block-end: 1px solid color-mix(in oklab, var(--brique) 26%, transparent);
+  }
+  .faq summary {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    min-height: 44px;
+    padding-block: 1rem;
+    cursor: pointer;
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.15rem, 1.02rem + 0.6vw, 1.5rem);
+    line-height: 1.2;
+    list-style: none;
+  }
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq summary::before {
+    content: '+';
+    flex: none;
+    inline-size: 1.1em;
+    color: var(--olive);
+    transition: transform 240ms ease;
+  }
+  .faq details[open] summary::before {
+    content: '−';
+  }
+  .faq summary:hover {
+    color: var(--olive);
+  }
+  .faq p {
+    padding: 0 0 1.1rem 1.9rem;
+    max-width: 40rem;
+    font-size: var(--t-petit);
+    line-height: 1.65;
+    color: var(--encre-doux);
+  }
+
+  /* ---------------------------------------------------------------------------
+     RÉVÉLATIONS — pilotées par le défilement, état final par défaut.
+  --------------------------------------------------------------------------- */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .fiche__l,
+      .terme > li {
+        animation: nais-monte linear both;
+        animation-timeline: view();
+        animation-range: entry 6% entry 56%;
+      }
+    }
+  }
+  @keyframes nais-monte {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fiche__l,
+    .terme > li {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+  }
+</style>

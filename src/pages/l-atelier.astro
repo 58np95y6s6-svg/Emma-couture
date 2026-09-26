@@ -1,0 +1,699 @@
+---
+/**
+ * /l-atelier/ — qui est Emma, son matériel, sa façon de travailler.
+ *
+ * ⚠️ Emma travaille CHEZ ELLE. Aucune adresse, aucune invitation à passer,
+ * aucun horaire d'ouverture sur cette page. On parle de remise en main propre
+ * sur rendez-vous, dans un lieu public.
+ * ⚠️ Broderie MACHINE. « Cousu main » ne vaut que pour les sacs, trousses
+ * et tabliers qu'elle confectionne.
+ * ⚠️ MAQUETTE — les éléments biographiques sont des exemples à faire valider
+ * par Emma avant mise en production (marqués [À CONFIRMER]).
+ */
+import { Image, getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
+
+import portrait from '../assets/creations/galerie/emma-brodeuse-vitre-portrait.webp';
+import bobines from '../assets/creations/bandeau/atelier-mur-bobines-fil-broderie-vitre.webp';
+import machine from '../assets/creations/plein-ecran/machine-a-broder-en-cours-atelier-vitre.webp';
+import machineDetail from '../assets/creations/detail/machine-a-broder-en-cours-atelier-vitre.webp';
+import papillon from '../assets/creations/plein-ecran/papillon-brode-dentelle-ajouree-coquelicots.webp';
+import arbre from '../assets/creations/galerie/arbre-de-vie-brode-dentelle-ajouree-fil-dore.webp';
+import sacBanane from '../assets/creations/detail/sac-banane-cousu-main-broderie-chats.webp';
+import trousse from '../assets/creations/galerie/trousse-cousue-main-brodee-prenom-lisa.webp';
+import ogSource from '../assets/creations/og/emma-brodeuse-vitre-portrait.webp';
+
+const og = await getImage({ src: ogSource, format: 'webp', width: 1200 });
+
+const titre = `L'atelier — ${SITE.nom}, brodeuse et couturière à ${SITE.ville} (35)`;
+const description = `Je brode à la machine et je couds, seule, à ${SITE.ville}. Ma machine, mon mur de bobines, la dentelle libre, et la façon dont je travaille avec vous : le motif validé avant la première piqûre.`;
+---
+
+<Base
+  titre={titre}
+  description={description}
+  imageOg={og.src}
+  fil={[{ nom: "L'atelier", url: '/l-atelier/' }]}
+>
+  {/* ⚠️ MAQUETTE — numéro, e-mail et délais provisoires (src/config.ts). */}
+
+  <!-- ===================== OUVERTURE ===================== -->
+  <section class="bande at-tete">
+    <div class="at-tete__dire">
+      <p class="sourcil">L'atelier — {SITE.ville}&nbsp;(35)</p>
+      <h1>C'est moi qui réponds,<br />qui brode <em>et qui emballe.</em></h1>
+      <p class="chapo">
+        Je m'appelle Emma. Je fais de la broderie machine personnalisée et de la couture sur mesure
+        à {SITE.ville}, en Ille-et-Vilaine. Il n'y a personne d'autre&nbsp;: quand vous m'écrivez,
+        vous m'écrivez à moi.
+      </p>
+      <p class="actions">
+        <a class="btn btn--wa" href={lienWhatsApp()}>Me poser une question</a>
+        <a class="btn btn--creux" href="/creations/">Voir ce que je fais</a>
+      </p>
+    </div>
+
+    <figure class="at-portrait">
+      <Image
+        src={portrait}
+        alt="Emma, brodeuse et couturière à Vitré, dans son espace de travail"
+        widths={[390, 620, 800, 1000]}
+        sizes="(max-width: 62rem) 88vw, 40vw"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+      <figcaption>Emma</figcaption>
+    </figure>
+  </section>
+
+  <!-- ===================== BANDEAU BOBINES ===================== -->
+  <div class="bandeau at-bandeau">
+    <Image
+      src={bobines}
+      alt="Le mur de l'atelier, entièrement couvert de bobines de fil à broder rangées par famille de couleurs"
+      widths={[800, 1400, 2000, 2400]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+    />
+    <p class="bandeau__mot" aria-hidden="true">le rack, derrière moi</p>
+  </div>
+
+  <!-- ===================== QUI JE SUIS ===================== -->
+  <section class="bande at-dire">
+    <h2 class="titre-xl">Pas d'équipe. Moi, ma machine,<br /><em>et un mur de bobines.</em></h2>
+    <div class="at-colonnes">
+      <p>
+        Je travaille seule, chez moi, à {SITE.ville}. C'est moi qui lis vos messages, qui choisis
+        la bobine dans le rack derrière moi, qui lance la machine et qui ferme le paquet. Si vous me
+        demandez où en est votre commande, je n'ai personne à aller consulter&nbsp;: je le sais.
+      </p>
+      <p>
+        Ce que ça change pour vous&nbsp;: on discute directement. Vous pouvez me dire « en fait,
+        plutôt en bleu », « le prénom un peu plus haut », « c'est pour un garçon qui déteste le
+        rose ». Je ne suis pas un formulaire de commande, je suis la personne qui va broder.
+      </p>
+      <p>
+        Ce que ça change aussi&nbsp;: je ne brode qu'une pièce à la fois. Le délai actuel est de
+        {' '}<b>{ATELIER.delaiActuel}</b>, et je préfère vous dire non que vous livrer en retard.
+      </p>
+    </div>
+    <p class="at-signature">Emma</p>
+  </section>
+
+  <!-- ===================== LE MATÉRIEL ===================== -->
+  <section class="bande at-outils" id="materiel">
+    <div class="at-outils__fig">
+      <Image
+        src={machine}
+        alt="La tête de la machine à broder en pleine action : un motif de cerisier en fleurs et un colibri se forment en fil de couleur sur le tissu tendu"
+        widths={[480, 800, 1200, 1600]}
+        sizes="(max-width: 62rem) 100vw, 58vw"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+
+    <div class="at-outils__txt">
+      <p class="sourcil">Ce qu'il y a dans la pièce</p>
+      <h2 class="titre-xl">Une machine,<br />un tapis de coupe,<br /><em>et beaucoup de fil.</em></h2>
+      <dl class="at-liste">
+        <div>
+          <dt>La machine à broder</dt>
+          <dd>
+            Une tête, un cadre tendu, une aiguille. Elle suit un fichier que je prépare motif par
+            motif&nbsp;: c'est là que se joue la densité de points, et donc la tenue de la broderie
+            au lavage.
+          </dd>
+        </div>
+        <div>
+          <dt>Le fil polyester 40</dt>
+          <dd>
+            Brillant, solide, il ne déteint pas. C'est lui qui permet de passer la pièce en machine
+            à 30° sans que la broderie bouge.
+          </dd>
+        </div>
+        <div>
+          <dt>Les cadres</dt>
+          <dd>
+            Mesurés en millimètres. C'est le cadre qui fixe la taille maximale du motif — la raison
+            pour laquelle je vous demande toujours les dimensions exactes du support.
+          </dd>
+        </div>
+        <div>
+          <dt>Le tapis de coupe</dt>
+          <dd>
+            Vert, quadrillé au centimètre. C'est là que je coupe les tissus des sacs, des trousses
+            et des tabliers avant de les coudre.
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ===================== LA DENTELLE LIBRE — RUPTURE ===================== -->
+  <section class="bande at-nuit" id="dentelle">
+    <div class="at-nuit__dire">
+      <p class="sourcil sourcil--clair">Ma spécialité</p>
+      <h2 class="titre-xl">La dentelle libre.</h2>
+      <p class="mesure mesure--clair">
+        La machine brode <em>dans le vide</em>, sur un support qui disparaît au rinçage. Il ne reste
+        que le fil, ajouré, qui se tient tout seul. Pas de tissu dessous.
+      </p>
+      <p class="mesure mesure--clair">
+        C'est long à programmer et ça rate quand la densité est mal calculée. C'est aussi ce que je
+        préfère faire, et ce qu'on trouve le moins ailleurs en Ille-et-Vilaine.
+      </p>
+      <p class="actions">
+        <a class="btn btn--or" href="/creations/decoration-ajouree/">Voir les pièces ajourées</a>
+      </p>
+    </div>
+
+    <div class="at-nuit__fig">
+      <figure class="at-nuit__a">
+        <Image
+          src={papillon}
+          alt="Papillon brodé en dentelle libre, ailes rouges et noires entièrement faites de fil, surmonté de coquelicots"
+          widths={[420, 700, 1100]}
+          sizes="(max-width: 62rem) 88vw, 38vw"
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+      <figure class="at-nuit__b">
+        <Image
+          src={arbre}
+          alt="Arbre de vie brodé en dentelle ajourée fil doré, pièce autoportante sans support tissu"
+          widths={[380, 620, 1000]}
+          sizes="(max-width: 62rem) 62vw, 28vw"
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===================== LA COUTURE ===================== -->
+  <section class="bande at-couture" id="couture">
+    <div class="at-couture__txt">
+      <h2 class="titre-xl">Certaines pièces,<br /><em>je les couds d'abord.</em></h2>
+      <p class="mesure">
+        Les sacs, les trousses, les tabliers, les bavoirs&nbsp;: ceux-là ne sortent pas d'un
+        catalogue. Je les couds, puis je les brode. Vous prenez dans mes coupons, ou vous
+        m'apportez le vôtre — un tissu qui vous plaît, un drap de famille, une chemise à
+        transformer.
+      </p>
+      <p class="mesure">
+        C'est la partie la plus lente du travail, et celle où l'on peut tout changer&nbsp;: la
+        taille, la doublure, la fermeture, la poche.
+      </p>
+      <p class="actions">
+        <a class="btn btn--creux" href="/creations/couture/">Voir les sacs et les trousses</a>
+      </p>
+    </div>
+
+    <ul class="at-paire">
+      <li>
+        <Image
+          src={sacBanane}
+          alt="Sac banane cousu main en tissu imprimé, brodé d'un motif de chats"
+          widths={[320, 520, 800]}
+          sizes="(max-width: 46rem) 46vw, 24vw"
+          loading="lazy"
+          decoding="async"
+        />
+      </li>
+      <li>
+        <Image
+          src={trousse}
+          alt="Trousse en tissu fleuri bleu et blanc, cousue main, brodée au prénom en fil doré"
+          widths={[320, 520, 800]}
+          sizes="(max-width: 46rem) 46vw, 24vw"
+          loading="lazy"
+          decoding="async"
+        />
+      </li>
+    </ul>
+  </section>
+
+  <!-- ===================== LA VALIDATION DU MOTIF ===================== -->
+  <section class="bande at-promesse" id="validation">
+    <figure class="at-promesse__fig" data-broderie="tambour">
+      <Image
+        src={machineDetail}
+        alt="Détail du fil en cours de broderie : les points se superposent pour former un pétale"
+        widths={[420, 680, 1000]}
+        sizes="(max-width: 62rem) 88vw, 36vw"
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+
+    <div class="at-promesse__txt">
+      <h2 class="titre-xl">Je vous montre le motif<br /><em>avant de piquer.</em></h2>
+      <p class="mesure">
+        Tant que ce n'est pas piqué, tout est possible&nbsp;: l'écriture, la taille, la couleur du
+        fil, l'endroit exact. Vous regardez, vous me dites, on change. Une fois le fil dans le
+        tissu, il ne s'enlève pas proprement — c'est justement pour ça que cette étape existe.
+      </p>
+      <p class="at-citation">
+        «&nbsp;Plus petit, et le prénom vers le bas.&nbsp;» — c'est le genre de message qui fait
+        gagner une semaine à tout le monde.
+      </p>
+      <p class="actions">
+        <a class="btn btn--creux" href="/sur-mesure/#etapes">Les cinq étapes en détail</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== OÙ ME TROUVER ===================== -->
+  <section class="bande at-ou" id="rendez-vous">
+    <div class="at-ou__in">
+      <p class="sourcil sourcil--clair">Où me trouver</p>
+      <h2 class="titre-xl">Sur rendez-vous,<br /><em>pas à l'improviste.</em></h2>
+      <p class="mesure mesure--clair">
+        L'atelier est chez moi&nbsp;: je ne reçois pas. Pour la remise en main propre, on convient
+        d'un lieu et d'une heure — à {SITE.ville} ou à Rennes. Sinon, j'envoie partout en France,
+        emballé cadeau.
+      </p>
+      <ul class="at-ou__liste">
+        <li>
+          <b>{SITE.ville} et Rennes</b>
+          <span>Remise en main propre sur rendez-vous, dans un lieu public convenu ensemble.</span>
+        </li>
+        <li>
+          <b>Toute la France</b>
+          <span>Envoi postal. Les frais dépendent du poids et du format, ils sont dans le devis.</span>
+        </li>
+        <li>
+          <b>En ligne</b>
+          <span>
+            <a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">
+              @{CONTACT.instagram}
+            </a>{' '}
+            — les pièces en cours y passent avant d'arriver ici.
+          </span>
+        </li>
+      </ul>
+      <p class="actions">
+        <a class="btn btn--or" href="/contact/">Prendre rendez-vous</a>
+        <a class="btn btn--wa" href={lienWhatsApp()}>Écrire sur WhatsApp</a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ==========================================================================
+     /l-atelier/ — styles propres à la page. Préfixe `at-`.
+     ========================================================================== */
+
+  /* --- Ouverture -------------------------------------------------------- */
+  .at-tete {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(2.5rem, 6vw, 4.5rem);
+    row-gap: clamp(1.8rem, 4vw, 2.6rem);
+  }
+  .at-tete__dire {
+    display: grid;
+    gap: clamp(0.9rem, 2vw, 1.35rem);
+    justify-items: start;
+    align-content: center;
+  }
+  .at-tete h1 {
+    max-width: 22ch;
+  }
+
+  .at-portrait {
+    margin: 0;
+    position: relative;
+    max-width: 30rem;
+  }
+  .at-portrait :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 3px 3px 3px 40%;
+  }
+  .at-portrait figcaption {
+    position: absolute;
+    inset-block-end: 0.9rem;
+    inset-inline-start: -0.4rem;
+    background: var(--sable-haut);
+    color: var(--brique);
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 1.25rem;
+    padding: 0.2rem 0.85rem;
+    border-radius: 999px;
+    box-shadow: 0 6px 22px -14px rgb(36 28 24 / 0.5);
+  }
+
+  @media (min-width: 62rem) {
+    .at-tete {
+      grid-template-columns:
+        [bord-d] minmax(var(--marge), 1fr)
+        [large-d] minmax(0, calc(var(--large) * 0.56)) minmax(0, calc(var(--large) * 0.44))
+        [large-f] minmax(var(--marge), 1fr) [bord-f];
+      column-gap: clamp(2rem, 4vw, 4rem);
+      align-items: center;
+      padding-block: clamp(3rem, 6vw, 5rem);
+    }
+    .at-tete__dire {
+      grid-column: large-d / span 1;
+    }
+    .at-portrait {
+      grid-column: span 1 / large-f;
+      max-width: none;
+    }
+  }
+
+  .at-bandeau {
+    margin-block: 0;
+  }
+
+  /* --- Qui je suis : texte en colonnes ---------------------------------- */
+  .at-dire {
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    row-gap: clamp(1.4rem, 3vw, 2.2rem);
+  }
+  .at-dire .titre-xl {
+    max-width: 26ch;
+  }
+  .at-colonnes {
+    display: grid;
+    gap: clamp(1rem, 2.5vw, 1.6rem);
+    max-width: 62rem;
+  }
+  .at-colonnes p {
+    color: var(--encre-doux);
+    max-width: 34rem;
+  }
+  .at-colonnes b {
+    font-weight: 500;
+    color: var(--encre);
+  }
+  @media (min-width: 52rem) {
+    .at-colonnes {
+      grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr));
+      column-gap: clamp(1.5rem, 3vw, 2.8rem);
+    }
+    .at-colonnes p {
+      font-size: var(--t-petit);
+      min-width: 0;
+    }
+  }
+  .at-signature {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-style: italic;
+    font-size: clamp(1.8rem, 1.2rem + 2vw, 2.8rem);
+    line-height: 1;
+    color: var(--brique);
+  }
+
+  /* --- Le matériel : image pleine largeur + définitions ---------------- */
+  .at-outils {
+    padding-block: 0 clamp(3rem, 7vw, 5rem);
+    row-gap: clamp(1.8rem, 4vw, 3rem);
+  }
+  .at-outils__fig {
+    grid-column: bord-d / bord-f;
+    position: relative;
+  }
+  .at-outils__fig :global(img) {
+    width: 100%;
+    max-height: min(70vh, 34rem);
+    object-fit: cover;
+  }
+  .at-outils__txt {
+    display: grid;
+    gap: clamp(0.9rem, 2vw, 1.3rem);
+    justify-items: start;
+  }
+  .at-outils__txt .titre-xl {
+    max-width: 22ch;
+  }
+
+  .at-liste {
+    display: grid;
+    gap: 0;
+    width: 100%;
+    max-width: 58rem;
+    margin-block-start: 0.4rem;
+  }
+  .at-liste > div {
+    min-width: 0;
+    display: grid;
+    gap: 0.15rem 1.4rem;
+    padding-block: 1rem;
+    border-block-start: 1px solid color-mix(in oklab, var(--brique) 22%, transparent);
+  }
+  .at-liste > div:last-child {
+    border-block-end: 1px solid color-mix(in oklab, var(--brique) 22%, transparent);
+  }
+  .at-liste dt {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+    line-height: 1.15;
+    color: var(--encre);
+  }
+  .at-liste dd {
+    margin: 0;
+    font-size: var(--t-petit);
+    line-height: 1.6;
+    color: var(--encre-doux);
+    max-width: 38rem;
+  }
+  @media (min-width: 46rem) {
+    .at-liste > div {
+      grid-template-columns: minmax(0, 12rem) minmax(0, 1fr);
+      align-items: baseline;
+    }
+  }
+
+  /* --- Dentelle libre : rupture sombre --------------------------------- */
+  .at-nuit {
+    padding-block: clamp(3.2rem, 8vw, 6rem);
+    color: var(--coquille);
+    row-gap: clamp(2rem, 4vw, 3rem);
+    background:
+      radial-gradient(75% 55% at 92% 5%, color-mix(in oklab, var(--mauve) 65%, var(--vert)) 0%, transparent 62%),
+      radial-gradient(60% 55% at 5% 95%, color-mix(in oklab, var(--dore) 26%, var(--vert)) 0%, transparent 62%),
+      linear-gradient(190deg, #141A15, var(--vert-2) 55%, var(--vert));
+  }
+  .at-nuit__dire {
+    display: grid;
+    gap: clamp(0.85rem, 2vw, 1.25rem);
+    justify-items: start;
+  }
+  .at-nuit .titre-xl em {
+    color: var(--dore);
+  }
+  .at-nuit .mesure em {
+    font-style: italic;
+    color: var(--dore);
+  }
+
+  .at-nuit__fig {
+    display: grid;
+    gap: clamp(0.8rem, 2vw, 1.4rem);
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+  .at-nuit__fig figure {
+    margin: 0;
+    min-width: 0;
+    width: 100%;
+  }
+  .at-nuit__a :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 3px 3px 3px 36%;
+  }
+  .at-nuit__b {
+    max-width: 68%;
+    justify-self: end;
+  }
+  .at-nuit__b :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 50% 3px 3px 3px;
+  }
+  @media (min-width: 62rem) {
+    .at-nuit {
+      grid-template-columns:
+        [bord-d] minmax(var(--marge), 1fr)
+        [large-d] minmax(0, calc(var(--large) * 0.45)) minmax(0, calc(var(--large) * 0.55))
+        [large-f] minmax(var(--marge), 1fr) [bord-f];
+      column-gap: clamp(2rem, 4vw, 4rem);
+      align-items: center;
+    }
+    .at-nuit__dire {
+      grid-column: large-d / span 1;
+    }
+    .at-nuit__fig {
+      grid-column: span 1 / large-f;
+    }
+    .at-nuit__b {
+      max-width: 58%;
+      margin-block-start: -18%;
+    }
+  }
+
+  /* --- Couture --------------------------------------------------------- */
+  .at-couture {
+    padding-block: clamp(2.5rem, 6vw, 4.5rem);
+    row-gap: clamp(1.8rem, 4vw, 2.6rem);
+  }
+  .at-couture__txt {
+    display: grid;
+    gap: clamp(0.85rem, 2vw, 1.2rem);
+    justify-items: start;
+  }
+  .at-couture__txt .titre-xl {
+    max-width: 20ch;
+  }
+  .at-paire {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(0.6rem, 1.5vw, 1.1rem);
+    align-items: start;
+  }
+  .at-paire li {
+    min-width: 0;
+  }
+  .at-paire :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 2px;
+  }
+  .at-paire li:first-child {
+    margin-block-start: clamp(1rem, 4vw, 3rem);
+  }
+  @media (min-width: 62rem) {
+    .at-couture {
+      grid-template-columns:
+        [bord-d] minmax(var(--marge), 1fr)
+        [large-d] minmax(0, calc(var(--large) * 0.52)) minmax(0, calc(var(--large) * 0.48))
+        [large-f] minmax(var(--marge), 1fr) [bord-f];
+      column-gap: clamp(2rem, 4vw, 4rem);
+      align-items: center;
+    }
+    .at-couture__txt {
+      grid-column: large-d / span 1;
+    }
+    .at-paire {
+      grid-column: span 1 / large-f;
+    }
+  }
+
+  /* --- La validation du motif ------------------------------------------ */
+  .at-promesse {
+    padding-block: clamp(2.5rem, 6vw, 4.5rem);
+    row-gap: clamp(1.8rem, 4vw, 2.6rem);
+  }
+  .at-promesse__fig {
+    margin: 0;
+    max-width: 26rem;
+  }
+  .at-promesse__fig :global(img) {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .at-promesse__txt {
+    display: grid;
+    gap: clamp(0.85rem, 2vw, 1.2rem);
+    justify-items: start;
+  }
+  .at-promesse__txt .titre-xl {
+    max-width: 20ch;
+  }
+  .at-citation {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.15rem, 1rem + 0.9vw, 1.6rem);
+    line-height: 1.3;
+    color: var(--brique);
+    max-width: 30rem;
+    padding-inline-start: 1.1rem;
+    border-inline-start: 2px solid color-mix(in oklab, var(--rouille) 55%, transparent);
+  }
+  @media (min-width: 62rem) {
+    .at-promesse {
+      grid-template-columns:
+        [bord-d] minmax(var(--marge), 1fr)
+        [large-d] minmax(0, calc(var(--large) * 0.36)) minmax(0, calc(var(--large) * 0.64))
+        [large-f] minmax(var(--marge), 1fr) [bord-f];
+      column-gap: clamp(2rem, 4vw, 4.5rem);
+      align-items: center;
+    }
+    .at-promesse__fig {
+      grid-column: large-d / span 1;
+      max-width: none;
+    }
+    .at-promesse__txt {
+      grid-column: span 1 / large-f;
+    }
+  }
+
+  /* --- Où me trouver : rupture sombre --------------------------------- */
+  .at-ou {
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    color: var(--coquille);
+    background:
+      radial-gradient(65% 65% at 12% 15%, color-mix(in oklab, var(--brique) 48%, transparent), transparent 70%),
+      linear-gradient(175deg, var(--vert-2), var(--vert) 65%, #12180F);
+  }
+  .at-ou__in {
+    display: grid;
+    gap: clamp(0.85rem, 2vw, 1.2rem);
+    justify-items: start;
+  }
+  .at-ou .titre-xl {
+    max-width: 20ch;
+  }
+  .at-ou .titre-xl em {
+    color: var(--dore);
+  }
+  .at-ou__liste {
+    display: grid;
+    gap: 0;
+    width: 100%;
+    max-width: 48rem;
+    margin-block-start: 0.5rem;
+  }
+  .at-ou__liste li {
+    min-width: 0;
+    display: grid;
+    gap: 0.1rem 1.2rem;
+    padding-block: 0.9rem;
+    border-block-start: 1px solid color-mix(in oklab, var(--rose) 20%, transparent);
+  }
+  .at-ou__liste li:last-child {
+    border-block-end: 1px solid color-mix(in oklab, var(--rose) 20%, transparent);
+  }
+  .at-ou__liste b {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.2rem;
+    color: var(--dore);
+  }
+  .at-ou__liste span {
+    font-size: var(--t-petit);
+    color: color-mix(in oklab, var(--rose) 60%, #C9BEB6);
+  }
+  .at-ou__liste a {
+    text-decoration-color: color-mix(in oklab, var(--dore) 70%, transparent);
+    text-underline-offset: 3px;
+  }
+  @media (min-width: 40rem) {
+    .at-ou__liste li {
+      grid-template-columns: minmax(0, 10rem) minmax(0, 1fr);
+      align-items: baseline;
+    }
+  }
+</style>

@@ -1,0 +1,431 @@
+---
+/**
+ * Mentions légales.
+ *
+ * Règles tenues ici :
+ *  - ⚠️ Emma travaille chez elle : AUCUNE adresse de rue n'est publiée. Seule
+ *    la ville apparaît. La question de l'adresse du siège, légalement exigée,
+ *    est posée explicitement dans l'encadré « à compléter ».
+ *  - Les valeurs manquantes viennent de src/config.ts et sont affichées telles
+ *    quelles, en évidence : on ne remplace jamais un « [À COMPLÉTER] » par une
+ *    valeur inventée.
+ *  - Pas de vente en ligne pour l'instant → ni CGV ni médiateur de la
+ *    consommation à ce stade (voir CLAUDE.md § Périmètre).
+ */
+import Base from '../layouts/Base.astro';
+import { SITE, CONTACT } from '../config';
+/* Le gabarit retombe sinon sur /og-defaut.jpg, qui n'existe pas encore
+   dans public/ : l'aperçu de partage serait cassé. */
+import ogPage from '../assets/creations/og/atelier-mur-bobines-fil-broderie-vitre.webp';
+
+const titre = `Mentions légales | ${SITE.nom}`;
+const description =
+  "Mentions légales du site emma-broderie.fr : éditeur, statut de micro-entreprise, SIRET, contact, hébergeur et propriété intellectuelle des photographies.";
+
+/** Vrai si la valeur de config est encore un marqueur à compléter. */
+const manque = (v: string) => v.includes('[À');
+
+/**
+ * Ce qu'il reste à demander à Emma avant la mise en ligne.
+ * La liste est affichée sur la page : tant qu'elle n'est pas vide, les
+ * mentions légales ne sont pas conformes.
+ */
+const aFournir = [
+  {
+    quoi: 'Numéro SIRET',
+    pourquoi: 'Obligatoire pour toute entreprise immatriculée.',
+    etat: SITE.siret,
+  },
+  {
+    quoi: 'Nom et prénom exacts de l’entrepreneure',
+    pourquoi: 'Doivent correspondre à l’état civil enregistré au répertoire SIRENE.',
+    etat: `${SITE.nomLegal} — à confirmer`,
+  },
+  {
+    quoi: 'Adresse du siège de l’entreprise',
+    pourquoi:
+      'La loi exige l’adresse de l’entreprise. Emma travaillant à son domicile, il faut choisir : publier l’adresse personnelle, ou passer par une adresse de domiciliation ou une boîte postale. À trancher avec elle avant la mise en ligne.',
+    etat: 'décision à prendre',
+  },
+  {
+    quoi: 'Adresse e-mail définitive',
+    pourquoi: 'C’est l’adresse à laquelle les visiteuses et la CNIL pourront écrire.',
+    etat: `${CONTACT.email} — à confirmer`,
+  },
+  {
+    quoi: 'Numéro de téléphone affiché',
+    pourquoi: 'Facultatif, mais il est actuellement affiché sur tout le site.',
+    etat: `${CONTACT.telephone} — à confirmer`,
+  },
+  {
+    quoi: 'Régime de TVA',
+    pourquoi:
+      'La mention « TVA non applicable, article 293 B du CGI » n’est juste que si Emma est bien sous le régime de la franchise en base.',
+    etat: 'à confirmer',
+  },
+  {
+    quoi: 'Code postal',
+    pourquoi: 'Repris du fichier de configuration, jamais vérifié.',
+    etat: `${SITE.codePostal} — à confirmer`,
+  },
+];
+---
+
+<Base
+  titre={titre}
+  description={description}
+  imageOg={ogPage.src}
+  fil={[{ nom: 'Mentions légales', url: '/mentions-legales/' }]}
+>
+  <section class="bande ml">
+    <div class="ml__tete">
+      <p class="sourcil">Informations légales</p>
+      <h1>Mentions légales</h1>
+      <p class="ml__chapo">
+        Qui édite ce site, qui l’héberge, et à qui appartiennent les photos. Pour les données
+        personnelles, tout est détaillé dans
+        la <a href="/politique-de-confidentialite/">politique de confidentialité</a>.
+      </p>
+    </div>
+
+    <!-- Encadré de chantier : à supprimer quand la liste est vide. -->
+    <aside class="ml__chantier" aria-labelledby="ml-chantier-titre">
+      <h2 id="ml-chantier-titre">À compléter avant la mise en ligne</h2>
+      <p>
+        Ces informations sont obligatoires et ne sont pas encore renseignées. Elles sont affichées
+        ici telles quelles, plutôt qu’inventées.
+      </p>
+      <dl class="ml__chantier-liste">
+        {
+          aFournir.map((a) => (
+            <div>
+              <dt>
+                {a.quoi} <b>{a.etat}</b>
+              </dt>
+              <dd>{a.pourquoi}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </aside>
+
+    <div class="ml__corps">
+      <section class="ml__bloc">
+        <h2>Éditeur du site</h2>
+        <dl class="ml__fiche">
+          <div>
+            <dt>Nom commercial</dt>
+            <dd>{SITE.nom}</dd>
+          </div>
+          <div>
+            <dt>Exploitante</dt>
+            <dd>
+              {SITE.nomLegal}
+              <span class="ml__flag">nom légal à confirmer</span>
+            </dd>
+          </div>
+          <div>
+            <dt>Statut</dt>
+            <dd>Entrepreneure individuelle — micro-entreprise</dd>
+          </div>
+          <div>
+            <dt>Activité</dt>
+            <dd>Broderie machine sur textile et couture sur mesure</dd>
+          </div>
+          <div>
+            <dt>SIRET</dt>
+            <dd>
+              {manque(SITE.siret) ? <b class="ml__manque">{SITE.siret}</b> : SITE.siret}
+            </dd>
+          </div>
+          <div>
+            <dt>Siège</dt>
+            <dd>
+              {SITE.ville} ({SITE.codePostal}), {SITE.departement}, France
+              <span class="ml__flag">
+                adresse précise non publiée — l’atelier est au domicile de l’exploitante
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt>Courriel</dt>
+            <dd><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></dd>
+          </div>
+          <div>
+            <dt>Téléphone</dt>
+            <dd><a href={`tel:${CONTACT.telephone}`}>{CONTACT.telephone}</a></dd>
+          </div>
+          <div>
+            <dt>TVA</dt>
+            <dd>
+              TVA non applicable, article 293 B du Code général des impôts
+              <span class="ml__flag">à confirmer selon le régime réel d’Emma</span>
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="ml__bloc">
+        <h2>Directrice de la publication</h2>
+        <p>
+          {SITE.nomLegal}, exploitante de {SITE.nom}. C’est elle qui écrit et valide les contenus
+          publiés sur ce site.
+        </p>
+      </section>
+
+      <section class="ml__bloc">
+        <h2>Hébergeur</h2>
+        <p>
+          <b>Netlify, Inc.</b><br />
+          512 2nd Street, Suite 200<br />
+          San Francisco, CA 94107<br />
+          États-Unis<br />
+          <a href="https://www.netlify.com/" rel="noopener nofollow" target="_blank">netlify.com</a>
+        </p>
+        <p class="ml__petit">
+          Netlify héberge les pages du site, reçoit les formulaires de contact et stocke les données
+          de l’espace d’administration. Les conséquences de cet hébergement hors Union européenne
+          sont détaillées dans
+          la <a href="/politique-de-confidentialite/">politique de confidentialité</a>.
+        </p>
+      </section>
+
+      <section class="ml__bloc">
+        <h2>Propriété intellectuelle</h2>
+        <p>
+          Les photographies publiées sur ce site ont été prises dans l’atelier et montrent des
+          pièces réellement brodées ou cousues par {SITE.nom}. Elles lui appartiennent, ainsi que
+          les motifs de broderie, les textes et la mise en page du site.
+        </p>
+        <p>
+          Toute reproduction, même partielle, sur un autre site, une boutique en ligne, un catalogue
+          ou un support imprimé est interdite sans accord écrit préalable. Les motifs brodés ne sont
+          ni vendus ni cédés sous forme de fichiers.
+        </p>
+        <p class="ml__petit">
+          Certaines pièces photographiées portent le prénom de la personne à qui elles étaient
+          destinées. Si vous êtes concerné·e et souhaitez qu’une photo soit retirée, il suffit de le
+          demander par courriel&nbsp;: elle est retirée sans discussion.
+        </p>
+      </section>
+
+      <section class="ml__bloc">
+        <h2>Vente en ligne</h2>
+        <p>
+          Ce site ne vend rien directement&nbsp;: il n’y a ni panier, ni paiement, ni prise de
+          commande automatique. Chaque projet passe par un échange, un devis, puis un accord. Il n’y
+          a donc pas de conditions générales de vente ni de médiateur de la consommation à ce stade.
+        </p>
+        <p class="ml__petit">
+          <!-- ⚠️ Si un paiement en ligne est ajouté plus tard (liens Stripe), CGV et médiateur de
+               la consommation deviennent obligatoires en B2C. Voir CLAUDE.md § Périmètre. -->
+          Si un paiement en ligne est ajouté un jour, cette page sera complétée avant.
+        </p>
+      </section>
+
+      <section class="ml__bloc">
+        <h2>Liens et responsabilité</h2>
+        <p>
+          Les informations affichées (délais, exemples de prix, disponibilités) sont indicatives et
+          peuvent changer&nbsp;: seul le devis envoyé par écrit engage. Les liens sortants — réseaux
+          sociaux, WhatsApp — mènent vers des services qui ont leurs propres règles, sur lesquelles
+          {SITE.nom} n’a pas la main.
+        </p>
+      </section>
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  /* --------------------------------------------------------------------------
+     Mentions légales. Page de texte : colonne de lecture étroite, hiérarchie
+     calme, aucun effet. Classes préfixées `ml-` / `ml__`.
+  -------------------------------------------------------------------------- */
+  .ml {
+    padding-block: clamp(2.2rem, 5vw, 4rem) clamp(3rem, 7vw, 6rem);
+    row-gap: clamp(1.8rem, 4vw, 2.8rem);
+  }
+  .ml__tete {
+    display: grid;
+    gap: clamp(0.7rem, 2vw, 1.1rem);
+    justify-items: start;
+    max-width: 44rem;
+  }
+  /* `.sourcil` est en nowrap dans la feuille globale : on l'autorise à passer
+     à la ligne pour qu'un libellé long ne déborde pas à 320 px. */
+  @media (max-width: 40rem) {
+    .ml .sourcil {
+      white-space: normal;
+      line-height: 1.5;
+    }
+    .ml .sourcil::after {
+      display: none;
+    }
+  }
+  .ml__tete h1 {
+    font-size: clamp(2rem, 1.4rem + 2.4vw, 3.4rem);
+  }
+  .ml__chapo {
+    font-size: var(--t-chapo);
+    line-height: 1.5;
+    color: var(--encre-doux);
+    max-width: 34rem;
+  }
+  .ml__chapo a,
+  .ml__corps a {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in oklab, var(--brique) 55%, transparent);
+  }
+  .ml__chapo a:hover,
+  .ml__corps a:hover {
+    color: var(--rouille);
+  }
+
+  /* L'encadré de chantier : visible, mais pas une alerte rouge agressive. */
+  .ml__chantier {
+    max-width: 46rem;
+    padding: clamp(1.1rem, 2.5vw, 1.8rem);
+    background: color-mix(in oklab, var(--ocre) 22%, var(--sable-haut));
+    border-inline-start: 3px solid var(--ocre);
+    border-radius: 2px;
+  }
+  .ml__chantier h2 {
+    font-family: 'Jost', sans-serif;
+    font-size: var(--t-petit);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: color-mix(in oklab, var(--brique) 85%, var(--encre));
+  }
+  .ml__chantier > p {
+    padding-block-start: 0.5rem;
+    font-size: var(--t-corps);
+    line-height: 1.6;
+    color: var(--encre-doux);
+    max-width: 38rem;
+  }
+  .ml__chantier-liste {
+    display: grid;
+    gap: 0.9rem;
+    padding-block-start: 1.1rem;
+  }
+  .ml__chantier-liste > div {
+    min-width: 0;
+  }
+  .ml__chantier-liste dt {
+    font-size: var(--t-corps);
+    font-weight: 500;
+    line-height: 1.45;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.4rem 0.6rem;
+  }
+  .ml__chantier-liste dt b {
+    font-weight: 500;
+    font-size: var(--t-micro);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    color: var(--coquille);
+    background: var(--brique);
+  }
+  .ml__chantier-liste dd {
+    margin: 0;
+    padding-block-start: 0.15rem;
+    font-size: var(--t-petit);
+    line-height: 1.6;
+    color: var(--gris);
+    max-width: 40rem;
+  }
+
+  /* Le corps : blocs séparés par un filet de fil. */
+  .ml__corps {
+    display: grid;
+    gap: clamp(1.6rem, 3.5vw, 2.6rem);
+    max-width: 46rem;
+  }
+  .ml__bloc {
+    display: grid;
+    gap: 0.65rem;
+    padding-block-start: clamp(1.2rem, 3vw, 2rem);
+    border-block-start: 1px solid color-mix(in oklab, var(--brique) 26%, transparent);
+  }
+  .ml__bloc h2 {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.35rem, 1.1rem + 1vw, 2rem);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+  }
+  /* Page de texte : le corps reste à var(--t-corps), soit 16 px minimum. */
+  .ml__bloc p {
+    font-size: var(--t-corps);
+    line-height: 1.7;
+    color: var(--encre-doux);
+    max-width: 38rem;
+  }
+  .ml__bloc p b {
+    font-weight: 500;
+    color: var(--encre);
+  }
+  /* Du texte de loi reste du texte : `--t-micro` (≈ 12 px) est trop petit ici. */
+  .ml__petit {
+    font-size: var(--t-petit) !important;
+    color: var(--gris) !important;
+  }
+
+  /* La fiche d'identité de l'entreprise. */
+  .ml__fiche {
+    display: grid;
+    gap: 0.75rem;
+    padding-block-start: 0.3rem;
+  }
+  .ml__fiche > div {
+    min-width: 0;
+    display: grid;
+    gap: 0.1rem;
+  }
+  .ml__fiche dt {
+    font-size: var(--t-micro);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+  .ml__fiche dd {
+    margin: 0;
+    font-size: var(--t-corps);
+    line-height: 1.6;
+    color: var(--encre);
+  }
+  @media (min-width: 40rem) {
+    .ml__fiche > div {
+      grid-template-columns: minmax(0, 10rem) minmax(0, 1fr);
+      gap: 0.2rem 1.5rem;
+      align-items: baseline;
+    }
+    .ml__fiche dt {
+      padding-block-start: 0.15rem;
+    }
+  }
+
+  /* Une valeur encore absente : elle doit sauter aux yeux. */
+  .ml__manque {
+    display: inline-block;
+    font-weight: 500;
+    font-family: 'Jost', sans-serif;
+    letter-spacing: 0.06em;
+    padding: 0.15rem 0.6rem;
+    border-radius: 3px;
+    color: var(--coquille);
+    background: var(--rouille);
+  }
+  .ml__flag {
+    display: block;
+    padding-block-start: 0.15rem;
+    font-size: var(--t-micro);
+    line-height: 1.5;
+    color: var(--brique);
+  }
+</style>

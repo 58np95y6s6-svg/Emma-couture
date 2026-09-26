@@ -1,0 +1,503 @@
+---
+/**
+ * Politique de confidentialité.
+ *
+ * Rédigée d'après CLAUDE.md § Légal :
+ *  - demandes de contact : finalité, base légale, 3 ans après le dernier contact ;
+ *  - données de vente : conservation comptable 10 ans ;
+ *  - mailing : consentement explicite, désinscription à chaque envoi ;
+ *  - statistiques de visite : agrégées, sans cookie ni identifiant ;
+ *  - droits RGPD et façon concrète de les exercer ;
+ *  - sous-traitants : Netlify (hébergement, formulaires, stockage) et
+ *    WhatsApp / Meta si la visiteuse choisit ce canal.
+ *
+ * Ton : sobre et clair. Emma doit pouvoir relire cette page et la comprendre.
+ * ⚠️ Aucune adresse postale publiée (elle travaille chez elle) : l'exercice des
+ * droits passe par le courriel.
+ */
+import Base from '../layouts/Base.astro';
+import { SITE, CONTACT } from '../config';
+/* Le gabarit retombe sinon sur /og-defaut.jpg, qui n'existe pas encore
+   dans public/ : l'aperçu de partage serait cassé. */
+import ogPage from '../assets/creations/og/atelier-mur-bobines-fil-broderie-vitre.webp';
+
+const titre = `Politique de confidentialité | ${SITE.nom}`;
+const description =
+  "Ce que devient ce que vous m’écrivez : données collectées, durées de conservation, absence de cookie de suivi, sous-traitants (Netlify, WhatsApp) et vos droits RGPD.";
+
+/* ⚠️ À mettre à jour à la main à chaque modification du texte de cette page. */
+const miseAJour = '26 septembre 2026';
+
+/** Vrai si la valeur de config est encore un marqueur à compléter. */
+const manque = (v: string) => v.includes('[À');
+
+/**
+ * Les traitements, un par bloc. C'est le cœur de la page : chacun dit ce qui
+ * est collecté, pourquoi, sur quelle base légale, et pendant combien de temps.
+ */
+const traitements = [
+  {
+    nom: 'Votre demande de devis',
+    donnees:
+      'Prénom et nom, adresse e-mail, téléphone si vous le donnez, type de projet, occasion, date souhaitée, budget indicatif, texte à broder, photo d’inspiration si vous en joignez une, canal de réponse préféré.',
+    finalite:
+      'Vous répondre, établir un devis, préparer la pièce, et retrouver votre historique si vous recommandez.',
+    base: 'Exécution d’un contrat ou mesures précontractuelles prises à votre demande (article 6.1.b du RGPD).',
+    duree: '3 ans à compter de notre dernier échange.',
+  },
+  {
+    nom: 'Vos commandes et vos factures',
+    donnees:
+      'Identité, nature de la pièce, montant, date, mode de règlement. Ces informations alimentent le livre des recettes obligatoire en micro-entreprise.',
+    finalite: 'Tenir la comptabilité de l’entreprise et justifier les recettes déclarées.',
+    base: 'Obligation légale comptable et fiscale (article 6.1.c du RGPD).',
+    duree: '10 ans, durée légale de conservation des pièces comptables.',
+  },
+  {
+    nom: 'La liste des nouveautés',
+    donnees: 'Votre adresse e-mail, la date et l’origine de votre inscription.',
+    finalite:
+      'Vous prévenir des nouveautés et des dates limites de commande avant Noël ou la fête des mères. Quelques messages par an, pas plus.',
+    base: 'Votre consentement, donné par une case à cocher qui n’est jamais pré-cochée (article 6.1.a du RGPD).',
+    duree:
+      'Jusqu’à votre désinscription. Chaque message contient la façon de se désinscrire ; un simple « STOP » en réponse suffit.',
+  },
+  {
+    nom: 'Les statistiques de visite',
+    donnees:
+      'Des compteurs agrégés par jour : nombre de pages vues, page consultée, provenance approximative (moteur de recherche, réseau social, QR code). Aucun cookie, aucun identifiant, aucune empreinte de navigateur, aucune adresse IP conservée. Ces chiffres ne permettent pas de vous reconnaître ni de vous suivre d’une page à l’autre.',
+    finalite:
+      'Savoir quelles pages servent vraiment à quelque chose, pour améliorer le site — rien d’autre.',
+    base: 'Intérêt légitime à mesurer l’audience de son propre site (article 6.1.f du RGPD).',
+    duree: 'Les compteurs agrégés sont conservés sous forme de totaux, sans donnée individuelle.',
+  },
+  {
+    nom: 'Si vous m’écrivez sur WhatsApp',
+    donnees: 'Votre numéro de téléphone, votre nom tel qu’il apparaît, et le contenu du message.',
+    finalite: 'Discuter de votre projet par le canal que vous avez choisi.',
+    base: 'Votre initiative : c’est vous qui ouvrez la conversation (article 6.1.b du RGPD).',
+    duree:
+      'La conversation reste dans WhatsApp selon ses propres règles, et dans le téléphone d’Emma jusqu’à suppression. Si vous préférez l’e-mail, le formulaire du site fait très bien l’affaire.',
+  },
+];
+
+const droits = [
+  { nom: 'Accès', dire: 'savoir ce que je conserve à votre sujet, et en recevoir une copie' },
+  { nom: 'Rectification', dire: 'corriger une information fausse ou incomplète' },
+  { nom: 'Effacement', dire: 'demander la suppression de vos données' },
+  { nom: 'Opposition', dire: 'refuser un traitement fondé sur l’intérêt légitime' },
+  { nom: 'Limitation', dire: 'demander le gel d’un traitement le temps d’une vérification' },
+  { nom: 'Portabilité', dire: 'récupérer les données que vous m’avez fournies, dans un fichier' },
+  {
+    nom: 'Retrait du consentement',
+    dire: 'quitter la liste des nouveautés à tout moment, sans justification',
+  },
+];
+---
+
+<Base
+  titre={titre}
+  description={description}
+  imageOg={ogPage.src}
+  fil={[{ nom: 'Politique de confidentialité', url: '/politique-de-confidentialite/' }]}
+>
+  <section class="bande pc">
+    <div class="pc__tete">
+      <p class="sourcil">Données personnelles</p>
+      <h1>Politique de confidentialité</h1>
+      <p class="pc__chapo">
+        Ce que devient ce que vous m’écrivez. Je travaille seule&nbsp;: personne d’autre ne lit vos
+        messages, et rien n’est revendu ni cédé à qui que ce soit.
+      </p>
+      <p class="pc__date">Dernière mise à jour&nbsp;: {miseAJour}</p>
+    </div>
+
+    <ul class="pc__resume">
+      <li><b>Aucun cookie de suivi</b>, donc aucun bandeau à refuser.</li>
+      <li><b>Aucune publicité</b>, aucun pixel de réseau social, aucun revendeur de données.</li>
+      <li><b>Vous écrivez, je réponds</b>, et vos coordonnées ne servent qu’à ça.</li>
+    </ul>
+
+    <div class="pc__corps">
+      <section class="pc__bloc">
+        <h2>Qui est responsable de ces données</h2>
+        <p>
+          {SITE.nomLegal}, exploitante de {SITE.nom}, entrepreneure individuelle à {SITE.ville} ({
+            SITE.departement
+          }).
+        </p>
+        <p>
+          Pour toute question sur cette page ou sur vos données&nbsp;:
+          <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
+        </p>
+        <p class="pc__petit">
+          L’adresse de l’atelier n’est pas publiée&nbsp;: c’est un domicile. Les demandes passent
+          donc par courriel, et reçoivent une réponse écrite.
+          {
+            manque(SITE.siret) && (
+              <span class="pc__flag">
+                Identification de l’entreprise (SIRET) encore à compléter&nbsp;:
+                voir les <a href="/mentions-legales/">mentions légales</a>.
+              </span>
+            )
+          }
+        </p>
+      </section>
+
+      <section class="pc__bloc">
+        <h2>Ce que je collecte, et pourquoi</h2>
+        <p>
+          Cinq situations, pas plus. Pour chacune&nbsp;: ce qui est collecté, à quoi ça sert, sur
+          quelle base légale, et combien de temps c’est gardé.
+        </p>
+
+        <div class="pc__traitements">
+          {
+            traitements.map((t) => (
+              <article class="pc__trait">
+                <h3>{t.nom}</h3>
+                <dl>
+                  <div>
+                    <dt>Données</dt>
+                    <dd>{t.donnees}</dd>
+                  </div>
+                  <div>
+                    <dt>À quoi ça sert</dt>
+                    <dd>{t.finalite}</dd>
+                  </div>
+                  <div>
+                    <dt>Base légale</dt>
+                    <dd>{t.base}</dd>
+                  </div>
+                  <div>
+                    <dt>Durée</dt>
+                    <dd>{t.duree}</dd>
+                  </div>
+                </dl>
+              </article>
+            ))
+          }
+        </div>
+
+        <p class="pc__petit">
+          Les champs du formulaire marqués comme obligatoires sont ceux sans lesquels je ne peux pas
+          répondre. Tout le reste est facultatif&nbsp;: un formulaire à moitié rempli est déjà un bon
+          point de départ.
+        </p>
+      </section>
+
+      <section class="pc__bloc">
+        <h2>Cookies</h2>
+        <p>
+          Ce site ne dépose <b>aucun cookie de mesure d’audience, de publicité ou de réseau
+          social</b>. Les statistiques décrites plus haut sont de simples compteurs sans identifiant.
+          C’est pour cette raison qu’aucun bandeau de consentement ne vous barre l’écran en arrivant.
+        </p>
+        <p>
+          Un seul cookie existe&nbsp;: celui qui maintient la session de l’espace d’administration,
+          utilisé uniquement par Emma pour gérer ses commandes. Il est strictement nécessaire au
+          fonctionnement de cet outil, ne sert à aucun suivi et ne vous concerne pas&nbsp;: à ce
+          titre il est exempté de consentement.
+        </p>
+      </section>
+
+      <section class="pc__bloc">
+        <h2>Qui d’autre peut voir ces données</h2>
+        <p>
+          Personne, à part les prestataires techniques qui font tourner le site. Aucune donnée n’est
+          vendue, louée, échangée ni transmise à un partenaire commercial.
+        </p>
+
+        <dl class="pc__soustraitants">
+          <div>
+            <dt>Netlify, Inc.</dt>
+            <dd>
+              Hébergement du site, réception des formulaires et stockage des données de gestion
+              (demandes, ventes, réglages). Société établie aux États-Unis, à San Francisco.
+              Les transferts hors Union européenne sont encadrés par les clauses contractuelles
+              types de la Commission européenne et par le cadre de protection des données
+              UE – États-Unis.
+              <!-- ⚠️ À revérifier avant la mise en ligne : le DPA de Netlify et l'état du cadre
+                   UE–États-Unis évoluent. Voir aussi les mentions légales. -->
+            </dd>
+          </div>
+          <div>
+            <dt>WhatsApp Ireland Ltd. (groupe Meta)</dt>
+            <dd>
+              Uniquement si <b>vous choisissez</b> d’écrire par WhatsApp. Dans ce cas, la
+              conversation circule dans WhatsApp et relève aussi de sa politique de confidentialité,
+              sur laquelle je n’ai pas la main. Si cela vous dérange, le formulaire du site ou un
+              simple e-mail évitent complètement WhatsApp.
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="pc__bloc">
+        <h2>Vos droits</h2>
+        <p>Sur les données qui vous concernent, vous pouvez exercer&nbsp;:</p>
+        <ul class="pc__droits">
+          {
+            droits.map((d) => (
+              <li>
+                <b>{d.nom}</b>
+                <span>{d.dire}</span>
+              </li>
+            ))
+          }
+        </ul>
+        <p>
+          Il suffit d’écrire à <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> en disant ce
+          que vous voulez&nbsp;: pas de formulaire, pas de justificatif à fournir dans les cas
+          simples. Je réponds dans un délai d’un mois au maximum, et en pratique bien avant.
+        </p>
+        <p class="pc__petit">
+          Une limite&nbsp;: les informations liées à une vente (montant, date, nature) doivent être
+          conservées dix ans pour la comptabilité. Une demande d’effacement ne peut donc pas les
+          faire disparaître avant ce délai&nbsp;; tout le reste, si.
+        </p>
+        <p>
+          Si ma réponse ne vous satisfait pas, vous pouvez saisir la CNIL&nbsp;: 3 place de
+          Fontenoy, TSA 80715, 75334 Paris Cedex 07,
+          ou <a href="https://www.cnil.fr/" rel="noopener nofollow" target="_blank">cnil.fr</a>.
+        </p>
+      </section>
+
+      <section class="pc__bloc">
+        <h2>Sécurité</h2>
+        <p>
+          Les formulaires et l’espace d’administration passent par une connexion chiffrée (HTTPS).
+          L’accès aux demandes et aux ventes est protégé par un mot de passe et une session limitée
+          dans le temps. Les photos publiées sur le site sont nettoyées de leurs métadonnées, et
+          notamment de la position GPS que les téléphones ajoutent aux photos.
+        </p>
+      </section>
+
+      <section class="pc__bloc">
+        <h2>Si cette page change</h2>
+        <p>
+          Elle sera mise à jour, et la date en haut de page le dira. En cas de changement important
+          — une nouvelle finalité, un nouveau prestataire — l’information sera visible sur le site.
+        </p>
+        <p class="pc__petit">
+          Voir aussi les <a href="/mentions-legales/">mentions légales</a>.
+        </p>
+      </section>
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  /* --------------------------------------------------------------------------
+     Politique de confidentialité. Page de texte : colonne de lecture étroite,
+     un résumé en trois lignes en haut, puis les traitements en blocs.
+     Classes préfixées `pc-` / `pc__`.
+  -------------------------------------------------------------------------- */
+  .pc {
+    padding-block: clamp(2.2rem, 5vw, 4rem) clamp(3rem, 7vw, 6rem);
+    row-gap: clamp(1.6rem, 3.5vw, 2.6rem);
+  }
+  .pc__tete {
+    display: grid;
+    gap: clamp(0.7rem, 2vw, 1.1rem);
+    justify-items: start;
+    max-width: 44rem;
+  }
+  /* `.sourcil` est en nowrap dans la feuille globale : on l'autorise à passer
+     à la ligne pour qu'un libellé long ne déborde pas à 320 px. */
+  @media (max-width: 40rem) {
+    .pc .sourcil {
+      white-space: normal;
+      line-height: 1.5;
+    }
+    .pc .sourcil::after {
+      display: none;
+    }
+  }
+  .pc__tete h1 {
+    font-size: clamp(1.9rem, 1.35rem + 2.3vw, 3.3rem);
+  }
+  .pc__chapo {
+    font-size: var(--t-chapo);
+    line-height: 1.5;
+    color: var(--encre-doux);
+    max-width: 34rem;
+  }
+  .pc__date {
+    font-size: var(--t-micro);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+
+  .pc a {
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in oklab, var(--brique) 55%, transparent);
+  }
+  .pc a:hover {
+    color: var(--rouille);
+  }
+
+  /* Le résumé : trois lignes, pour la personne qui ne lira pas le reste. */
+  .pc__resume {
+    display: grid;
+    gap: 0.6rem;
+    max-width: 44rem;
+    padding: clamp(1rem, 2.4vw, 1.6rem) clamp(1.1rem, 2.5vw, 1.8rem);
+    background: color-mix(in oklab, var(--rose) 45%, var(--sable-haut));
+    border-inline-start: 3px solid var(--brique);
+    border-radius: 2px;
+    font-size: var(--t-corps);
+    line-height: 1.6;
+    color: var(--encre-doux);
+  }
+  .pc__resume li {
+    min-width: 0;
+    display: flex;
+    gap: 0.6rem;
+  }
+  .pc__resume li::before {
+    content: '✽';
+    flex: none;
+    color: var(--rouille);
+  }
+  .pc__resume b {
+    font-weight: 500;
+    color: var(--encre);
+  }
+
+  .pc__corps {
+    display: grid;
+    gap: clamp(1.6rem, 3.5vw, 2.6rem);
+    max-width: 46rem;
+  }
+  .pc__bloc {
+    display: grid;
+    gap: 0.7rem;
+    padding-block-start: clamp(1.2rem, 3vw, 2rem);
+    border-block-start: 1px solid color-mix(in oklab, var(--brique) 26%, transparent);
+  }
+  .pc__bloc h2 {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.35rem, 1.1rem + 1vw, 2rem);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+  }
+  /* Page de texte : le corps reste à var(--t-corps), soit 16 px minimum. */
+  .pc__bloc p {
+    font-size: var(--t-corps);
+    line-height: 1.7;
+    color: var(--encre-doux);
+    max-width: 38rem;
+  }
+  .pc__bloc p b {
+    font-weight: 500;
+    color: var(--encre);
+  }
+  /* Du texte de loi reste du texte : `--t-micro` (≈ 12 px) est trop petit ici. */
+  .pc__petit {
+    font-size: var(--t-petit) !important;
+    color: var(--gris) !important;
+  }
+  .pc__flag {
+    display: block;
+    padding-block-start: 0.3rem;
+    color: var(--brique);
+  }
+
+  /* Les traitements : un bloc par situation, avec un liseré de fil. */
+  .pc__traitements {
+    display: grid;
+    gap: clamp(0.9rem, 2vw, 1.3rem);
+    padding-block-start: 0.4rem;
+  }
+  .pc__trait {
+    min-width: 0;
+    padding: clamp(0.9rem, 2vw, 1.3rem);
+    background: color-mix(in oklab, var(--sable-haut) 72%, transparent);
+    border-radius: 2px;
+    border-block-start: 2px solid color-mix(in oklab, var(--brique) 45%, transparent);
+  }
+  .pc__trait h3 {
+    font-size: clamp(1.1rem, 1rem + 0.6vw, 1.4rem);
+    line-height: 1.2;
+  }
+  .pc__trait dl {
+    display: grid;
+    gap: 0.55rem;
+    padding-block-start: 0.7rem;
+  }
+  .pc__trait dl > div {
+    min-width: 0;
+    display: grid;
+    gap: 0.1rem;
+  }
+  .pc__trait dt {
+    font-size: var(--t-micro);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--brique);
+  }
+  .pc__trait dd {
+    margin: 0;
+    font-size: var(--t-corps);
+    line-height: 1.6;
+    color: var(--encre-doux);
+  }
+  @media (min-width: 44rem) {
+    .pc__trait dl > div {
+      grid-template-columns: minmax(0, 8.5rem) minmax(0, 1fr);
+      gap: 0.2rem 1.4rem;
+      align-items: baseline;
+    }
+    .pc__trait dt {
+      padding-block-start: 0.2rem;
+    }
+  }
+
+  /* Les sous-traitants. */
+  .pc__soustraitants {
+    display: grid;
+    gap: 1rem;
+    padding-block-start: 0.4rem;
+  }
+  .pc__soustraitants > div {
+    min-width: 0;
+    padding-inline-start: 1rem;
+    border-inline-start: 2px solid color-mix(in oklab, var(--brique) 40%, transparent);
+  }
+  .pc__soustraitants dt {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.05rem, 1rem + 0.4vw, 1.25rem);
+    line-height: 1.2;
+  }
+  .pc__soustraitants dd {
+    margin: 0;
+    padding-block-start: 0.25rem;
+    font-size: var(--t-corps);
+    line-height: 1.65;
+    color: var(--encre-doux);
+  }
+
+  /* Les droits : une liste en deux colonnes sur écran large. */
+  .pc__droits {
+    display: grid;
+    gap: 0.55rem clamp(1.2rem, 3vw, 2.4rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+    padding-block: 0.2rem 0.4rem;
+  }
+  .pc__droits li {
+    min-width: 0;
+    font-size: var(--t-corps);
+    line-height: 1.55;
+    color: var(--encre-doux);
+    padding-block-end: 0.5rem;
+    border-block-end: 1px solid color-mix(in oklab, var(--brique) 18%, transparent);
+  }
+  .pc__droits b {
+    display: block;
+    font-weight: 500;
+    color: var(--encre);
+  }
+</style>

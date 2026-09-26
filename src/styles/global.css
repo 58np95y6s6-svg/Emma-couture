@@ -386,6 +386,14 @@ h2.sourcil { font-weight: 500; }
 @supports not (animation-timeline: scroll()) {
   .entete::before { opacity: 1; }
 }
+/* ⚠️ Les deux branches ci-dessus ne couvraient pas tous les cas : quand les
+   animations au défilement SONT supportées mais que le système demande moins
+   d'animations, ni l'une ni l'autre ne s'appliquait, et l'en-tête collant
+   restait sans fond — le texte de la page passait dessous, sur tout le site.
+   Le fond est alors simplement toujours visible. */
+@media (prefers-reduced-motion: reduce) {
+  .entete::before { opacity: 1; }
+}
 @keyframes entete-pose { from { opacity: 0; } to { opacity: 1; } }
 
 .entete__in {

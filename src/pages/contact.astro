@@ -1,0 +1,1235 @@
+---
+/**
+ * /contact/ — la page de conversion du site.
+ *
+ * Formulaire Netlify Forms (`name="demande"`), honeypot `bot-field`,
+ * `action="/merci/"`.
+ *
+ * ⚠️ RÈGLE D'OR : le formulaire fonctionne SANS JavaScript. Le découpage en
+ * étapes courtes est une amélioration progressive ajoutée par le script en bas
+ * de page. Si le script ne s'exécute pas, tous les groupes restent visibles,
+ * la validation native du navigateur s'applique et l'envoi fonctionne.
+ *
+ * Pré-remplissage depuis une création : `?creation=<id>`. Le site est statique,
+ * donc c'est lu côté client. Les vignettes sont pré-rendues dans un <template>
+ * (inerte : aucune image n'est téléchargée tant qu'elle n'est pas clonée).
+ *
+ * ⚠️ MAQUETTE — numéro, e-mail, délais et fourchettes de budget provisoires.
+ */
+import { Image, getImage } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
+
+import ogSource from '../assets/creations/og/atelier-mur-bobines-fil-broderie-vitre.webp';
+
+const og = await getImage({ src: ogSource, format: 'webp', width: 1200 });
+
+/* ---------------------------------------------------------------------------
+   Les créations, pour le pré-remplissage depuis une fiche.
+   On ne sérialise que le strict nécessaire.
+--------------------------------------------------------------------------- */
+const creations = (await getCollection('creations', ({ data }) => !data.masquee)).sort(
+  (a, b) => a.data.ordre - b.data.ordre
+);
+
+const avecImage = await Promise.all(
+  creations.map(async (c) => ({
+    c,
+    img: await getImage({ src: c.data.photo, format: 'webp', width: 600 }),
+  }))
+);
+
+const indexCreations = Object.fromEntries(
+  avecImage.map(({ c, img }) => [
+    c.id,
+    {
+      titre: c.data.titre,
+      url: `/creations/${c.id}/`,
+      image: img.src,
+    },
+  ])
+);
+
+/* Fourchettes de budget. ⚠️ Indicatif, à faire valider par Emma. */
+const BUDGETS = [
+  'Moins de 30 €',
+  'Entre 30 et 50 €',
+  'Entre 50 et 100 €',
+  'Plus de 100 €',
+  "Je n'en ai aucune idée",
+];
+
+const TYPES = [
+  { v: 'Une pièce du catalogue', d: 'Doudou, drap de bain, cadre de naissance, chaussette de Noël…' },
+  { v: 'Un vêtement ou du linge que je vous apporte', d: 'Polo, sweat, doudoune, serviette, drap de famille' },
+  { v: 'Un sac, une trousse ou un tablier à coudre', d: 'Je le couds, puis je le brode' },
+  { v: 'De la dentelle libre', d: 'Pièce ajourée, sans tissu dessous : arbre de vie, papillon, initiale' },
+  { v: "Un logo de club, d'association ou d'entreprise", d: 'Série de polos, sweats, serviettes' },
+  { v: 'Je ne sais pas encore', d: "Dites-moi l'idée, je vous propose quelque chose" },
+];
+
+const OCCASIONS_FORM = [
+  'Une naissance',
+  'Un mariage',
+  'La fête des mères',
+  'Noël',
+  'Un anniversaire',
+  'Un baptême',
+  'Un départ, une retraite',
+  'Pas d’occasion particulière',
+];
+
+const titre = `Contact & devis — broderie personnalisée à ${SITE.ville} | ${SITE.nom}`;
+const description = `Racontez-moi votre projet de broderie personnalisée ou de couture sur mesure : quelques questions courtes et je vous réponds avec un prix et un délai. WhatsApp, e-mail ou téléphone, comme vous préférez. ${SITE.ville}, Rennes et toute la France.`;
+---
+
+<Base
+  titre={titre}
+  description={description}
+  imageOg={og.src}
+  fil={[{ nom: 'Contact', url: '/contact/' }]}
+>
+  {/* Données de pré-remplissage : lues par le script en bas de page. */}
+  <script
+    type="application/json"
+    id="ct-creations"
+    is:inline
+    set:html={JSON.stringify(indexCreations)}
+  />
+
+  {/* Vignettes pré-rendues. Un <template> est inerte : rien n'est téléchargé. */}
+  <template id="ct-vignettes">
+    {
+      creations.map((c) => (
+        <div data-creation={c.id}>
+          <Image
+            src={c.data.photo}
+            alt={c.data.alt}
+            widths={[180, 360]}
+            sizes="90px"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      ))
+    }
+  </template>
+
+  <!-- ===================== OUVERTURE ===================== -->
+  <section class="bande ct-tete">
+    <div class="ct-tete__in">
+      <p class="sourcil">Contact &amp; devis</p>
+      <h1>Dites-moi ce que vous avez<br />en tête. <em>Même flou.</em></h1>
+      <p class="chapo">
+        Quelques questions courtes, deux minutes, et je vous réponds avec un prix et un délai.
+        Broderie personnalisée et couture sur mesure, depuis {SITE.ville}&nbsp;(35).
+      </p>
+      <ul class="ct-rassure">
+        <li><b>{ATELIER.delaiReponse}</b></li>
+        <li>Délai actuel&nbsp;: <b>{ATELIER.delaiActuel}</b></li>
+        <li>Sans engagement</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== FORMULAIRE + RACCOURCIS ===================== -->
+  <section class="bande ct-corps" id="devis">
+    <!-- ---------- Le formulaire ---------- -->
+    <div class="ct-form__hote">
+      {
+        ATELIER.commandes !== 'ouvertes' && (
+          <p class="ct-alerte">
+            {ATELIER.commandes === 'conges'
+              ? `Je suis en congés${ATELIER.retourLe ? ` jusqu'au ${ATELIER.retourLe}` : ''}. Vous pouvez m'écrire : je réponds à mon retour.`
+              : 'Mon planning est complet pour le moment. Écrivez-moi quand même : je vous dis à partir de quand je peux reprendre.'}
+          </p>
+        )
+      }
+
+      <form
+        class="ct-form"
+        id="demande"
+        name="demande"
+        method="POST"
+        action="/merci/"
+        enctype="multipart/form-data"
+        data-netlify="true"
+        data-netlify-honeypot="bot-field"
+      >
+        {/* Netlify l'injecte au déploiement ; on l'écrit quand même, pour que
+            l'envoi fonctionne à l'identique en local et en prévisualisation. */}
+        <input type="hidden" name="form-name" value="demande" />
+
+        {/* Anti-spam : champ leurre, masqué et retiré du parcours clavier. */}
+        <p class="ct-leurre">
+          <label for="bot-field">Ne remplissez pas ce champ</label>
+          <input id="bot-field" type="text" name="bot-field" tabindex="-1" autocomplete="off" />
+        </p>
+
+        {/* Rattachement à une création, rempli par le script si ?creation=… */}
+        <input type="hidden" name="creation_slug" value="" />
+        <input type="hidden" name="creation_titre" value="" />
+        <input type="hidden" name="creation_url" value="" />
+        <input type="hidden" name="creation_image" value="" />
+
+        <!-- Vignette de la pièce concernée -->
+        <div class="ct-piece" id="ct-piece" hidden>
+          <div class="ct-piece__img" id="ct-piece-img"></div>
+          <div class="ct-piece__txt">
+            <p class="ct-piece__quoi">Votre demande porte sur</p>
+            <p class="ct-piece__titre" id="ct-piece-titre"></p>
+            <p class="ct-piece__liens">
+              <a id="ct-piece-lien" href="/creations/">Revoir la fiche</a>
+              <button type="button" class="ct-piece__non" id="ct-piece-non">
+                Ce n'est pas cette pièce
+              </button>
+            </p>
+          </div>
+        </div>
+
+        <!-- Jauge d'avancement : révélée par le script uniquement -->
+        <p class="ct-jauge" id="ct-jauge" hidden aria-live="polite"></p>
+
+        <!-- ÉTAPE 1 — type de projet -->
+        <div class="ct-pas" data-pas>
+          <fieldset class="ct-champ" tabindex="-1">
+            <legend>Qu'est-ce que je brode&nbsp;?</legend>
+            <p class="ct-aide">Une seule réponse. On affinera ensemble.</p>
+            <div class="ct-options">
+              {
+                TYPES.map((t, i) => (
+                  <label class="ct-opt">
+                    <input
+                      type="radio"
+                      name="type_projet"
+                      value={t.v}
+                      required
+                      id={i === 0 ? 'type-catalogue' : undefined}
+                    />
+                    <span class="ct-opt__nom">{t.v}</span>
+                    <span class="ct-opt__d">{t.d}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- ÉTAPE 2 — occasion -->
+        <div class="ct-pas" data-pas>
+          <fieldset class="ct-champ" tabindex="-1">
+            <legend>C'est pour quelle occasion&nbsp;?</legend>
+            <p class="ct-aide">Ça m'aide à vous proposer le bon support et la bonne écriture.</p>
+            <div class="ct-options ct-options--serre">
+              {
+                OCCASIONS_FORM.map((o) => (
+                  <label class="ct-opt ct-opt--court">
+                    <input type="radio" name="occasion" value={o} required />
+                    <span class="ct-opt__nom">{o}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- ÉTAPE 3 — date -->
+        <div class="ct-pas" data-pas>
+          <fieldset class="ct-champ" tabindex="-1">
+            <legend>Pour quand&nbsp;?</legend>
+            <p class="ct-aide">
+              La date est la vraie contrainte. Si elle est serrée, dites-le&nbsp;: je regarde ce qui
+              tient.
+            </p>
+            <div class="ct-duo">
+              <p class="ct-ligne">
+                <label for="date_souhaitee">La date à laquelle vous voulez l'avoir en main</label>
+                <input type="date" id="date_souhaitee" name="date_souhaitee" />
+              </p>
+            </div>
+            <label class="ct-case">
+              <input type="checkbox" name="date_souple" value="Pas de date précise" />
+              <span>Je n'ai pas de date précise, je ne suis pas pressé·e</span>
+            </label>
+          </fieldset>
+        </div>
+
+        <!-- ÉTAPE 4 — budget -->
+        <div class="ct-pas" data-pas>
+          <fieldset class="ct-champ" tabindex="-1">
+            <legend>Votre budget, à peu près&nbsp;?</legend>
+            <p class="ct-aide">
+              Ce n'est pas un engagement. C'est ce qui me permet de vous proposer un support et une
+              taille de motif cohérents, plutôt qu'un devis hors sujet.
+            </p>
+            <div class="ct-options ct-options--serre">
+              {
+                BUDGETS.map((b) => (
+                  <label class="ct-opt ct-opt--court">
+                    <input type="radio" name="budget" value={b} required />
+                    <span class="ct-opt__nom">{b}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- ÉTAPE 5 — texte à broder + précisions -->
+        <div class="ct-pas" data-pas>
+          <fieldset class="ct-champ" tabindex="-1">
+            <legend>Qu'est-ce qu'on écrit dessus&nbsp;?</legend>
+            <p class="ct-ligne">
+              <label for="texte_broder">Le texte à broder</label>
+              <input
+                type="text"
+                id="texte_broder"
+                name="texte_broder"
+                maxlength="120"
+                autocomplete="off"
+                placeholder="Ambre — 16 janvier 2026 — 3,85 kg"
+              />
+              <span class="ct-note">Prénom, date, mesures, une phrase. Vide si vous hésitez.</span>
+            </p>
+            <p class="ct-ligne">
+              <label for="precisions">Le reste, si vous en avez envie</label>
+              <textarea
+                id="precisions"
+                name="precisions"
+                rows="5"
+                maxlength="2000"
+                placeholder="Couleur du tissu, couleur du fil, écriture cursive ou bâton, dimensions, ce que vous voulez éviter…"
+              ></textarea>
+            </p>
+          </fieldset>
+        </div>
+
+        <!-- ÉTAPE 6 — photo d'inspiration -->
+        <div class="ct-pas" data-pas>
+          <fieldset class="ct-champ" tabindex="-1">
+            <legend>Une photo d'inspiration&nbsp;? <span class="ct-option">Optionnel</span></legend>
+            <p class="ct-aide">
+              Une capture d'écran, un dessin d'enfant, la photo du vêtement à broder. C'est souvent
+              plus clair que trois paragraphes.
+            </p>
+            <p class="ct-ligne">
+              <label for="inspiration">Choisir une photo</label>
+              <input type="file" id="inspiration" name="inspiration" accept="image/*" />
+              <span class="ct-note">Une seule photo, moins de 8 Mo. Vous pouvez aussi l'envoyer ensuite sur WhatsApp.</span>
+            </p>
+          </fieldset>
+        </div>
+
+        <!-- ÉTAPE 7 — coordonnées -->
+        <div class="ct-pas" data-pas>
+          <fieldset class="ct-champ" tabindex="-1">
+            <legend>Et vous, vous êtes qui&nbsp;?</legend>
+            <div class="ct-duo">
+              <p class="ct-ligne">
+                <label for="prenom">Votre prénom <span class="ct-oblig">obligatoire</span></label>
+                <input
+                  type="text"
+                  id="prenom"
+                  name="prenom"
+                  required
+                  autocomplete="given-name"
+                  maxlength="80"
+                />
+              </p>
+              <p class="ct-ligne">
+                <label for="ville">Votre ville</label>
+                <input
+                  type="text"
+                  id="ville"
+                  name="ville"
+                  autocomplete="address-level2"
+                  maxlength="80"
+                  placeholder="Vitré, Rennes, ailleurs…"
+                />
+              </p>
+              <p class="ct-ligne">
+                <label for="email">Votre e-mail <span class="ct-oblig">obligatoire</span></label>
+                <input type="email" id="email" name="email" required autocomplete="email" />
+              </p>
+              <p class="ct-ligne">
+                <label for="telephone">Votre téléphone</label>
+                <input type="tel" id="telephone" name="telephone" autocomplete="tel" />
+                <span class="ct-note">Nécessaire si vous préférez WhatsApp ou un appel.</span>
+              </p>
+            </div>
+          </fieldset>
+        </div>
+
+        <!-- ÉTAPE 8 — canal de réponse -->
+        <div class="ct-pas" data-pas>
+          <fieldset class="ct-champ" tabindex="-1">
+            <legend>Je vous réponds comment&nbsp;?</legend>
+            <div class="ct-options ct-options--serre">
+              <label class="ct-opt ct-opt--court">
+                <input type="radio" name="canal" value="WhatsApp" required />
+                <span class="ct-opt__nom">Sur WhatsApp</span>
+              </label>
+              <label class="ct-opt ct-opt--court">
+                <input type="radio" name="canal" value="E-mail" required />
+                <span class="ct-opt__nom">Par e-mail</span>
+              </label>
+              <label class="ct-opt ct-opt--court">
+                <input type="radio" name="canal" value="Téléphone" required />
+                <span class="ct-opt__nom">Par téléphone</span>
+              </label>
+            </div>
+
+            <label class="ct-case ct-case--large">
+              <input type="checkbox" name="nouveautes" value="Oui" />
+              <span>
+                Prévenez-moi des nouveautés et des dates limites de commande pour Noël. Quelques
+                messages par an, jamais plus.
+                <a href="/politique-de-confidentialite/">Comment j'utilise vos données</a>
+              </span>
+            </label>
+          </fieldset>
+        </div>
+
+        <!-- Navigation par étapes : révélée par le script uniquement -->
+        <div class="ct-nav" id="ct-nav" hidden>
+          <button type="button" class="btn btn--creux" id="ct-prec">Précédent</button>
+          <button type="button" class="btn btn--wa" id="ct-suiv">Suivant</button>
+        </div>
+
+        <!-- Envoi : toujours présent dans le HTML, donc utilisable sans JS -->
+        <div class="ct-envoi" id="ct-envoi">
+          <button type="submit" class="btn btn--wa ct-envoi__btn">Envoyer ma demande</button>
+          <p class="ct-rgpd">
+            Vos réponses me servent uniquement à vous répondre et à préparer votre commande. Elles
+            ne sont ni revendues ni transmises.
+            <a href="/politique-de-confidentialite/">Politique de confidentialité</a>
+          </p>
+        </div>
+      </form>
+    </div>
+
+    <!-- ---------- Raccourcis ---------- -->
+    <aside class="ct-aside" aria-label="Autres façons de me joindre">
+      <div class="ct-aside__in">
+        <h2 class="ct-aside__h2">Ou plus simplement.</h2>
+        <p class="ct-aside__p">
+          Le formulaire n'est pas obligatoire. Un message de trois mots me suffit pour commencer.
+        </p>
+
+        <ul class="ct-canaux">
+          <li>
+            <a class="btn btn--wa" href={lienWhatsApp()}>
+              <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"
+                ><path
+                  d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"
+                /></svg
+              >
+              Écrire sur WhatsApp
+            </a>
+          </li>
+          <li><a class="btn btn--creux" href={`tel:${CONTACT.telephone}`}>Appeler {CONTACT.telephone}</a></li>
+          <li><a class="btn btn--creux" href={`mailto:${CONTACT.email}`}>Envoyer un e-mail</a></li>
+        </ul>
+
+        <dl class="ct-infos">
+          <dt>Où je suis</dt>
+          <dd>
+            {SITE.ville} ({SITE.codePostal}), en {SITE.departement}. Je travaille chez moi&nbsp;: je
+            ne reçois pas, mais on peut se retrouver.
+          </dd>
+          <dt>Où je livre</dt>
+          <dd>{ATELIER.zones}. Remise en main propre sur rendez-vous.</dd>
+          <dt>Quand je réponds</dt>
+          <dd>{ATELIER.delaiReponse}. Le délai de fabrication actuel est de {ATELIER.delaiActuel}.</dd>
+          <dt>Ailleurs</dt>
+          <dd>
+            <a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">
+              @{CONTACT.instagram}
+            </a>{' '}
+            — les pièces en cours passent souvent là d'abord.
+          </dd>
+        </dl>
+
+        <p class="ct-aside__lien">
+          <a class="lien-fleche" href="/sur-mesure/#questions">Les questions qu'on me pose</a>
+        </p>
+      </div>
+    </aside>
+  </section>
+</Base>
+
+<script>
+  /* ==========================================================================
+     /contact/ — amélioration progressive du formulaire.
+
+     Tout ce qui suit est facultatif : sans ce script, les huit groupes du
+     formulaire restent visibles, la validation native du navigateur s'applique
+     et le bouton « Envoyer ma demande » fonctionne. Le script ne fait que
+     découper le parcours en étapes courtes et rattacher une création.
+     ========================================================================== */
+
+  const form = document.getElementById('demande') as HTMLFormElement | null;
+
+  if (form) {
+    /* ----------------------------------------------------------------------
+       1. Rattachement à une création (?creation=<id>)
+    ---------------------------------------------------------------------- */
+    type Fiche = { titre: string; url: string; image: string };
+
+    const brut = document.getElementById('ct-creations')?.textContent ?? '{}';
+    let fiches: Record<string, Fiche> = {};
+    try {
+      fiches = JSON.parse(brut);
+    } catch {
+      fiches = {};
+    }
+
+    const bloc = document.getElementById('ct-piece');
+    const hoteImg = document.getElementById('ct-piece-img');
+    const hoteTitre = document.getElementById('ct-piece-titre');
+    const hoteLien = document.getElementById('ct-piece-lien') as HTMLAnchorElement | null;
+    const boutonNon = document.getElementById('ct-piece-non');
+    const modeles = document.getElementById('ct-vignettes') as HTMLTemplateElement | null;
+
+    const champ = (nom: string) =>
+      form.querySelector<HTMLInputElement>(`input[name="${nom}"]`);
+
+    function rattache(slug: string, f: Fiche) {
+      champ('creation_slug')!.value = slug;
+      champ('creation_titre')!.value = f.titre;
+      champ('creation_url')!.value = new URL(f.url, location.origin).href;
+      champ('creation_image')!.value = new URL(f.image, location.origin).href;
+
+      if (hoteTitre) hoteTitre.textContent = f.titre;
+      if (hoteLien) hoteLien.href = f.url;
+
+      /* La vignette est clonée depuis le <template> : aucune image n'a été
+         téléchargée avant ce moment. */
+      const source = modeles?.content.querySelector(`[data-creation="${slug}"] img`);
+      if (source && hoteImg) {
+        hoteImg.replaceChildren(source.cloneNode(true));
+      }
+
+      if (bloc) bloc.hidden = false;
+
+      /* Le type de projet est alors connu : on le coche. */
+      const catalogue = document.getElementById('type-catalogue') as HTMLInputElement | null;
+      if (catalogue && !form.querySelector('input[name="type_projet"]:checked')) {
+        catalogue.checked = true;
+      }
+    }
+
+    function detache() {
+      for (const nom of ['creation_slug', 'creation_titre', 'creation_url', 'creation_image']) {
+        const c = champ(nom);
+        if (c) c.value = '';
+      }
+      if (bloc) bloc.hidden = true;
+      if (hoteImg) hoteImg.replaceChildren();
+      const url = new URL(location.href);
+      url.searchParams.delete('creation');
+      history.replaceState(null, '', url.pathname + url.search + url.hash);
+    }
+
+    const demande = new URLSearchParams(location.search).get('creation');
+    if (demande && Object.prototype.hasOwnProperty.call(fiches, demande)) {
+      rattache(demande, fiches[demande]);
+    }
+    boutonNon?.addEventListener('click', detache);
+
+    /* ----------------------------------------------------------------------
+       2. Découpage en étapes courtes
+    ---------------------------------------------------------------------- */
+    const pas = Array.from(form.querySelectorAll<HTMLElement>('[data-pas]'));
+    const nav = document.getElementById('ct-nav');
+    const jauge = document.getElementById('ct-jauge');
+    const envoi = document.getElementById('ct-envoi');
+    const prec = document.getElementById('ct-prec') as HTMLButtonElement | null;
+    const suiv = document.getElementById('ct-suiv') as HTMLButtonElement | null;
+
+    if (pas.length > 1 && nav && jauge && envoi && prec && suiv) {
+      /* À partir d'ici c'est nous qui validons : on coupe la validation
+         native, sinon un champ requis dans une étape masquée bloquerait
+         l'envoi sans message visible. */
+      form.noValidate = true;
+      form.classList.add('ct-form--etapes');
+      nav.hidden = false;
+      jauge.hidden = false;
+
+      let courant = 0;
+      const doux = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* Une zone de message par étape, créée à la demande. */
+      function zoneErreur(etape: HTMLElement): HTMLParagraphElement {
+        let z = etape.querySelector<HTMLParagraphElement>('.ct-err');
+        if (!z) {
+          z = document.createElement('p');
+          z.className = 'ct-err';
+          z.id = `ct-err-${pas.indexOf(etape)}`;
+          z.setAttribute('role', 'alert');
+          etape.querySelector('fieldset')?.appendChild(z);
+        }
+        return z;
+      }
+
+      function nettoie(etape: HTMLElement) {
+        etape.querySelector('.ct-err')?.remove();
+        for (const c of etape.querySelectorAll('[aria-invalid="true"]')) {
+          c.removeAttribute('aria-invalid');
+          c.removeAttribute('aria-describedby');
+        }
+      }
+
+      /** Valide une étape et affiche le premier problème rencontré. */
+      function valide(etape: HTMLElement): boolean {
+        nettoie(etape);
+        const champs = Array.from(
+          etape.querySelectorAll<
+            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+          >('input, select, textarea')
+        ).filter((c) => c.name !== 'bot-field' && c.type !== 'hidden');
+
+        const vus = new Set<string>();
+        for (const c of champs) {
+          /* Pour un groupe de boutons radio, un seul passage suffit. */
+          if (c.type === 'radio') {
+            if (vus.has(c.name)) continue;
+            vus.add(c.name);
+          }
+          if (c.checkValidity()) continue;
+
+          const z = zoneErreur(etape);
+          z.textContent =
+            c.type === 'radio'
+              ? 'Choisissez une réponse pour continuer.'
+              : c.validity.typeMismatch && c.type === 'email'
+                ? "Cette adresse e-mail n'a pas l'air valide."
+                : c.validationMessage || 'Ce champ est à compléter.';
+          c.setAttribute('aria-invalid', 'true');
+          c.setAttribute('aria-describedby', z.id);
+          c.focus({ preventScroll: false });
+          return false;
+        }
+        return true;
+      }
+
+      function affiche(i: number, focalise = true) {
+        courant = Math.max(0, Math.min(i, pas.length - 1));
+        pas.forEach((p, n) => {
+          p.hidden = n !== courant;
+        });
+        const dernier = courant === pas.length - 1;
+        prec.hidden = courant === 0;
+        suiv.hidden = dernier;
+        envoi.classList.toggle('ct-envoi--pret', dernier);
+        jauge.textContent = `Étape ${courant + 1} sur ${pas.length}`;
+        jauge.style.setProperty('--part', String((courant + 1) / pas.length));
+
+        if (focalise) {
+          const cible = pas[courant].querySelector<HTMLElement>('fieldset');
+          cible?.focus({ preventScroll: true });
+          const haut = form.getBoundingClientRect().top;
+          if (haut < 0 || haut > window.innerHeight * 0.5) {
+            form.scrollIntoView({ behavior: doux ? 'smooth' : 'auto', block: 'start' });
+          }
+        }
+      }
+
+      suiv.addEventListener('click', () => {
+        if (valide(pas[courant])) affiche(courant + 1);
+      });
+      prec.addEventListener('click', () => {
+        nettoie(pas[courant]);
+        affiche(courant - 1);
+      });
+
+      /* Entrée dans un champ texte fait avancer, pas envoyer. */
+      form.addEventListener('keydown', (e) => {
+        const ev = e as KeyboardEvent;
+        if (ev.key !== 'Enter') return;
+        const cible = ev.target as HTMLElement;
+        if (cible.tagName === 'TEXTAREA' || cible.tagName === 'BUTTON') return;
+        if (courant === pas.length - 1) return;
+        ev.preventDefault();
+        if (valide(pas[courant])) affiche(courant + 1);
+      });
+
+      /* Dernier filet : si un champ d'une étape précédente est incomplet,
+         on y retourne au lieu d'envoyer une demande inutilisable. */
+      form.addEventListener('submit', (e) => {
+        for (let i = 0; i < pas.length; i += 1) {
+          const etaitMasque = pas[i].hidden;
+          pas[i].hidden = false;
+          const bon = valide(pas[i]);
+          if (!bon) {
+            e.preventDefault();
+            affiche(i, false);
+            const z = pas[i].querySelector<HTMLElement>('.ct-err');
+            pas[i].querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+            z?.scrollIntoView({ behavior: doux ? 'smooth' : 'auto', block: 'center' });
+            return;
+          }
+          pas[i].hidden = etaitMasque;
+        }
+      });
+
+      affiche(0, false);
+    }
+  }
+</script>
+
+<style>
+  /* ==========================================================================
+     /contact/ — styles propres à la page. Préfixe `ct-`.
+
+     ⚠️ Piège connu du projet : une classe qui pose `display: grid` écrase le
+     `display: none` de l'attribut [hidden]. Chaque bloc masquable a donc sa
+     règle [hidden] explicite.
+     ========================================================================== */
+
+  /* --- Ouverture -------------------------------------------------------- */
+  .ct-tete {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 3.5vw, 2.5rem);
+  }
+  .ct-tete__in {
+    display: grid;
+    gap: clamp(0.85rem, 2vw, 1.25rem);
+    justify-items: start;
+    max-width: 40rem;
+  }
+  .ct-tete h1 {
+    max-width: 22ch;
+  }
+  .ct-rassure {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+    font-size: var(--t-petit);
+    color: var(--encre-doux);
+  }
+  .ct-rassure li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .ct-rassure li + li::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--rouille);
+  }
+  .ct-rassure b {
+    font-weight: 500;
+    color: var(--encre);
+  }
+
+  /* --- Corps : formulaire + colonne raccourcis -------------------------- */
+  .ct-corps {
+    padding-block: 0 clamp(3rem, 7vw, 5.5rem);
+    row-gap: clamp(2rem, 5vw, 3rem);
+    align-items: start;
+  }
+
+  .ct-alerte {
+    font-size: var(--t-petit);
+    background: color-mix(in oklab, var(--ocre) 30%, var(--sable-haut));
+    border-inline-start: 3px solid var(--rouille);
+    padding: 0.85rem 1.05rem;
+    border-radius: 0 6px 6px 0;
+    margin-block-end: 1.2rem;
+  }
+
+  .ct-form {
+    display: grid;
+    gap: clamp(1.2rem, 3vw, 1.8rem);
+    background: color-mix(in oklab, var(--sable-haut) 82%, transparent);
+    border: 1px solid color-mix(in oklab, var(--brique) 24%, transparent);
+    border-radius: 4px 4px 4px 26px;
+    padding: clamp(1.1rem, 3.5vw, 2.2rem);
+    min-width: 0;
+    /* L'en-tête est collant : sans cette marge, le haut du formulaire
+       passerait dessous à chaque changement d'étape. */
+    scroll-margin-block-start: 5.5rem;
+  }
+
+  /* Le leurre anti-spam : hors écran, jamais dans le parcours clavier. */
+  .ct-leurre {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* --- Vignette de la création rattachée -------------------------------- */
+  .ct-piece {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.4rem 0.9rem;
+    align-items: center;
+    padding: 0.7rem 0.85rem;
+    background: color-mix(in oklab, var(--rose) 52%, var(--sable-haut));
+    border-radius: 3px 16px 3px 16px;
+  }
+  .ct-piece[hidden] {
+    display: none;
+  }
+  .ct-piece__img :global(img) {
+    width: 90px;
+    height: 112px;
+    object-fit: cover;
+    border-radius: 2px;
+  }
+  .ct-piece__txt {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+  .ct-piece__quoi {
+    font-size: var(--t-micro);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brique);
+  }
+  .ct-piece__titre {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.15rem, 1rem + 0.8vw, 1.5rem);
+    line-height: 1.12;
+  }
+  .ct-piece__liens {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1rem;
+    font-size: var(--t-micro);
+    padding-block-start: 0.2rem;
+  }
+  .ct-piece__liens a,
+  .ct-piece__non {
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    font: inherit;
+    letter-spacing: 0.04em;
+    color: var(--encre-doux);
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: color-mix(in oklab, var(--brique) 50%, transparent);
+  }
+  .ct-piece__liens a:hover,
+  .ct-piece__non:hover {
+    color: var(--rouille);
+  }
+
+  /* --- Jauge d'avancement ---------------------------------------------- */
+  .ct-jauge {
+    --part: 0.125;
+    font-size: var(--t-micro);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--brique);
+    padding-block-end: 0.7rem;
+    border-block-end: 2px solid color-mix(in oklab, var(--brique) 20%, transparent);
+    position: relative;
+  }
+  .ct-jauge[hidden] {
+    display: none;
+  }
+  .ct-jauge::after {
+    content: '';
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-end: -2px;
+    height: 2px;
+    width: 100%;
+    background: var(--rouille);
+    transform: scaleX(var(--part));
+    transform-origin: left;
+    transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ct-jauge::after {
+      transition: none;
+    }
+  }
+
+  /* --- Une étape -------------------------------------------------------- */
+  .ct-pas {
+    display: grid;
+    min-width: 0;
+  }
+  .ct-pas[hidden] {
+    display: none;
+  }
+
+  .ct-champ {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .ct-champ:focus {
+    outline: none;
+  }
+  .ct-champ > legend {
+    padding: 0;
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.45rem, 1.15rem + 1.4vw, 2.1rem);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    color: var(--encre);
+    margin-block-end: 0.35rem;
+  }
+  .ct-option {
+    font-family: 'Jost', sans-serif;
+    font-size: var(--t-micro);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gris);
+    vertical-align: 0.35em;
+    margin-inline-start: 0.4rem;
+  }
+  .ct-aide {
+    font-size: var(--t-petit);
+    line-height: 1.55;
+    color: var(--encre-doux);
+    max-width: 38rem;
+  }
+
+  /* Les groupes de choix : cartes cliquables, bouton radio natif conservé. */
+  .ct-options {
+    display: grid;
+    gap: 0.5rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 34rem) {
+    .ct-options--serre {
+      grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+    }
+  }
+
+  .ct-opt {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.1rem 0.7rem;
+    align-items: start;
+    min-height: 3rem;
+    padding: 0.7rem 0.9rem;
+    border: 1.5px solid color-mix(in oklab, var(--brique) 26%, transparent);
+    border-radius: 3px;
+    background: color-mix(in oklab, var(--sable-haut) 55%, transparent);
+    cursor: pointer;
+    transition: border-color 200ms ease, background 200ms ease;
+  }
+  .ct-opt:hover {
+    border-color: color-mix(in oklab, var(--rouille) 60%, transparent);
+    background: var(--sable-haut);
+  }
+  .ct-opt:has(input:checked) {
+    border-color: var(--rouille);
+    background: color-mix(in oklab, var(--rose) 40%, var(--sable-haut));
+  }
+  .ct-opt:has(input:focus-visible) {
+    outline: 2.5px solid var(--rouille);
+    outline-offset: 2px;
+  }
+  .ct-opt input {
+    accent-color: var(--rouille);
+    width: 1.15rem;
+    height: 1.15rem;
+    margin: 0.2rem 0 0;
+    grid-row: 1 / span 2;
+    flex: none;
+  }
+  .ct-opt--court input {
+    grid-row: 1;
+    align-self: center;
+    margin-block-start: 0;
+  }
+  .ct-opt--court {
+    align-items: center;
+  }
+  .ct-opt__nom {
+    font-size: 1rem;
+    line-height: 1.35;
+  }
+  .ct-opt__d {
+    grid-column: 2;
+    font-size: var(--t-petit);
+    line-height: 1.45;
+    color: var(--gris);
+  }
+
+  /* Champs texte ------------------------------------------------------- */
+  .ct-duo {
+    display: grid;
+    gap: 0.9rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 34rem) {
+    .ct-duo {
+      grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+    }
+  }
+
+  .ct-ligne {
+    display: grid;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+  .ct-ligne label {
+    font-size: var(--t-petit);
+    font-weight: 500;
+    letter-spacing: 0.015em;
+    color: var(--encre);
+  }
+  .ct-oblig {
+    font-size: var(--t-micro);
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rouille);
+    margin-inline-start: 0.3rem;
+  }
+  .ct-note {
+    font-size: var(--t-micro);
+    line-height: 1.5;
+    color: var(--gris);
+  }
+
+  .ct-ligne input,
+  .ct-ligne textarea {
+    font-family: inherit;
+    /* 16 px minimum : en dessous, iOS zoome tout seul au focus. */
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--encre);
+    background: #fff;
+    border: 1.5px solid color-mix(in oklab, var(--brique) 30%, transparent);
+    border-radius: 3px;
+    padding: 0.7rem 0.85rem;
+    min-height: 3rem;
+    width: 100%;
+    max-width: 100%;
+  }
+  .ct-ligne textarea {
+    resize: vertical;
+    min-height: 7rem;
+  }
+  .ct-ligne input:hover,
+  .ct-ligne textarea:hover {
+    border-color: color-mix(in oklab, var(--brique) 50%, transparent);
+  }
+  .ct-ligne input::placeholder,
+  .ct-ligne textarea::placeholder {
+    color: color-mix(in oklab, var(--gris) 70%, #fff);
+  }
+  .ct-ligne input[aria-invalid='true'],
+  .ct-ligne textarea[aria-invalid='true'] {
+    border-color: var(--rouille);
+    background: color-mix(in oklab, var(--rose) 22%, #fff);
+  }
+  .ct-ligne input[type='file'] {
+    padding: 0.6rem 0.7rem;
+    background: color-mix(in oklab, var(--sable-haut) 60%, #fff);
+    cursor: pointer;
+  }
+  .ct-ligne input[type='date'] {
+    max-width: 16rem;
+  }
+
+  /* Cases à cocher ------------------------------------------------------ */
+  .ct-case {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.7rem;
+    align-items: start;
+    min-height: 2.9rem;
+    padding-block: 0.5rem;
+    font-size: var(--t-petit);
+    line-height: 1.5;
+    color: var(--encre-doux);
+    cursor: pointer;
+  }
+  .ct-case input {
+    accent-color: var(--rouille);
+    width: 1.2rem;
+    height: 1.2rem;
+    margin: 0.15rem 0 0;
+  }
+  .ct-case--large {
+    margin-block-start: 0.6rem;
+    padding: 0.85rem 1rem;
+    background: color-mix(in oklab, var(--sable-haut) 70%, transparent);
+    border: 1px dashed color-mix(in oklab, var(--brique) 34%, transparent);
+    border-radius: 3px 14px 3px 14px;
+  }
+  .ct-case a {
+    text-decoration-color: color-mix(in oklab, var(--rouille) 60%, transparent);
+    text-underline-offset: 3px;
+    white-space: nowrap;
+  }
+
+  /* Message d'erreur ---------------------------------------------------- */
+  .ct-form :global(.ct-err) {
+    font-size: var(--t-petit);
+    font-weight: 500;
+    color: #8C2A1C;
+    background: color-mix(in oklab, var(--rose) 55%, #fff);
+    border-inline-start: 3px solid var(--rouille);
+    padding: 0.6rem 0.85rem;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* Navigation et envoi ------------------------------------------------- */
+  .ct-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem 0.9rem;
+    align-items: center;
+  }
+  .ct-nav[hidden] {
+    display: none;
+  }
+  .ct-nav button[hidden] {
+    display: none;
+  }
+  .ct-nav #ct-suiv {
+    margin-inline-start: auto;
+  }
+
+  .ct-envoi {
+    display: grid;
+    gap: 0.8rem;
+    justify-items: start;
+  }
+  .ct-rgpd {
+    font-size: var(--t-micro);
+    line-height: 1.55;
+    color: var(--gris);
+    max-width: 40rem;
+  }
+  .ct-rgpd a {
+    text-decoration-color: color-mix(in oklab, var(--rouille) 55%, transparent);
+    text-underline-offset: 3px;
+  }
+
+  /* En mode étapes, le bouton d'envoi n'apparaît qu'à la dernière étape.
+     Sans JavaScript, la classe .ct-form--etapes n'est jamais posée : le
+     bouton reste visible et le formulaire est envoyable d'un bloc. */
+  .ct-form--etapes .ct-envoi__btn {
+    display: none;
+  }
+  .ct-form--etapes .ct-envoi--pret .ct-envoi__btn {
+    display: inline-flex;
+  }
+
+  /* --- Colonne raccourcis --------------------------------------------- */
+  .ct-aside__in {
+    display: grid;
+    gap: clamp(0.8rem, 2vw, 1.15rem);
+    justify-items: start;
+    padding: clamp(1.1rem, 3vw, 1.7rem);
+    color: var(--coquille);
+    border-radius: 4px 4px 22px 4px;
+    background:
+      radial-gradient(70% 60% at 90% 5%, color-mix(in oklab, var(--mauve) 60%, var(--vert)) 0%, transparent 65%),
+      linear-gradient(170deg, var(--vert-2), var(--vert) 70%, #12180F);
+  }
+  .ct-aside__h2 {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.3rem);
+    line-height: 1.03;
+    letter-spacing: -0.02em;
+  }
+  .ct-aside__p {
+    font-size: var(--t-petit);
+    color: color-mix(in oklab, var(--rose) 62%, #C9BEB6);
+    max-width: 26rem;
+  }
+  .ct-canaux {
+    display: grid;
+    gap: 0.55rem;
+    width: 100%;
+  }
+  .ct-canaux li {
+    min-width: 0;
+  }
+  .ct-canaux .btn {
+    width: 100%;
+  }
+  .ct-canaux .btn--creux {
+    color: var(--coquille);
+    border-color: color-mix(in oklab, var(--rose) 45%, transparent);
+  }
+  .ct-canaux .btn--creux::before {
+    background: var(--coquille);
+  }
+  .ct-canaux .btn--creux:hover {
+    color: var(--encre);
+    border-color: var(--coquille);
+  }
+
+  .ct-infos {
+    display: grid;
+    gap: 0;
+    width: 100%;
+    margin-block-start: 0.4rem;
+  }
+  .ct-infos dt {
+    font-size: var(--t-micro);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--dore);
+    padding-block-start: 0.85rem;
+  }
+  .ct-infos dd {
+    margin: 0;
+    font-size: var(--t-petit);
+    line-height: 1.55;
+    color: color-mix(in oklab, var(--rose) 60%, #C9BEB6);
+    padding-block-end: 0.85rem;
+    border-block-end: 1px solid color-mix(in oklab, var(--rose) 18%, transparent);
+  }
+  .ct-infos dd a {
+    text-decoration-color: color-mix(in oklab, var(--dore) 70%, transparent);
+    text-underline-offset: 3px;
+  }
+  .ct-aside__lien .lien-fleche {
+    color: var(--coquille);
+    border-color: color-mix(in oklab, var(--rose) 45%, transparent);
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+  }
+  .ct-aside__lien .lien-fleche:hover {
+    color: var(--dore);
+    border-color: var(--dore);
+  }
+
+  @media (min-width: 62rem) {
+    .ct-corps {
+      grid-template-columns:
+        [bord-d] minmax(var(--marge), 1fr)
+        [large-d] minmax(0, calc(var(--large) * 0.62)) minmax(0, calc(var(--large) * 0.38))
+        [large-f] minmax(var(--marge), 1fr) [bord-f];
+      column-gap: clamp(1.5rem, 3vw, 2.8rem);
+    }
+    .ct-form__hote {
+      grid-column: large-d / span 1;
+    }
+    .ct-aside {
+      grid-column: span 1 / large-f;
+      position: sticky;
+      inset-block-start: 5.5rem;
+    }
+  }
+</style>

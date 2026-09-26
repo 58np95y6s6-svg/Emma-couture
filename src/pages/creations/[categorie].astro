@@ -1,0 +1,468 @@
+---
+/**
+ * /creations/<categorie>/ — une page par catégorie réellement remplie.
+ *
+ * Chaque catégorie a son titre, sa meta description et son chapô : ce sont
+ * six pages différentes, pas six variantes d'un gabarit. Une catégorie vide
+ * ne génère aucune page (pas de cul-de-sac dans le sitemap).
+ */
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import CarteCreation from '../../components/CarteCreation.astro';
+import { SITE, ATELIER, lienWhatsApp } from '../../config';
+
+export const getStaticPaths: GetStaticPaths = async () => {
+/**
+ * Le texte de chaque catégorie. Le chapô porte les mots-clés, le titre vend.
+ * ⚠️ Emma brode à la MACHINE : ni ici ni ailleurs « brodé à la main ».
+ * « Cousu main » n'est vrai que pour la couture (sacs, trousses, tabliers).
+ *
+ * ⚠️ Défini DANS getStaticPaths : Astro isole cette fonction dans son propre
+ * module au build, où les constantes du corps du frontmatter n'existent pas.
+ * Les textes voyagent donc par les props.
+ */
+const CATEGORIES = {
+  naissance: {
+    court: 'Naissance',
+    h1: 'Le premier cadeau<br /><em>au prénom.</em>',
+    titre: 'Doudou, cadre & bavoir brodés au prénom — créations naissance',
+    description:
+      'Toutes mes créations de naissance brodées au prénom : doudou, cadre, bavoir, cape de bain, sac à dos. Prix à partir de, délais et photos — brodé à Vitré (35).',
+    chapo:
+      'Doudou, cadre de naissance, bavoir, cape de bain : vous me donnez les lignes du carnet de santé — prénom, date, heure, poids, taille — et je m’occupe de la mise en page. Le fil tient au lavage à 30°, c’est fait pour être traîné partout.',
+    note: 'Vous pouvez commander avant l’accouchement et me donner les chiffres après : je garde le cadre prêt et je brode dès votre message.',
+  },
+  'linge-de-bain': {
+    court: 'Linge de bain',
+    h1: 'Le cadeau qui sert<br /><em>tous les jours.</em>',
+    titre: 'Drap de bain & serviette brodés au prénom — Vitré (35)',
+    description:
+      'Draps de bain, serviettes et capes brodés au prénom en lettres cursives, brodés à Vitré (35). Vous choisissez la couleur du linge, celle du fil et l’écriture. Envoi partout en France.',
+    chapo:
+      'Draps de bain, serviettes, capes : du coton épais et un prénom en lettres cursives dans l’angle. Vous choisissez la couleur du linge, celle du fil et l’écriture ; je vous montre le rendu avant de lancer la machine. C’est le cadeau qu’on utilise le lendemain, pas celui qu’on range.',
+    note: 'Un jeu complet pour toute la famille, chacun son prénom : dites-moi combien de pièces, je vous fais un prix d’ensemble.',
+  },
+  vetements: {
+    court: 'Vêtements',
+    h1: 'Un prénom<br />sur le <em>vêtement.</em>',
+    titre: 'Broderie sur vêtement : prénom, initiale, logo — Vitré (35)',
+    description:
+      'Pyjamas, tabliers, blouses, vestes, tenues de club : je brode le prénom, l’initiale ou le logo à Vitré (35). Sur votre vêtement ou sur un vêtement que je fournis.',
+    chapo:
+      'Pyjama, tablier, blouse, veste, tenue de club : je brode le prénom, l’initiale ou le logo. Vous m’apportez le vêtement, ou je le fournis. Pour les groupes — équipe, classe, association — envoyez-moi le nombre de pièces et le visuel.',
+    note: '',
+  },
+  couture: {
+    court: 'Couture',
+    h1: 'Cousu,<br /><em>puis brodé.</em>',
+    titre: 'Sacs & trousses cousus main et brodés — Vitré (35)',
+    description:
+      'Sacs, trousses et tabliers cousus main puis brodés au prénom à Vitré (35). Vous choisissez dans mes coupons ou vous apportez votre tissu. Devis dans la journée.',
+    chapo:
+      'Sacs, trousses, tabliers : ces pièces-là, je les couds avant de les broder. Vous prenez dans mes coupons, ou vous m’apportez votre tissu — un drap de famille, une chemise, un coupon repéré au marché. Ce sont les seules pièces du site que je peux dire cousues main.',
+    note: 'Un tissu qui a une histoire donne toujours le meilleur cadeau. Envoyez-moi une photo du coupon, je vous dis ce qu’on peut en tirer.',
+  },
+  'decoration-ajouree': {
+    court: 'Dentelle libre',
+    h1: 'La dentelle libre.',
+    titre: 'Dentelle libre : broderie ajourée sans support — Vitré (35)',
+    description:
+      'Dentelle libre brodée à Vitré (35) : arbre de vie, papillon, initiale, napperon. Des pièces ajourées sans support tissu, qui se tiennent seules. À encadrer, à suspendre ou à coudre.',
+    chapo:
+      'La machine brode dans le vide, sur un support qui disparaît au rinçage : il ne reste que le fil, ajouré, qui se tient tout seul. Ça se glisse dans un cadre, ça s’accroche à une fenêtre, ça se coud sur une robe. C’est ce que je préfère faire — et ce qu’on trouve le moins en Ille-et-Vilaine.',
+    note: 'Un dessin, une initiale, un motif repéré ailleurs : envoyez-moi l’image, je vous dis si la dentelle peut tenir toute seule.',
+  },
+  noel: {
+    court: 'Noël',
+    h1: 'Noël, mais<br /><em>à son prénom.</em>',
+    titre: 'Cadeaux de Noël brodés au prénom — Vitré (35)',
+    description:
+      'Chaussettes de cheminée, pyjamas, plaids et boules brodés au prénom à Vitré (35). Une pièce par personne. À commander avant la mi-novembre pour être livré le 24.',
+    chapo:
+      'Chaussette de cheminée, pyjama, plaid, boule brodée : une pièce par personne, avec son prénom. On les ressort chaque année, alors autant qu’elles soient justes du premier coup — je vous montre le motif avant de broder.',
+    note: 'À commander avant la mi-novembre : passé cette date, je ne garantis plus la livraison pour le 24.',
+  },
+} as const;
+
+  type Slug = keyof typeof CATEGORIES;
+
+  const creations = (await getCollection('creations', ({ data }) => !data.masquee)).sort(
+    (a, b) => a.data.ordre - b.data.ordre,
+  );
+
+  /* Une catégorie sans création ne génère aucune page. */
+  const remplies = (Object.keys(CATEGORIES) as Slug[]).filter((s) =>
+    creations.some((c) => c.data.categorie === s),
+  );
+
+  return remplies.map((slug) => ({
+    params: { categorie: slug },
+    props: {
+      cat: CATEGORIES[slug],
+      pieces: creations.filter((c) => c.data.categorie === slug),
+      voisines: remplies
+        .filter((s) => s !== slug)
+        .map((s) => ({ slug: s, court: CATEGORIES[s].court })),
+    },
+  }));
+};
+
+const { categorie } = Astro.params;
+const { cat, pieces, voisines } = Astro.props;
+
+/* Prix d'appel de la catégorie : le plus bas réellement présent. Aucun
+   chiffre inventé — s'il n'y a pas de prix dans le contenu, on n'affiche rien. */
+const prix = pieces.map((c) => c.data.prixDepart).filter((p): p is number => typeof p === 'number');
+const prixMini = prix.length > 0 ? Math.min(...prix) : null;
+
+/* Image de partage : la première pièce de la catégorie, recadrée en 1200×630.
+   La largeur est plafonnée à celle du fichier source : on ne fabrique pas de
+   pixels. */
+const ogLargeur = Math.min(1200, pieces[0].data.photo.width);
+const og = await getImage({
+  src: pieces[0].data.photo,
+  width: ogLargeur,
+  height: Math.round((ogLargeur * 630) / 1200),
+  fit: 'cover',
+  position: 'center',
+  format: 'jpeg',
+  quality: 78,
+});
+
+const colonnes = Math.min(pieces.length, 3);
+const colonnesPetit = Math.min(pieces.length, 2);
+
+const titre = `${cat.titre} | ${SITE.nom}`;
+---
+
+<Base
+  titre={titre}
+  description={cat.description}
+  imageOg={og.src}
+  fil={[
+    { nom: 'Créations', url: '/creations/' },
+    { nom: cat.court, url: `/creations/${categorie}/` },
+  ]}
+>
+  {/*
+    ⚠️ MAQUETTE — CONTENU D'EXEMPLE
+    Prix et délais viennent du contenu et de src/config.ts : provisoires.
+    Vocabulaire : broderie MACHINE.
+  */}
+
+  <!-- ===================== ENTÊTE ===================== -->
+  <section class="bande cat-tete">
+    <nav class="ariane" aria-label="Fil d'Ariane">
+      <a href="/">Accueil</a>
+      <span aria-hidden="true">/</span>
+      <a href="/creations/">Créations</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{cat.court}</span>
+    </nav>
+
+    <div class="cat-tete__in">
+      <h1 set:html={cat.h1} />
+      <div class="cat-tete__dire">
+        <p class="chapo">{cat.chapo}</p>
+        <ul class="cat-tete__faits">
+          {prixMini && <li>À partir de <b>{prixMini}&nbsp;€</b></li>}
+          <li>Délai actuel&nbsp;: <b>{ATELIER.delaiActuel}</b></li>
+          <li>Brodé à {SITE.ville}, en {SITE.departement}</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LES PIÈCES ===================== -->
+  <section class="bande cat-grille">
+    <ul class="grille" style={`--n:${colonnes};--n2:${colonnesPetit}`}>
+      {
+        pieces.map((c, i) => (
+          <li>
+            <CarteCreation
+              creation={c}
+              prioritaire={i < 2}
+              tailles="(max-width: 48rem) 46vw, (max-width: 75rem) 30vw, 22rem"
+            />
+          </li>
+        ))
+      }
+    </ul>
+
+    {cat.note && <p class="cat-note">{cat.note}</p>}
+  </section>
+
+  <!-- ===================== SUITE & APPEL ===================== -->
+  <section class="bande cat-suite">
+    <div class="cat-suite__in">
+      <div class="cat-suite__cta">
+        <h2>Vous avez une idée précise&nbsp;?</h2>
+        <p>
+          Envoyez-moi le prénom, l'objet et la date. Je réponds avec un prix et un délai, et je
+          vous montre le motif avant de lancer la machine.
+        </p>
+        <p class="actions">
+          <a
+            class="btn btn--wa"
+            href={lienWhatsApp(`Bonjour ${SITE.nom}, je cherche une idée du côté « ${cat.court} ».`)}
+          >
+            Écrire sur WhatsApp
+          </a>
+          <a class="btn btn--creux" href="/sur-mesure/">Voir le sur-mesure</a>
+        </p>
+      </div>
+
+      <nav class="cat-suite__nav" aria-label="Autres catégories">
+        <h2>Voir aussi</h2>
+        <ul>
+          {voisines.map((v) => <li><a href={`/creations/${v.slug}/`}>{v.court}</a></li>)}
+          <li><a href="/creations/">Toutes les créations</a></li>
+        </ul>
+      </nav>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* --- Entête : le titre à gauche, le texte à droite dès l'ordinateur.
+         Composition différente de la galerie, exprès. --- */
+  .cat-tete {
+    padding-block: clamp(1.5rem, 4vw, 3rem) clamp(2rem, 4vw, 3.5rem);
+    row-gap: clamp(1.5rem, 3vw, 2.5rem);
+  }
+  .ariane {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.3rem 0.5rem;
+    font-size: var(--t-micro);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+  .ariane a {
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--brique) 40%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+  .ariane a:hover {
+    color: var(--rouille);
+    text-decoration-color: var(--rouille);
+  }
+  .ariane span[aria-current] {
+    color: var(--brique);
+  }
+
+  .cat-tete__in {
+    display: grid;
+    gap: clamp(1.2rem, 3vw, 2rem);
+  }
+  .cat-tete h1 {
+    max-width: 18ch;
+  }
+  .cat-tete__dire {
+    display: grid;
+    gap: clamp(1rem, 2vw, 1.4rem);
+    align-content: start;
+  }
+  .cat-tete .chapo {
+    max-width: 40rem;
+  }
+  .cat-tete__faits {
+    list-style: none;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    font-size: var(--t-petit);
+    color: var(--gris);
+  }
+  .cat-tete__faits b {
+    font-weight: 500;
+    color: var(--brique);
+  }
+  .cat-tete__faits li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .cat-tete__faits li + li::before {
+    content: '✽';
+    color: color-mix(in oklab, var(--brique) 60%, transparent);
+    margin-inline-end: 0.4rem;
+  }
+
+  @media (min-width: 62rem) {
+    .cat-tete__in {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      gap: clamp(2rem, 5vw, 4.5rem);
+      align-items: start;
+    }
+    .cat-tete__dire {
+      /* Le paragraphe démarre à la hauteur d'œil du titre, pas au-dessus. */
+      padding-block-start: 0.55rem;
+    }
+  }
+
+  /* --- Grille --- */
+  .cat-grille {
+    padding-block: 0 clamp(2.5rem, 6vw, 5rem);
+    row-gap: clamp(1.8rem, 4vw, 3rem);
+  }
+  .grille {
+    list-style: none;
+    margin: 0;
+    display: grid;
+    gap: clamp(1.1rem, 3vw, 2.6rem) clamp(0.8rem, 2vw, 1.8rem);
+    grid-template-columns: repeat(var(--n2, 2), minmax(0, 1fr));
+  }
+  .grille > li {
+    min-width: 0;
+  }
+  .grille > li > :global(.carte) {
+    width: auto;
+    max-width: none;
+  }
+  /* Le tambour est un disque : en grille, le cadre se règle au carré, sinon
+     il reste une bande vide sous chaque cercle. */
+  .grille :global(.carte__img) {
+    aspect-ratio: 1;
+  }
+  /* Toute la carte est un lien : sans cette règle, le titre, l'accroche et le
+     prix sont soulignés d'un bloc. (À corriger un jour dans global.css, la
+     rangée de l'accueil a le même souci.) */
+  .grille :global(.carte__lien) {
+    text-decoration: none;
+  }
+
+  /* ⚠️ CarteCreation pose la classe .carte__actions, que global.css ne
+     connaît pas (il style .carte__cta) : sans cette reprise, les deux liens
+     de la carte se suivent dans le fil du texte et se coupent en deux.
+     À réunifier un jour dans le composant. */
+  .grille :global(.carte__actions) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.9rem;
+    padding-block-start: 0.1rem;
+  }
+  .grille :global(.lien-devis) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: var(--t-petit);
+    color: var(--encre-doux);
+    text-underline-offset: 4px;
+    text-decoration-color: color-mix(in oklab, var(--encre) 30%, transparent);
+  }
+  .grille :global(.lien-devis):hover {
+    color: var(--rouille);
+    text-decoration-color: var(--rouille);
+  }
+
+  @media (min-width: 48rem) {
+    /* Plafond de 24rem par colonne : une catégorie qui ne contient qu'une
+       pièce ne doit pas l'étaler sur toute la largeur de l'écran. */
+    .grille {
+      grid-template-columns: repeat(var(--n, 3), minmax(0, 24rem));
+    }
+  }
+
+  .cat-note {
+    max-width: 38rem;
+    padding-inline-start: 1.1rem;
+    border-inline-start: 2px solid color-mix(in oklab, var(--brique) 50%, transparent);
+    font-size: var(--t-corps);
+    line-height: 1.6;
+    color: var(--encre-doux);
+  }
+
+  /* --- Bande de sortie : tintée, deux colonnes, sans photo.
+         L'accueil et la galerie ont déjà leur bande sombre. --- */
+  .cat-suite {
+    background:
+      radial-gradient(
+        70% 80% at 92% 8%,
+        color-mix(in oklab, var(--ocre) 24%, transparent),
+        transparent 70%
+      ),
+      linear-gradient(
+        170deg,
+        color-mix(in oklab, var(--rose) 58%, var(--sable)),
+        color-mix(in oklab, var(--brique) 14%, var(--rose)) 100%
+      );
+    padding-block: clamp(2.5rem, 6vw, 4.5rem);
+  }
+  .cat-suite__in {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3rem);
+  }
+  .cat-suite h2 {
+    font-size: var(--t-h3);
+    line-height: 1.15;
+  }
+  .cat-suite__cta {
+    display: grid;
+    gap: 0.9rem;
+    justify-items: start;
+    max-width: 34rem;
+  }
+  .cat-suite__cta p:not(.actions) {
+    font-size: var(--t-corps);
+    line-height: 1.6;
+    color: var(--encre-doux);
+  }
+  .cat-suite__nav h2 {
+    font-family: 'Jost', sans-serif;
+    font-size: var(--t-micro);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--brique);
+    font-weight: 500;
+    margin-block-end: 0.5rem;
+  }
+  .cat-suite__nav ul {
+    list-style: none;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.2rem;
+  }
+  .cat-suite__nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: var(--t-petit);
+    /* Soulignement typographique, pas un filet collé au bas de la zone
+       tactile : sur 44 px de haut, le trait décrocherait du texte. */
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-decoration-color: color-mix(in oklab, var(--encre) 25%, transparent);
+    text-underline-offset: 5px;
+  }
+  .cat-suite__nav a:hover {
+    color: var(--rouille);
+    text-decoration-color: var(--rouille);
+  }
+
+  @media (min-width: 62rem) {
+    .cat-suite__in {
+      grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+      align-items: start;
+      gap: clamp(2rem, 5vw, 4rem);
+    }
+    .cat-suite__nav {
+      text-align: end;
+      max-width: 16rem;
+    }
+    .cat-suite__nav ul {
+      justify-content: end;
+    }
+  }
+</style>

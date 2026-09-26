@@ -1,0 +1,631 @@
+---
+/**
+ * /creations/<slug>/ — la fiche d'une création.
+ *
+ * Deux appels à l'action : WhatsApp (avec l'URL absolue de la fiche dans le
+ * message, pour que l'aperçu affiche la photo) et le formulaire de devis
+ * pré-rempli. Maillage vers la catégorie, les occasions et le sur-mesure.
+ */
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import CarteCreation from '../../components/CarteCreation.astro';
+import { SITE, ATELIER, OCCASIONS, lienWhatsApp } from '../../config';
+
+/** Libellés d'affichage. Les slugs viennent de src/content.config.ts. */
+const NOM_CATEGORIE: Record<string, string> = {
+  naissance: 'Naissance',
+  'linge-de-bain': 'Linge de bain',
+  vetements: 'Vêtements',
+  couture: 'Couture',
+  'decoration-ajouree': 'Dentelle libre',
+  noel: 'Noël',
+};
+
+const NOM_OCCASION: Record<string, string> = {
+  naissance: 'Une naissance',
+  mariage: 'Un mariage',
+  'fete-des-meres': 'La fête des mères',
+  noel: 'Noël',
+  anniversaire: 'Un anniversaire',
+  bapteme: 'Un baptême',
+  retraite: 'Un départ en retraite',
+};
+
+/** Seules ces occasions ont une page : ne jamais lier vers une URL absente. */
+const OCCASIONS_AVEC_PAGE = new Set(OCCASIONS.map((o) => o.slug));
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const creations = await getCollection('creations', ({ data }) => !data.masquee);
+  return creations.map((creation) => ({
+    params: { slug: creation.id },
+    props: { creation },
+  }));
+};
+
+const { creation } = Astro.props;
+const { data, id } = creation;
+const { Content } = await render(creation);
+
+/* Les autres pièces : d'abord la même catégorie, complétée par le reste. */
+const toutes = (await getCollection('creations', ({ data: d }) => !d.masquee)).sort(
+  (a, b) => a.data.ordre - b.data.ordre,
+);
+const memeCategorie = toutes.filter((c) => c.id !== id && c.data.categorie === data.categorie);
+const autres = [...memeCategorie, ...toutes.filter((c) => c.id !== id && !memeCategorie.includes(c))]
+  .slice(0, 6);
+
+const urlFiche = `/creations/${id}/`;
+const urlAbsolue = new URL(urlFiche, SITE.url).href;
+
+/* Accord du bouton : « la même » pour une trousse, « le même » pour un cadre.
+   Le genre se lit dans l'article du titre ; un titre élidé (« L'arbre… ») est
+   traité au masculin. */
+const feminin = /^la\s/i.test(data.titre.trim());
+const meme = feminin ? 'la même' : 'le même';
+/** « brodé » ou « brodée », selon le genre du titre. */
+const brode = feminin ? 'brodée' : 'brodé';
+
+/* WhatsApp : l'URL de la fiche est jointe au message. C'est l'aperçu Open
+   Graph du lien qui porte la photo — wa.me n'accepte aucune pièce jointe. */
+const wa = lienWhatsApp(
+  `Bonjour ${SITE.nom}, j'ai vu « ${data.titre} » sur votre site et j'aimerais ${meme}.`,
+  urlAbsolue,
+);
+
+/* Image de partage 1200×630 dérivée de la photo de la création : c'est elle
+   qui s'affiche dans l'aperçu WhatsApp. En JPEG, le format que tous les
+   aperçus savent lire. Le rapport 1200/630 est respecté, mais la largeur est
+   plafonnée à celle du fichier source : on ne fabrique pas de pixels. */
+const ogLargeur = Math.min(1200, data.photo.width);
+const og = await getImage({
+  src: data.photo,
+  width: ogLargeur,
+  height: Math.round((ogLargeur * 630) / 1200),
+  fit: 'cover',
+  position: 'center',
+  format: 'jpeg',
+  quality: 78,
+});
+
+const categorieNom = NOM_CATEGORIE[data.categorie] ?? data.categorie;
+const occasions = data.occasions.map((o) => ({
+  slug: o,
+  nom: NOM_OCCASION[o] ?? o,
+  lien: OCCASIONS_AVEC_PAGE.has(o as (typeof OCCASIONS)[number]['slug']) ? `/cadeaux/${o}/` : null,
+}));
+
+/* Données structurées. Aucune note, aucun avis : rien d'inventé. */
+const produit: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: data.titre,
+  description: data.accroche,
+  image: [new URL(og.src, SITE.url).href],
+  url: urlAbsolue,
+  category: categorieNom,
+  brand: { '@type': 'Brand', name: SITE.nom },
+  ...(data.prixDepart
+    ? {
+        offers: {
+          '@type': 'Offer',
+          priceCurrency: 'EUR',
+          price: data.prixDepart,
+          /* « À partir de » : le prix plancher, motif et support à confirmer. */
+          availability:
+            ATELIER.commandes === 'ouvertes'
+              ? 'https://schema.org/InStock'
+              : 'https://schema.org/PreOrder',
+          itemCondition: 'https://schema.org/NewCondition',
+          url: urlAbsolue,
+          seller: { '@id': `${SITE.url}/#atelier` },
+        },
+      }
+    : {}),
+};
+
+const titre = `${data.titre} — ${brode} à ${SITE.ville} (35) | ${SITE.nom}`;
+const description = `${data.accroche} ${
+  data.prixDepart ? `À partir de ${data.prixDepart} €. ` : ''
+}${brode[0].toUpperCase()}${brode.slice(1)} à ${SITE.ville} en ${
+  SITE.departement
+}, motif validé avant broderie, envoi partout en France.`;
+---
+
+<Base
+  titre={titre}
+  description={description}
+  imageOg={og.src}
+  fil={[
+    { nom: 'Créations', url: '/creations/' },
+    { nom: categorieNom, url: `/creations/${data.categorie}/` },
+    { nom: data.titre, url: urlFiche },
+  ]}
+>
+  {/*
+    ⚠️ MAQUETTE — CONTENU D'EXEMPLE
+    Prix, délais, numéro WhatsApp et e-mail sont provisoires (src/config.ts
+    et src/content/creations/). Vocabulaire : broderie MACHINE.
+  */}
+
+  <script type="application/ld+json" set:html={JSON.stringify(produit)} />
+
+  <!-- ===================== FICHE ===================== -->
+  <section class="bande fiche">
+    <nav class="ariane" aria-label="Fil d'Ariane">
+      <a href="/">Accueil</a>
+      <span aria-hidden="true">/</span>
+      <a href="/creations/">Créations</a>
+      <span aria-hidden="true">/</span>
+      <a href={`/creations/${data.categorie}/`}>{categorieNom}</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">{data.titre}</span>
+    </nav>
+
+    <div class="fiche__in">
+      <div class="fiche__photos">
+        <figure class="fiche__grande">
+          <Image
+            src={data.photo}
+            alt={data.alt}
+            widths={[390, 620, 800, 1000]}
+            sizes="(max-width: 62rem) 92vw, 44rem"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </figure>
+
+        {
+          data.photos.length > 0 && (
+            <ul class="fiche__vues">
+              {data.photos.map((p, i) => (
+                <li>
+                  <Image
+                    src={p}
+                    alt={`${data.titre} — vue ${i + 2}`}
+                    widths={[320, 480, 620]}
+                    sizes="(max-width: 62rem) 45vw, 21rem"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+
+      <div class="fiche__panneau">
+        <div class="fiche__collant">
+          <p class="fiche__cat">
+            <a href={`/creations/${data.categorie}/`}>{categorieNom}</a>
+          </p>
+
+          <h1>{data.titre}</h1>
+          <p class="chapo">{data.accroche}</p>
+
+          {
+            data.prixDepart && (
+              <p class="prix">
+                à partir de <b>{data.prixDepart}&nbsp;€</b>
+              </p>
+            )
+          }
+
+          <ul class="fiche__faits">
+            {
+              data.delaiJours && (
+                <li>
+                  <span>Fabrication</span>
+                  <b>environ {data.delaiJours} jours ouvrés</b>
+                </li>
+              )
+            }
+            <li>
+              <span>Délai actuel de l'atelier</span>
+              <b>{ATELIER.delaiActuel}</b>
+            </li>
+            <li>
+              <span>{data.cousuMain ? 'Cousue puis brodée' : 'Brodée'} chez moi</span>
+              <b>{SITE.ville} ({SITE.codePostal})</b>
+            </li>
+          </ul>
+
+          <p class="actions">
+            <a class="btn btn--wa" href={wa}>Je veux {meme}</a>
+            <a class="btn btn--creux" href={`/contact/?creation=${id}`}>Demander un devis</a>
+          </p>
+
+          <p class="fiche__rassure">
+            Je vous montre le motif avant de lancer la machine. Emballage cadeau compris.
+            {' '}{ATELIER.zones}.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LE TEXTE + LE MAILLAGE ===================== -->
+  <section class="bande fiche-dire">
+    <div class="fiche-dire__in">
+      <div class="prose">
+        <Content />
+      </div>
+
+      <aside class="fiche-dire__cote">
+        <h2>Pour quelle occasion&nbsp;?</h2>
+        {
+          occasions.length > 0 ? (
+            <ul class="fiche-dire__occ">
+              {occasions.map((o) =>
+                o.lien ? (
+                  <li>
+                    <a href={o.lien}>{o.nom}</a>
+                  </li>
+                ) : (
+                  <li>
+                    <span>{o.nom}</span>
+                  </li>
+                ),
+              )}
+            </ul>
+          ) : (
+            <p class="fiche-dire__vide">Pour n'importe quelle occasion, en fait.</p>
+          )
+        }
+
+        <p class="fiche-dire__lien">
+          <a class="lien-fleche" href="/sur-mesure/">Comment se passe une commande</a>
+        </p>
+        <p class="fiche-dire__lien">
+          <a class="lien-fleche" href={`/creations/${data.categorie}/`}>
+            Toutes les pièces « {categorieNom} »
+          </a>
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== AUTRES PIÈCES ===================== -->
+  {
+    autres.length > 0 && (
+      <section class="bande suite">
+        <div class="suite__tete">
+          <h2 class="titre-xl titre-xl--pose">Dans le même esprit.</h2>
+          <p class="suite__lien">
+            <a class="lien-fleche" href="/creations/">
+              Voir toutes les créations
+            </a>
+          </p>
+        </div>
+
+        <div class="rangee" tabindex="0" role="region" aria-label="Autres créations">
+          {autres.map((c) => (
+            <CarteCreation creation={c} tailles="(max-width: 40rem) 74vw, 22rem" />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  /* --- Fil d'Ariane --- */
+  .ariane {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.2rem 0.5rem;
+    font-size: var(--t-micro);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+  .ariane a {
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--brique) 40%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+  }
+  .ariane a:hover {
+    color: var(--rouille);
+    text-decoration-color: var(--rouille);
+  }
+  .ariane span[aria-current] {
+    color: var(--brique);
+  }
+
+  /* --- La fiche : photo à gauche, panneau collant à droite --- */
+  .fiche {
+    padding-block: clamp(1rem, 3vw, 2rem) clamp(2.5rem, 6vw, 4.5rem);
+    row-gap: clamp(1.2rem, 3vw, 2rem);
+  }
+  .fiche__in {
+    display: grid;
+    gap: clamp(1.6rem, 4vw, 3.5rem);
+  }
+  .fiche__photos {
+    display: grid;
+    gap: clamp(0.6rem, 1.5vw, 1rem);
+    min-width: 0;
+  }
+  .fiche__grande {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 8px 8px 160px 8px;
+    background: color-mix(in oklab, var(--brique) 18%, var(--sable));
+    box-shadow: 0 30px 60px -40px rgba(30, 22, 18, 0.8);
+  }
+  .fiche__grande img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+  .fiche__vues {
+    list-style: none;
+    margin: 0;
+    display: grid;
+    gap: clamp(0.5rem, 1.5vw, 0.9rem);
+    grid-template-columns: repeat(auto-fill, minmax(min(9rem, 100%), 1fr));
+  }
+  .fiche__vues > li {
+    min-width: 0;
+  }
+  .fiche__vues img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+
+  .fiche__panneau {
+    min-width: 0;
+  }
+  .fiche__collant {
+    display: grid;
+    gap: clamp(0.7rem, 1.8vw, 1.1rem);
+    justify-items: start;
+  }
+  .fiche__cat a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: var(--t-micro);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brique);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--brique) 45%, transparent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
+  }
+  .fiche__cat a:hover {
+    color: var(--rouille);
+    text-decoration-color: var(--rouille);
+  }
+  .fiche h1 {
+    max-width: 20ch;
+  }
+  .fiche .chapo {
+    max-width: 34rem;
+  }
+  .fiche .prix {
+    font-size: var(--t-corps);
+  }
+
+  .fiche__faits {
+    list-style: none;
+    margin: 0;
+    display: grid;
+    gap: 0.55rem;
+    width: 100%;
+    max-width: 30rem;
+    padding-block: 0.6rem;
+    border-block: 1px dashed color-mix(in oklab, var(--brique) 38%, transparent);
+  }
+  .fiche__faits li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.2rem 1rem;
+    font-size: var(--t-petit);
+    color: var(--gris);
+  }
+  .fiche__faits b {
+    font-weight: 500;
+    color: var(--encre-doux);
+    font-variant-numeric: tabular-nums;
+  }
+  .fiche__rassure {
+    font-size: var(--t-petit);
+    line-height: 1.6;
+    color: var(--gris);
+    max-width: 32rem;
+  }
+
+  @media (min-width: 62rem) {
+    .fiche__in {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      align-items: start;
+    }
+    .fiche__collant {
+      position: sticky;
+      /* L'en-tête est translucide et fait environ 4,5 rem de haut. */
+      top: clamp(5rem, 7vw, 6.5rem);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .fiche__collant {
+      position: static;
+    }
+  }
+
+  /* --- Le texte de la création, en colonne étroite, + le maillage --- */
+  .fiche-dire {
+    background: color-mix(in oklab, var(--sable) 84%, var(--olive));
+    padding-block: clamp(2.5rem, 6vw, 4.5rem);
+  }
+  .fiche-dire__in {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+  .prose {
+    display: grid;
+    gap: 1.1rem;
+    max-width: 38rem;
+    font-size: var(--t-corps);
+    line-height: 1.7;
+    color: var(--encre-doux);
+  }
+  .prose :global(p) {
+    text-wrap: pretty;
+  }
+  .prose :global(p:first-child) {
+    font-size: var(--t-chapo);
+    line-height: 1.45;
+    color: var(--encre);
+  }
+  .prose :global(strong) {
+    font-weight: 500;
+    color: var(--encre);
+  }
+  .prose :global(a) {
+    text-underline-offset: 3px;
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    display: grid;
+    gap: 0.5rem;
+    padding-inline-start: 1.2rem;
+  }
+
+  .fiche-dire__cote h2 {
+    font-family: 'Jost', sans-serif;
+    font-size: var(--t-micro);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--brique);
+    margin-block-end: 0.6rem;
+  }
+  .fiche-dire__occ {
+    list-style: none;
+    margin: 0 0 1.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.5rem;
+  }
+  .fiche-dire__occ a,
+  .fiche-dire__occ span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.45rem 1rem;
+    border-radius: 999px;
+    font-size: var(--t-petit);
+    text-decoration: none;
+    border: 1px solid color-mix(in oklab, var(--brique) 30%, transparent);
+    color: var(--encre-doux);
+  }
+  .fiche-dire__occ a:hover {
+    background: var(--encre);
+    border-color: var(--encre);
+    color: var(--sable-haut);
+  }
+  .fiche-dire__occ span {
+    border-style: dashed;
+    color: var(--gris);
+  }
+  .fiche-dire__vide {
+    font-size: var(--t-petit);
+    color: var(--gris);
+    margin-block-end: 1.2rem;
+  }
+  .fiche-dire__lien {
+    font-size: var(--t-petit);
+  }
+  .fiche-dire__lien + .fiche-dire__lien {
+    margin-block-start: 0.5rem;
+  }
+
+  @media (min-width: 62rem) {
+    .fiche-dire__in {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: clamp(2.5rem, 6vw, 5rem);
+      align-items: start;
+    }
+  }
+
+  /* --- Autres pièces : la rangée défilante de l'accueil --- */
+  .suite {
+    padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(3rem, 7vw, 5.5rem);
+    row-gap: clamp(1.2rem, 3vw, 2rem);
+  }
+  .suite__tete {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.6rem 2rem;
+  }
+  .suite__lien {
+    font-size: var(--t-petit);
+  }
+
+  /* .lien-fleche pose son filet au bas d'une boîte de 2,75 rem : le trait
+     décroche du texte. On le remplace ici par un vrai soulignement. */
+  .fiche-dire__lien :global(.lien-fleche),
+  .suite__lien :global(.lien-fleche) {
+    border-bottom: 0;
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-decoration-color: color-mix(in oklab, var(--encre) 25%, transparent);
+    text-underline-offset: 5px;
+  }
+  .fiche-dire__lien :global(.lien-fleche):hover,
+  .suite__lien :global(.lien-fleche):hover {
+    text-decoration-color: var(--rouille);
+  }
+
+  /* Mêmes correctifs locaux que sur la galerie : le cadre du tambour au
+     carré, et la carte entière est un lien. */
+  .suite :global(.carte__img) {
+    aspect-ratio: 1;
+  }
+  .suite :global(.carte__lien) {
+    text-decoration: none;
+  }
+
+  /* ⚠️ CarteCreation pose la classe .carte__actions, que global.css ne
+     connaît pas (il style .carte__cta) : sans cette reprise, les deux liens
+     de la carte se suivent dans le fil du texte et se coupent en deux.
+     À réunifier un jour dans le composant. */
+  .suite :global(.carte__actions) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.9rem;
+    padding-block-start: 0.1rem;
+  }
+  .suite :global(.lien-devis) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: var(--t-petit);
+    color: var(--encre-doux);
+    text-underline-offset: 4px;
+    text-decoration-color: color-mix(in oklab, var(--encre) 30%, transparent);
+  }
+  .suite :global(.lien-devis):hover {
+    color: var(--rouille);
+    text-decoration-color: var(--rouille);
+  }
+
+</style>

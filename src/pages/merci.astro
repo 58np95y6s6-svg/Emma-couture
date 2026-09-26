@@ -1,0 +1,224 @@
+---
+/**
+ * /merci/ — page d'arrivée après l'envoi du formulaire de demande.
+ * C'est la valeur de `action` du formulaire de /contact/.
+ * ⚠️ noindex : cette page ne doit jamais apparaître dans les résultats.
+ */
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
+
+import bobines from '../assets/creations/bandeau/atelier-mur-bobines-fil-broderie-vitre.webp';
+
+const titre = `Message reçu — ${SITE.nom}`;
+const description = 'Votre demande est bien arrivée. Je vous réponds avec un prix et un délai.';
+---
+
+<Base titre={titre} description={description} noindex={true}>
+  {/* ⚠️ MAQUETTE — délai de réponse provisoire (src/config.ts). */}
+
+  <section class="bande mr-tete">
+    <div class="mr-tete__in">
+      <p class="sourcil">Demande envoyée</p>
+      <h1>C'est arrivé.<br /><em>Je vous réponds.</em></h1>
+      <p class="chapo">
+        {ATELIER.delaiReponse}, avec un prix, un délai et ce que je vous propose de faire. Ça ne
+        vous engage toujours à rien.
+      </p>
+
+      <p class="actions">
+        <a class="btn btn--wa" href={lienWhatsApp("Bonjour Emma, je viens de vous envoyer une demande depuis votre site.")}>
+          Ajouter quelque chose sur WhatsApp
+        </a>
+        <a class="btn btn--creux" href={`tel:${CONTACT.telephone}`}>Appeler</a>
+      </p>
+    </div>
+
+    <ol class="mr-suite">
+        <li>
+          <b>Vérifiez vos indésirables</b>
+          <span>
+            Ma réponse part de <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>. Si elle
+            n'est pas dans la boîte de réception, elle est probablement là.
+          </span>
+        </li>
+        <li>
+          <b>Vous n'avez rien reçu au bout de 48 h&nbsp;?</b>
+          <span>
+            Écrivez-moi sur WhatsApp, c'est le plus rapide. Il arrive qu'un e-mail se perde.
+          </span>
+        </li>
+        <li>
+          <b>Une précision à ajouter&nbsp;?</b>
+          <span>
+            Une photo, une date, une couleur qui vous revient&nbsp;: envoyez-la, je l'ajoute à
+            votre demande.
+          </span>
+        </li>
+    </ol>
+  </section>
+
+  <div class="bandeau mr-bandeau">
+    <Image
+      src={bobines}
+      alt="Mur de l'atelier couvert de bobines de fil à broder de toutes les couleurs"
+      widths={[800, 1400, 2000]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+    />
+    <p class="bandeau__mot" aria-hidden="true">à tout de suite</p>
+  </div>
+
+  <section class="bande mr-suivant">
+    <h2 class="titre-xl">En attendant.</h2>
+    <ul class="mr-liens">
+      <li>
+        <a href="/creations/">
+          <b>Les créations</b>
+          <span>Ce qui est passé sous la machine ces dernières semaines.</span>
+        </a>
+      </li>
+      <li>
+        <a href="/sur-mesure/">
+          <b>Comment ça se passe</b>
+          <span>Les cinq étapes, les délais, l'entretien, les questions fréquentes.</span>
+        </a>
+      </li>
+      <li>
+        <a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">
+          <b>@{CONTACT.instagram}</b>
+          <span>Les pièces en cours passent souvent là avant d'arriver sur le site.</span>
+        </a>
+      </li>
+      <li>
+        <a href="/">
+          <b>Retour à l'accueil</b>
+          <span>{SITE.baseline}</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+</Base>
+
+<style>
+  /* ==========================================================================
+     /merci/ — styles propres à la page. Préfixe `mr-`.
+     ========================================================================== */
+  .mr-tete {
+    padding-block: clamp(2.5rem, 7vw, 5.5rem) clamp(2.5rem, 6vw, 4.5rem);
+    row-gap: clamp(1.8rem, 4vw, 2.6rem);
+    align-items: start;
+  }
+  .mr-tete__in {
+    display: grid;
+    gap: clamp(0.9rem, 2vw, 1.35rem);
+    justify-items: start;
+    max-width: 40rem;
+  }
+  .mr-tete h1 {
+    max-width: 18ch;
+  }
+
+  .mr-suite {
+    display: grid;
+    gap: 0;
+    width: 100%;
+    max-width: 40rem;
+  }
+  @media (min-width: 62rem) {
+    .mr-tete {
+      grid-template-columns:
+        [bord-d] minmax(var(--marge), 1fr)
+        [large-d] minmax(0, calc(var(--large) * 0.54)) minmax(0, calc(var(--large) * 0.46))
+        [large-f] minmax(var(--marge), 1fr) [bord-f];
+      column-gap: clamp(2rem, 4vw, 4rem);
+    }
+    .mr-tete__in {
+      grid-column: large-d / span 1;
+    }
+    .mr-suite {
+      grid-column: span 1 / large-f;
+      margin-block-start: 0.4rem;
+    }
+  }
+  .mr-suite li {
+    min-width: 0;
+    display: grid;
+    gap: 0.15rem;
+    padding-block: 0.9rem;
+    border-block-start: 1px solid color-mix(in oklab, var(--brique) 22%, transparent);
+  }
+  .mr-suite li:last-child {
+    border-block-end: 1px solid color-mix(in oklab, var(--brique) 22%, transparent);
+  }
+  .mr-suite b {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(1.1rem, 1rem + 0.5vw, 1.35rem);
+    line-height: 1.2;
+    color: var(--encre);
+  }
+  .mr-suite span {
+    font-size: var(--t-petit);
+    line-height: 1.6;
+    color: var(--encre-doux);
+  }
+  .mr-suite a {
+    text-decoration-color: color-mix(in oklab, var(--rouille) 60%, transparent);
+    text-underline-offset: 3px;
+  }
+
+  .mr-bandeau {
+    margin-block: 0;
+  }
+
+  .mr-suivant {
+    padding-block: clamp(2.5rem, 6vw, 4.5rem);
+    row-gap: clamp(1.4rem, 3vw, 2.2rem);
+  }
+  .mr-suivant .titre-xl {
+    max-width: 16ch;
+  }
+  /* Chaque carte porte son cadre : une rangée incomplète ne laisse pas
+     d'aplat vide (piège de `auto-fit` avec un fond posé sur la grille). */
+  .mr-liens {
+    display: grid;
+    gap: clamp(0.5rem, 1.2vw, 0.9rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
+  }
+  .mr-liens li {
+    min-width: 0;
+  }
+  .mr-liens a {
+    display: grid;
+    gap: 0.2rem;
+    align-content: start;
+    height: 100%;
+    padding: clamp(1rem, 2.2vw, 1.5rem);
+    text-decoration: none;
+    background: color-mix(in oklab, var(--sable-haut) 78%, transparent);
+    border: 1px solid color-mix(in oklab, var(--brique) 22%, transparent);
+    border-radius: 3px 3px 16px 3px;
+    transition: background 280ms ease, color 200ms ease, border-color 280ms ease;
+  }
+  .mr-liens li:nth-child(even) a {
+    border-radius: 3px 16px 3px 3px;
+  }
+  .mr-liens a:hover {
+    background: var(--sable-haut);
+    color: var(--rouille);
+    border-color: color-mix(in oklab, var(--rouille) 45%, transparent);
+  }
+  .mr-liens b {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-weight: 400;
+    font-size: var(--t-h3);
+    line-height: 1.1;
+  }
+  .mr-liens span {
+    font-size: var(--t-petit);
+    line-height: 1.55;
+    color: var(--encre-doux);
+  }
+</style>

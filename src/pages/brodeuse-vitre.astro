@@ -1,0 +1,790 @@
+---
+/**
+ * Page locale principale : Vitré.
+ *
+ * Intention : c'est le terrain d'Emma. L'angle est la présence réelle sur
+ * place — on se voit, on se donne la pièce en main, les communes autour sont
+ * à portée de voiture. Rien de ce texte ne doit pouvoir être recopié sur la
+ * page Rennes en changeant la ville : là-bas l'angle est la distance.
+ *
+ * Cible : « brodeuse Vitré », « broderie Vitré », « cadeau personnalisé Vitré ».
+ *
+ * ⚠️ MAQUETTE — prix, délais, avis, numéro WhatsApp, e-mail et téléphone sont
+ * provisoires (src/config.ts). Vocabulaire : broderie MACHINE.
+ */
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
+
+import portrait from '../assets/creations/hero-mobile/emma-brodeuse-vitre-portrait.webp';
+import bobines from '../assets/creations/bandeau/atelier-mur-bobines-fil-broderie-vitre.webp';
+import ogPage from '../assets/creations/og/emma-brodeuse-vitre-portrait.webp';
+
+import pLinge from '../assets/creations/galerie/serviette-brodee-prenom-alicia-rose.webp';
+import pNaissance from '../assets/creations/galerie/doudou-lapin-brode-prenom-naissance-vitre.webp';
+import pCouture from '../assets/creations/galerie/trousse-cousue-main-brodee-prenom-lisa.webp';
+import pDeco from '../assets/creations/galerie/tambour-decoratif-brode-fee-rouge.webp';
+
+const titre = `Brodeuse à Vitré (35) — broderie personnalisée & couture | ${SITE.nom}`;
+const description =
+  "Brodeuse à Vitré (35) : prénoms, motifs et logos brodés à la machine, sacs et trousses cousus. Remise en main propre à Vitré, devis par WhatsApp, envoi partout en France.";
+
+const wa = lienWhatsApp(
+  "Bonjour Emma, je suis à Vitré (ou tout près) et j'aimerais faire broder quelque chose.",
+);
+
+/*
+  ⚠️ À CONFIRMER AVEC EMMA — liste plausible, pas validée.
+  Jusqu'où accepte-t-elle de se déplacer ? Ces communes sont celles de la
+  couronne de Vitré ; elles sont citées ici, et seulement ici, pour éviter de
+  créer une page par commune (Google traite la série de pages « ville » comme
+  du spam — voir CLAUDE.md § Stratégie SEO).
+*/
+const communes = [
+  'Châteaubourg',
+  'Argentré-du-Plessis',
+  'La Guerche-de-Bretagne',
+  'Étrelles',
+  'Val-d’Izé',
+  'Torcé',
+  'Domalain',
+  'Balazé',
+  'Pocé-les-Bois',
+  'Erbrée',
+  'Montreuil-sous-Pérouse',
+  'Saint-M’Hervé',
+];
+
+/*
+  ⚠️ CONTENU À VALIDER — la sélection des quatre pièces ci-dessous est un
+  exemple. Emma choisira ce qui la représente le mieux auprès de sa clientèle
+  de Vitré. Les liens pointent vers les catégories déjà listées dans le pied
+  de page.
+*/
+const pieces = [
+  {
+    img: pLinge,
+    alt: "Drap de bain rose avec le prénom Alicia brodé en fil mauve sur la bordure",
+    nom: 'Le linge au prénom',
+    dire: 'Drap de bain, serviette, peignoir, sortie de bain. Le classique, et celui qui se garde le plus longtemps.',
+    href: '/creations/linge-de-bain/',
+  },
+  {
+    img: pNaissance,
+    alt: "Doudou lapin en tissu doux avec un prénom brodé sur le ventre, cadeau de naissance",
+    nom: 'Le cadeau de naissance',
+    dire: 'Doudou, bavoir, cape de bain, cadre. On part du prénom, de la date, parfois du poids.',
+    href: '/creations/naissance/',
+  },
+  {
+    img: pCouture,
+    alt: "Trousse en tissu cousue main, prénom Lisa brodé sur le rabat",
+    nom: 'Les sacs et trousses',
+    dire: 'Ceux-là, je les couds avant de les broder. Tissu choisi ensemble, doublure comprise.',
+    href: '/creations/couture/',
+  },
+  {
+    img: pDeco,
+    alt: "Tambour à broder décoratif : une fée en robe rouge brodée, prêt à accrocher",
+    nom: 'Les pièces à accrocher',
+    dire: 'Tambour décoratif, cadre, dentelle ajourée. Un cadeau qui ne s’use pas et qui ne se mange pas.',
+    href: '/creations/decoration-ajouree/',
+  },
+];
+
+/*
+  FAQ locale — questions réellement posées par une personne de Vitré.
+  Le JSON-LD ci-dessous est généré depuis ce tableau : les deux ne peuvent
+  donc pas diverger. Ne pas ajouter de question au balisage sans l'afficher.
+*/
+const faq = [
+  {
+    q: 'Où est-ce que je récupère ma commande à Vitré ?',
+    r: "On convient du lieu et de l'heure par message, dans Vitré. Je travaille chez moi : il n'y a pas de boutique où pousser la porte, alors on se retrouve en ville, au moment qui vous arrange.",
+  },
+  {
+    q: 'Combien de temps faut-il pour une broderie ?',
+    r: `Le délai affiché en ce moment est de ${ATELIER.delaiActuel} entre la commande validée et la pièce prête. Pour une date précise — une naissance, un mariage, un départ — dites-la moi dès le premier message : je vous réponds tout de suite si ça tient ou non.`,
+  },
+  {
+    q: 'Vous vous déplacez dans les communes autour de Vitré ?',
+    r: "Je passe régulièrement dans la couronne de Vitré, de Châteaubourg à La Guerche-de-Bretagne. Dites-moi d'où vous êtes : soit nos routes se croisent, soit je vous envoie le colis, et c'est très bien aussi.",
+  },
+  {
+    q: 'Je peux venir voir l’atelier ?',
+    r: "Non, et c'est assumé : l'atelier est chez moi. En échange, vous voyez le motif avant qu'il soit piqué — je vous envoie le dessin, et on le corrige autant de fois qu'il faut avant que la machine démarre.",
+  },
+];
+
+const jsonFaq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.r },
+  })),
+};
+---
+
+<Base
+  titre={titre}
+  description={description}
+  imageOg={ogPage.src}
+  fil={[{ nom: 'Brodeuse à Vitré', url: '/brodeuse-vitre/' }]}
+>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonFaq)} is:inline />
+
+  <!-- ===================== HAUT DE PAGE ===================== -->
+  <section class="bande vit-haut">
+    <div class="vit-haut__dire">
+      <p class="sourcil">Vitré · Ille-et-Vilaine</p>
+
+      <h1>Vous êtes de Vitré&nbsp;?<br />Le paquet ne prendra pas <em>la poste.</em></h1>
+
+      <p class="chapo">
+        Je suis brodeuse à Vitré. Je brode à la machine des prénoms, des motifs et des logos sur du
+        linge, des vêtements et des cadeaux de naissance&nbsp;; les sacs, les trousses et les
+        tabliers, je les couds avant de les broder. Pour un cadeau personnalisé à Vitré, on se
+        donne rendez-vous et vous repartez avec la pièce dans les mains.
+      </p>
+
+      <p class="actions">
+        <a class="btn btn--wa" href={wa}>Écrire sur WhatsApp</a>
+        <a class="btn btn--creux" href="/contact/#devis">Demander un devis</a>
+      </p>
+
+      <ul class="vit-reperes">
+        <li><b>{ATELIER.delaiReponse}</b></li>
+        <li>Délai actuel&nbsp;: <b>{ATELIER.delaiActuel}</b></li>
+        <li>Remise en main propre à {SITE.ville}</li>
+      </ul>
+    </div>
+
+    <figure class="vit-haut__fig">
+      <Image
+        src={portrait}
+        alt="Emma, brodeuse et couturière, dans son atelier de Vitré"
+        widths={[390, 620, 1000]}
+        sizes="(max-width: 62rem) 100vw, 38vw"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+      <figcaption>
+        C’est moi qui réponds, qui brode et qui emballe. Et qui vous retrouve en ville.
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ===================== SE VOIR, OU PAS ===================== -->
+  <section class="bande vit-voir">
+    <h2 class="titre-xl">Deux façons de récupérer votre pièce.</h2>
+
+    <div class="vit-voir__duo">
+      <article class="vit-voir__bloc vit-voir__bloc--main">
+        <p class="vit-voir__eti">Sur place</p>
+        <h3>En main propre, dans Vitré</h3>
+        <p>
+          On fixe le lieu et l’heure par message. Vous regardez la pièce, vous la prenez, c’est
+          réglé&nbsp;: pas de frais de port, pas de numéro de suivi à surveiller, pas de colis qui
+          arrive la veille pour rien.
+        </p>
+        <p class="vit-voir__note">
+          <!-- ⚠️ À CONFIRMER : point de rendez-vous habituel à Vitré (centre, parking, marché…). -->
+          Le point de rendez-vous se décide au message, selon l’heure et l’endroit qui vous vont.
+        </p>
+      </article>
+
+      <article class="vit-voir__bloc">
+        <p class="vit-voir__eti">Ou pas</p>
+        <h3>Par la poste, même d’ici</h3>
+        <p>
+          Si vous n’avez pas le temps de passer, j’envoie&nbsp;: colis suivi, emballage cadeau
+          compris, partout en France. Beaucoup de Vitréens choisissent ça pour offrir à quelqu’un
+          qui habite loin.
+        </p>
+        <p class="vit-voir__note">
+          <!-- ⚠️ À CONFIRMER : frais de port et transporteur. -->
+          Les frais d’envoi sont indiqués dans le devis, avant que vous validiez quoi que ce soit.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===================== BANDE PHOTO PLEINE LARGEUR ===================== -->
+  <div class="plein vit-bandeau">
+    <Image
+      src={bobines}
+      alt="Mur de l’atelier de Vitré couvert de bobines de fil à broder de toutes les couleurs"
+      widths={[800, 1400, 2000, 2400]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+    />
+    <p class="vit-bandeau__mot">
+      Le mur de bobines est à Vitré. La couleur du fil, on la choisit dedans.
+    </p>
+  </div>
+
+  <!-- ===================== QUATRE PIÈCES ===================== -->
+  <section class="bande vit-pieces">
+    <div class="vit-pieces__tete">
+      <h2 class="titre-xl">Quatre pièces sorties d’ici.</h2>
+      <p class="mesure">
+        Pour donner une idée&nbsp;: ce sont des commandes réelles, brodées à Vitré. La vôtre ne
+        ressemblera à aucune des quatre, c’est un peu le principe.
+      </p>
+    </div>
+
+    <ul class="vit-pieces__grille">
+      {
+        pieces.map((p) => (
+          <li>
+            <a href={p.href}>
+              <span class="vit-pieces__img">
+                <Image
+                  src={p.img}
+                  alt={p.alt}
+                  widths={[320, 480, 620]}
+                  sizes="(max-width: 34rem) 84vw, (max-width: 62rem) 42vw, 17rem"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </span>
+              <span class="vit-pieces__nom">{p.nom}</span>
+              <span class="vit-pieces__dire">{p.dire}</span>
+              <span class="vit-pieces__voir" aria-hidden="true">Voir →</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- ===================== AUTOUR DE VITRÉ (section sombre) ===================== -->
+  <section class="bande vit-autour">
+    <div class="vit-autour__dire">
+      <p class="sourcil sourcil--clair">La couronne de Vitré</p>
+      <h2 class="titre-xl">Si vous êtes à vingt minutes,<br />on se croise <em>de toute façon.</em></h2>
+      <p class="mesure mesure--clair">
+        Vitré, et puis tout ce qui tourne autour. Je ne fais pas une page par commune&nbsp;: dites-moi
+        simplement d’où vous êtes, et on trouve le point de rencontre le plus court pour vous deux.
+      </p>
+
+      <!-- ⚠️ À CONFIRMER : périmètre réel de déplacement d'Emma (voir const communes). -->
+      <ul class="vit-communes">
+        {communes.map((c) => <li>{c}</li>)}
+      </ul>
+
+      <p class="vit-autour__marches">
+        <b>Les marchés de créateurs.</b> J’en fais dans le pays de Vitré&nbsp;: c’est l’occasion de
+        voir les pièces en vrai, de toucher le fil et de repartir avec quelque chose le jour même.
+        Les prochaines dates s’affichent ici dès qu’elles sont fixées.
+        <!--
+          ⚠️ À CONFIRMER : marchés habituels (lesquels, quand, à quelle fréquence).
+          Les dates viendront des réglages de l'admin (CLAUDE.md § 5 « Prochains marchés »),
+          pour qu'Emma les change sans déclencher de rebuild Netlify.
+        -->
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ LOCALE ===================== -->
+  <section class="bande vit-faq" id="questions">
+    <h2 class="titre-xl">Les questions qu’on me pose à Vitré.</h2>
+
+    <div class="vit-faq__liste">
+      {
+        faq.map((f) => (
+          <details class="vit-faq__item">
+            <summary>
+              <span>{f.q}</span>
+              <span class="vit-faq__plus" aria-hidden="true" />
+            </summary>
+            <p>{f.r}</p>
+          </details>
+        ))
+      }
+    </div>
+
+    <p class="vit-faq__reste">
+      Une question qui n’est pas là&nbsp;? <a class="lien-fleche" href={wa}>Posez-la sur WhatsApp</a>,
+      je réponds vite.
+    </p>
+  </section>
+
+  <!-- ===================== APPEL FINAL ===================== -->
+  <section class="bande vit-final" id="devis">
+    <div class="vit-final__in">
+      <h2 class="titre-xl">Dites-moi le prénom.<br /><em>Je sors les bobines.</em></h2>
+      <p class="mesure mesure--clair">
+        Un prénom, une date, une occasion, même flou&nbsp;: écrivez-moi. Je réponds avec un prix, un
+        délai et une proposition de motif. Ça ne vous engage à rien, et vous êtes à quelques minutes
+        de la machine.
+      </p>
+      <p class="actions">
+        <a class="btn btn--wa" href={wa}>Écrire sur WhatsApp</a>
+        <a class="btn btn--or" href="/contact/#devis">Remplir le formulaire</a>
+      </p>
+      <p class="vit-final__note">
+        Ou par téléphone au <a href={`tel:${CONTACT.telephone}`}>{CONTACT.telephone}</a>. Vous
+        cherchez plutôt côté Rennes&nbsp;? <a href="/broderie-personnalisee-rennes/">C’est par ici.</a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style is:global>
+  /* --------------------------------------------------------------------------
+     Page locale Vitré. Styles propres à cette page, préfixés `vit-` : aucun
+     fichier partagé n'est touché. Les classes globales réutilisées telles
+     quelles : .bande .titre-xl .sourcil .mesure .chapo .btn .actions .lien-fleche
+  -------------------------------------------------------------------------- */
+
+  /* 1. Haut de page : texte à gauche, portrait à droite, décalé vers le bas. */
+  .vit-haut {
+    padding-block: clamp(2rem, 6vw, 4.5rem) clamp(3rem, 7vw, 6rem);
+    row-gap: clamp(1.8rem, 4vw, 3rem);
+  }
+  .vit-haut__dire {
+    display: grid;
+    gap: clamp(0.9rem, 2vw, 1.4rem);
+    justify-items: start;
+  }
+  /* `.sourcil` est en `white-space: nowrap` dans la feuille globale : un
+     libellé un peu long débordait de la page à 320 px. On l'autorise à passer
+     à la ligne sur petit écran seulement — sinon le filet pointillé du
+     `::after` casse le libellé en deux sur ordinateur. Même principe que
+     `.sourcil--hero` sur la page d'accueil. */
+  @media (max-width: 40rem) {
+    .vit-haut .sourcil,
+    .vit-autour .sourcil {
+      white-space: normal;
+      line-height: 1.5;
+    }
+    .vit-haut .sourcil::after,
+    .vit-autour .sourcil::after {
+      display: none;
+    }
+  }
+  .vit-haut h1 {
+    max-width: 20ch;
+  }
+  .vit-haut__fig {
+    margin: 0;
+    max-width: 30rem;
+  }
+  .vit-haut__fig img {
+    width: 100%;
+    border-radius: 3px 3px 3px 72px;
+    box-shadow: 0 34px 60px -44px rgba(36, 28, 24, 0.8);
+  }
+  .vit-haut__fig figcaption {
+    padding-block-start: 0.7rem;
+    max-width: 24rem;
+    font-size: var(--t-petit);
+    line-height: 1.5;
+    color: var(--encre-doux);
+    border-inline-start: 2px solid color-mix(in oklab, var(--brique) 45%, transparent);
+    padding-inline-start: 0.8rem;
+  }
+
+  .vit-reperes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem 1.1rem;
+    padding-block-start: 0.5rem;
+    font-size: var(--t-petit);
+    color: var(--gris);
+  }
+  .vit-reperes li {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+  .vit-reperes li + li::before {
+    content: '✽';
+    color: var(--ocre);
+  }
+  .vit-reperes b {
+    font-weight: 500;
+    color: var(--encre);
+  }
+
+  @media (min-width: 62rem) {
+    .vit-haut {
+      grid-template-columns:
+        [bord-d] minmax(var(--marge), 1fr)
+        [large-d] minmax(0, 40rem)
+        [mi] minmax(0, 28rem)
+        [large-f] minmax(var(--marge), 1fr) [bord-f];
+      column-gap: clamp(2rem, 4vw, 4.5rem);
+    }
+    .vit-haut__dire {
+      grid-column: large-d / mi;
+      grid-row: 1;
+    }
+    .vit-haut__fig {
+      grid-column: mi / large-f;
+      grid-row: 1;
+      max-width: none;
+      margin-block-start: clamp(2rem, 5vw, 4.5rem);
+    }
+  }
+
+  /* 2. Deux façons de récupérer : une colonne accentuée, une sobre. */
+  .vit-voir {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+    row-gap: clamp(1.4rem, 3vw, 2.2rem);
+  }
+  .vit-voir .titre-xl {
+    max-width: 26ch;
+    font-size: clamp(1.75rem, 1.2rem + 2vw, 3rem);
+  }
+  .vit-voir__duo {
+    display: grid;
+    gap: clamp(1.1rem, 2.5vw, 2rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr));
+  }
+  .vit-voir__bloc {
+    min-width: 0;
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+    padding: clamp(1.1rem, 2.5vw, 1.8rem);
+    background: color-mix(in oklab, var(--sable-haut) 78%, transparent);
+    border-block-start: 2px solid color-mix(in oklab, var(--brique) 35%, transparent);
+    border-radius: 2px 2px 2px 26px;
+  }
+  .vit-voir__bloc--main {
+    background: color-mix(in oklab, var(--rose) 46%, var(--sable-haut));
+    border-block-start-color: var(--rouille);
+  }
+  .vit-voir__eti {
+    font-size: var(--t-micro);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--brique);
+  }
+  .vit-voir__bloc p:not(.vit-voir__eti):not(.vit-voir__note) {
+    /* Texte courant : jamais sous 16 px (var(--t-corps) démarre à 1rem). */
+    font-size: var(--t-corps);
+    line-height: 1.6;
+    color: var(--encre-doux);
+    max-width: 30rem;
+  }
+  .vit-voir__note {
+    /* Une phrase, pas un libellé : `--t-micro` (≈ 12 px) serait trop petit. */
+    font-size: var(--t-petit);
+    line-height: 1.55;
+    color: var(--gris);
+    padding-block-start: 0.4rem;
+    border-block-start: 1px dashed color-mix(in oklab, var(--brique) 30%, transparent);
+    max-width: 30rem;
+  }
+
+  /* 3. Bande photo pleine largeur. */
+  .vit-bandeau {
+    display: grid;
+    grid-template-areas: 'a';
+    /* La piste doit valoir la hauteur du conteneur, pas la hauteur intrinsèque
+       de la photo : sinon la légende et le voile sombre, posés en `end`, se
+       retrouvent hors de la zone rognée (bug constaté sur la page Rennes). */
+    grid-template-rows: minmax(0, 1fr);
+    isolation: isolate;
+    /* Hauteur définie : `object-fit: cover` a besoin d'une hauteur résolue,
+       un simple max-height laisserait l'image reprendre son ratio d'origine. */
+    height: clamp(190px, 32vw, 420px);
+    overflow: hidden;
+  }
+  .vit-bandeau img {
+    grid-area: a;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    mask-image: linear-gradient(to bottom, transparent, #000 16%, #000 100%);
+  }
+  .vit-bandeau::after {
+    content: '';
+    grid-area: a;
+    background: linear-gradient(
+      to top,
+      rgba(24, 20, 16, 0.86) 0%,
+      rgba(24, 20, 16, 0.5) 34%,
+      rgba(24, 20, 16, 0.12) 68%,
+      transparent 100%
+    );
+  }
+  .vit-bandeau__mot {
+    grid-area: a;
+    z-index: 1;
+    align-self: end;
+    margin: 0 var(--marge) clamp(0.9rem, 2.5vw, 1.8rem);
+    max-width: 30rem;
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.15rem, 0.9rem + 1.4vw, 2rem);
+    line-height: 1.15;
+    color: #fbf3e9;
+    text-wrap: balance;
+    text-shadow: 0 1px 2px rgb(28 24 20 / 0.6), 0 8px 30px rgb(28 24 20 / 0.5);
+  }
+
+  /* 4. Quatre pièces : grille de vignettes 4:5. */
+  .vit-pieces {
+    padding-block: clamp(2.8rem, 6vw, 5rem);
+    row-gap: clamp(1.6rem, 3.5vw, 2.6rem);
+  }
+  .vit-pieces__tete {
+    display: grid;
+    gap: clamp(0.8rem, 2vw, 1.2rem);
+    justify-items: start;
+  }
+  .vit-pieces__tete .titre-xl {
+    font-size: clamp(1.75rem, 1.2rem + 2vw, 3rem);
+    max-width: 22ch;
+  }
+  .vit-pieces__grille {
+    display: grid;
+    gap: clamp(1.1rem, 2.6vw, 2rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
+  }
+  .vit-pieces__grille > li {
+    min-width: 0;
+  }
+  .vit-pieces__grille a {
+    display: grid;
+    gap: 0.4rem;
+    text-decoration: none;
+    min-width: 0;
+  }
+  .vit-pieces__img {
+    display: block;
+    overflow: hidden;
+    border-radius: 2px;
+    background: color-mix(in oklab, var(--rose) 30%, var(--sable-haut));
+  }
+  .vit-pieces__img img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .vit-pieces__grille a:hover .vit-pieces__img img,
+  .vit-pieces__grille a:focus-visible .vit-pieces__img img {
+    transform: scale(1.05);
+  }
+  .vit-pieces__nom {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: var(--t-h3);
+    line-height: 1.1;
+    padding-block-start: 0.25rem;
+  }
+  .vit-pieces__dire {
+    font-size: var(--t-corps);
+    line-height: 1.55;
+    color: var(--encre-doux);
+  }
+  .vit-pieces__voir {
+    font-size: var(--t-micro);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--rouille);
+  }
+
+  /* 5. Autour de Vitré : rupture sombre, plus courte que la section de l'accueil. */
+  .vit-autour {
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    color: var(--coquille);
+    background:
+      radial-gradient(
+        70% 60% at 12% 0%,
+        color-mix(in oklab, var(--mauve) 60%, var(--vert-2)) 0%,
+        transparent 62%
+      ),
+      linear-gradient(168deg, var(--vert-2), var(--vert) 70%, #141a15);
+  }
+  .vit-autour__dire {
+    display: grid;
+    gap: clamp(0.9rem, 2vw, 1.4rem);
+    justify-items: start;
+  }
+  .vit-autour .titre-xl {
+    max-width: 26ch;
+  }
+  .vit-autour .titre-xl em {
+    color: var(--dore);
+  }
+
+  .vit-communes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.55rem;
+    padding-block: 0.4rem;
+    max-width: 46rem;
+  }
+  .vit-communes li {
+    font-size: var(--t-petit);
+    line-height: 1.3;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    color: color-mix(in oklab, var(--rose) 80%, #fff);
+    border: 1px solid color-mix(in oklab, var(--dore) 40%, transparent);
+    background: rgba(251, 244, 236, 0.045);
+  }
+
+  .vit-autour__marches {
+    max-width: 38rem;
+    font-size: var(--t-corps);
+    line-height: 1.6;
+    color: color-mix(in oklab, var(--rose) 60%, #c9beb6);
+    padding-block-start: 0.8rem;
+    border-block-start: 1px solid rgba(251, 244, 236, 0.16);
+  }
+  .vit-autour__marches b {
+    font-weight: 500;
+    color: var(--coquille);
+  }
+
+  /* 6. FAQ : accordéon sobre, filets de fil entre les questions. */
+  .vit-faq {
+    padding-block: clamp(2.8rem, 6vw, 5rem);
+    row-gap: clamp(1.4rem, 3vw, 2.2rem);
+  }
+  .vit-faq .titre-xl {
+    font-size: clamp(1.75rem, 1.2rem + 2vw, 3rem);
+    max-width: 24ch;
+  }
+  .vit-faq__liste {
+    max-width: 44rem;
+    border-block-start: 1px solid color-mix(in oklab, var(--brique) 28%, transparent);
+  }
+  .vit-faq__item {
+    border-block-end: 1px solid color-mix(in oklab, var(--brique) 28%, transparent);
+  }
+  .vit-faq__item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 3.1rem;
+    padding-block: 0.85rem;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.05rem, 0.98rem + 0.5vw, 1.35rem);
+    line-height: 1.25;
+  }
+  .vit-faq__item summary::-webkit-details-marker {
+    display: none;
+  }
+  .vit-faq__item summary:hover {
+    color: var(--rouille);
+  }
+  .vit-faq__plus {
+    flex: none;
+    position: relative;
+    width: 1rem;
+    height: 1rem;
+  }
+  .vit-faq__plus::before,
+  .vit-faq__plus::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 0;
+    width: 1rem;
+    height: 1.5px;
+    background: var(--rouille);
+    transition: transform 240ms ease;
+  }
+  .vit-faq__plus::after {
+    transform: rotate(90deg);
+  }
+  .vit-faq__item[open] .vit-faq__plus::after {
+    transform: rotate(0deg);
+  }
+  .vit-faq__item > p {
+    padding-block: 0 1.1rem;
+    max-width: 38rem;
+    font-size: var(--t-corps);
+    line-height: 1.65;
+    color: var(--encre-doux);
+  }
+  .vit-faq__reste {
+    font-size: var(--t-petit);
+    color: var(--gris);
+  }
+
+  /* 7. Appel final : bande tintée, pas une copie de l'appel final de l'accueil. */
+  .vit-final {
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    color: var(--coquille);
+    background:
+      radial-gradient(
+        60% 70% at 85% 10%,
+        color-mix(in oklab, var(--brique) 62%, transparent),
+        transparent 68%
+      ),
+      linear-gradient(172deg, #2a2b22, var(--vert) 80%);
+  }
+  .vit-final__in {
+    display: grid;
+    gap: clamp(0.9rem, 2vw, 1.3rem);
+    justify-items: start;
+  }
+  .vit-final .titre-xl {
+    max-width: 22ch;
+  }
+  .vit-final .titre-xl em {
+    color: var(--dore);
+  }
+  /* `.btn--wa` est vert foncé : sur cette bande sombre, la pastille disparaît.
+     Un filet doré lui rend sa forme sans toucher au bouton global. */
+  .vit-final .btn--wa {
+    border-color: color-mix(in oklab, var(--dore) 55%, transparent);
+  }
+  .vit-final__note {
+    font-size: var(--t-petit);
+    color: color-mix(in oklab, var(--rose) 62%, var(--gris));
+    padding-block-start: 0.3rem;
+  }
+  .vit-final__note a {
+    text-decoration-color: color-mix(in oklab, var(--dore) 70%, transparent);
+    text-underline-offset: 3px;
+    color: var(--coquille);
+  }
+
+  /* Apparitions douces, uniquement si le navigateur sait animer au défilement. */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .vit-voir__bloc,
+      .vit-pieces__grille > li,
+      .vit-communes li {
+        animation: vit-monte linear both;
+        animation-timeline: view();
+        animation-range: entry 4% cover 32%;
+      }
+    }
+  }
+  @keyframes vit-monte {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .vit-voir__bloc,
+    .vit-pieces__grille > li,
+    .vit-communes li,
+    .vit-pieces__img img {
+      opacity: 1 !important;
+      transform: none !important;
+      animation: none !important;
+    }
+  }
+</style>

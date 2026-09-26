@@ -1,0 +1,885 @@
+---
+/**
+ * /sur-mesure/ — comment commander.
+ *
+ * ⚠️ MAQUETTE — CONTENU D'EXEMPLE
+ * Les prix et les délais affichés ici ne sont PAS saisis à la main : ils sont
+ * CALCULÉS à partir du champ `prixDepart` / `delaiJours` des créations
+ * (src/content/creations/*.md). Ces valeurs sont elles-mêmes provisoires et
+ * doivent être confirmées par Emma avant mise en production.
+ * Vocabulaire : broderie MACHINE. Ne jamais écrire « brodé à la main ».
+ */
+import { Image, getImage } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
+
+import bobines from '../assets/creations/bandeau/atelier-mur-bobines-fil-broderie-vitre.webp';
+import machine from '../assets/creations/detail/machine-a-broder-en-cours-atelier-vitre.webp';
+import ogSource from '../assets/creations/og/atelier-mur-bobines-fil-broderie-vitre.webp';
+
+const og = await getImage({ src: ogSource, format: 'webp', width: 1200 });
+
+/* ---------------------------------------------------------------------------
+   PRIX & DÉLAIS — calculés, jamais saisis
+--------------------------------------------------------------------------- */
+const creations = await getCollection('creations', ({ data }) => !data.masquee);
+
+const LIBELLE: Record<string, { nom: string; quoi: string }> = {
+  naissance: { nom: 'Naissance & enfant', quoi: 'Doudou, cadre de naissance, bavoir, sac à dos' },
+  'linge-de-bain': { nom: 'Linge de bain', quoi: 'Drap de bain, serviette, cape de bain, peignoir' },
+  vetements: { nom: 'Vêtements', quoi: 'Polo, sweat, doudoune, chemise, tenue de club' },
+  couture: { nom: 'Sacs, trousses & tabliers', quoi: 'Cousus par moi, puis brodés' },
+  'decoration-ajouree': { nom: 'Dentelle libre', quoi: 'Arbre de vie, papillon, initiale, napperon' },
+  noel: { nom: 'Noël', quoi: 'Chaussette de cheminée, pyjama, boule brodée' },
+};
+const ORDRE_CAT = [
+  'naissance',
+  'linge-de-bain',
+  'couture',
+  'decoration-ajouree',
+  'vetements',
+  'noel',
+];
+
+const fourchettes = ORDRE_CAT.map((cat) => {
+  const lot = creations.filter((c) => c.data.categorie === cat);
+  const prix = lot.map((c) => c.data.prixDepart).filter((n): n is number => typeof n === 'number');
+  const jours = lot.map((c) => c.data.delaiJours).filter((n): n is number => typeof n === 'number');
+  if (prix.length === 0) return null;
+  return {
+    cat,
+    nom: LIBELLE[cat].nom,
+    quoi: LIBELLE[cat].quoi,
+    prix: Math.min(...prix),
+    jours: jours.length ? Math.max(...jours) : null,
+    exemples: lot.map((c) => c.data.titre),
+  };
+}).filter((f): f is NonNullable<typeof f> => f !== null);
+
+const tousPrix = creations
+  .map((c) => c.data.prixDepart)
+  .filter((n): n is number => typeof n === 'number');
+const tousJours = creations
+  .map((c) => c.data.delaiJours)
+  .filter((n): n is number => typeof n === 'number');
+
+const prixMin = Math.min(...tousPrix);
+const prixMax = Math.max(...tousPrix);
+const joursMin = Math.min(...tousJours);
+const joursMax = Math.max(...tousJours);
+
+/* ---------------------------------------------------------------------------
+   FAQ — une seule source, utilisée pour l'affichage ET pour le JSON-LD
+--------------------------------------------------------------------------- */
+const faq = [
+  {
+    q: 'Vous brodez à la main ?',
+    r: `Non, à la machine. C'est ce qui me permet de broder un prénom net, régulier, qui tient au lavage — et de le faire pour un prix raisonnable. Ce que je couds main, en revanche, ce sont les sacs, les trousses et les tabliers : ceux-là, je les confectionne avant de les broder.`,
+  },
+  {
+    q: 'Combien de temps faut-il prévoir ?',
+    r: `Le délai actuel est de ${ATELIER.delaiActuel} à partir du moment où le motif est validé. Selon la pièce, il faut compter de ${joursMin} à ${joursMax} jours ouvrés. Pour Noël, écrivez-moi avant la mi-novembre : passé cette date, je ne garantis plus la livraison pour le 24.`,
+  },
+  {
+    q: 'Combien ça coûte ?',
+    r: `Les pièces du catalogue commencent entre ${prixMin} et ${prixMax} €. Le prix dépend de la taille du motif, du nombre de points et du support. Un prénom court en lettres cursives coûte moins cher qu'un motif large et dense : la machine passe moins de temps dessus. Je vous donne le prix exact avant de commencer, et ça ne vous engage à rien.`,
+  },
+  {
+    q: 'Qu’est-ce que vous pouvez broder ?',
+    r: `Un prénom, une date, des mesures de naissance, une phrase, un motif, un logo de club ou d'association. Sur du linge de bain, des vêtements, des doudous, des bavoirs, des sacs, des tabliers, des sets de table. Et la dentelle libre, brodée sans support tissu, qui se tient toute seule.`,
+  },
+  {
+    q: 'Je peux vous apporter mon propre tissu ou mon vêtement ?',
+    r: `Oui, et c'est fréquent. Vous m'apportez le vêtement, le drap de bain ou le coupon, je brode dessus. Dites-moi la matière avant : certains tissus très fins ou très extensibles demandent un renfort, et je préfère le savoir avant de piquer.`,
+  },
+  {
+    q: 'Et si le motif ne me plaît pas ?',
+    r: `Je vous montre le motif avant de lancer la machine : l'écriture, la taille, la couleur du fil, l'emplacement. Si quelque chose ne va pas, on le change — tant que ce n'est pas piqué, tout est possible. C'est justement pour ça que cette étape existe : une fois le fil dans le tissu, il ne s'enlève pas proprement.`,
+  },
+  {
+    q: 'Comment je récupère ma commande ?',
+    r: `${ATELIER.zones}. La remise en main propre se fait sur rendez-vous, dans un lieu public convenu ensemble. Pour l'envoi, les frais dépendent du poids et du format : je vous les indique avec le devis. L'emballage cadeau est compris.`,
+  },
+  {
+    q: 'C’est pour dans trois jours. C’est possible ?',
+    r: `Parfois. Ça dépend de ce qu'il y a devant dans la file et de la pièce. Écrivez-moi sur WhatsApp en me disant la date : je regarde et je vous réponds franchement. Je préfère dire non que livrer en retard.`,
+  },
+  {
+    q: 'Comment on entretient une broderie ?',
+    r: `Machine à 30°, et le fil ne bouge pas. Retournez la pièce avant de la mettre au tambour, repassez sur l'envers, et évitez l'eau de Javel — c'est elle qui décolore le fil, pas la machine.`,
+  },
+];
+
+const donneesFaq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.r },
+  })),
+};
+
+const titre = `Sur-mesure : commander une broderie personnalisée à ${SITE.ville} — ${SITE.nom}`;
+const description = `Étapes, délais, prix à partir de ${prixMin} €, entretien, livraison et emballage cadeau : tout ce qu'il faut savoir avant de commander une broderie personnalisée ou une pièce cousue sur mesure à ${SITE.ville} (35).`;
+---
+
+<Base
+  titre={titre}
+  description={description}
+  imageOg={og.src}
+  fil={[{ nom: 'Sur-mesure', url: '/sur-mesure/' }]}
+>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(donneesFaq)} />
+
+  {/*
+    ⚠️ MAQUETTE — prix, délais, numéro et e-mail provisoires (src/config.ts).
+  */}
+
+  <!-- ===================== OUVERTURE ===================== -->
+  <section class="bande sm-tete">
+    <div class="sm-tete__dire">
+      <p class="sourcil">Sur-mesure</p>
+      <h1>Vous m'envoyez le prénom.<br />Je brode. <em>Vous offrez.</em></h1>
+      <p class="chapo">
+        Broderie personnalisée et couture sur mesure, depuis {SITE.ville}&nbsp;(35). Voilà comment
+        ça se passe, ce que ça coûte, combien de temps il faut — et les questions qu'on me pose
+        avant de se lancer.
+      </p>
+      <p class="actions">
+        <a class="btn btn--wa" href={lienWhatsApp()}>Écrire sur WhatsApp</a>
+        <a class="btn btn--creux" href="/contact/">Demander un devis</a>
+      </p>
+    </div>
+
+    <ul class="sm-chiffres">
+      <li>
+        <b>à partir de {prixMin}&nbsp;€</b>
+        <span>selon la pièce et la taille du motif</span>
+      </li>
+      <li>
+        <b>{ATELIER.delaiActuel}</b>
+        <span>délai actuel, après validation du motif</span>
+      </li>
+      <li>
+        <b>{ATELIER.delaiReponse}</b>
+        <span>avec un prix et un délai, sans engagement</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ===================== LES ÉTAPES ===================== -->
+  <section class="bande sm-pas" id="etapes" data-broderie="fil" data-fil="#7A4C3A">
+    <div class="tete">
+      <p class="sourcil">Comment ça se passe</p>
+      <h2 class="titre-xl">Cinq étapes,<br />et <em>une seule</em> décision<br />à prendre.</h2>
+      <p class="mesure">
+        La décision, c'est l'étape&nbsp;04&nbsp;: vous validez le motif, ou vous me dites ce qui ne
+        va pas. Le reste, c'est mon travail.
+      </p>
+    </div>
+
+    <ol class="etapes sm-etapes">
+      <li>
+        <p class="etapes__n">01</p>
+        <h3>Vous m'écrivez</h3>
+        <p>
+          WhatsApp, formulaire ou téléphone, comme vous préférez. Le prénom, l'occasion, la date
+          souhaitée. Une photo d'inspiration si vous en avez une. Même flou, ça suffit.
+        </p>
+      </li>
+      <li>
+        <p class="etapes__n">02</p>
+        <h3>Je vous réponds avec un prix</h3>
+        <p>
+          Un prix, un délai, et ce que je vous propose de faire. {ATELIER.delaiReponse}. Ça ne vous
+          engage à rien&nbsp;: beaucoup de gens m'écrivent juste pour savoir.
+        </p>
+      </li>
+      <li>
+        <p class="etapes__n">03</p>
+        <h3>On choisit ensemble</h3>
+        <p>
+          Le support, l'écriture, la couleur du fil, l'emplacement du motif. Vous prenez dans mes
+          coupons et mes bobines, ou vous m'apportez votre propre tissu.
+        </p>
+      </li>
+      <li>
+        <p class="etapes__n">04</p>
+        <h3>Je vous montre le motif</h3>
+        <p>
+          Avant de lancer la machine, je vous envoie le dessin. Si quelque chose ne va pas, on le
+          change&nbsp;: tant que ce n'est pas piqué, tout est possible.
+        </p>
+      </li>
+      <li>
+        <p class="etapes__n">05</p>
+        <h3>Je brode, j'emballe</h3>
+        <p>
+          Emballage cadeau compris. Remise en main propre à {SITE.ville} et à Rennes sur
+          rendez-vous, ou envoi partout en France.
+        </p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ===================== PRIX ===================== -->
+  <section class="bande sm-prix" id="prix">
+    <div class="sm-prix__intro">
+      <h2 class="titre-xl">Les prix commencent ici.</h2>
+      <p class="mesure">
+        Le prix dépend de trois choses&nbsp;: la taille du motif, sa densité — le nombre de points
+        — et le support. Un prénom court en lettres cursives passe vite sous l'aiguille&nbsp;; un
+        motif large et dense y reste longtemps. Les pièces du catalogue commencent entre {prixMin} et{' '}
+        {prixMax}&nbsp;€.
+      </p>
+      <p class="sm-prix__note">
+        Si vous apportez votre propre vêtement, vous ne payez que la broderie.
+      </p>
+    </div>
+
+    <ul class="sm-grille">
+      {
+        fourchettes.map((f) => (
+          <li class="sm-carte">
+            <p class="sm-carte__prix">
+              <span>à partir de</span>
+              <b>{f.prix}&nbsp;€</b>
+            </p>
+            <h3>{f.nom}</h3>
+            <p class="sm-carte__quoi">{f.quoi}</p>
+            {f.jours && <p class="sm-carte__delai">≈ {f.jours} jours ouvrés</p>}
+            <a class="lien-fleche" href={`/creations/${f.cat}/`}>Voir les pièces</a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="sm-prix__pied">
+      Un devis n'est jamais une estimation au hasard&nbsp;: je calcule le motif avant de vous
+      répondre. <a class="lien-fleche" href="/contact/">Décrivez-moi votre projet</a>
+    </p>
+  </section>
+
+  <!-- ===================== DÉLAIS — SECTION DE RUPTURE ===================== -->
+  <section class="bande sm-nuit" id="delais">
+    <div class="sm-nuit__dire">
+      <p class="sourcil sourcil--clair">Les délais</p>
+      <h2 class="titre-xl">Une machine.<br /><em>Une pièce à la fois.</em></h2>
+      <p class="mesure mesure--clair">
+        Je ne brode pas deux commandes en parallèle&nbsp;: la machine n'a qu'une tête, et c'est moi
+        qui la surveille. Ce qui veut dire que votre pièce a une place dans la file, et que je sais
+        exactement où elle en est quand vous me le demandez.
+      </p>
+      <p class="mesure mesure--clair">
+        Le délai actuel est de <b>{ATELIER.delaiActuel}</b> à partir de la validation du motif.
+        Selon la pièce, comptez de {joursMin} à {joursMax} jours ouvrés.
+      </p>
+      <ul class="sm-dates">
+        <li>
+          <b>Noël</b>
+          <span>Écrivez-moi avant la mi-novembre. Après, je ne garantis plus le 24.</span>
+        </li>
+        <li>
+          <b>Naissance</b>
+          <span>
+            Le terme suffit&nbsp;: je prépare le motif, je brode le prénom quand il arrive.
+          </span>
+        </li>
+        <li>
+          <b>Urgent</b>
+          <span>Écrivez-moi la date sur WhatsApp. Je regarde, et je réponds franchement.</span>
+        </li>
+      </ul>
+      <p class="actions">
+        <a class="btn btn--or" href={lienWhatsApp('Bonjour Emma, est-ce que vous pourriez broder une pièce pour une date précise ?')}>
+          Demander si c'est jouable
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== BANDEAU PLEINE LARGEUR ===================== -->
+  <div class="bandeau sm-bandeau">
+    <Image
+      src={bobines}
+      alt="Mur de l'atelier couvert de bobines de fil à broder de toutes les couleurs"
+      widths={[800, 1400, 2000, 2400]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+    />
+    <p class="bandeau__mot" aria-hidden="true">la couleur du fil, on la choisit</p>
+  </div>
+
+  <!-- ===================== ENTRETIEN + LIVRAISON ===================== -->
+  <section class="bande sm-duo" id="entretien">
+    <figure class="sm-duo__fig" data-broderie="tambour">
+      <Image
+        src={machine}
+        alt="Gros plan de la broderie en cours sous la tête de la machine : motif de cerisier en fleurs en fil de couleur"
+        widths={[420, 680, 1000]}
+        sizes="(max-width: 62rem) 92vw, 38vw"
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+
+    <div class="sm-duo__txt">
+      {/* ⚠️ Le 30° vient du contenu des créations. Le reste des conseils
+          d'entretien est à faire confirmer par Emma. [À CONFIRMER] */}
+      <h2 class="titre-xl">Ça passe en machine à 30°.</h2>
+      <p class="mesure">
+        C'est la question qu'on me pose juste après le prix. Le fil polyester ne bouge pas au
+        lavage&nbsp;: un doudou brodé se lave comme un doudou, une serviette brodée se lave comme
+        une serviette.
+      </p>
+      <dl class="sm-def">
+        <dt>Au lavage</dt>
+        <dd>30°, cycle normal. Retournez la pièce avant de la mettre au tambour.</dd>
+        <dt>Au repassage</dt>
+        <dd>Sur l'envers, ou avec un linge entre le fer et la broderie.</dd>
+        <dt>À éviter</dt>
+        <dd>L'eau de Javel. C'est elle qui décolore le fil, pas la machine.</dd>
+      </dl>
+
+      <h2 class="sm-duo__h2b">Vous récupérez la pièce emballée.</h2>
+      <p class="mesure">
+        {ATELIER.zones}. La remise en main propre se fait <b>sur rendez-vous</b>, dans un lieu
+        public convenu ensemble&nbsp;: je travaille chez moi, je ne reçois pas. Les frais d'envoi
+        dépendent du poids et du format, je vous les indique avec le devis.
+      </p>
+      <p class="sm-cadeau">
+        <span aria-hidden="true">✽</span> L'emballage cadeau est compris. Si c'est une surprise,
+        dites-le-moi&nbsp;: je n'écris rien sur le paquet.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section class="bande sm-faq" id="questions">
+    <div class="sm-faq__tete">
+      <h2 class="titre-xl">Les questions<br /><em>qu'on me pose.</em></h2>
+      <p class="mesure">
+        Si la vôtre n'y est pas, écrivez-la-moi. C'est souvent comme ça que cette liste s'allonge.
+      </p>
+    </div>
+
+    <div class="sm-faq__liste">
+      {
+        faq.map((f, i) => (
+          <details class="sm-q" open={i === 0}>
+            <summary>
+              <span>{f.q}</span>
+              <span class="sm-q__plus" aria-hidden="true"></span>
+            </summary>
+            <p>{f.r}</p>
+          </details>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ===================== APPEL FINAL ===================== -->
+  <section class="bande sm-final">
+    <div class="sm-final__in">
+      <p class="sourcil sourcil--clair">On commence&nbsp;?</p>
+      <h2 class="titre-xl">Dites-moi le prénom.<br /><em>Je sors les bobines.</em></h2>
+      <p class="mesure mesure--clair">
+        Le formulaire prend deux minutes et se remplit par petites questions. Ou bien écrivez-moi
+        sur WhatsApp&nbsp;: c'est moi qui lis.
+      </p>
+      <p class="actions">
+        <a class="btn btn--or" href="/contact/">Remplir le formulaire</a>
+        <a class="btn btn--wa" href={lienWhatsApp()}>Écrire sur WhatsApp</a>
+      </p>
+      <p class="sm-final__note">
+        Ou par téléphone au <a href={`tel:${CONTACT.telephone}`}>{CONTACT.telephone}</a>.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ==========================================================================
+     /sur-mesure/ — styles propres à la page. Préfixe `sm-`.
+     Rythme vertical volontairement inégal : les sections ne respirent pas
+     toutes pareil (voir SKILL.md § « le rythme vertical identique »).
+     ========================================================================== */
+
+  /* --- Ouverture : deux colonnes désaxées ------------------------------- */
+  .sm-tete {
+    padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 7vw, 6rem);
+    row-gap: clamp(2.2rem, 5vw, 3rem);
+  }
+  .sm-tete__dire {
+    display: grid;
+    gap: clamp(0.9rem, 2vw, 1.4rem);
+    justify-items: start;
+  }
+  .sm-tete h1 {
+    max-width: 22ch;
+  }
+
+  .sm-chiffres {
+    display: grid;
+    gap: 1px;
+    background: color-mix(in oklab, var(--brique) 22%, transparent);
+    border-block: 1px solid color-mix(in oklab, var(--brique) 22%, transparent);
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sm-chiffres li {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+    padding: 1.1rem 0.2rem;
+    background: color-mix(in oklab, var(--sable-haut) 70%, transparent);
+  }
+  .sm-chiffres b {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.5rem, 1rem + 2vw, 2.4rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--brique);
+  }
+  .sm-chiffres span {
+    font-size: var(--t-petit);
+    line-height: 1.45;
+    color: var(--encre-doux);
+  }
+  @media (min-width: 46rem) {
+    .sm-chiffres {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+    }
+    .sm-chiffres li {
+      padding-inline: clamp(0.9rem, 2vw, 1.6rem);
+    }
+    .sm-chiffres li:first-child {
+      padding-inline-start: 0;
+    }
+  }
+  @media (min-width: 62rem) {
+    .sm-tete {
+      grid-template-columns:
+        [bord-d] minmax(var(--marge), 1fr)
+        [large-d] minmax(0, calc(var(--large) * 0.56)) minmax(0, calc(var(--large) * 0.44))
+        [large-f] minmax(var(--marge), 1fr) [bord-f];
+      column-gap: clamp(2rem, 4vw, 4rem);
+      align-items: end;
+    }
+    .sm-tete__dire {
+      grid-column: large-d / span 1;
+    }
+    .sm-chiffres {
+      grid-column: span 1 / large-f;
+      grid-template-columns: minmax(0, 1fr);
+      border: 0;
+      border-inline-start: 1px solid color-mix(in oklab, var(--brique) 22%, transparent);
+      background: transparent;
+      gap: 0;
+      padding-block-end: 0.5rem;
+    }
+    .sm-chiffres li {
+      background: transparent;
+      padding: 0.85rem clamp(1rem, 2vw, 1.6rem);
+    }
+  }
+
+  /* --- Étapes ---------------------------------------------------------- */
+  .sm-pas {
+    padding-block: clamp(3rem, 7vw, 6rem);
+    row-gap: clamp(2.2rem, 5vw, 3.4rem);
+    position: relative;
+  }
+  .sm-etapes {
+    grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+  }
+
+  /* --- Prix ------------------------------------------------------------ */
+  .sm-prix {
+    padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(3rem, 7vw, 5.5rem);
+    row-gap: clamp(1.8rem, 4vw, 2.8rem);
+  }
+  .sm-prix__intro {
+    display: grid;
+    gap: clamp(0.8rem, 2vw, 1.2rem);
+    justify-items: start;
+  }
+  .sm-prix__intro .titre-xl {
+    max-width: 18ch;
+  }
+  .sm-prix__note {
+    font-size: var(--t-petit);
+    color: var(--brique);
+    border-inline-start: 2px solid color-mix(in oklab, var(--rouille) 55%, transparent);
+    padding-inline-start: 0.85rem;
+  }
+
+  /* Pas de fond porté par la grille : avec `auto-fit`, la dernière rangée
+     incomplète laisserait un grand aplat vide. Chaque carte porte son cadre. */
+  .sm-grille {
+    display: grid;
+    gap: clamp(0.5rem, 1.2vw, 0.9rem);
+    grid-template-columns: repeat(auto-fit, minmax(min(15.5rem, 100%), 1fr));
+    align-items: stretch;
+  }
+  .sm-carte {
+    min-width: 0;
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+    padding: clamp(1.1rem, 2.4vw, 1.7rem);
+    background: color-mix(in oklab, var(--sable-haut) 78%, transparent);
+    border: 1px solid color-mix(in oklab, var(--brique) 22%, transparent);
+    border-radius: 3px 3px 18px 3px;
+    transition: background 300ms ease, border-color 300ms ease;
+  }
+  .sm-carte:nth-child(even) {
+    border-radius: 3px 18px 3px 3px;
+  }
+  .sm-carte:hover {
+    background: var(--sable-haut);
+    border-color: color-mix(in oklab, var(--rouille) 45%, transparent);
+  }
+  .sm-carte__prix {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.05rem 0.45rem;
+  }
+  .sm-carte__prix span {
+    font-size: var(--t-micro);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gris);
+  }
+  .sm-carte__prix b {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-weight: 400;
+    font-size: clamp(1.7rem, 1.2rem + 2vw, 2.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--rouille);
+  }
+  .sm-carte h3 {
+    font-size: var(--t-h3);
+  }
+  .sm-carte__quoi {
+    font-size: var(--t-petit);
+    color: var(--encre-doux);
+  }
+  .sm-carte__delai {
+    font-size: var(--t-micro);
+    letter-spacing: 0.06em;
+    color: var(--gris);
+    font-variant-numeric: tabular-nums;
+  }
+  .sm-carte .lien-fleche {
+    justify-self: start;
+    margin-block-start: 0.35rem;
+    min-height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+  }
+  .sm-prix__pied {
+    font-size: var(--t-petit);
+    color: var(--encre-doux);
+    max-width: 46rem;
+  }
+  .sm-prix__pied .lien-fleche {
+    white-space: nowrap;
+  }
+
+  /* --- Délais : rupture sombre, pleine largeur ------------------------- */
+  .sm-nuit {
+    padding-block: clamp(3.2rem, 8vw, 6.5rem);
+    color: var(--coquille);
+    background:
+      radial-gradient(70% 55% at 8% 0%, color-mix(in oklab, var(--mauve) 60%, var(--vert)) 0%, transparent 62%),
+      radial-gradient(55% 60% at 96% 100%, color-mix(in oklab, var(--brique) 42%, var(--vert)) 0%, transparent 65%),
+      linear-gradient(168deg, var(--vert-2), var(--vert) 62%, #141A15);
+    position: relative;
+  }
+  .sm-nuit__dire {
+    display: grid;
+    gap: clamp(0.9rem, 2vw, 1.3rem);
+    justify-items: start;
+  }
+  .sm-nuit .titre-xl {
+    max-width: 20ch;
+  }
+  .sm-nuit .titre-xl em {
+    color: var(--dore);
+  }
+  .sm-nuit b {
+    font-weight: 500;
+    color: var(--coquille);
+  }
+
+  .sm-dates {
+    display: grid;
+    gap: 0;
+    width: 100%;
+    max-width: 44rem;
+    margin-block-start: 0.6rem;
+  }
+  .sm-dates li {
+    min-width: 0;
+    display: grid;
+    gap: 0.1rem 1.1rem;
+    padding-block: 0.85rem;
+    border-block-start: 1px solid color-mix(in oklab, var(--rose) 20%, transparent);
+  }
+  .sm-dates li:last-child {
+    border-block-end: 1px solid color-mix(in oklab, var(--rose) 20%, transparent);
+  }
+  .sm-dates b {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.2rem;
+    color: var(--dore);
+    letter-spacing: 0.01em;
+  }
+  .sm-dates span {
+    font-size: var(--t-petit);
+    color: color-mix(in oklab, var(--rose) 60%, #C9BEB6);
+  }
+  @media (min-width: 40rem) {
+    .sm-dates li {
+      grid-template-columns: minmax(0, 8rem) minmax(0, 1fr);
+      align-items: baseline;
+    }
+  }
+
+  /* --- Bandeau --------------------------------------------------------- */
+  .sm-bandeau {
+    margin-block: 0;
+  }
+
+  /* --- Entretien + livraison : image + texte --------------------------- */
+  .sm-duo {
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    row-gap: clamp(2rem, 4vw, 3rem);
+  }
+  .sm-duo__fig {
+    margin: 0;
+    max-width: 30rem;
+  }
+  .sm-duo__fig :global(img) {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  .sm-duo__txt {
+    display: grid;
+    gap: clamp(0.9rem, 2vw, 1.25rem);
+    justify-items: start;
+    min-width: 0;
+  }
+  .sm-duo__txt .titre-xl {
+    max-width: 20ch;
+  }
+  .sm-duo__h2b {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.6rem, 1.1rem + 2.2vw, 2.6rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin-block-start: clamp(1rem, 2.5vw, 1.8rem);
+    max-width: 22ch;
+  }
+
+  .sm-def {
+    display: grid;
+    gap: 0.15rem 1rem;
+    width: 100%;
+    max-width: 34rem;
+    font-size: var(--t-petit);
+  }
+  .sm-def dt {
+    font-size: var(--t-micro);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brique);
+    padding-block-start: 0.7rem;
+  }
+  .sm-def dd {
+    margin: 0;
+    color: var(--encre-doux);
+    padding-block-end: 0.7rem;
+    border-block-end: 1px solid color-mix(in oklab, var(--brique) 16%, transparent);
+  }
+  @media (min-width: 40rem) {
+    .sm-def {
+      grid-template-columns: minmax(0, 9rem) minmax(0, 1fr);
+      align-items: baseline;
+    }
+    .sm-def dt {
+      border-block-end: 1px solid color-mix(in oklab, var(--brique) 16%, transparent);
+      padding-block-end: 0.7rem;
+    }
+  }
+
+  .sm-cadeau {
+    font-size: var(--t-petit);
+    color: var(--encre-doux);
+    background: color-mix(in oklab, var(--rose) 45%, var(--sable-haut));
+    padding: 0.85rem 1.05rem;
+    border-radius: 2px 14px 2px 14px;
+    max-width: 34rem;
+  }
+  .sm-cadeau span {
+    color: var(--rouille);
+  }
+
+  @media (min-width: 62rem) {
+    .sm-duo {
+      grid-template-columns:
+        [bord-d] minmax(var(--marge), 1fr)
+        [large-d] minmax(0, calc(var(--large) * 0.36)) minmax(0, calc(var(--large) * 0.64))
+        [large-f] minmax(var(--marge), 1fr) [bord-f];
+      column-gap: clamp(2rem, 4vw, 4.5rem);
+      align-items: start;
+    }
+    .sm-duo__fig {
+      grid-column: large-d / span 1;
+      position: sticky;
+      inset-block-start: 6rem;
+    }
+    .sm-duo__txt {
+      grid-column: span 1 / large-f;
+    }
+  }
+
+  /* --- FAQ ------------------------------------------------------------- */
+  .sm-faq {
+    padding-block: clamp(2.5rem, 5vw, 4rem) clamp(3rem, 7vw, 5.5rem);
+    row-gap: clamp(1.6rem, 3.5vw, 2.6rem);
+  }
+  .sm-faq__tete {
+    display: grid;
+    gap: 0.9rem;
+    justify-items: start;
+  }
+  .sm-faq__tete .titre-xl {
+    max-width: 16ch;
+  }
+  .sm-faq__liste {
+    border-block-start: 1px solid color-mix(in oklab, var(--brique) 26%, transparent);
+    max-width: 52rem;
+  }
+  .sm-q {
+    border-block-end: 1px solid color-mix(in oklab, var(--brique) 26%, transparent);
+  }
+  .sm-q summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.2rem;
+    min-height: 3.4rem;
+    padding-block: 0.9rem;
+    cursor: pointer;
+    list-style: none;
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: clamp(1.1rem, 1rem + 0.7vw, 1.45rem);
+    line-height: 1.18;
+    letter-spacing: -0.01em;
+  }
+  .sm-q summary::-webkit-details-marker {
+    display: none;
+  }
+  .sm-q summary:hover {
+    color: var(--rouille);
+  }
+  .sm-q__plus {
+    flex: none;
+    position: relative;
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+  .sm-q__plus::before,
+  .sm-q__plus::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 50%;
+    inset-inline-start: 0;
+    width: 100%;
+    height: 1.5px;
+    background: var(--brique);
+    transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .sm-q__plus::after {
+    transform: rotate(90deg);
+  }
+  .sm-q[open] .sm-q__plus::after {
+    transform: rotate(0deg);
+  }
+  .sm-q > p {
+    font-size: var(--t-petit);
+    line-height: 1.65;
+    color: var(--encre-doux);
+    max-width: 44rem;
+    padding-block-end: 1.2rem;
+    padding-inline-end: 1rem;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sm-q__plus::before,
+    .sm-q__plus::after {
+      transition: none;
+    }
+  }
+  @media (min-width: 62rem) {
+    .sm-faq {
+      grid-template-columns:
+        [bord-d] minmax(var(--marge), 1fr)
+        [large-d] minmax(0, calc(var(--large) * 0.34)) minmax(0, calc(var(--large) * 0.66))
+        [large-f] minmax(var(--marge), 1fr) [bord-f];
+      column-gap: clamp(2rem, 4vw, 4.5rem);
+      align-items: start;
+    }
+    .sm-faq__tete {
+      grid-column: large-d / span 1;
+      position: sticky;
+      inset-block-start: 6rem;
+    }
+    .sm-faq__liste {
+      grid-column: span 1 / large-f;
+      border-block-start: 0;
+    }
+    .sm-faq__liste .sm-q:first-child {
+      border-block-start: 1px solid color-mix(in oklab, var(--brique) 26%, transparent);
+    }
+  }
+
+  /* --- Appel final ----------------------------------------------------- */
+  .sm-final {
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    color: var(--coquille);
+    background:
+      radial-gradient(60% 70% at 85% 10%, color-mix(in oklab, var(--brique) 50%, transparent), transparent 70%),
+      linear-gradient(172deg, var(--vert), #12180F);
+  }
+  .sm-final__in {
+    display: grid;
+    gap: clamp(0.8rem, 2vw, 1.2rem);
+    justify-items: start;
+  }
+  .sm-final .titre-xl {
+    max-width: 20ch;
+  }
+  .sm-final .titre-xl em {
+    color: var(--dore);
+  }
+  .sm-final__note {
+    font-size: var(--t-petit);
+    color: color-mix(in oklab, var(--rose) 60%, var(--gris));
+    padding-block-start: 0.3rem;
+  }
+  .sm-final__note a {
+    text-decoration-color: color-mix(in oklab, var(--dore) 70%, transparent);
+    text-underline-offset: 3px;
+  }
+</style>

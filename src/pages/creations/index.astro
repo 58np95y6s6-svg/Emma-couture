@@ -1,0 +1,323 @@
+---
+/**
+ * /creations/ — la galerie complète.
+ *
+ * Les filtres par catégorie sont des LIENS vers les pages catégorie : chaque
+ * catégorie a sa propre URL indexable. Aucun JavaScript de filtrage.
+ */
+import { getCollection } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import CarteCreation from '../../components/CarteCreation.astro';
+import { SITE, ATELIER, lienWhatsApp } from '../../config';
+
+import bobines from '../../assets/creations/bandeau/atelier-mur-bobines-fil-broderie-vitre.webp';
+import partage from '../../assets/creations/plein-ecran/machine-a-broder-en-cours-atelier-vitre.webp';
+
+/* Image de partage 1200×630 : sans elle, la page repartirait sur l'image par
+   défaut du gabarit. En JPEG, le format que tous les aperçus savent lire. */
+const og = await getImage({
+  src: partage,
+  width: 1200,
+  height: 630,
+  fit: 'cover',
+  position: 'center',
+  format: 'jpeg',
+  quality: 78,
+});
+
+/* Libellés courts des catégories, pour les filtres. L'ordre est éditorial :
+   on ouvre sur la naissance (la demande la plus fréquente) et on garde Noël
+   à la fin, la saison venant en dernier. */
+const ETIQUETTES = [
+  { slug: 'naissance', court: 'Naissance' },
+  { slug: 'linge-de-bain', court: 'Linge de bain' },
+  { slug: 'vetements', court: 'Vêtements' },
+  { slug: 'couture', court: 'Couture' },
+  { slug: 'decoration-ajouree', court: 'Dentelle libre' },
+  { slug: 'noel', court: 'Noël' },
+] as const;
+
+const creations = (await getCollection('creations', ({ data }) => !data.masquee)).sort(
+  (a, b) => a.data.ordre - b.data.ordre,
+);
+
+/* Un filtre n'existe que si la catégorie contient au moins une pièce :
+   un lien vers une page vide serait un cul-de-sac. */
+const filtres = ETIQUETTES.map((e) => ({
+  ...e,
+  nombre: creations.filter((c) => c.data.categorie === e.slug).length,
+})).filter((e) => e.nombre > 0);
+
+/* Grille : 2 colonnes sur téléphone, 3 dès la tablette, jamais plus —
+   les photos doivent rester grandes. */
+const colonnes = Math.min(creations.length, 3);
+const colonnesPetit = Math.min(creations.length, 2);
+
+const titre = `Créations brodées & cousues à Vitré (35) — toutes mes pièces | ${SITE.nom}`;
+const description =
+  'Toutes mes créations brodées à Vitré : doudous et cadres de naissance, linge de bain au prénom, dentelle ajourée, sacs et trousses cousus. Prix à partir de, délai annoncé, devis dans la journée.';
+---
+
+<Base
+  titre={titre}
+  description={description}
+  imageOg={og.src}
+  fil={[{ nom: 'Créations', url: '/creations/' }]}
+>
+  {/*
+    ⚠️ MAQUETTE — CONTENU D'EXEMPLE
+    Prix et délais viennent de src/content/creations/ et de src/config.ts :
+    provisoires tant qu'Emma ne les a pas confirmés.
+    Vocabulaire : broderie MACHINE. Ne jamais écrire « brodé à la main ».
+  */}
+
+  <!-- ===================== ENTÊTE DE GALERIE ===================== -->
+  <section class="bande galerie-tete">
+    <h1>Voilà ce qui sort <em>de l'atelier.</em></h1>
+    <p class="chapo">
+      Broderie personnalisée et couture sur mesure à {SITE.ville}&nbsp;(35)&nbsp;: chaque pièce
+      ci-dessous est sortie de chez moi, pour quelqu'un. Vous pouvez demander la même avec un
+      autre prénom, une autre couleur de fil — ou partir d'une idée qui n'est pas là.
+    </p>
+    <p class="galerie-tete__delai">
+      Délai actuel&nbsp;: <b>{ATELIER.delaiActuel}</b> · {ATELIER.zones}
+    </p>
+  </section>
+
+  <!-- ===================== FILTRES = PAGES CATÉGORIE ===================== -->
+  <nav class="bande barre" aria-label="Catégories de créations">
+    <ul class="barre__liste plein">
+      <li>
+        <span class="puce puce--ici" aria-current="page">Tout</span>
+      </li>
+      {
+        filtres.map((f) => (
+          <li>
+            <a class="puce" href={`/creations/${f.slug}/`}>
+              {f.court}
+              <b aria-hidden="true">{f.nombre}</b>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+
+  <!-- ===================== LA GRILLE ===================== -->
+  <section class="bande galerie">
+    <ul class="grille" style={`--n:${colonnes};--n2:${colonnesPetit}`}>
+      {
+        creations.map((c, i) => (
+          <li>
+            <CarteCreation
+              creation={c}
+              prioritaire={i < 2}
+              tailles="(max-width: 48rem) 46vw, (max-width: 75rem) 30vw, 22rem"
+            />
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- ===================== RIEN NE CORRESPOND ===================== -->
+  <section class="final bande">
+    <Image
+      class="final__fond"
+      src={bobines}
+      alt=""
+      widths={[800, 1400, 2000]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="final__in">
+      <h2 class="titre-xl">Votre idée n'est pas<br /><em>dans la liste&nbsp;?</em></h2>
+      <p class="mesure mesure--clair">
+        Tant mieux. Dites-moi le prénom, l'objet et la date&nbsp;: je vous dis tout de suite si
+        c'est brodable et ce que ça coûte. Je vous montre le motif avant de lancer la machine.
+      </p>
+      <p class="actions">
+        <a class="btn btn--wa" href={lienWhatsApp()}>Écrire sur WhatsApp</a>
+        <a class="btn btn--or" href="/sur-mesure/">Comment ça se passe</a>
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* --- Entête : titre sur une ligne, pas de sourcil. Le gabarit
+         « sourcil + titre en trois lignes » est déjà celui de l'accueil. --- */
+  .galerie-tete {
+    padding-block: clamp(2.5rem, 6vw, 5rem) clamp(1.5rem, 3vw, 2.5rem);
+    row-gap: clamp(0.9rem, 2vw, 1.4rem);
+    justify-items: start;
+  }
+  .galerie-tete h1 {
+    max-width: 22ch;
+  }
+  .galerie-tete .chapo {
+    max-width: 44rem;
+  }
+  .galerie-tete__delai {
+    font-size: var(--t-petit);
+    color: var(--gris);
+    letter-spacing: 0.01em;
+  }
+  .galerie-tete__delai b {
+    font-weight: 500;
+    color: var(--brique);
+  }
+
+  /* --- Barre de catégories : pleine largeur, elle défile si besoin.
+         C'est le conteneur qui défile, jamais la page. --- */
+  .barre {
+    padding-block: 0 clamp(1.5rem, 3vw, 2.5rem);
+    position: relative;
+  }
+  .barre::after {
+    content: '';
+    grid-column: bord-d / bord-f;
+    height: 1px;
+    background: repeating-linear-gradient(
+      90deg,
+      color-mix(in oklab, var(--brique) 55%, transparent) 0 10px,
+      transparent 10px 19px
+    );
+    opacity: 0.55;
+  }
+  .barre__liste {
+    list-style: none;
+    margin: 0;
+    display: flex;
+    gap: 0.5rem;
+    padding: 0 var(--marge) 0.9rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--brique) 45%, transparent) transparent;
+  }
+  .barre__liste > li {
+    flex: 0 0 auto;
+  }
+  .puce {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 44px;
+    padding: 0.5rem 1.05rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in oklab, var(--brique) 32%, transparent);
+    background: color-mix(in oklab, var(--sable-haut) 70%, transparent);
+    color: var(--encre-doux);
+    text-decoration: none;
+    font-size: var(--t-petit);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    transition:
+      background 250ms ease,
+      color 250ms ease,
+      border-color 250ms ease;
+  }
+  .puce b {
+    font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    font-size: 0.72em;
+    font-weight: 400;
+    padding: 0.1rem 0.34rem;
+    border-radius: 4px;
+    background: color-mix(in oklab, var(--brique) 14%, transparent);
+    color: var(--brique);
+  }
+  a.puce:hover {
+    background: var(--encre);
+    border-color: var(--encre);
+    color: var(--sable-haut);
+  }
+  a.puce:hover b {
+    background: color-mix(in oklab, var(--dore) 35%, transparent);
+    color: var(--sable-haut);
+  }
+  .puce--ici {
+    background: var(--brique);
+    border-color: var(--brique);
+    color: var(--sable-haut);
+    cursor: default;
+  }
+
+  /* --- La grille. minmax(0, …) partout : une piste auto suffirait à
+         élargir la page. --- */
+  .galerie {
+    padding-block: 0 clamp(3rem, 7vw, 6rem);
+  }
+  .grille {
+    list-style: none;
+    margin: 0;
+    display: grid;
+    gap: clamp(1.1rem, 3vw, 2.6rem) clamp(0.8rem, 2vw, 1.8rem);
+    grid-template-columns: repeat(var(--n2, 2), minmax(0, 1fr));
+  }
+  .grille > li {
+    min-width: 0;
+  }
+  /* La carte est taillée pour la rangée défilante de l'accueil : ici elle
+     prend la largeur de sa colonne. */
+  .grille > li > :global(.carte) {
+    width: auto;
+    max-width: none;
+  }
+  /* Le tambour est un disque : en grille, le cadre se règle au carré, sinon
+     il reste une bande vide sous chaque cercle. */
+  .grille :global(.carte__img) {
+    aspect-ratio: 1;
+  }
+  /* Toute la carte est un lien : sans cette règle, le titre, l'accroche et le
+     prix sont soulignés d'un bloc. (À corriger un jour dans global.css, la
+     rangée de l'accueil a le même souci.) */
+  .grille :global(.carte__lien) {
+    text-decoration: none;
+  }
+
+  /* ⚠️ CarteCreation pose la classe .carte__actions, que global.css ne
+     connaît pas (il style .carte__cta) : sans cette reprise, les deux liens
+     de la carte se suivent dans le fil du texte et se coupent en deux.
+     À réunifier un jour dans le composant. */
+  .grille :global(.carte__actions) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.9rem;
+    padding-block-start: 0.1rem;
+  }
+  .grille :global(.lien-devis) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    font-size: var(--t-petit);
+    color: var(--encre-doux);
+    text-underline-offset: 4px;
+    text-decoration-color: color-mix(in oklab, var(--encre) 30%, transparent);
+  }
+  .grille :global(.lien-devis):hover {
+    color: var(--rouille);
+    text-decoration-color: var(--rouille);
+  }
+
+
+  @media (min-width: 48rem) {
+    /* Plafond de 24rem par colonne : une catégorie qui ne contient qu'une
+       pièce ne doit pas l'étaler sur toute la largeur de l'écran. */
+    .grille {
+      grid-template-columns: repeat(var(--n, 3), minmax(0, 24rem));
+    }
+    /* Décalage vertical d'une colonne sur deux : une galerie composée,
+       pas un tableau. */
+    .grille > li:nth-child(even) {
+      margin-block-start: clamp(1rem, 3.5vw, 3.5rem);
+    }
+  }
+
+  .final .titre-xl {
+    max-width: 20ch;
+  }
+</style>
