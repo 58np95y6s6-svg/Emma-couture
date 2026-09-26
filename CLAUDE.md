@@ -355,6 +355,7 @@ graphiques simples), filtre semaine / mois / année :
   inscrit·es ~4 à 6 semaines avant (fête des mères, fête des pères, rentrée, Halloween, Noël…).
 
 ### 7. Instagram : import automatique, publication validée
+Compte : **@emma_couture_broderie**.
 Emmanuelle poste déjà ses créations sur Instagram. Le site réutilise ces photos **sans qu'elle
 ait à les republier**, mais **rien ne s'affiche sans son accord**.
 
@@ -391,7 +392,8 @@ Contraintes techniques à respecter :
 - Consentement : la validation manuelle est aussi le garde-fou contre la republication de photos
   d'enfants ou de clientes sans accord.
 
-À compléter : pseudo Instagram d'Emmanuelle, et statut du compte (personnel ou déjà professionnel).
+À compléter : statut du compte (personnel ou déjà professionnel). Si personnel, la bascule en
+compte professionnel est un préalable à tout développement de cette fonctionnalité.
 
 ### 8. Aide intégrée
 Une page « Comment faire ? » avec 5-6 fiches très courtes et illustrées.
@@ -433,8 +435,9 @@ Une page « Comment faire ? » avec 5-6 fiches très courtes et illustrées.
 - Fait-elle de la dentelle libre sur commande, ou seulement pour elle ? : [À COMPLÉTER]
   (conditionne l'angle SEO le plus différenciant)
 - Numéro WhatsApp (idéalement WhatsApp Business, gratuit) : [À COMPLÉTER]
-- Réseaux sociaux : Instagram (pseudo [À COMPLÉTER]) — préciser si le compte est personnel ou
-  professionnel : l'import automatique exige un compte professionnel. Facebook : [À COMPLÉTER]
+- Réseaux sociaux : Instagram **@emma_couture_broderie** — reste à confirmer si le compte est
+  personnel ou déjà professionnel (l'import automatique exige un compte professionnel).
+  Facebook : [À COMPLÉTER]
 - Remise en main propre possible à Rennes ? Marchés habituels ? : [À COMPLÉTER]
 - Photo portrait d'Emma (haute qualité, lumière naturelle) : [À FOURNIR]
 - Photos des créations : [À FOURNIR]
