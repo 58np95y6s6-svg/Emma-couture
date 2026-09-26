@@ -392,8 +392,31 @@ Contraintes techniques à respecter :
 - Consentement : la validation manuelle est aussi le garde-fou contre la republication de photos
   d'enfants ou de clientes sans accord.
 
-À compléter : statut du compte (personnel ou déjà professionnel). Si personnel, la bascule en
-compte professionnel est un préalable à tout développement de cette fonctionnalité.
+#### Préalable : type de compte **à confirmer** (septembre 2026)
+Probablement personnel, mais non vérifié. **Comment trancher en dix secondes**, depuis
+l'application Instagram sur le téléphone d'Emmanuelle :
+Profil → menu ☰ → *Paramètres* → *Type de compte et outils*.
+- « **Passer à un compte professionnel** » → le compte est **personnel**.
+- « **Changer de type de compte** » (ou présence d'un *Tableau de bord professionnel* et de
+  *Statistiques* sur le profil) → il est **déjà professionnel**, il n'y a rien à faire.
+
+Si le compte est personnel, rien ne peut être développé tant qu'il n'est pas passé en
+**compte Créateur**. C'est gratuit, réversible, et ça se fait en deux minutes.
+
+⚠️ **Un compte professionnel ne peut pas être privé.** Si le compte d'Emmanuelle est actuellement
+en privé, la bascule rendra **toutes ses publications passées visibles par n'importe qui**.
+À vérifier avec elle AVANT de basculer :
+- passer en revue les anciennes publications (photos de famille, d'enfants, de son domicile) ;
+- archiver ou supprimer ce qui ne doit pas devenir public ;
+- si le compte mélange vie privée et créations, **créer un second compte dédié à l'activité**
+  est la meilleure option — le compte perso reste privé, le compte pro alimente le site.
+
+**Créateur plutôt qu'Entreprise** : le compte Créateur est pensé pour les personnes (artisans,
+artistes) et conserve l'accès à la bibliothèque musicale complète, ce que le compte Entreprise
+restreint pour raisons de droits commerciaux — ça compte si elle publie des reels. Les deux
+fonctionnent avec l'*Instagram API with Instagram Login*, qui n'exige pas de page Facebook liée.
+Le compte Entreprise ne deviendrait utile que si une boutique Instagram était ajoutée un jour,
+ce qui est hors périmètre.
 
 ### 8. Aide intégrée
 Une page « Comment faire ? » avec 5-6 fiches très courtes et illustrées.
