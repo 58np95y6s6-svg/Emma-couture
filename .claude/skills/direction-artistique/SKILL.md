@@ -188,8 +188,13 @@ de section, tout centré, un seul `border-radius` partout, cartes à liseré col
 
 Google Fonts est le seul hébergeur autorisé (contrainte CSP des artefacts, et performance).
 
-- **Prénoms** : `Petit Formal Script` — réservée aux prénoms, jamais pour autre chose.
-- **Titres** : `Spectral` (axes variables disponibles).
+- **Titres** : `Instrument Serif` — choisie par le client en remplacement de Fraunces.
+  Serif à très fort contraste, registre studio de design plutôt que boutique de créateur ;
+  son italique porte les accents. ⚠️ Elle n'existe qu'en **une seule graisse (400)**, romain et
+  italique : la hiérarchie se fait donc par la **taille et l'italique**, jamais par la graisse.
+  Ne pas écrire de `font-weight` ni de `font-variation-settings` dessus.
+  ⚠️ **Fraunces est abandonnée** : trop identifiable comme la police par défaut de l'artisanal
+  généré, avec ses axes `SOFT` et `WONK` exhibés.
 - **Texte courant** : `Jost`.
 - **Chiffres techniques** (références de fil, tailles de cadre, nombre de points) : une chasse fixe.
 
