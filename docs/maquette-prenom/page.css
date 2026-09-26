@@ -58,7 +58,7 @@
   --t-h3:    clamp(1.25rem, 1.1rem + 0.8vw, 1.7rem);
   --t-h2:    clamp(2.1rem, 1.35rem + 3.6vw, 4.9rem);
   --t-h1:    clamp(2rem, 1.35rem + 2.9vw, 3.9rem);
-  --t-geant: clamp(3.4rem, 1.4rem + 12vw, 11.5rem);
+  --t-geant: clamp(3.9rem, 2.2rem + 9vw, 11.5rem);
 
   /* Grain de toile : bruit fractal, à peine perceptible, mais la page
      cesse d'être plate. */
@@ -408,7 +408,7 @@ h3 {
 .nav { display: none; gap: clamp(0.9rem, 1.8vw, 1.9rem); }
 .nav a {
   font-size: var(--t-petit); text-decoration: none; letter-spacing: 0.01em;
-  padding-block: 0.65rem;
+  padding-block: 0.8rem;
   position: relative;
 }
 .nav a::after {
@@ -555,7 +555,7 @@ h3 {
   .hero__texte {
     grid-column: large-d / mi; grid-row: 1;
     padding-inline-end: clamp(1.5rem, 3vw, 3rem);
-    padding-block: clamp(5rem, 9vw, 7rem) clamp(2rem, 4vw, 4rem);
+    padding-block: clamp(4.5rem, 6.5vw, 6.5rem) clamp(1.75rem, 3vw, 3.5rem);
   }
   .hero__photo {
     grid-column: mi / bord-f; grid-row: 1;
@@ -642,6 +642,20 @@ h3 {
 .tete { display: grid; gap: clamp(1rem, 2vw, 1.5rem); justify-items: start; }
 .tete .titre-xl { max-width: 24ch; }
 .tete--large .titre-xl { max-width: 32ch; }
+
+/* Le chapeau des créations se décale : titre à gauche, texte plus bas à
+   droite. Une composition, pas un empilement. */
+@media (min-width: 62rem) {
+  .creations .tete {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+    column-gap: clamp(2rem, 5vw, 5.5rem);
+    row-gap: clamp(1.2rem, 2.5vw, 2rem);
+  }
+  .creations .tete .sourcil  { grid-column: 1 / -1; grid-row: 1; }
+  .creations .tete .titre-xl { grid-column: 1; grid-row: 2 / span 2; align-self: start; }
+  .creations .tete .mesure   { grid-column: 2; grid-row: 2; align-self: end; max-width: none; }
+  .creations .tete .indice   { grid-column: 2; grid-row: 3; align-self: start; }
+}
 
 .indice {
   display: flex; align-items: center; gap: 0.45rem;
@@ -1219,7 +1233,7 @@ h3 {
   color: var(--dore); font-weight: 500;
   margin-block-end: 0.3rem;
 }
-.pied a { text-decoration: none; text-underline-offset: 3px; min-height: 1.9rem; display: inline-flex; align-items: center; }
+.pied a { text-decoration: none; text-underline-offset: 3px; min-height: 2.6rem; display: inline-flex; align-items: center; }
 .pied a:hover { text-decoration: underline; color: var(--rose); }
 .pied__bas {
   display: flex; flex-wrap: wrap; gap: 0.6rem 1.4rem;

@@ -97,6 +97,49 @@ Vérifié en septembre 2026 :
 - Les **Deploy Previews sont gratuites**, les déploiements échoués aussi.
 - Si les crédits sont épuisés, **le site est mis en pause** jusqu'au mois suivant.
 
+#### Grille tarifaire réelle (vérifiée septembre 2026)
+| Poste | Coût |
+|---|---|
+| Déploiement en production | **15 crédits** |
+| Bande passante | **20 crédits / Go** (~15 Go si on ne fait que ça) |
+| Requêtes web | 2 crédits / 10 000 |
+| Calcul (fonctions) | 10 crédits / Go-heure |
+| Soumissions de formulaires | **gratuit et illimité** |
+| Deploy Previews, déploiements échoués | **gratuit** |
+
+Inclus par ailleurs : 125 000 invocations de fonctions, 300 minutes de build.
+**Plafond strict** : pas de dépassement facturé, mais le site **passe hors ligne** jusqu'au
+1er du mois suivant. Pas de sursis, pas de recharge automatique.
+
+#### Budget mensuel estimé
+Pour 1 000 visites/mois, avec des images correctement dimensionnées (~800 Ko par visite) :
+
+| Poste | Consommation | Crédits |
+|---|---|---|
+| 10 déploiements en production | — | **150** |
+| Bande passante | 0,8 Go | 16 |
+| Requêtes | ~25 000 | 5 |
+| Fonctions (réglages, statistiques, Instagram) | négligeable | ~2 |
+| **Total** | | **~173 / 300** |
+
+**Conclusion : le poste de dépense n'est pas le trafic, ce sont les déploiements.**
+Un déploiement coûte 15 crédits, soit **5 % du budget du mois**. Emmanuelle pourrait tripler son
+audience sans problème ; en revanche, vingt déploiements suffisent à mettre le site hors ligne.
+
+⚠️ Cela vise directement le bouton **« Publier mes modifications »** : sans garde-fou, Emmanuelle
+peut éteindre son propre site en corrigeant ses textes. Obligations :
+- **Compteur visible dans l'admin** : « 4 publications sur 10 ce mois-ci », avec la date de
+  remise à zéro.
+- **Refus au-delà de 8 publications par mois**, message clair : « Vos modifications sont
+  enregistrées. Vous pourrez les publier le 1er. » Rien n'est perdu, la publication est différée.
+- Les modifications de textes vivants (bannière, prix, délai, avis, horaires) **ne publient rien**
+  et restent illimitées : c'est là qu'on l'oriente en priorité.
+
+⚠️ Sur la bande passante, à 20 crédits le gigaoctet : servir une image de 2400 px à un téléphone
+de 390 px coûte de l'argent. `srcset` est **obligatoire**, pas une optimisation.
+Ne pas utiliser le **Netlify Image CDN** (facturé) : les images sont pré-générées par
+`scripts/traiter-photos.mjs`. Pas de vidéo hébergée.
+
 Conséquences obligatoires :
 - **Tout ce qu'Emma modifie depuis l'admin ne doit JAMAIS déclencher un rebuild.** Les réglages
   (bannière événement, téléphone, délais, avis…) sont stockés dans Netlify Blobs et lus à
