@@ -186,19 +186,108 @@ const el = (nom, attrs) => {
 const mouvementReduit = () =>
   window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/* Un unique <path> hors ecran sert de regle de mesure pour tous les traces.
-   Il doit etre dans le document (et non en display:none) pour que
-   getTotalLength / getPointAtLength fonctionnent partout. */
-let regle = null;
-function mesureur() {
-  if (!regle) {
-    const s = el('svg', { width: '0', height: '0', 'aria-hidden': 'true' });
-    s.setAttribute('style', 'position:absolute;left:-9999px;top:0;width:0;height:0;overflow:hidden');
-    regle = el('path');
-    s.appendChild(regle);
-    document.body.appendChild(s);
+/* -----------------------------------------------------------------------------
+   APLATISSEMENT DES TRACES
+   On pourrait appeler getPointAtLength() sur un <path>, mais c'est ruineux :
+   mesure faite sur ce projet, un appel coute environ 0,3 ms, soit plus de
+   300 ms pour un seul prenom. On aplatit donc les courbes nous-memes en
+   polyligne, une fois, avec les longueurs cumulees. On gagne un facteur ~100
+   et on n'a plus besoin d'un SVG de mesure dans le document.
+   Commandes reconnues : M L H V C S Q T Z, absolues et relatives.
+----------------------------------------------------------------------------- */
+
+const cacheTraces = new Map();
+
+function aplatit(d) {
+  let tr = cacheTraces.get(d);
+  if (tr) return tr;
+
+  const jetons = d.match(/[a-zA-Z]|-?\d*\.?\d+(?:e[-+]?\d+)?/g) || [];
+  const xs = [], ys = [];
+  let i = 0, cmd = 'M', x = 0, y = 0, sx = 0, sy = 0, px = 0, py = 0, qx = 0, qy = 0;
+  const nb = () => parseFloat(jetons[i++]);
+  const pousse = (X, Y) => { xs.push(X); ys.push(Y); };
+
+  /* Subdivision d'une cubique : un segment par unite de longueur du polygone
+     de controle, borne entre 6 et 80. Largement sous le pas de broderie. */
+  const cubique = (x1, y1, x2, y2, X, Y) => {
+    const poly = Math.hypot(x1 - x, y1 - y) + Math.hypot(x2 - x1, y2 - y1) + Math.hypot(X - x2, Y - y2);
+    const n = Math.max(6, Math.min(80, Math.ceil(poly)));
+    for (let k = 1; k <= n; k++) {
+      const u = k / n, v = 1 - u;
+      pousse(v * v * v * x + 3 * v * v * u * x1 + 3 * v * u * u * x2 + u * u * u * X,
+             v * v * v * y + 3 * v * v * u * y1 + 3 * v * u * u * y2 + u * u * u * Y);
+    }
+    px = x2; py = y2; qx = X; qy = Y; x = X; y = Y;
+  };
+
+  while (i < jetons.length) {
+    if (/[a-zA-Z]/.test(jetons[i])) { cmd = jetons[i]; i++; if (i >= jetons.length && cmd.toUpperCase() !== 'Z') break; }
+    const rel = cmd >= 'a';
+    const C = cmd.toUpperCase();
+    if (C === 'M') {
+      const X = nb(), Y = nb();
+      x = rel ? x + X : X; y = rel ? y + Y : Y;
+      sx = x; sy = y; px = x; py = y; qx = x; qy = y;
+      pousse(x, y);
+      cmd = rel ? 'l' : 'L';           /* les paires suivantes sont des lignes */
+    } else if (C === 'L') {
+      const X = nb(), Y = nb();
+      x = rel ? x + X : X; y = rel ? y + Y : Y;
+      px = x; py = y; qx = x; qy = y; pousse(x, y);
+    } else if (C === 'H') {
+      const X = nb(); x = rel ? x + X : X; px = x; py = y; qx = x; qy = y; pousse(x, y);
+    } else if (C === 'V') {
+      const Y = nb(); y = rel ? y + Y : Y; px = x; py = y; qx = x; qy = y; pousse(x, y);
+    } else if (C === 'C') {
+      let a = nb(), b = nb(), c = nb(), e = nb(), f = nb(), g = nb();
+      if (rel) { a += x; b += y; c += x; e += y; f += x; g += y; }
+      cubique(a, b, c, e, f, g);
+    } else if (C === 'S') {
+      let c = nb(), e = nb(), f = nb(), g = nb();
+      if (rel) { c += x; e += y; f += x; g += y; }
+      cubique(2 * x - px, 2 * y - py, c, e, f, g);
+    } else if (C === 'Q') {
+      let a = nb(), b = nb(), f = nb(), g = nb();
+      if (rel) { a += x; b += y; f += x; g += y; }
+      const cx = a, cy = b;
+      cubique(x + (2 / 3) * (cx - x), y + (2 / 3) * (cy - y), f + (2 / 3) * (cx - f), g + (2 / 3) * (cy - g), f, g);
+      px = cx; py = cy;
+    } else if (C === 'T') {
+      let f = nb(), g = nb();
+      if (rel) { f += x; g += y; }
+      const cx = 2 * x - px, cy = 2 * y - py;
+      cubique(x + (2 / 3) * (cx - x), y + (2 / 3) * (cy - y), f + (2 / 3) * (cx - f), g + (2 / 3) * (cy - g), f, g);
+      px = cx; py = cy;
+    } else if (C === 'Z') {
+      pousse(sx, sy); x = sx; y = sy; px = x; py = y;
+    } else {
+      i++;                              /* commande non geree : on l'ignore */
+    }
   }
-  return regle;
+
+  const n = xs.length;
+  const cum = new Float64Array(n);
+  for (let k = 1; k < n; k++) cum[k] = cum[k - 1] + Math.hypot(xs[k] - xs[k - 1], ys[k] - ys[k - 1]);
+  tr = { xs, ys, cum, L: n ? cum[n - 1] : 0 };
+  if (cacheTraces.size < 800) cacheTraces.set(d, tr);
+  return tr;
+}
+
+/** Point a l'abscisse curviligne s, par interpolation dans la polyligne. */
+function pointA(tr, s, sortie) {
+  const { xs, ys, cum } = tr;
+  const n = xs.length;
+  if (!n) { sortie.x = 0; sortie.y = 0; return sortie; }
+  if (s <= 0) { sortie.x = xs[0]; sortie.y = ys[0]; return sortie; }
+  if (s >= tr.L) { sortie.x = xs[n - 1]; sortie.y = ys[n - 1]; return sortie; }
+  let lo = 0, hi = n - 1;
+  while (lo + 1 < hi) { const mi = (lo + hi) >> 1; if (cum[mi] <= s) lo = mi; else hi = mi; }
+  const seg = cum[hi] - cum[lo];
+  const u = seg > 0 ? (s - cum[lo]) / seg : 0;
+  sortie.x = xs[lo] + (xs[hi] - xs[lo]) * u;
+  sortie.y = ys[lo] + (ys[hi] - ys[lo]) * u;
+  return sortie;
 }
 
 /* Bruit deterministe : deux rendus du meme prenom se ressemblent,
@@ -244,15 +333,17 @@ function arrete(a) { actifs.delete(a); }
  * des points serres qui traversent le trait de part en part.
  *
  * @param {string} d       trace SVG
+ * @param {number} dx      decalage horizontal applique a la volee
  * @param {number} largeur largeur du bourdon (unites de dessin)
  * @param {number} pas     ecart entre deux piqures
  * @param {function} rnd   generateur de bruit
  * @returns {Array<[number,number,number,number]>} segments [x1,y1,x2,y2]
  */
-function pointsDeBourdon(d, largeur, pas, rnd) {
-  const p = mesureur();
-  p.setAttribute('d', d);
-  const L = p.getTotalLength();
+const _a = { x: 0, y: 0 }, _b = { x: 0, y: 0 }, _c = { x: 0, y: 0 };
+
+function pointsDeBourdon(d, dx, largeur, pas, rnd) {
+  const tr = aplatit(d);
+  const L = tr.L;
   const segments = [];
   if (!isFinite(L) || L <= 0) return segments;
 
@@ -266,9 +357,9 @@ function pointsDeBourdon(d, largeur, pas, rnd) {
   let s = 0;
   let securite = 0;
   while (s <= L && securite++ < 6000) {
-    const c = p.getPointAtLength(s);
-    const a = p.getPointAtLength(Math.max(0, s - eps));
-    const b = p.getPointAtLength(Math.min(L, s + eps));
+    const c = pointA(tr, s, _c);
+    const a = pointA(tr, Math.max(0, s - eps), _a);
+    const b = pointA(tr, Math.min(L, s + eps), _b);
     let tx = b.x - a.x, ty = b.y - a.y;
     const m = Math.hypot(tx, ty) || 1;
     tx /= m; ty /= m;

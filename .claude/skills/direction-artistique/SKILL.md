@@ -198,6 +198,35 @@ L'animation est **structurante, pas décorative**. Le moteur maison
 
 Options : `data-fil="#6B5560"`, `data-duree="2600"`, `data-declencheur="visible|charge|survol"`.
 
+### Le carrousel de prénoms du haut de page
+
+Le prénom géant **s'enchaîne** : une fois brodé, il se **découd**, et le suivant se brode.
+Découdre, c'est faire disparaître les points **dans l'ordre inverse** de leur apparition, comme
+quand on tire le fil — c'est le geste réel de l'atelier, et c'est bien plus juste qu'un fondu.
+
+Rythme, environ six secondes par prénom :
+| Étape | Durée | Détail |
+|---|---|---|
+| Broderie | ~2,6 s | les points apparaissent un par un |
+| Pause | ~2,2 s | assez long pour lire le prénom et sa légende |
+| Découdre | ~0,8 s | ordre inverse, **plus rapide** : tirer un fil va vite |
+| Respiration | ~0,4 s | le vide avant le suivant |
+
+Règles :
+- **La légende suit le prénom.** Chaque prénom a la sienne (« cadre de naissance brodé mardi :
+  prénom, date, 3,85 kg »). Une légende figée pendant que le prénom change serait incohérente.
+  Elle change pendant la respiration, jamais pendant la broderie.
+- **Aucun décalage de mise en page** : les prénoms n'ont pas la même longueur. Réserver la hauteur
+  et la largeur maximales dès le départ, sinon la page saute à chaque tour.
+- **S'arrêter** après quatre ou cinq prénoms, sur le dernier, brodé. Une boucle infinie distrait,
+  fatigue et consomme du processeur pour rien.
+- **Suspendre** quand le haut de page sort de l'écran (`IntersectionObserver`), reprendre au retour.
+- **Accessibilité** : le titre accessible reste stable, le carrousel est décoratif
+  (`aria-hidden="true"` sur le SVG, texte accessible fixe à côté). Pas d'`aria-live` : annoncer
+  un prénom toutes les six secondes rendrait un lecteur d'écran inutilisable.
+- **`prefers-reduced-motion`** : un seul prénom, affiché brodé, sans enchaînement.
+- Au survol ou au focus, **mettre en pause** — on laisse la visiteuse lire si elle veut.
+
 Le **prénom brodé est le fil conducteur** : énorme sur ordinateur, il se brode dès l'arrivée et
 revient plusieurs fois dans la page avec un prénom différent — c'est littéralement le produit.
 
