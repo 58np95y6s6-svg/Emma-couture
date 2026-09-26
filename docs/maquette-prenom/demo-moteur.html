@@ -602,6 +602,20 @@ function mesuresStatiques() {
   ligne('Éléments SVG créés par le moteur', document.querySelectorAll('svg[class^="broderie"] *').length);
   ligne('Prénom « ' + ($('#r-texte').value || 'Ambre') + ' »', (cible.__broderie ? cible.__broderie.points : 0) + ' points');
   ligne('Glyphes dans l’alphabet', Object.keys(ALPHABET).length);
+  /* Coût de fabrication d’un prénom : géométrie + création des <line>. */
+  const bac = document.createElement('div');
+  bac.style.cssText = 'position:absolute;left:-99999px;top:0';
+  document.body.appendChild(bac);
+  for (const mot of ['Ambre', 'Jean-Baptiste']) {
+    bac.textContent = '';
+    const s = document.createElement('span');
+    s.dataset.broderie = 'prenom'; s.dataset.declencheur = 'charge'; s.textContent = mot;
+    bac.appendChild(s);
+    const t = performance.now();
+    init(bac);
+    ligne('Fabrication de « ' + mot + ' »', (performance.now() - t).toFixed(1) + ' ms · ' + s.__broderie.points + ' points');
+  }
+  bac.remove();
   ligne('Mouvement réduit détecté', window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'oui' : 'non');
   ligne('devicePixelRatio', window.devicePixelRatio);
 }

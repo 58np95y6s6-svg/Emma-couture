@@ -31,9 +31,7 @@
 const SVGNS = 'http://www.w3.org/2000/svg';
 
 /* Palette de reference (surchargeable par data-fil ou par les variables CSS). */
-const FIL_DEFAUT = '#6B5560';   /* mauve profond */
-const BOIS_CLAIR = '#C9A97E';
-const BOIS_FONCE = '#8A6A46';
+const FIL_DEFAUT = '#6B5560';   /* mauve profond, variable CSS --broderie-fil */
 
 /* -----------------------------------------------------------------------------
    1. ALPHABET MONOLINEAIRE
@@ -204,7 +202,7 @@ function aplatit(d) {
 
   const jetons = d.match(/[a-zA-Z]|-?\d*\.?\d+(?:e[-+]?\d+)?/g) || [];
   const xs = [], ys = [];
-  let i = 0, cmd = 'M', x = 0, y = 0, sx = 0, sy = 0, px = 0, py = 0, qx = 0, qy = 0;
+  let i = 0, cmd = 'M', x = 0, y = 0, sx = 0, sy = 0, px = 0, py = 0;
   const nb = () => parseFloat(jetons[i++]);
   const pousse = (X, Y) => { xs.push(X); ys.push(Y); };
 
@@ -218,7 +216,7 @@ function aplatit(d) {
       pousse(v * v * v * x + 3 * v * v * u * x1 + 3 * v * u * u * x2 + u * u * u * X,
              v * v * v * y + 3 * v * v * u * y1 + 3 * v * u * u * y2 + u * u * u * Y);
     }
-    px = x2; py = y2; qx = X; qy = Y; x = X; y = Y;
+    px = x2; py = y2; x = X; y = Y;
   };
 
   while (i < jetons.length) {
@@ -228,17 +226,17 @@ function aplatit(d) {
     if (C === 'M') {
       const X = nb(), Y = nb();
       x = rel ? x + X : X; y = rel ? y + Y : Y;
-      sx = x; sy = y; px = x; py = y; qx = x; qy = y;
+      sx = x; sy = y; px = x; py = y;
       pousse(x, y);
       cmd = rel ? 'l' : 'L';           /* les paires suivantes sont des lignes */
     } else if (C === 'L') {
       const X = nb(), Y = nb();
       x = rel ? x + X : X; y = rel ? y + Y : Y;
-      px = x; py = y; qx = x; qy = y; pousse(x, y);
+      px = x; py = y; pousse(x, y);
     } else if (C === 'H') {
-      const X = nb(); x = rel ? x + X : X; px = x; py = y; qx = x; qy = y; pousse(x, y);
+      const X = nb(); x = rel ? x + X : X; px = x; py = y; pousse(x, y);
     } else if (C === 'V') {
-      const Y = nb(); y = rel ? y + Y : Y; px = x; py = y; qx = x; qy = y; pousse(x, y);
+      const Y = nb(); y = rel ? y + Y : Y; px = x; py = y; pousse(x, y);
     } else if (C === 'C') {
       let a = nb(), b = nb(), c = nb(), e = nb(), f = nb(), g = nb();
       if (rel) { a += x; b += y; c += x; e += y; f += x; g += y; }
@@ -306,6 +304,17 @@ function graine(chaine) {
 
 const actifs = new Set();
 let idFrame = 0;
+
+/* Position de defilement et hauteur de fenetre mises en cache : les lire
+   depuis la boucle d'animation pourrait forcer un recalcul de mise en page.
+   On les met a jour dans les evenements, ou la mise en page est deja propre. */
+let defilement = 0;
+let hauteurVue = 0;
+function relitFenetre() { defilement = window.scrollY || 0; hauteurVue = window.innerHeight || 0; }
+relitFenetre();
+window.addEventListener('scroll', () => { defilement = window.scrollY || 0; }, { passive: true });
+window.addEventListener('resize', relitFenetre, { passive: true });
+window.addEventListener('orientationchange', relitFenetre, { passive: true });
 
 function tourne(t) {
   idFrame = 0;
@@ -733,7 +742,9 @@ function effetFil(noeud) {
     }
     gGuide.setAttribute('d', d);
 
-    segs = pointsAvant(d, Math.max(13, W * 0.022), Math.max(8, W * 0.014));
+    /* Point avant : le tiret doit rester plus court que l'ecart, sinon on
+       lit une ligne pointillee au lieu d'une suite de piqures. */
+    segs = pointsAvant(d, Math.max(14, W * 0.023), Math.max(7, W * 0.0115));
     gPoints.textContent = '';
     noeuds = segs.map(([x1, y1, x2, y2]) => {
       const l = el('line', { x1, y1, x2, y2 });
@@ -761,9 +772,10 @@ function effetFil(noeud) {
 
   const machine = {
     tic(t) {
-      const vh = window.innerHeight;
-      /* Aucune lecture de layout ici : haut et H sont en cache. */
-      const p = (window.scrollY + vh * 0.72 - haut) / Math.max(1, H + vh * 0.2);
+      /* Aucune lecture de mise en page ici : haut, H, defilement et
+         hauteurVue sont tous en cache. */
+      const vh = hauteurVue;
+      const p = (defilement + vh * 0.72 - haut) / Math.max(1, H + vh * 0.2);
       const clamp = Math.max(0, Math.min(1, p));
       applique(Math.round(clamp * (segs.length - 1)), t);
       svg.classList.toggle('broderie-fil-actif', clamp > 0.001 && clamp < 0.999);
