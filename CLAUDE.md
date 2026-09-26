@@ -400,10 +400,17 @@ l'*Instagram API with Instagram Login* fonctionne sans page Facebook liée.
 Volume constaté : **468 publications**, 138 abonnés. Nom affiché : **Emmanuelle Wagner**
 (à confirmer comme nom légal avant de l'utiliser dans les mentions légales).
 
-⚠️ **Le compte mélange créations et vie personnelle** (photos de vacances, de famille, de
-paysages au milieu des créations). C'est la confirmation qu'il ne faut **jamais** brancher la
-galerie en automatique intégral : la validation en un geste dans l'admin n'est pas une précaution
-théorique, c'est une nécessité.
+Le compte est **exclusivement professionnel** : les publications sont des photos de créations,
+souvent mises en scène en extérieur (jardin, gravier, bord de mer, sur modèle), ce qui correspond
+au style de prise de vue constaté dans `docs/inventaire-photos.md`. Pas de contenu personnel à
+filtrer.
+
+La validation manuelle avant publication reste néanmoins la règle, pour trois raisons qui
+tiennent toujours :
+- **visages de clientes et d'enfants** portant les pièces, qui exigent un accord ;
+- **qualité** : toutes les photos d'Instagram ne méritent pas la page d'accueil ;
+- **SEO** : c'est le moment où Emmanuelle corrige le texte alternatif et rattache le post à une
+  création.
 
 Conséquences pour l'import :
 - Ne récupérer que les **N derniers posts** (20 à 30), pas les 468 : inutile et coûteux.
