@@ -17,7 +17,7 @@ const VERS = path.join(RACINE, 'docs', 'img');
 /** nom court dans la maquette → chemin sous src/assets/creations/ */
 const VISUELS = {
   'machine-large': 'hero-large/machine-a-broder-en-cours-atelier-vitre',
-  bobines: 'hero-large/atelier-mur-bobines-fil-broderie-vitre',
+  bobines: 'bandeau/atelier-mur-bobines-fil-broderie-vitre',
   doudou: 'galerie/doudou-lapin-brode-prenom-naissance-vitre',
   'cadre-naissance': 'galerie/cadre-naissance-brode-prenom-chambre-bebe',
   serviette: 'galerie/serviette-brodee-prenom-alicia-rose',

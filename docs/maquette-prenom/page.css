@@ -1,0 +1,750 @@
+/* ==========================================================================
+   emma-broderie.fr — maquette « Le prénom », version poussée
+   --------------------------------------------------------------------------
+   Parti pris : le prénom n'est pas une légende, c'est l'architecture.
+   Il est démesuré, il déborde des marges, il passe derrière les photos,
+   il sert de numérotation et de signature. Tout le reste est une grille
+   éditoriale stricte, alignée à gauche, tenue par des filets d'un pixel.
+   Un seul panneau sombre dans toute la page : la dentelle libre.
+
+   Ce fichier ne contient AUCUNE animation d'entrée : rien n'est en
+   opacity:0, rien n'attend un script. broderie.css / broderie.js ajoutent
+   leur couche par-dessus ; la page vit très bien sans eux.
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- jetons -- */
+:root{
+  /* Surfaces */
+  --fond:      #FFFDFB;   /* blanc cassé, très légèrement rosé */
+  --fond-2:    #FAF2ED;   /* tinte rose, pour un bloc sur deux */
+  --nuit:      #241D1C;   /* le seul fond sombre — cale la photo de dentelle */
+  --nuit-2:    #17110F;
+
+  /* Encres */
+  --encre:     #241E1B;   /* titres */
+  --texte:     #443A35;   /* texte courant : 9,3:1 sur le fond */
+  --doux:      #7A6C65;   /* mentions secondaires : 4,6:1 */
+  --mauve:     #6B5560;   /* le prénom */
+  --rose:      #E8CFC6;
+  --rose-vif:  #D2A091;
+
+  /* Or : deux valeurs. Le #B89355 d'origine ne passe pas en texte
+     (2,6:1 sur blanc) — il reste décoratif, le texte prend --or-txt. */
+  --or:        #B89355;
+  --or-txt:    #8A6626;   /* 5,1:1 sur --fond */
+  --or-clair:  #D8B678;   /* or lisible sur --nuit */
+
+  --ligne:     #E8DCD4;
+  --ligne-nuit:#3E332F;
+
+  /* Mesures */
+  --marge:  clamp(18px, 5.2vw, 84px);
+  --large:  1320px;
+  --rythme: clamp(60px, 11vw, 132px);
+
+  /* Typographie */
+  --titre: "Fraunces", "Spectral", Georgia, "Times New Roman", serif;
+  --corps: "Jost", "Helvetica Neue", system-ui, sans-serif;
+  /* Deux registres d'écriture, jamais interchangeables :
+     --brode  = ce que la MACHINE écrit (le produit : prénoms, occasions, « Merci »)
+     --plume  = ce qu'EMMA écrit à la main (numéros d'étape, signature, pied de page) */
+  --brode: "Great Vibes", "Petit Formal Script", cursive;
+  --plume: "Playwrite FR Moderne", "Segoe Script", cursive;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+html{
+  -webkit-text-size-adjust:100%;
+  scroll-behavior:smooth;
+  overflow-x:clip;           /* le prénom déborde volontairement : jamais de scroll latéral */
+}
+@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
+
+body{
+  margin:0;
+  overflow-x:clip;
+  background:var(--fond);
+  color:var(--texte);
+  font-family:var(--corps);
+  font-weight:400;
+  font-size:16.5px;
+  line-height:1.72;
+  letter-spacing:.002em;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+@media (min-width:768px){ body{font-size:17px} }
+
+img{max-width:100%;height:auto;display:block}
+figure{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+h1,h2,h3{margin:0}
+a{color:inherit}
+
+/* Focus clavier : un liseré or franc, jamais masqué. */
+:focus-visible{
+  outline:2.5px solid var(--or-txt);
+  outline-offset:3px;
+  border-radius:1px;
+}
+
+.saut{
+  position:absolute;left:-9999px;top:0;z-index:100;
+  background:var(--encre);color:var(--fond);
+  padding:14px 20px;text-decoration:none;font-size:15px;
+}
+.saut:focus{left:0}
+
+/* ------------------------------------------------------- Fraunces réglée --
+   opsz basse + SOFT haut : les empattements s'arrondissent comme le bout
+   d'un point de bourdon. C'est ce qui évite le serif « template ». */
+.titre-serif,h1,h2,h3,blockquote{
+  font-family:var(--titre);
+  font-optical-sizing:none;
+  font-variation-settings:"SOFT" 70,"WONK" 1,"opsz" 40;
+  font-weight:350;
+  color:var(--encre);
+  letter-spacing:-.018em;
+  line-height:1.08;
+  text-wrap:balance;
+}
+
+/* ------------------------------------------------------------- le prénom -- */
+/* Le prénom brodé : Great Vibes a de vrais pleins et déliés, comme le point
+   de bourdon d'une machine. C'est exactement ce qu'on voit sur les photos. */
+.prenom{
+  font-family:var(--brode);
+  font-weight:400;
+  color:var(--mauve);
+  margin:0;
+  line-height:1;
+  letter-spacing:.005em;
+}
+/* L'écriture d'Emma : cursive scolaire française, monoline, un peu hésitante.
+   Réservée à sa voix — jamais au produit. */
+.plume{
+  font-family:var(--plume);
+  font-weight:300;
+  color:var(--mauve);
+  margin:0;
+  line-height:1.15;
+}
+
+/* --------------------------------------------------------------- surtitre -- */
+.oeil{
+  margin:0 0 18px;
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:.24em;
+  text-transform:uppercase;
+  color:var(--doux);
+  display:flex;align-items:center;gap:12px;
+}
+.oeil i{
+  font-style:normal;font-family:var(--corps);
+  color:var(--or-txt);font-weight:500;
+  padding-right:12px;border-right:1px solid var(--ligne);
+}
+.oeil--clair{color:#BEADA6}
+.oeil--clair i{color:var(--or-clair);border-right-color:var(--ligne-nuit)}
+
+/* ============================================================== ANNONCE == */
+.annonce{
+  background:var(--encre);color:#EFE5DF;
+  display:flex;align-items:center;gap:8px;
+  padding:9px var(--marge);
+}
+.annonce__txt{
+  margin:0;flex:1;
+  font-size:13.5px;line-height:1.5;letter-spacing:.005em;
+}
+.annonce__txt strong{font-weight:500;color:#fff}
+.annonce__txt a{
+  color:var(--or-clair);text-decoration:none;
+  border-bottom:1px solid rgba(216,182,120,.45);
+  white-space:nowrap;margin-left:4px;
+}
+.annonce__txt a:hover{border-bottom-color:var(--or-clair)}
+.annonce__pastille{
+  display:inline-block;width:6px;height:6px;border-radius:50%;
+  background:var(--or-clair);margin-right:9px;vertical-align:1px;
+}
+.annonce__fermer{
+  flex:none;width:44px;height:44px;margin:-8px -12px -8px 0;
+  background:none;border:0;color:#B4A49C;
+  font-size:24px;line-height:1;cursor:pointer;
+}
+.annonce__fermer:hover{color:#fff}
+
+/* =============================================================== EN-TÊTE == */
+.entete{
+  position:sticky;top:0;z-index:40;
+  background:color-mix(in srgb,var(--fond) 88%,transparent);
+  backdrop-filter:saturate(1.2) blur(14px);
+  border-bottom:1px solid var(--ligne);
+}
+.entete__in{
+  max-width:var(--large);margin:0 auto;
+  padding:0 var(--marge);
+  min-height:62px;
+  display:flex;align-items:center;gap:14px;
+}
+.marque{text-decoration:none;display:grid;line-height:1;margin-right:auto}
+.marque__nom{
+  font-family:var(--titre);
+  font-variation-settings:"SOFT" 70,"WONK" 1,"opsz" 22;
+  font-weight:400;font-size:21px;color:var(--encre);letter-spacing:-.01em;
+}
+.marque__sous{
+  font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--doux);margin-top:5px;
+}
+
+.nav-ordi{display:none;gap:30px}
+.nav-ordi a{
+  text-decoration:none;font-size:14px;color:var(--texte);
+  padding:6px 0;position:relative;
+}
+.nav-ordi a::after{
+  content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;
+  background:var(--or);transition:right .34s cubic-bezier(.2,.7,.3,1);
+}
+.nav-ordi a:hover::after{right:0}
+
+.entete__cta{
+  flex:none;text-decoration:none;
+  background:var(--encre);color:var(--fond);
+  font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  padding:0 20px;height:44px;display:inline-flex;align-items:center;
+}
+.entete__cta:hover{background:var(--mauve)}
+
+/* menu mobile : <details>, zéro JS pour l'ouverture */
+.menu{position:relative}
+.menu summary{
+  list-style:none;cursor:pointer;
+  width:44px;height:44px;display:grid;align-content:center;justify-items:center;gap:6px;
+}
+.menu summary::-webkit-details-marker{display:none}
+.menu summary span{width:20px;height:1.5px;background:var(--encre);display:block;transition:transform .25s}
+.menu[open] summary span:first-child{transform:translateY(3.75px) rotate(45deg)}
+.menu[open] summary span:last-child{transform:translateY(-3.75px) rotate(-45deg)}
+.menu__panneau{
+  position:absolute;right:-8px;top:52px;z-index:50;
+  background:var(--fond);border:1px solid var(--ligne);
+  min-width:min(76vw,268px);
+  display:grid;
+  box-shadow:0 24px 50px -24px rgba(36,30,27,.28);
+}
+.menu__panneau a{
+  text-decoration:none;padding:15px 22px;font-size:15px;
+  border-bottom:1px solid var(--ligne);
+}
+.menu__panneau a:last-child{border-bottom:0;color:var(--or-txt)}
+.menu__panneau a:hover{background:var(--fond-2)}
+
+@media (min-width:1000px){
+  .menu{display:none}
+  .nav-ordi{display:flex}
+  .entete__in{min-height:76px;gap:36px}
+}
+
+/* ================================================================ BOUTONS == */
+.actions{display:flex;flex-wrap:wrap;gap:10px}
+.actions--centre{justify-content:center}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  min-height:52px;padding:0 26px;
+  text-decoration:none;font-family:var(--corps);
+  font-size:12.5px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;
+  transition:background .25s,color .25s,border-color .25s,transform .25s;
+}
+.btn svg{width:18px;height:18px;flex:none}
+.btn--wa{background:var(--encre);color:#FFFDFB}
+.btn--wa:hover{background:var(--mauve)}
+.btn--creux{border:1px solid var(--encre);color:var(--encre)}
+.btn--creux:hover{background:var(--encre);color:var(--fond)}
+@media (prefers-reduced-motion:no-preference){
+  .btn:active{transform:translateY(1px)}
+}
+
+.lien-fleche{
+  display:inline-flex;align-items:center;gap:10px;
+  min-height:44px;
+  text-decoration:none;color:var(--or-txt);
+  font-size:13px;letter-spacing:.13em;text-transform:uppercase;font-weight:500;
+}
+.lien-fleche::after{
+  content:"";width:30px;height:1px;background:currentColor;
+  transition:width .34s cubic-bezier(.2,.7,.3,1);
+}
+.lien-fleche:hover::after{width:52px}
+.lien-fleche--clair{color:var(--or-clair)}
+
+.prix{
+  margin:0;
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--or-txt);font-weight:500;
+}
+.prix--clair{color:var(--or-clair);margin:26px 0 20px}
+
+/* ================================================================= HÉROS ==
+   Le prénom occupe toute la largeur, sa dernière boucle passe PAR-DESSUS le
+   portrait : le nom est littéralement brodé sur la photo. En dessous, deux
+   colonnes inégales — la légende de la pièce à gauche, le portrait à droite. */
+.heros{
+  max-width:var(--large);margin:0 auto;
+  padding:clamp(24px,5.5vw,56px) var(--marge) clamp(44px,7vw,78px);
+}
+.oeil--heros{margin-bottom:clamp(12px,2.4vw,24px)}
+
+.heros__scene{
+  position:relative;overflow:clip;
+  display:grid;
+  grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);
+  column-gap:clamp(14px,4vw,32px);
+}
+
+.prenom--heros{
+  grid-column:1/-1;
+  font-size:clamp(4.1rem,20.5vw,15.5rem);
+  line-height:1;
+  margin-left:-.045em;              /* la panse du A vient lécher la marge */
+  white-space:nowrap;
+  position:relative;z-index:3;      /* au-dessus de la photo : c'est le point */
+  pointer-events:none;
+}
+
+.heros__legende{
+  grid-column:1;align-self:start;
+  margin:clamp(10px,3vw,22px) 0 0;
+  font-family:var(--titre);font-style:italic;font-weight:300;
+  font-variation-settings:"SOFT" 70,"opsz" 20;
+  font-size:clamp(12.5px,3.4vw,15px);color:var(--doux);letter-spacing:0;
+  line-height:1.45;
+  display:grid;gap:2px;
+}
+.heros__legende span[aria-hidden]{display:none}
+
+.heros__photo{
+  grid-column:2;
+  margin-top:clamp(-72px,-13vw,-26px);   /* la photo remonte sous le prénom */
+  position:relative;z-index:1;
+}
+.heros__photo img{
+  width:100%;aspect-ratio:4/5;object-fit:cover;object-position:52% 30%;
+  background:var(--fond-2);
+}
+.heros__photo figcaption{
+  font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--doux);padding-top:11px;line-height:1.5;
+}
+
+.heros__dire{margin-top:clamp(34px,6.5vw,52px);max-width:52ch}
+.heros h1{
+  font-size:clamp(2.05rem,7.4vw,3.55rem);
+  line-height:1.04;
+  margin:0 0 22px;
+}
+.heros h1 em{
+  font-style:italic;color:var(--mauve);
+  font-variation-settings:"SOFT" 90,"WONK" 1,"opsz" 60;
+}
+.heros__texte{
+  margin:0 0 30px;
+  font-size:1.03rem;line-height:1.75;color:var(--texte);
+  max-width:46ch;
+}
+
+.rassure{
+  margin-top:30px;padding-top:20px;border-top:1px solid var(--ligne);
+  display:grid;gap:10px;
+  font-size:13.5px;color:var(--doux);line-height:1.5;
+}
+.rassure li{display:flex;gap:11px;align-items:baseline}
+.rassure li::before{
+  content:"";flex:none;width:5px;height:5px;margin-top:.5em;
+  background:var(--rose-vif);border-radius:50%;
+}
+.rassure strong{color:var(--texte);font-weight:500}
+
+/* héros — ordinateur : le prénom prend toute la largeur utile, le portrait
+   se réduit à une vignette calée à droite, le texte se met en deux colonnes. */
+@media (min-width:860px){
+  .heros__scene{grid-template-columns:minmax(0,1fr) minmax(0,.3fr)}
+  .prenom--heros{font-size:clamp(8rem,17.5vw,15.5rem)}
+  .heros__legende{
+    margin-top:clamp(-40px,-3vw,-10px);
+    font-size:15px;max-width:26ch;
+  }
+  .heros__photo{margin-top:clamp(-190px,-15vw,-90px)}
+  .heros__dire{
+    margin-top:clamp(30px,4vw,54px);
+    display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);
+    gap:clamp(30px,5vw,72px);align-items:start;max-width:none;
+  }
+  .heros h1{grid-column:1;margin:0}
+  .heros__dire > .heros__texte{grid-column:2;margin:0}
+  .heros__dire > .actions{grid-column:2;margin-top:26px}
+  .rassure{
+    grid-column:1/-1;margin-top:46px;
+    grid-template-columns:repeat(3,minmax(0,1fr));gap:18px 34px;
+  }
+}
+
+/* =============================================================== PREUVE === */
+.preuve{border-block:1px solid var(--ligne);background:var(--fond)}
+.preuve__in{
+  max-width:var(--large);margin:0 auto;padding:0 var(--marge);
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.preuve__item{
+  padding:22px 0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+}
+.preuve__item:nth-child(odd){padding-right:16px}
+.preuve__item:nth-child(even){
+  padding-left:16px;border-left:1px solid var(--ligne);
+}
+.preuve__item:nth-child(-n+2){border-bottom:1px solid var(--ligne)}
+.preuve__item b{
+  font-family:var(--titre);font-variation-settings:"SOFT" 70,"opsz" 40;
+  font-weight:400;font-size:clamp(1.6rem,5.4vw,2rem);color:var(--encre);
+  letter-spacing:-.02em;line-height:1;
+}
+.preuve__item span{font-size:12.5px;color:var(--doux);line-height:1.4;max-width:17ch}
+
+@media (min-width:860px){
+  .preuve__in{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .preuve__item{padding:30px 0 30px 28px;border-left:1px solid var(--ligne)}
+  .preuve__item:first-child{padding-left:0;border-left:0}
+  .preuve__item:nth-child(-n+2){border-bottom:0}
+  .preuve__item:nth-child(odd),
+  .preuve__item:nth-child(even){padding-right:22px}
+  .preuve__item:first-child{padding-left:0}
+}
+
+/* ================================================================= BLOCS == */
+.bloc{
+  max-width:var(--large);margin:0 auto;
+  padding:var(--rythme) var(--marge);
+}
+.bloc--tinte{
+  max-width:none;background:var(--fond-2);
+  padding-inline:max(var(--marge),calc(50vw - var(--large)/2 + var(--marge)));
+}
+.bloc__tete{max-width:34ch;margin-bottom:clamp(34px,6vw,64px)}
+.bloc__tete h2,.final h2,.nuit h2,.atelier h2{
+  font-size:clamp(1.85rem,6.2vw,3.05rem);
+  line-height:1.07;margin:0;
+}
+.bloc__chapo{
+  margin:20px 0 0;color:var(--doux);font-size:1rem;line-height:1.72;max-width:44ch;
+}
+.bloc__suite{margin:clamp(30px,5vw,50px) 0 0;padding-top:24px;border-top:1px solid var(--ligne)}
+
+/* ============================================================== GALERIE === */
+.galerie{display:grid;gap:clamp(44px,8vw,72px)}
+.piece a{text-decoration:none;color:inherit;display:grid;gap:18px}
+
+.piece figure{
+  position:relative;overflow:clip;background:var(--fond-2);
+}
+.piece img{
+  width:100%;aspect-ratio:4/5;object-fit:cover;
+  transition:transform .8s cubic-bezier(.2,.7,.3,1);
+}
+@media (prefers-reduced-motion:no-preference){
+  .piece a:hover img,.piece a:focus-visible img{transform:scale(1.035)}
+}
+.piece--carre img{aspect-ratio:1/1}
+
+/* « brodé pour Lisa » : la mention qui rappelle, à chaque pièce, que le
+   produit c'est un prénom — et pas un article de catalogue. */
+.piece__pour{
+  margin:0 0 2px;
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--doux);
+  display:flex;align-items:baseline;gap:9px;
+}
+.piece__pour b{
+  font-weight:400;
+  font-size:2.15rem;letter-spacing:.005em;text-transform:none;
+  color:var(--mauve);line-height:.9;
+  transform:translateY(.08em);
+}
+
+.piece__dire{display:grid;gap:9px}
+.piece h3{
+  font-size:clamp(1.18rem,4.4vw,1.42rem);
+  line-height:1.2;font-weight:400;
+}
+.piece__dire p{margin:0;font-size:.95rem;line-height:1.66;color:var(--doux);max-width:40ch}
+.piece .prix{margin-top:3px}
+
+/* Rythme irrégulier, y compris sur mobile : une pièce sur deux est
+   rentrée à droite. C'est ce décalage qui casse l'effet « catalogue ». */
+@media (min-width:420px){
+  .piece--carre,.piece--decale{margin-left:14%}
+}
+
+@media (min-width:860px){
+  .galerie{
+    grid-template-columns:repeat(12,minmax(0,1fr));
+    gap:clamp(42px,5vw,72px) clamp(24px,3vw,46px);
+    align-items:start;
+  }
+  .piece--carre,.piece--decale{margin-left:0}
+  .galerie > li:nth-child(1){grid-column:1/8}
+  .galerie > li:nth-child(2){grid-column:9/13;margin-top:clamp(50px,8vw,120px)}
+  .galerie > li:nth-child(3){grid-column:2/6}
+  .galerie > li:nth-child(4){grid-column:7/12;margin-top:clamp(-120px,-8vw,-40px)}
+  .galerie > li:nth-child(5){grid-column:1/5;margin-top:clamp(-40px,-3vw,0px)}
+  .galerie > li:nth-child(6){grid-column:6/13}
+}
+
+/* ============================================ NUIT — la dentelle libre === */
+.nuit{
+  background:var(--nuit);color:#E7DCD6;
+  background-image:radial-gradient(120% 80% at 78% 12%,#33292610 0,transparent 60%);
+}
+.nuit__in{
+  max-width:var(--large);margin:0 auto;
+  padding:var(--rythme) var(--marge);
+  display:grid;gap:clamp(38px,6vw,64px);
+}
+.nuit h2{color:#FFF9F4}
+.nuit__dire p{color:#BCACA4;max-width:46ch;margin:22px 0 0;font-size:1rem;line-height:1.75}
+.nuit__dire h2{margin-bottom:4px}
+
+.nuit__images{display:grid;gap:18px;grid-template-columns:minmax(0,1fr)}
+.nuit__grand img{width:100%;aspect-ratio:4/5;object-fit:cover}
+.nuit__petit{
+  width:62%;margin-left:auto;margin-top:-22%;position:relative;
+  border:1px solid var(--ligne-nuit);
+}
+.nuit__petit img{width:100%;aspect-ratio:1/1;object-fit:cover}
+.nuit__petit figcaption{
+  font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:#9C8C84;padding:11px 0 0;
+}
+
+@media (min-width:860px){
+  .nuit__in{
+    grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);
+    align-items:center;gap:clamp(40px,6vw,96px);
+  }
+  .nuit__petit{width:54%;margin-top:-30%}
+}
+
+/* ============================================= INDEX DES OCCASIONS ====== */
+.index{border-top:1px solid var(--ligne)}
+.index li{border-bottom:1px solid var(--ligne)}
+.index a{
+  display:grid;
+  grid-template-columns:64px minmax(0,1fr);
+  grid-template-areas:"img mot" "img det";
+  align-items:center;
+  gap:2px 18px;
+  padding:20px 0;
+  text-decoration:none;color:inherit;position:relative;
+}
+.index__img{grid-area:img;overflow:clip;background:var(--fond);align-self:start}
+.index__img img{width:64px;height:64px;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.3,1)}
+.index__mot{
+  grid-area:mot;
+  font-family:var(--titre);font-variation-settings:"SOFT" 70,"WONK" 1,"opsz" 60;
+  font-weight:350;font-size:clamp(1.35rem,5.6vw,1.9rem);
+  color:var(--encre);letter-spacing:-.02em;line-height:1.15;
+}
+.index__det{grid-area:det;font-size:13.5px;color:var(--doux);line-height:1.5}
+.index__ex{
+  display:none;grid-area:ex;
+  font-size:2.6rem;color:var(--rose-vif);text-align:right;
+  transition:color .3s,transform .5s cubic-bezier(.2,.7,.3,1);
+}
+@media (prefers-reduced-motion:no-preference){
+  .index a:hover .index__img img,
+  .index a:focus-visible .index__img img{transform:scale(1.08)}
+  .index a:hover .index__ex{color:var(--mauve);transform:translateX(-10px)}
+}
+
+@media (min-width:768px){
+  .index a{
+    grid-template-columns:96px minmax(0,1.1fr) minmax(0,1.3fr) minmax(0,.7fr);
+    grid-template-areas:"img mot det ex";
+    gap:0 clamp(20px,3vw,44px);
+    padding:26px 0;
+  }
+  .index__img img{width:96px;height:96px}
+  .index__ex{display:block}
+  .index__det{font-size:14.5px}
+}
+
+/* ================================================================ ÉTAPES == */
+.etapes{
+  display:grid;gap:clamp(34px,5vw,48px);
+  counter-reset:pas;
+}
+.etapes li{
+  padding-left:clamp(56px,14vw,86px);position:relative;
+  border-top:1px solid var(--ligne);padding-top:22px;
+}
+.etapes__n{
+  position:absolute;left:0;top:16px;
+  font-size:clamp(1.25rem,4.4vw,1.55rem);color:var(--rose-vif);
+  line-height:1;margin:0;
+}
+.etapes h3{
+  font-size:clamp(1.15rem,4.4vw,1.36rem);font-weight:400;margin:0 0 9px;line-height:1.2;
+}
+.etapes li > p:last-child{margin:0;color:var(--doux);font-size:.97rem;line-height:1.7;max-width:42ch}
+
+@media (min-width:860px){
+  .etapes{grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(26px,3vw,48px)}
+  .etapes li{padding-left:0;padding-top:26px}
+  .etapes__n{position:static;margin-bottom:12px}
+}
+
+.ruban{margin-top:var(--rythme)}
+.ruban img{
+  width:100%;aspect-ratio:16/7;object-fit:cover;object-position:center 58%;
+}
+
+/* =============================================================== ATELIER == */
+.atelier__in{display:grid;gap:clamp(34px,6vw,64px)}
+.atelier__photos{position:relative}
+.atelier__bobines img{width:100%;aspect-ratio:16/10;object-fit:cover}
+.atelier__rond{
+  position:absolute;z-index:2;
+  left:4%;bottom:-13%;
+  width:min(40%,190px);
+  border-radius:50%;overflow:clip;
+  border:6px solid var(--fond);
+  box-shadow:0 18px 42px -22px rgba(36,30,27,.5);
+}
+.atelier__rond img{width:100%;aspect-ratio:1/1;object-fit:cover;object-position:52% 30%}
+.atelier__dire{padding-top:clamp(40px,10vw,60px)}
+.atelier__dire p{margin:22px 0 0;max-width:46ch;color:var(--texte)}
+.signature{
+  font-size:clamp(1.9rem,6.6vw,2.4rem);
+  margin-top:34px !important;color:var(--mauve);
+}
+
+@media (min-width:860px){
+  .atelier__in{
+    grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+    align-items:center;gap:clamp(48px,7vw,96px);
+  }
+  .atelier__dire{padding-top:0}
+  .atelier__rond{left:-8%;bottom:-16%;width:min(42%,220px)}
+}
+
+/* ================================================================== AVIS == */
+.avis{display:grid;gap:26px}
+.avis figure{
+  border-top:1px solid var(--ligne);padding-top:22px;
+}
+.avis blockquote{margin:0}
+.avis blockquote p{
+  margin:0;
+  font-family:var(--titre);font-style:italic;font-weight:300;
+  font-variation-settings:"SOFT" 80,"opsz" 40;
+  font-size:1.08rem;line-height:1.5;color:var(--encre);letter-spacing:-.01em;
+}
+.avis figcaption{
+  margin-top:14px;font-family:var(--corps);
+  font-size:11px;letter-spacing:.17em;text-transform:uppercase;color:var(--doux);
+}
+.avis__grand{border-top-color:var(--rose-vif) !important}
+.avis__grand blockquote p{font-size:clamp(1.35rem,5.4vw,1.85rem);line-height:1.32}
+
+@media (min-width:768px){
+  .avis{grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(26px,3vw,46px)}
+  .avis__grand{grid-column:1/4;grid-row:1/3}
+  .avis figure:nth-child(2){grid-column:4/7}
+  .avis figure:nth-child(3){grid-column:4/7}
+  .avis figure:nth-child(4){grid-column:1/4}
+}
+
+/* ================================================================= FINAL == */
+.final{
+  position:relative;overflow:clip;
+  background:var(--fond);
+  border-top:1px solid var(--ligne);
+  padding:var(--rythme) var(--marge);
+}
+.final__fantome{
+  position:absolute;right:-.14em;top:-.12em;
+  font-size:clamp(9rem,34vw,24rem);
+  color:var(--rose);opacity:.5;
+  white-space:nowrap;pointer-events:none;user-select:none;
+}
+.final__in{position:relative;z-index:1;max-width:var(--large);margin:0 auto;text-align:center}
+.final .oeil{justify-content:center}
+.final__texte{
+  margin:22px auto 34px;max-width:42ch;color:var(--doux);font-size:1.02rem;line-height:1.72;
+}
+.final__note{margin:26px 0 0;font-size:13.5px;color:var(--doux)}
+.final__note a{color:var(--encre);text-decoration:none;border-bottom:1px solid var(--rose-vif)}
+
+/* =================================================================== PIED == */
+.pied{background:var(--encre);color:#C9BAB2;padding-top:clamp(50px,8vw,80px)}
+.pied__in{
+  max-width:var(--large);margin:0 auto;padding:0 var(--marge) clamp(40px,6vw,64px);
+  display:grid;gap:36px;
+}
+.pied__scripte{font-size:2rem;color:var(--or-clair);margin-bottom:18px}
+.pied__adresse{margin:0;font-size:14.5px;line-height:1.85}
+.pied__adresse a{color:#E6DAD3}
+.pied__col h2{
+  font-family:var(--corps);font-variation-settings:normal;
+  font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:#8E7D75;margin:0 0 16px;font-weight:500;
+}
+.pied__col{display:grid;gap:2px;align-content:start}
+.pied__col a{
+  text-decoration:none;font-size:14.5px;padding:7px 0;color:#C9BAB2;
+  width:fit-content;border-bottom:1px solid transparent;
+}
+.pied__col a:hover{color:#fff;border-bottom-color:var(--or)}
+.pied__col p{margin:0;font-size:14px;line-height:1.7;color:#9E8D85;max-width:30ch}
+
+.pied__bas{
+  border-top:1px solid var(--ligne-nuit);
+  max-width:var(--large);margin:0 auto;
+  padding:22px var(--marge) calc(22px + env(safe-area-inset-bottom));
+  display:flex;flex-wrap:wrap;gap:6px 26px;justify-content:space-between;
+  font-size:12.5px;color:#8E7D75;
+}
+.pied__bas p{margin:0}
+.pied__bas a{color:#8E7D75;text-decoration:none;border-bottom:1px solid #3E332F}
+.pied__bas a:hover{color:#fff}
+
+@media (min-width:768px){
+  .pied__in{grid-template-columns:minmax(0,1.5fr) repeat(3,minmax(0,1fr));gap:clamp(24px,4vw,56px)}
+}
+
+/* ================================================== WHATSAPP FLOTTANT ==== */
+.wa-flottant{
+  position:fixed;z-index:45;
+  right:14px;bottom:calc(14px + env(safe-area-inset-bottom));
+  display:inline-flex;align-items:center;gap:9px;
+  min-height:48px;padding:0 18px 0 15px;
+  background:var(--encre);color:#FFFDFB;
+  text-decoration:none;
+  font-size:12.5px;font-weight:500;letter-spacing:.11em;text-transform:uppercase;
+  box-shadow:0 12px 30px -12px rgba(36,30,27,.55);
+}
+.wa-flottant svg{width:20px;height:20px;flex:none;color:var(--or-clair)}
+@media (min-width:1000px){ .wa-flottant{display:none} }
+
+/* ============================================ mouvement réduit / impression */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+}

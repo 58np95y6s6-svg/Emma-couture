@@ -27,6 +27,34 @@ Règles de conversion :
   budget indicatif (fourchettes) → texte à broder → photo d'inspiration (optionnelle) → coordonnées
   → « Comment préférez-vous être recontacté·e ? » (WhatsApp / email / téléphone).
 - Page de remerciement après envoi : délai de réponse annoncé + bouton WhatsApp.
+
+### Depuis une création : la demande part avec la photo
+Quand une visiteuse clique « Je veux la même » ou « Demander un devis » sur une création,
+la demande doit arriver à Emmanuelle **avec la photo de la pièce concernée**, pour qu'elle sache
+immédiatement de quoi on parle sans avoir à demander.
+
+**WhatsApp — contrainte technique à connaître.** Le lien `wa.me` n'accepte qu'un paramètre,
+`text` : **il est impossible d'y attacher une image**. La solution est d'inclure l'**URL de la
+création** dans le message pré-rempli. WhatsApp génère alors une **carte d'aperçu avec l'image
+Open Graph** de la page : la photo apparaît bien dans la conversation.
+→ Cela rend l'**image OG par création obligatoire**, pas optionnelle. Format 1200×630, la pièce
+   bien cadrée et lisible en petit.
+→ Message type : `Bonjour Emmanuelle, j'ai vu « Doudou lapin brodé » sur votre site et j'aimerais
+   un modèle similaire. https://emma-broderie.fr/creations/doudou-lapin-brode/`
+→ L'aperçu dépend de WhatsApp : si la carte ne s'affiche pas, le lien reste cliquable. Ne jamais
+   faire reposer une information essentielle sur le seul aperçu.
+
+**Formulaire — là on maîtrise tout.** Le formulaire pré-rempli depuis une création embarque :
+- des champs cachés : `creation_slug`, `creation_titre`, `creation_url`, `creation_image` ;
+- **une vignette visible de la pièce en haut du formulaire**, avec son titre — la visiteuse voit
+  ce qu'elle demande, ce qui rassure et réduit les abandons ;
+- un bouton « ce n'est pas cette pièce » qui retire le rattachement.
+
+**Dans l'admin**, la demande s'affiche avec **la photo de la création** en vignette, à côté du
+message. C'est le vrai bénéfice : Emmanuelle identifie la pièce d'un coup d'œil.
+
+La photo d'inspiration envoyée par la visiteuse (étape optionnelle du formulaire guidé) est un
+sujet distinct et s'ajoute à celle-ci.
 - **Prix « à partir de »** visibles sur les créations et la page Sur-mesure : c'est la première question
   des client·es ; les sites d'artisans qui convertissent l'affichent.
 - Preuve sociale : avis clients (saisis par Emma dans l'admin), nombre de créations réalisées.

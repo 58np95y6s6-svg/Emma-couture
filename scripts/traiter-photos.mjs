@@ -27,12 +27,21 @@ const TEMPO = fs.mkdtempSync(path.join(os.tmpdir(), 'broderie-'));
 
 /** Formats de sortie, d'après CLAUDE.md § Photos. */
 const FORMATS = {
+  'plein-ecran': { largeur: 2400, hauteur: 1350 }, // full-bleed, grands écrans
+  bandeau: { largeur: 2400, hauteur: 620 }, // bande pleine largeur entre deux sections
   'hero-large': { largeur: 1920, hauteur: 1080 }, // 16:9 ordinateur
   'hero-mobile': { largeur: 1000, hauteur: 1250 }, // 4:5 mobile
   galerie: { largeur: 1000, hauteur: 1250 }, // 4:5
   detail: { largeur: 1000, hauteur: 1000 }, // 1:1
   og: { largeur: 1200, hauteur: 630 }, // partage réseaux
 };
+
+/**
+ * Garde-fou : on ne fabrique jamais un fichier plus grand que la matière
+ * disponible. Agrandir une photo de téléphone la rend molle, et c'est
+ * exactement ce qui se voit sur un hero plein écran.
+ */
+const TOLERANCE_AGRANDISSEMENT = 1.05;
 
 /**
  * `position` suit la syntaxe de sharp : où garder le sujet quand on recadre.
@@ -55,7 +64,9 @@ const SELECTION = [
     num: '011',
     fichier: 'IMG_0184.HEIC',
     nom: 'atelier-mur-bobines-fil-broderie-vitre',
-    formats: ['hero-large', 'galerie', 'detail', 'og'],
+    // Sa forme naturelle après extraction est une bande très large : c'est
+    // en bandeau pleine largeur qu'elle rend le mieux, et sans agrandissement.
+    formats: ['bandeau', 'hero-large', 'galerie', 'detail', 'og'],
     position: 'centre',
     luminosite: 1.08,
     // On isole le mur de bobines : la partie haute de la photo, sans la serviette.
@@ -67,7 +78,7 @@ const SELECTION = [
     num: '036',
     fichier: 'IMG_3089.HEIC',
     nom: 'machine-a-broder-en-cours-atelier-vitre',
-    formats: ['galerie', 'detail', 'hero-large'],
+    formats: ['plein-ecran', 'galerie', 'detail', 'hero-large'],
     position: 'centre',
     luminosite: 1.05,
     alt: "Broderie en cours sous la tête de la machine : un paysage de cerisiers en fleurs et un colibri en fil de couleur sur toile blanche",
@@ -97,7 +108,7 @@ const SELECTION = [
     num: '052',
     fichier: 'IMG_3763.HEIC',
     nom: 'arbre-de-vie-brode-dentelle-ajouree-fil-dore',
-    formats: ['galerie', 'detail'],
+    formats: ['plein-ecran', 'galerie', 'detail'],
     position: 'centre',
     luminosite: 1.06,
     alt: "Arbre de vie brodé en dentelle ajourée fil doré, pièce autoportante sans support tissu, sur fond noir",
@@ -107,7 +118,7 @@ const SELECTION = [
     num: '079',
     fichier: 'IMG_6856.HEIC',
     nom: 'papillon-brode-dentelle-ajouree-coquelicots',
-    formats: ['galerie', 'detail'],
+    formats: ['plein-ecran', 'galerie', 'detail'],
     position: 'centre',
     luminosite: 1.0,
     alt: "Papillon brodé en relief aux ailes rouges et noires, surmonté de coquelicots brodés, posé sur un feuillage",
@@ -117,7 +128,7 @@ const SELECTION = [
     num: '049',
     fichier: 'IMG_3679.HEIC',
     nom: 'sac-banane-cousu-main-broderie-chats',
-    formats: ['galerie', 'detail'],
+    formats: ['plein-ecran', 'galerie', 'detail'],
     position: 'centre',
     luminosite: 1.03,
     alt: "Sac banane en suédine jaune moutarde, cousu main, brodé de trois chats gris",
@@ -167,7 +178,7 @@ const SELECTION = [
     num: '020',
     fichier: 'IMG_0845.HEIC',
     nom: 'tambour-decoratif-brode-fee-rouge',
-    formats: ['galerie', 'detail'],
+    formats: ['plein-ecran', 'galerie', 'detail'],
     position: 'centre',
     luminosite: 1.03,
     alt: "Tambour décoratif brodé d'une fée rouge tendant la main à un oiseau, posé sur une planche en bois à côté d'une plante grasse",
@@ -222,6 +233,7 @@ for (const photo of SELECTION) {
     const fichierSortie = path.join(destination, `${photo.nom}.webp`);
 
     let image = sharp(source).rotate(); // redresse selon l'EXIF, qui est ensuite abandonné
+    let sourceUtile = { width: meta.width, height: meta.height };
 
     if (photo.extraire) {
       // On matérialise la rotation avant de mesurer : sinon `metadata()` rend
@@ -230,12 +242,30 @@ for (const photo of SELECTION) {
       const { width, height } = await sharp(redresse).metadata();
       image = sharp(redresse);
       const e = photo.extraire;
+      sourceUtile = {
+        width: Math.round(e.largeur * width),
+        height: Math.round(e.hauteur * height),
+      };
       image = image.extract({
         left: Math.round(e.gauche * width),
         top: Math.round(e.haut * height),
         width: Math.round(e.largeur * width),
         height: Math.round(e.hauteur * height),
       });
+    }
+
+    // Un recadrage `cover` prend le plus grand des deux rapports : c'est lui
+    // qui dit de combien la photo devra être agrandie.
+    const agrandissement = Math.max(
+      largeur / sourceUtile.width,
+      hauteur / sourceUtile.height,
+    );
+    if (agrandissement > TOLERANCE_AGRANDISSEMENT) {
+      console.warn(
+        `  ⚠ ${photo.num} · ${nomFormat} ignoré : demanderait un agrandissement de ` +
+          `${agrandissement.toFixed(2)}× depuis ${sourceUtile.width}×${sourceUtile.height}`,
+      );
+      continue;
     }
 
     await image
