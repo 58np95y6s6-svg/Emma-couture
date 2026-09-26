@@ -1,0 +1,45 @@
+---
+import { SITE, CONTACT, ATELIER } from '../config';
+---
+
+<footer class="pied bande">
+  <div class="pied__in">
+    <div class="pied__marque">
+      <p class="pied__nom">{SITE.nom}</p>
+      <p>Broderie machine &amp; couture<br />{SITE.ville} — {SITE.departement}</p>
+      <p><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></p>
+      <p><a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">@{CONTACT.instagram}</a></p>
+    </div>
+
+    <nav class="pied__nav" aria-label="Créations">
+      <h2>Créations</h2>
+      <a href="/creations/naissance/">Naissance &amp; enfant</a>
+      <a href="/creations/linge-de-bain/">Linge de bain</a>
+      <a href="/creations/couture/">Sacs &amp; trousses</a>
+      <a href="/creations/decoration-ajouree/">Dentelle libre</a>
+    </nav>
+
+    <nav class="pied__nav" aria-label="Occasions">
+      <h2>Occasions</h2>
+      <a href="/cadeaux/naissance/">Cadeau de naissance</a>
+      <a href="/cadeaux/mariage/">Mariage</a>
+      <a href="/cadeaux/fete-des-meres/">Fête des mères</a>
+      <a href="/cadeaux/noel/">Noël</a>
+    </nav>
+
+    <div class="pied__nav">
+      <h2>Où me trouver</h2>
+      <p>{ATELIER.zones}</p>
+      <p><a href="/brodeuse-vitre/">Brodeuse à Vitré</a></p>
+      <p><a href="/broderie-personnalisee-rennes/">Broderie à Rennes</a></p>
+    </div>
+  </div>
+
+  <p class="pied__bas">
+    <span>
+      {SITE.nomLegal} — micro-entreprise · SIRET {SITE.siret}
+    </span>
+    <a href="/mentions-legales/">Mentions légales</a>
+    <a href="/politique-de-confidentialite/">Politique de confidentialité</a>
+  </p>
+</footer>

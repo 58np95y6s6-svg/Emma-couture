@@ -1,0 +1,72 @@
+/**
+ * Réglages du site, intégrés au build.
+ *
+ * ⚠️ Ce sont des **valeurs de repli**. À terme, tout ce qui est marqué
+ * « piloté par l'admin » est lu à l'exécution depuis Netlify Blobs via
+ * /api/reglages (voir CLAUDE.md § 5). Si la fonction échoue, le site
+ * s'affiche avec les valeurs ci-dessous : jamais de page cassée.
+ *
+ * ⚠️ TOUT CE QUI SUIT EST PROVISOIRE tant qu'Emma ne l'a pas confirmé.
+ * Ne pas mettre le site en production avec ces valeurs.
+ */
+
+export const SITE = {
+  nom: 'Emma Broderie',
+  /** Nom légal, réservé aux mentions légales. */
+  nomLegal: 'Emmanuelle Wagner', // [À CONFIRMER]
+  baseline: 'Broderie machine & couture · Vitré',
+  url: 'https://emma-broderie.fr',
+  langue: 'fr',
+  ville: 'Vitré',
+  codePostal: '35500', // [À CONFIRMER]
+  departement: 'Ille-et-Vilaine',
+  /** L'adresse précise n'est PAS publiée : Emma travaille chez elle. */
+  siret: '[À COMPLÉTER]',
+} as const;
+
+export const CONTACT = {
+  /** Format international sans + ni espaces, pour wa.me. */
+  whatsapp: '33600000000', // [À COMPLÉTER]
+  telephone: '+33600000000', // [À COMPLÉTER]
+  email: 'bonjour@emma-broderie.fr', // [À COMPLÉTER]
+  instagram: 'emma_couture_broderie',
+  instagramUrl: 'https://www.instagram.com/emma_couture_broderie/',
+} as const;
+
+/** Piloté par l'admin. */
+export const ATELIER = {
+  /** Affiché en réassurance sur tout le site. */
+  delaiActuel: '2 semaines', // [À CONFIRMER]
+  delaiReponse: 'Réponse dans la journée', // [À CONFIRMER]
+  /** 'ouvertes' | 'complet' | 'conges' */
+  commandes: 'ouvertes' as 'ouvertes' | 'complet' | 'conges',
+  /** Rempli seulement si commandes === 'conges'. */
+  retourLe: '',
+  zones: 'Remise en main propre à Vitré et à Rennes, envoi partout en France',
+} as const;
+
+/**
+ * Message WhatsApp pré-rempli.
+ *
+ * Depuis une création, on passe l'URL de la fiche : WhatsApp affiche alors
+ * une carte d'aperçu avec l'image Open Graph. C'est le seul moyen d'y faire
+ * apparaître la photo — le lien wa.me n'accepte aucune pièce jointe
+ * (voir CLAUDE.md § « Depuis une création »).
+ */
+export function lienWhatsApp(message?: string, urlCreation?: string): string {
+  const texte = [
+    message ?? `Bonjour ${SITE.nom}, j'aimerais faire broder quelque chose.`,
+    urlCreation,
+  ]
+    .filter(Boolean)
+    .join(' ');
+  return `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(texte)}`;
+}
+
+/** Les quatre occasions mises en avant, dans l'ordre d'affichage. */
+export const OCCASIONS = [
+  { slug: 'naissance', nom: 'Une naissance', liste: 'Doudou, cadre de naissance, bavoir, cape de bain', fil: '#4A6047' },
+  { slug: 'mariage', nom: 'Un mariage', liste: 'Pochettes des témoins, mouchoir, dentelle cousue sur la robe', fil: '#6B5560' },
+  { slug: 'fete-des-meres', nom: 'La fête des mères', liste: 'Trousse, tablier, serviettes de plage, tambour décoratif', fil: '#A8492A' },
+  { slug: 'noel', nom: 'Noël', liste: 'Chaussette de cheminée, pyjama, plaid, boule brodée', fil: '#B03A52' },
+] as const;

@@ -1,0 +1,51 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { lienWhatsApp, SITE } from '../config';
+
+interface Props {
+  creation: CollectionEntry<'creations'>;
+  /** Passé à `sizes` : dépend du contexte d'affichage. */
+  tailles?: string;
+  /** La première carte d'une page n'est pas différée. */
+  prioritaire?: boolean;
+}
+
+const { creation, tailles = '(max-width: 40rem) 74vw, 22rem', prioritaire = false } = Astro.props;
+const { data, id } = creation;
+
+const urlFiche = `/creations/${id}/`;
+const urlAbsolue = new URL(urlFiche, SITE.url).href;
+
+/* L'URL de la fiche est jointe au message : WhatsApp en affiche l'aperçu
+   Open Graph, seule façon d'y faire apparaître la photo. */
+const wa = lienWhatsApp(
+  `Bonjour ${SITE.nom}, j'ai vu « ${data.titre} » sur votre site et j'aimerais le même.`,
+  urlAbsolue,
+);
+---
+
+<article class="carte">
+  <a class="carte__lien" href={urlFiche}>
+    <figure class="carte__img" data-broderie="tambour">
+      <Image
+        src={data.photo}
+        alt={data.alt}
+        widths={[320, 480, 620, 800]}
+        sizes={tailles}
+        loading={prioritaire ? 'eager' : 'lazy'}
+        decoding="async"
+      />
+    </figure>
+    <div class="carte__txt">
+      <h3>{data.titre}</h3>
+      <p>{data.accroche}</p>
+      {data.prixDepart && <p class="prix">à partir de {data.prixDepart} €</p>}
+    </div>
+  </a>
+
+  <p class="carte__actions">
+    <a class="lien-wa" href={wa}>Je veux le même</a>
+    <a class="lien-devis" href={`/contact/?creation=${id}`}>Demander un devis</a>
+  </p>
+</article>

@@ -1,0 +1,153 @@
+---
+/**
+ * Gabarit de toutes les pages publiques.
+ * En-tête, pied, bouton WhatsApp flottant, SEO et données structurées.
+ */
+import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
+import Entete from '../components/Entete.astro';
+import Pied from '../components/Pied.astro';
+import '../styles/broderie.css';
+import '../styles/global.css';
+
+interface Props {
+  titre: string;
+  description: string;
+  /** Image de partage, 1200×630. Chemin absolu depuis la racine du site. */
+  imageOg?: string;
+  /** Les pages comme /merci/ ne doivent pas être indexées. */
+  noindex?: boolean;
+  /** Fil d'Ariane : [{ nom, url }], sans l'accueil qui est ajouté seul. */
+  fil?: { nom: string; url: string }[];
+}
+
+const { titre, description, imageOg = '/og-defaut.jpg', noindex = false, fil = [] } = Astro.props;
+
+const url = new URL(Astro.url.pathname, Astro.site ?? SITE.url).href;
+const urlImage = new URL(imageOg, Astro.site ?? SITE.url).href;
+
+/**
+ * LocalBusiness sur toutes les pages.
+ * ⚠️ Pas d'adresse précise : Emma travaille à son domicile. On publie la
+ * ville et la zone desservie, jamais la rue.
+ */
+const donneesLocalBusiness = {
+  '@context': 'https://schema.org',
+  '@type': 'LocalBusiness',
+  '@id': `${SITE.url}/#atelier`,
+  name: SITE.nom,
+  description:
+    'Broderie machine personnalisée et couture sur mesure à Vitré : prénoms, motifs, logos, dentelle ajourée, sacs et trousses.',
+  url: SITE.url,
+  email: CONTACT.email,
+  telephone: CONTACT.telephone,
+  image: urlImage,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: SITE.ville,
+    postalCode: SITE.codePostal,
+    addressRegion: SITE.departement,
+    addressCountry: 'FR',
+  },
+  areaServed: [
+    { '@type': 'City', name: 'Vitré' },
+    { '@type': 'City', name: 'Rennes' },
+    { '@type': 'AdministrativeArea', name: 'Ille-et-Vilaine' },
+    { '@type': 'Country', name: 'France' },
+  ],
+  sameAs: [CONTACT.instagramUrl],
+};
+
+const donneesFil =
+  fil.length > 0
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [{ nom: 'Accueil', url: '/' }, ...fil].map((e, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: e.nom,
+          item: new URL(e.url, SITE.url).href,
+        })),
+      }
+    : null;
+---
+
+<!doctype html>
+<html lang={SITE.langue}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{titre}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={url} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#20291F" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content={SITE.nom} />
+    <meta property="og:title" content={titre} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:image" content={urlImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Jost:wght@400..500&display=swap"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(donneesLocalBusiness)} />
+    {donneesFil && <script type="application/ld+json" set:html={JSON.stringify(donneesFil)} />}
+  </head>
+
+  <body>
+    <a class="saut" href="#contenu">Aller au contenu</a>
+    <div class="progression" aria-hidden="true"><span></span></div>
+
+    <Entete />
+
+    <main id="contenu">
+      <slot />
+    </main>
+
+    <Pied />
+
+    <a class="flottant" href={lienWhatsApp()}>
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"
+        ><path
+          d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"
+        /></svg
+      >
+      <span>WhatsApp</span>
+    </a>
+
+    <script>
+      /* Menu mobile — le strict minimum, sans dépendance. */
+      const bouton = document.querySelector<HTMLButtonElement>('.burger');
+      const menu = document.getElementById('menu-mobile');
+      if (bouton && menu) {
+        bouton.addEventListener('click', () => {
+          const ouvert = bouton.getAttribute('aria-expanded') === 'true';
+          bouton.setAttribute('aria-expanded', String(!ouvert));
+          menu.hidden = ouvert;
+          document.documentElement.classList.toggle('menu-ouvert', !ouvert);
+        });
+        menu.addEventListener('click', (e) => {
+          if ((e.target as HTMLElement).tagName !== 'A') return;
+          bouton.setAttribute('aria-expanded', 'false');
+          menu.hidden = true;
+          document.documentElement.classList.remove('menu-ouvert');
+        });
+      }
+    </script>
+
+    <script>
+      /* Importé plutôt que référencé en `src` : Astro l'empaquette alors
+         avec le reste, au lieu d'émettre un chemin qui n'existe pas. */
+      import '../scripts/broderie.js';
+    </script>
+  </body>
+</html>

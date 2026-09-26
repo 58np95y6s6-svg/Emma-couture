@@ -1,22 +1,316 @@
 ---
-// Page d'attente : remplacée par la vraie page d'accueil
-// une fois la direction visuelle validée (voir CLAUDE.md § Design).
-const titre = 'Emma — broderie & couture à Vitré';
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import CarteCreation from '../components/CarteCreation.astro';
+import { SITE, CONTACT, ATELIER, OCCASIONS, lienWhatsApp } from '../config';
+
+import portrait from '../assets/creations/galerie/emma-brodeuse-vitre-portrait.webp';
+import bobines from '../assets/creations/bandeau/atelier-mur-bobines-fil-broderie-vitre.webp';
+import machine from '../assets/creations/plein-ecran/machine-a-broder-en-cours-atelier-vitre.webp';
+import papillon from '../assets/creations/plein-ecran/papillon-brode-dentelle-ajouree-coquelicots.webp';
+import arbre from '../assets/creations/galerie/arbre-de-vie-brode-dentelle-ajouree-fil-dore.webp';
+import tambour from '../assets/creations/plein-ecran/tambour-decoratif-brode-fee-rouge.webp';
+
+/* Photos des quatre occasions, dans l'ordre de config.OCCASIONS. */
+import occNaissance from '../assets/creations/galerie/doudou-plat-brode-prenom-keanu-naissance.webp';
+import occMariage from '../assets/creations/galerie/papillon-brode-dentelle-ajouree-coquelicots.webp';
+import occMeres from '../assets/creations/galerie/tambour-decoratif-brode-fee-rouge.webp';
+import occNoel from '../assets/creations/galerie/chaussette-de-noel-brodee-prenom.webp';
+
+const photosOccasions = [occNaissance, occMariage, occMeres, occNoel];
+const altOccasions = [
+  "Doudou plat en tissu, prénom brodé au centre, cadeau de naissance",
+  "Papillon en dentelle libre, entièrement brodé de fil, à coudre sur une robe",
+  'Tambour à broder décoratif, brodé et prêt à accrocher au mur',
+  'Chaussette de Noël rouge, prénom brodé sur le revers',
+];
+
+/* Les créations mises en avant. L'ordre viendra de l'admin ; ici, du build. */
+const creations = (await getCollection('creations', ({ data }) => !data.masquee))
+  .sort((a, b) => a.data.ordre - b.data.ordre)
+  .slice(0, 6);
+
+const titre = `${SITE.nom} — broderie personnalisée & couture sur mesure à ${SITE.ville} (35)`;
+const description =
+  "Broderie personnalisée et couture sur mesure à Vitré (35) : prénoms, motifs, logos, dentelle ajourée, sacs et trousses. Devis dans la journée, remise en main propre à Vitré et Rennes, envoi partout en France.";
 ---
 
-<!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{titre}</title>
-    <meta name="description" content="Broderie personnalisée et couture sur mesure à Vitré (35). Site en préparation." />
-    <meta name="robots" content="noindex" />
-  </head>
-  <body>
-    <main>
-      <h1>{titre}</h1>
-      <p>Site en préparation.</p>
-    </main>
-  </body>
-</html>
+<Base titre={titre} description={description}>
+  {/*
+    ⚠️ MAQUETTE — CONTENU D'EXEMPLE
+    Prix, délais, avis, chiffres, numéro WhatsApp, téléphone et e-mail sont
+    provisoires (voir src/config.ts). À remplacer par les vraies valeurs
+    d'Emma avant toute mise en production.
+    Vocabulaire : broderie MACHINE. Ne jamais écrire « brodé à la main ».
+  */}
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero bande">
+    <div class="hero__photo">
+      <Image
+        src={portrait}
+        alt="Emma, brodeuse et couturière à Vitré"
+        widths={[390, 620, 800, 1000]}
+        sizes="(max-width: 62rem) 100vw, 44vw"
+        loading="eager"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </div>
+
+    <p class="hero__vignette">
+      <strong>Emma</strong>
+      <span>C'est moi qui réponds, qui brode et qui emballe.</span>
+    </p>
+
+    <div class="hero__texte">
+      <p class="sourcil sourcil--hero">Broderie machine &amp; couture — {SITE.ville}&nbsp;(35)</p>
+
+      <p
+        class="prenom-geant"
+        data-broderie="prenom"
+        data-fil="#7A4C3A"
+        data-duree="3200"
+        data-declencheur="charge"
+      >
+        Ambre
+      </p>
+      <p class="prenom-note">
+        <span aria-hidden="true">↑</span> cadre de naissance brodé mardi, 3,85&nbsp;kg.
+      </p>
+
+      <h1>Dites-moi le prénom.<br />Je sors <em>les bobines.</em></h1>
+
+      <p class="chapo">
+        Prénoms, motifs, logos de club, dentelle ajourée, sets de table&nbsp;: je brode sur le
+        linge, les vêtements et les cadeaux de naissance. Les sacs, les trousses et les tabliers,
+        je les couds aussi. Dites-moi ce que vous avez en tête, même flou.
+      </p>
+
+      <p class="actions">
+        <a class="btn btn--wa" href={lienWhatsApp()}>Écrire sur WhatsApp</a>
+        <a class="btn btn--creux" href="/contact/#devis">Demander un devis</a>
+      </p>
+
+      <ul class="rassure">
+        <li><b>{ATELIER.delaiReponse}</b></li>
+        <li>Délai actuel&nbsp;: <b>{ATELIER.delaiActuel}</b></li>
+        <li>{ATELIER.zones}</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===================== CRÉATIONS ===================== -->
+  <section class="bande creations" id="creations">
+    <div class="tete">
+      <p class="sourcil">Les créations</p>
+      <h2 class="titre-xl">Ce qui est passé<br />sous la machine<br /><em>cette semaine.</em></h2>
+      <p class="mesure">
+        Chaque pièce part d'un prénom et d'une occasion. Le tissu, l'écriture et la couleur du fil,
+        on les choisit ensemble — avant que je lance la machine.
+      </p>
+      <p class="indice"><span aria-hidden="true">→</span> faites défiler la rangée</p>
+    </div>
+
+    <div class="rangee" tabindex="0" role="region" aria-label="Créations récentes, rangée défilante">
+      {creations.map((c, i) => <CarteCreation creation={c} prioritaire={i === 0} />)}
+    </div>
+
+    <p class="creations__tout">
+      <a class="btn btn--creux" href="/creations/">Voir toutes les créations</a>
+    </p>
+  </section>
+
+  <!-- ===================== BANDEAU BOBINES ===================== -->
+  <div class="bandeau">
+    <Image
+      src={bobines}
+      alt="Mur de l'atelier couvert de bobines de fil à broder de toutes les couleurs"
+      widths={[800, 1400, 2000, 2400]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+    />
+    <p class="bandeau__mot" aria-hidden="true">un mur de bobines</p>
+  </div>
+
+  <!-- ===================== DENTELLE LIBRE ===================== -->
+  <section class="bande nuit" id="dentelle">
+    <div class="nuit__fixe">
+      <p class="sourcil sourcil--clair">Ma spécialité</p>
+      <h2 class="titre-xl">La dentelle libre.</h2>
+      <p class="mesure mesure--clair">
+        La machine brode <em>dans le vide</em>, sur un support qui disparaît au rinçage. Il ne
+        reste que le fil, ajouré, qui se tient tout seul.
+      </p>
+      <p class="mesure mesure--clair">
+        Un arbre de vie, un papillon, une initiale, un napperon&nbsp;: ça se glisse dans un cadre,
+        ça s'accroche à une fenêtre, ça se coud sur une robe de mariée. C'est ce que je préfère
+        faire — et ce qu'on trouve le moins ailleurs.
+      </p>
+      <p class="actions">
+        <a class="btn btn--or" href="/creations/decoration-ajouree/">Voir les pièces en dentelle</a>
+      </p>
+    </div>
+
+    <div class="nuit__fig">
+      <Image
+        src={papillon}
+        alt="Papillon brodé en relief aux ailes rouges et noires, surmonté de coquelicots brodés"
+        widths={[480, 800, 1400]}
+        sizes="(max-width: 62rem) 92vw, 42vw"
+        loading="lazy"
+        decoding="async"
+      />
+      <Image
+        src={arbre}
+        alt="Arbre de vie brodé en dentelle ajourée fil doré, pièce autoportante sans support tissu"
+        widths={[480, 800, 1000]}
+        sizes="(max-width: 62rem) 92vw, 42vw"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  </section>
+
+  <!-- ===================== OCCASIONS ===================== -->
+  <section class="bande occasions" id="occasions">
+    <div class="tete tete--large">
+      <p class="sourcil">Pour quelle occasion&nbsp;?</p>
+      <h2 class="titre-xl">Naissance, mariage,<br />fête des mères, <em>Noël…</em></h2>
+      <p class="mesure">
+        Et tout le reste&nbsp;: un baptême, un départ en retraite, un anniversaire, un cadeau
+        d'équipe. Donnez-moi la date, je vous dis ce qui tient dans le délai.
+      </p>
+    </div>
+
+    <ul class="occ">
+      {
+        OCCASIONS.map((o, i) => (
+          <li class="occ__item" style={`--f:${o.fil}`}>
+            <a href={`/cadeaux/${o.slug}/`}>
+              <span class="occ__n">{String(i + 1).padStart(2, '0')}</span>
+              <span class="occ__nom">{o.nom}</span>
+              <span class="occ__liste">{o.liste}</span>
+              <span class="occ__img">
+                <Image
+                  src={photosOccasions[i]}
+                  alt={altOccasions[i]}
+                  widths={[320, 480, 620]}
+                  sizes="(max-width: 34rem) 100vw, (max-width: 62rem) 30vw, 15rem"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </span>
+              <span class="occ__fleche" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- ===================== MÉTHODE ===================== -->
+  <section class="bande methode" id="methode" data-broderie="fil">
+    <div class="tete">
+      <p class="sourcil">Comment ça se passe</p>
+      <h2 class="titre-xl">Trois étapes,<br /><em>pas une de plus.</em></h2>
+    </div>
+
+    <ol class="etapes">
+      <li>
+        <p class="etapes__n">01</p>
+        <h3>Vous me racontez</h3>
+        <p>
+          Le prénom, l'occasion, la date souhaitée. Une photo d'inspiration si vous en avez une.
+          Même flou, ça suffit pour commencer.
+        </p>
+      </li>
+      <li>
+        <p class="etapes__n">02</p>
+        <h3>Je vous montre le motif</h3>
+        <p>
+          Avant de lancer la machine, je vous envoie le dessin. Si quelque chose ne va pas, on le
+          change&nbsp;: tant que ce n'est pas piqué, tout est possible.
+        </p>
+      </li>
+      <li>
+        <p class="etapes__n">03</p>
+        <h3>Vous offrez</h3>
+        <p>
+          Emballage cadeau compris. Remise en main propre à {SITE.ville} et à Rennes, ou envoi
+          partout en France.
+        </p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ===================== ATELIER ===================== -->
+  <section class="bande atelier" id="atelier">
+    <figure class="atelier__fig" data-broderie="tambour">
+      <Image
+        src={machine}
+        alt="Broderie en cours sous la tête de la machine : cerisiers en fleurs et colibri en fil de couleur"
+        widths={[480, 800, 1400]}
+        sizes="(max-width: 62rem) 92vw, 44vw"
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+
+    <div class="atelier__dire">
+      <h2 class="titre-xl">Pas d'équipe.<br />Moi, ma machine,<br /><em>et un mur de bobines.</em></h2>
+      <p class="mesure">
+        Il n'y a pas d'équipe&nbsp;: c'est moi qui lis vos messages, qui choisis la bobine dans le
+        rack derrière moi, qui lance la machine et qui ferme le paquet.
+      </p>
+      <p class="mesure">
+        Je vous montre le motif avant de lancer la machine. Si quelque chose ne va pas, on le
+        change&nbsp;: tant que ce n'est pas piqué, tout est possible.
+      </p>
+      <p class="signature">Emma</p>
+      <p class="actions">
+        <a class="btn btn--creux" href="/l-atelier/">Visiter l'atelier</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ===================== APPEL FINAL ===================== -->
+  <section class="final bande" id="devis">
+    <Image
+      class="final__fond"
+      src={tambour}
+      alt=""
+      widths={[800, 1400]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="final__in">
+      <p class="sourcil sourcil--clair">On commence&nbsp;?</p>
+      <p
+        class="prenom-geant prenom-geant--clair"
+        data-broderie="prenom"
+        data-fil="#E8CFC6"
+        data-duree="2800"
+        data-declencheur="visible"
+      >
+        Keanu
+      </p>
+      <h2 class="titre-xl">Racontez-moi<br /><em>votre projet.</em></h2>
+      <p class="mesure mesure--clair">
+        Un prénom, un motif, un logo de club, une pièce en dentelle, un set de table&nbsp;:
+        écrivez-moi ce que vous avez en tête, même flou. Je réponds dans la journée avec un prix,
+        un délai et une proposition. Ça ne vous engage à rien.
+      </p>
+      <p class="actions">
+        <a class="btn btn--wa" href={lienWhatsApp()}>Écrire sur WhatsApp</a>
+        <a class="btn btn--or" href="/contact/#devis">Remplir le formulaire</a>
+      </p>
+      <p class="final__note">
+        Ou par téléphone au <a href={`tel:${CONTACT.telephone}`}>{CONTACT.telephone}</a>.
+      </p>
+    </div>
+  </section>
+</Base>

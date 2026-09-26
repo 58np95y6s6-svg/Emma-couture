@@ -461,13 +461,20 @@ h2.sourcil { font-weight: 500; }
 .hero__photo {
   grid-column: bord-d / bord-f;
   position: relative;
-  height: clamp(260px, 42svh, 430px);
+  /* Un RAPPORT, pas une hauteur fixe. Avec une hauteur en pixels et une
+     largeur variable, la fraction d'image visible change du tout au tout
+     entre 390 px et 800 px : le visage d'Emma passait de cadré à décapité.
+     Le rapport garde la même portion de photo à toutes les largeurs. */
+  aspect-ratio: 4 / 3;
+  max-block-size: 62svh;
   overflow: hidden;
   background: var(--brique);
 }
 .hero__photo img {
   width: 100%; height: 100%;
-  object-fit: cover; object-position: 50% 18%;
+  object-fit: cover;
+  /* Le visage occupe environ 18 % à 62 % de la hauteur de la source. */
+  object-position: 50% 30%;
 }
 .hero__photo::after {
   content: ''; position: absolute; inset: 0;
