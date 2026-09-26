@@ -354,7 +354,41 @@ graphiques simples), filtre semaine / mois / année :
 - **Calendrier des temps forts** qui suggère de préparer bannière, page occasion et message aux
   inscrit·es ~4 à 6 semaines avant (fête des mères, fête des pères, rentrée, Halloween, Noël…).
 
-### 7. Aide intégrée
+### 7. Instagram : import automatique, publication validée
+Emmanuelle poste déjà ses créations sur Instagram. Le site réutilise ces photos **sans qu'elle
+ait à les republier**, mais **rien ne s'affiche sans son accord**.
+
+Fonctionnement :
+- Une **fonction planifiée** (1 à 2 fois par jour, jamais à chaque visite) interroge l'API,
+  récupère les derniers posts, **recopie les images dans Netlify Blobs** et stocke la légende.
+- Dans l'admin, une file « Nouveautés Instagram » : chaque post a deux gros boutons,
+  **« Afficher sur le site »** / **« Masquer »**. Défaut = masqué. Possibilité de corriger le
+  texte alternatif et de rattacher le post à une création existante.
+- Les posts validés alimentent une bande secondaire « Des nouvelles de l'atelier », **jamais**
+  les fiches `/creations/`, qui restent choisies et rédigées à la main.
+- Aucun rebuild déclenché.
+
+Contraintes techniques à respecter :
+- ⚠️ L'API **Basic Display a été coupée par Meta le 4 décembre 2024**. Il n'existe plus de voie
+  officielle pour un compte personnel : **le compte d'Emmanuelle doit être professionnel**
+  (Créateur ou Business). Utiliser l'*Instagram API with Instagram Login*.
+- ⚠️ Le **jeton longue durée expire au bout de 60 jours**. Le renouveler automatiquement tous les
+  ~50 jours depuis la fonction planifiée, et **prévenir Emmanuelle dans l'admin** si le
+  renouvellement échoue — sinon la galerie se vide sans que personne ne comprenne pourquoi.
+- ⚠️ Les **URL d'images d'Instagram sont temporaires** (quelques heures à quelques jours) : ne
+  jamais les stocker telles quelles ni les servir aux visiteuses. On sert **nos propres copies**.
+- Les images ne doivent **jamais** être chargées depuis le CDN de Meta côté visiteuse : cela ferait
+  dialoguer son navigateur avec Meta et fragiliserait la position « aucun traceur, pas de bandeau ».
+- Budget : appels de fonctions et bande passante comptent dans les 300 crédits/mois. Cache CDN
+  généreux sur la bande « nouvelles de l'atelier », vignettes compressées.
+- Politique de confidentialité : ajouter Meta comme sous-traitant uniquement si des données
+  personnelles transitent ; préciser que les images sont hébergées chez nous.
+- Consentement : la validation manuelle est aussi le garde-fou contre la republication de photos
+  d'enfants ou de clientes sans accord.
+
+À compléter : pseudo Instagram d'Emmanuelle, et statut du compte (personnel ou déjà professionnel).
+
+### 8. Aide intégrée
 Une page « Comment faire ? » avec 5-6 fiches très courtes et illustrées.
 
 ### Technique
@@ -394,7 +428,8 @@ Une page « Comment faire ? » avec 5-6 fiches très courtes et illustrées.
 - Fait-elle de la dentelle libre sur commande, ou seulement pour elle ? : [À COMPLÉTER]
   (conditionne l'angle SEO le plus différenciant)
 - Numéro WhatsApp (idéalement WhatsApp Business, gratuit) : [À COMPLÉTER]
-- Réseaux sociaux : [À COMPLÉTER]
+- Réseaux sociaux : Instagram (pseudo [À COMPLÉTER]) — préciser si le compte est personnel ou
+  professionnel : l'import automatique exige un compte professionnel. Facebook : [À COMPLÉTER]
 - Remise en main propre possible à Rennes ? Marchés habituels ? : [À COMPLÉTER]
 - Photo portrait d'Emma (haute qualité, lumière naturelle) : [À FOURNIR]
 - Photos des créations : [À FOURNIR]
