@@ -35,3 +35,10 @@ npm-debug.log*
 # régénérés par `node scripts/preparer-maquette.mjs`
 docs/img/
 docs/maquette-prenom/img/
+
+# Photos : dérivées de photos-originales/ par scripts/traiter-photos.mjs.
+# Hors Git parce que le dépôt est public et qu'elles montrent le portrait
+# d'Emma et des prénoms de clientes. Régénérer après un clone :
+#   node scripts/traiter-photos.mjs && node scripts/preparer-maquette.mjs
+src/assets/creations/
+docs/planches-contact/
