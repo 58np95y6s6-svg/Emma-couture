@@ -17,6 +17,17 @@
     X-Robots-Tag = "noindex, nofollow, noarchive"
     Cache-Control = "no-store"
 
+# ⚠️ PROVISOIRE — à retirer au passage sur emma-broderie.fr
+# Le site tourne sur le sous-domaine netlify.app avec des valeurs d'exemple
+# (prix, délais, avis, numéro de téléphone) et des mentions légales
+# incomplètes. On le rend visible par lien, mais on le tient hors des moteurs
+# de recherche : sinon il devient la vitrine publique d'Emma, et il fera
+# doublon avec le vrai domaine le jour où celui-ci existera.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+
 [[headers]]
   for = "/*"
   [headers.values]

@@ -36,9 +36,13 @@ npm-debug.log*
 docs/img/
 docs/maquette-prenom/img/
 
-# Photos : dérivées de photos-originales/ par scripts/traiter-photos.mjs.
-# Hors Git parce que le dépôt est public et qu'elles montrent le portrait
-# d'Emma et des prénoms de clientes. Régénérer après un clone :
-#   node scripts/traiter-photos.mjs && node scripts/preparer-maquette.mjs
-src/assets/creations/
+# Les photos TRAITÉES (src/assets/creations/) sont versionnées : sans elles le
+# dépôt ne se construit pas. Elles sortent de scripts/traiter-photos.mjs, qui
+# supprime toutes les métadonnées — vérifié : 0 coordonnée GPS sur 32 fichiers.
+#
+# Les ORIGINAUX restent hors Git : 204 Mo, et 77 sur 100 géolocalisent le
+# domicile d'Emma. Le dépôt est public.
+#
+# Les planches contact montrent les 102 photos d'origine, visages compris :
+# hors Git également. Régénérer avec : node scripts/planche-contact.mjs
 docs/planches-contact/

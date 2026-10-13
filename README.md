@@ -16,23 +16,26 @@ npm run dev
 
 Le site tourne sur http://localhost:4321.
 
-### Les photos ne sont pas dans le dépôt
+### Les photos
 
-Le dépôt est public, et les photos montrent le portrait d'Emma ainsi que des créations où
-des **prénoms de clientes sont lisibles**. Elles sont donc hors Git, comme les originaux.
+Les photos **traitées** sont dans le dépôt (`src/assets/creations/`, 11 Mo) : sans elles,
+`npm run build` échoue sur les imports d'images. Elles sortent de `scripts/traiter-photos.mjs`,
+qui recadre aux formats de la direction artistique, encode en WebP et **supprime toutes les
+métadonnées**. Vérifié : aucune coordonnée GPS sur les 32 fichiers.
 
-Elles se régénèrent depuis `photos-originales/` (fourni séparément) :
+Les **originaux** restent hors Git — 204 Mo, et 77 sur 100 géolocalisent le domicile d'Emma.
+Le dépôt étant public, les y mettre reviendrait à publier son adresse. Même raison pour les
+planches contact, qui montrent les 102 photos d'origine, visages compris.
+
+Pour régénérer après avoir récupéré `photos-originales/` :
 
 ```bash
-node scripts/traiter-photos.mjs
+node scripts/traiter-photos.mjs      # photos du site + journal des retouches
+node scripts/preparer-maquette.mjs   # visuels des maquettes dans docs/
+node scripts/planche-contact.mjs     # planches contact numérotées
 ```
 
-Le script recadre aux formats de la direction artistique, encode en WebP, **supprime toutes les
-métadonnées EXIF** (position GPS comprise : les photos prises à domicile révèlent l'adresse) et
-écrit un journal dans `docs/journal-retouches.json`. Il refuse tout recadrage qui demanderait
-plus de 5 % d'agrandissement.
-
-Sans ces fichiers, `npm run build` échoue sur les imports d'images.
+Le script de traitement refuse tout recadrage qui demanderait plus de 5 % d'agrandissement.
 
 ## Structure
 

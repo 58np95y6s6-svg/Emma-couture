@@ -3,7 +3,9 @@
 # mentionné ici (ce fichier est public). Il est protégé par l'en-tête
 # X-Robots-Tag dans netlify.toml et une balise meta noindex.
 
+# ⚠️ PROVISOIRE — le site tourne sur un sous-domaine netlify.app avec des
+# valeurs d'exemple. Indexation refusée jusqu'au passage sur emma-broderie.fr.
 User-agent: *
-Allow: /
+Disallow: /
 
 Sitemap: https://emma-broderie.fr/sitemap-index.xml
