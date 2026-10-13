@@ -80,14 +80,14 @@ const faqLd = {
   })),
 };
 
-/* ⚠️ Valeurs de droite = EXEMPLES DE FORMAT, pas des données clientes.
-   « 3,85 kg » reprend la légende d'exemple de l'accueil. */
+/* Valeurs reprises du cadre « Ambre » photographié plus bas (cohérence
+   photo / texte). ⚠️ Accord de la cliente à confirmer avant mise en ligne. */
 const fiche = [
   { l: 'Prénom', v: 'Ambre', n: "l'orthographe exacte, en cursive ou en capitales" },
-  { l: 'Date', v: '16.01.2026', n: 'ou « 16 janvier 2026 »' },
-  { l: 'Heure', v: '04 h 12', n: 'facultatif' },
-  { l: 'Poids', v: '3,85 kg', n: '' },
-  { l: 'Taille', v: '49 cm', n: '' },
+  { l: 'Date', v: '16.01.2024', n: 'ou « 16 janvier 2024 »' },
+  { l: 'Heure', v: '14 h 46', n: 'facultatif' },
+  { l: 'Poids', v: '3,135 kg', n: '' },
+  { l: 'Taille', v: '50 cm', n: '' },
 ];
 ---
 
@@ -139,8 +139,8 @@ const fiche = [
         {/* ⚠️ Données d'exemple : format d'une fiche, pas une vraie cliente. */}
         <dl class="na-carte" aria-label="Exemple d'informations brodées">
           <div><dt>Prénom</dt><dd>Ambre</dd></div>
-          <div><dt>Née le</dt><dd>16.01.2026</dd></div>
-          <div><dt>Poids</dt><dd>3,85 kg</dd></div>
+          <div><dt>Née le</dt><dd>16.01.2024</dd></div>
+          <div><dt>Poids</dt><dd>3,135 kg</dd></div>
         </dl>
       </div>
     </section>
@@ -187,7 +187,7 @@ const fiche = [
         <li class="planche__b">
           <Image
             src={photoKeanu}
-            alt="Doudou plat en tissu étoilé, prénom brodé au centre en fil bleu"
+            alt="Doudou plat blanc à pois avec une tête d'ourson, prénom brodé au centre en fil vert"
             widths={[320, 480, 700]}
             sizes="(max-width: 48rem) 76vw, 28vw"
             loading="lazy"
@@ -198,7 +198,7 @@ const fiche = [
         <li class="planche__c">
           <Image
             src={photoSac}
-            alt="Sac à dos d'enfant brodé au prénom Malo"
+            alt="Sac à dos d'enfant bleu marine, rabat brodé d'étoiles et du prénom Malo"
             widths={[320, 480, 700]}
             sizes="(max-width: 48rem) 76vw, 26vw"
             loading="lazy"

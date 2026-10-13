@@ -133,7 +133,7 @@ const chemin = [
         <span class="at-tambour__vis" aria-hidden="true"></span>
         <Image
           src={portrait}
-          alt="Emma, brodeuse et couturière à Vitré, à son poste de travail"
+          alt="Portrait d'Emma, brodeuse et couturière à Vitré, souriante, en plein air"
           widths={[320, 480, 640, 820]}
           sizes="(max-width: 64rem) 78vw, 30rem"
           loading="eager"
@@ -695,11 +695,12 @@ const chemin = [
   }
   /* Deux pièces de patron : un trait de coupe en pointillés autour de chaque photo */
   .at-patron { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(1.2rem, 4vw, 2.5rem); padding: 0.75rem; }
+  .at-patron { align-items: start; }
   .at-patron li { position: relative; display: grid; gap: 0.8rem; }
   .at-patron li:nth-child(2) { margin-block-start: 3.5rem; }
   .at-patron li::before {
     content: '';
-    position: absolute; inset: -0.6rem -0.6rem 1.9rem;
+    position: absolute; inset: -0.6rem -0.6rem 2.3rem;
     border: 1.5px dashed color-mix(in oklab, var(--encre) 45%, transparent);
     border-radius: var(--r-m);
     pointer-events: none;

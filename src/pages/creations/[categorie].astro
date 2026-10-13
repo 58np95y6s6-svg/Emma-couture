@@ -421,7 +421,7 @@ const titre = `${cat.titre} | ${SITE.nom}`;
   .dt__tambour {
     --bois: #C9A97E; --bois-fonce: #8A6A46;
     position: relative;
-    width: min(100%, 34rem);
+    width: min(100% - 2.5rem, 34rem);
     justify-self: center;
     aspect-ratio: 1;
     border-radius: 50%;
@@ -502,7 +502,7 @@ const titre = `${cat.titre} | ${SITE.nom}`;
   .faits dd { margin: 0; font-size: clamp(1rem, 0.9rem + 0.4vw, 1.2rem); color: var(--encre); }
   .faits > div:first-child dd { color: var(--coquelicot-fonce); }
   @media (max-width: 30rem) {
-    .faits > div:last-child { flex-basis: 100%; padding-inline-start: 0; border-inline-start: 0; border-block-start: 1px dashed color-mix(in oklab, var(--encre) 18%, transparent); }
+    .faits > div + div:last-child { flex-basis: 100%; padding-inline-start: 0; border-inline-start: 0; border-block-start: 1px dashed color-mix(in oklab, var(--encre) 18%, transparent); }
   }
 
   /* ============================ VEDETTE ============================ */

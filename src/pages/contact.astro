@@ -402,7 +402,7 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
               <input type="checkbox" name="nouveautes" value="Oui" />
               <span>
                 Je souhaite être prévenu·e des nouveautés et des dates limites de commande pour
-                Noël, à raison de quelques messages par an.
+                Noël, à raison de quelques messages par an.{' '}
                 <a href="/politique-de-confidentialite/">Utilisation de mes données</a>
               </span>
             </label>
@@ -420,7 +420,7 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
           <button type="submit" class="btn btn--wa btn--grand ct-envoi__btn">Envoyer ma demande</button>
           <p class="ct-rgpd">
             Vos réponses servent uniquement à traiter votre demande et à préparer votre commande.
-            Elles ne sont ni revendues ni transmises.
+            Elles ne sont ni revendues ni transmises.{' '}
             <a href="/politique-de-confidentialite/">Politique de confidentialité</a>
           </p>
         </div>
@@ -1137,6 +1137,11 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
     padding: clamp(1.4rem, 4vw, 2.4rem);
     border-radius: var(--r-l);
     overflow: hidden;
+  }
+  @media (min-width: 48rem) and (max-width: 63.99rem) {
+    .ct-aside.tapis { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2.5rem; align-items: start; }
+    .ct-aside__h2, .ct-aside__p { grid-column: 1 / -1; }
+    .ct-infos { grid-column: 2; grid-row: 3 / span 2; margin-block-start: -0.85rem; }
   }
   .ct-aside__h2 {
     font-size: clamp(1.8rem, 1.3rem + 1.6vw, 2.5rem);

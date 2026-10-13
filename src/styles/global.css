@@ -102,6 +102,9 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
+  /* Un fond sur <html> : sans lui, celui du <body> est reporté sur le
+     canevas et son dégradé se calait sur la hauteur de la fenêtre. */
+  background-color: var(--lin);
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
   color-scheme: light;

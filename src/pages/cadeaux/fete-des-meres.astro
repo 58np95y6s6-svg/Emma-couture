@@ -1,9 +1,10 @@
 ---
 /**
  * /cadeaux/fete-des-meres/ — page d'atterrissage.
- * Intention unique : « cadeau fête des mères personnalisé ».
- * Angle : la date est fixe et connue d'avance, donc une vraie date limite
- * de commande — calculée au build, jamais écrite en dur.
+ * Intention unique : « cadeau fête des mères brodé ». Ne pas y viser la
+ * naissance, le mariage ni Noël.
+ * Angle : choisir l'objet d'après la personne ; la date est fixe et connue
+ * d'avance, donc calculée au build, jamais écrite en dur.
  *
  * ⚠️ MAQUETTE. Prix et délais viennent de src/config.ts et du contenu.
  * Vocabulaire : broderie MACHINE. « Cousu main » ne vaut que pour les
@@ -22,9 +23,8 @@ import photoBanane from '../../assets/creations/galerie/sac-banane-cousu-main-br
 import photoFinal from '../../assets/creations/plein-ecran/tambour-decoratif-brode-fee-rouge.webp';
 
 /* ---------------------------------------------------------------------------
-   La date de la fête des mères en France : dernier dimanche de mai, sauf si
-   c'est la Pentecôte — dans ce cas, premier dimanche de juin. Calculée au
-   build : la page ne peut donc pas afficher une date périmée.
+   La fête des mères en France : dernier dimanche de mai, sauf si c'est la
+   Pentecôte — dans ce cas, premier dimanche de juin. Calculée au build.
 --------------------------------------------------------------------------- */
 function paques(an: number): Date {
   const A = an % 19;
@@ -68,20 +68,16 @@ const prochaine =
 const MARGE_JOURS = 21;
 const dateLimite = new Date(prochaine.getTime() - MARGE_JOURS * 86400000);
 
-const fmtLong = new Intl.DateTimeFormat('fr-FR', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long',
-  timeZone: 'UTC',
-});
-const fmtCourt = new Intl.DateTimeFormat('fr-FR', {
-  day: 'numeric',
-  month: 'long',
-  timeZone: 'UTC',
-});
+const fmtLong = new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
+const fmtCourt = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'long', timeZone: 'UTC' });
+const fmtJour = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', timeZone: 'UTC' });
+const fmtMois = new Intl.DateTimeFormat('fr-FR', { month: 'long', timeZone: 'UTC' });
 const dateFete = fmtLong.format(prochaine);
 const anneeFete = prochaine.getUTCFullYear();
 const dateFeteCourte = fmtCourt.format(prochaine);
+const jourFete = fmtJour.format(prochaine);
+const moisFete = fmtMois.format(prochaine);
+const isoFete = prochaine.toISOString().slice(0, 10);
 const dateLimiteTexte = fmtLong.format(dateLimite);
 const isoLimite = dateLimite.toISOString().slice(0, 10);
 
@@ -95,41 +91,44 @@ const prixMini = prix.length ? Math.min(...prix) : null;
 const trousse = toutes.find((c) => c.id === 'trousse-cousue-brodee');
 const drap = toutes.find((c) => c.id === 'drap-de-bain-brode-prenom');
 
-/* Quatre entrées « si elle… » : l'objet est choisi d'après la personne, pas
-   d'après une catégorie de catalogue. Prix seulement quand une création
-   existe et porte un prix. */
+/* Quatre entrées d'après la personne, pas d'après un catalogue.
+   Prix seulement quand une création existe et porte un prix. */
 const idees = [
   {
-    si: 'Si elle traîne à la plage ou à la piscine',
+    pour: 'Pour la plage ou la piscine',
     quoi: 'Le drap de bain au prénom',
-    dit: 'Coton épais, prénom en cursive dans l’angle. Celui qu’on ne se fait plus voler sur le transat.',
+    dit: 'Coton épais, prénom brodé en écriture cursive dans un angle. Il se reconnaît au premier regard sur le transat.',
     photo: photoDrap,
     alt: 'Drap de bain rose poudré brodé au prénom en lettres cursives violettes',
     prix: drap?.data.prixDepart ?? null,
+    lien: drap ? `/creations/${drap.id}/` : null,
   },
   {
-    si: 'Si elle range tout dans son sac',
-    quoi: 'La trousse cousue puis brodée',
-    dit: 'Je la couds avant de la broder. Vous choisissez le tissu dans mes coupons, ou vous apportez le vôtre.',
+    pour: 'Pour le sac à main',
+    quoi: 'La trousse cousue main, brodée au prénom',
+    dit: 'Je la couds avant de la broder. Le tissu se choisit parmi mes coupons, ou vous me confiez le vôtre.',
     photo: photoTrousse,
-    alt: 'Trousse en tissu fleuri bleu et blanc, cousue main, brodée au prénom en fil doré',
+    alt: 'Trousse matelassée en tissu blanc à motif de feuillage, cousue main, brodée au prénom en fil doré',
     prix: trousse?.data.prixDepart ?? null,
+    lien: trousse ? `/creations/${trousse.id}/` : null,
   },
   {
-    si: 'Si elle a un mur vide dans la cuisine',
+    pour: 'Pour la maison',
     quoi: 'Le tambour décoratif',
-    dit: 'Un motif brodé, tendu dans son cadre, prêt à accrocher. Le prénom peut y tenir aussi.',
+    dit: 'Un motif brodé, tendu dans son cadre et prêt à accrocher. Un prénom ou une date peuvent y figurer.',
     photo: photoTambour,
     alt: 'Tambour à broder décoratif avec une fée brodée en fil rouge, prêt à accrocher',
     prix: null,
+    lien: null,
   },
   {
-    si: 'Si elle sort les mains libres',
+    pour: 'Pour les sorties',
     quoi: 'Le sac banane cousu main',
-    dit: 'Cousu ici, brodé du motif de votre choix — celui-là est parti couvert de chats.',
+    dit: 'Cousu à l’atelier, brodé du motif de votre choix. Celui-ci porte un semis de petits chats.',
     photo: photoBanane,
     alt: 'Sac banane cousu main, tissu brodé de petits chats',
     prix: null,
+    lien: null,
   },
 ];
 
@@ -139,37 +138,37 @@ const wa = lienWhatsApp(
 
 const og = await getImage({ src: photoTrousse, width: 1200, height: 630, format: 'jpeg' });
 
-const titre = `Cadeau de fête des mères personnalisé & brodé — ${SITE.ville} (35) | ${SITE.nom}`;
-const description = `Cadeau de fête des mères personnalisé, brodé à ${SITE.ville} (35) : trousse cousue main, drap de bain, tablier, tambour. Le ${dateFeteCourte} ${anneeFete} : commandez avant le ${fmtCourt.format(dateLimite)}.`;
+const titre = `Cadeau fête des mères brodé et personnalisé — ${SITE.ville} (35) | ${SITE.nom}`;
+const description = `Cadeau de fête des mères brodé au prénom à ${SITE.ville} (35) : trousse cousue main, drap de bain, tablier, tambour décoratif. Le ${dateFeteCourte} ${anneeFete} : commande avant le ${fmtCourt.format(dateLimite)}.`;
 
 const faq = [
   {
-    q: `Jusqu'à quand je peux commander pour la fête des mères ?`,
-    r: `La fête des mères tombe le ${dateFete} ${anneeFete}. Pour être tranquille, commandez avant le ${dateLimiteTexte} : ça laisse le temps de valider le motif, de broder et d'expédier. Après cette date, écrivez-moi quand même sur WhatsApp — je vous dirai franchement si c'est encore jouable.`,
+    q: 'Jusqu’à quelle date puis-je commander pour la fête des mères ?',
+    r: `La fête des mères a lieu le ${dateFete} ${anneeFete}. Je vous recommande de commander avant le ${dateLimiteTexte}, afin de disposer du temps nécessaire à la validation du motif, à la broderie et à l'expédition. Au-delà, contactez-moi sur WhatsApp : je vous indiquerai ce qui reste réalisable.`,
   },
   {
-    q: 'Combien ça coûte ?',
+    q: 'Quels sont les prix ?',
     r: [
-      drap?.data.prixDepart ? `Le drap de bain au prénom commence à ${drap.data.prixDepart} €` : null,
-      trousse?.data.prixDepart ? `la trousse cousue main à ${trousse.data.prixDepart} €` : null,
+      drap?.data.prixDepart ? `Le drap de bain au prénom est proposé à partir de ${drap.data.prixDepart} €` : null,
+      trousse?.data.prixDepart ? `la trousse cousue main à partir de ${trousse.data.prixDepart} €` : null,
     ]
       .filter(Boolean)
       .join(', ')
       .concat(
-        `. Pour le reste — tablier, serviettes, tambour décoratif — le prix dépend du support et de la taille du motif. Je vous donne un prix ferme avant de commencer.`,
+        `. Pour un tablier, des serviettes ou un tambour décoratif, le prix dépend du support et de la taille du motif : je vous communique un prix ferme avant toute réalisation.`,
       ),
   },
   {
-    q: `Je n'ai aucune idée de ce qui lui plairait.`,
-    r: `Alors ne cherchez pas l'objet, décrivez-moi la personne : ce qu'elle fait de ses journées, ce qu'elle emporte partout, la couleur qu'elle porte. Je vous propose deux ou trois pistes avec un prix, vous choisissez.`,
+    q: 'Je ne sais pas quel objet choisir.',
+    r: `Décrivez-moi plutôt la personne : ses occupations, ce qu'elle emporte au quotidien, les couleurs qu'elle porte. Je vous propose deux ou trois pistes chiffrées, parmi lesquelles vous choisissez.`,
   },
   {
-    q: 'On peut broder les prénoms des enfants plutôt que le sien ?',
-    r: `Oui, et c'est très demandé : les prénoms des enfants ou des petits-enfants, les uns sous les autres. Comptez la place — au-delà de quatre ou cinq prénoms, mieux vaut un grand support comme un tablier ou un drap de bain.`,
+    q: 'Peut-on broder les prénoms des enfants plutôt que le sien ?',
+    r: `Oui, c'est une demande fréquente : les prénoms des enfants ou des petits-enfants, les uns sous les autres. Au-delà de quatre ou cinq prénoms, un support plus grand, comme un tablier ou un drap de bain, est préférable.`,
   },
   {
-    q: 'C\'est emballé, et vous expédiez ?',
-    r: `Emballage cadeau compris. ${ATELIER.zones}. Si vous n'habitez pas l'Ille-et-Vilaine, je peux expédier directement chez elle.`,
+    q: 'La pièce est-elle emballée, et pouvez-vous l’expédier ?',
+    r: `L'emballage cadeau est compris. ${ATELIER.zones}. Je peux également expédier directement à la destinataire.`,
   },
 ];
 
@@ -192,479 +191,326 @@ const faqLd = {
 >
   <script type="application/ld+json" set:html={JSON.stringify(faqLd)} is:inline />
 
-  <!-- ===================== EN-TÊTE : LA DATE ===================== -->
-  <section class="bande fdm-tete">
-    <div class="fdm-mot">
-      <p class="sourcil">Fête des mères — {SITE.ville}&nbsp;(35)</p>
-      <h1>Elle a déjà tout.<br /><em>Sauf son prénom dessus.</em></h1>
-      <p class="chapo">
-        Cadeau de fête des mères personnalisé, brodé à {SITE.ville}&nbsp;: une trousse cousue main,
-        un drap de bain, un tablier, un tambour à accrocher. Vous me donnez le prénom et la couleur,
-        je m'occupe du reste.{prixMini && ` À partir de ${prixMini} €.`}
-      </p>
-      <p class="actions">
-        <a class="btn btn--wa" href={wa}>Écrire sur WhatsApp</a>
-        <a class="btn btn--creux" href="/contact/?occasion=fete-des-meres#devis">Demander un devis</a>
-      </p>
-    </div>
+  <div class="pg">
+    <!-- ===================== HAUT DE PAGE ===================== -->
+    <section class="bande fm-ouv">
+      <nav class="ariane" aria-label="Fil d'Ariane">
+        <a href="/">Accueil</a><span aria-hidden="true">/</span>
+        <span aria-current="page">Cadeau fête des mères</span>
+      </nav>
 
-    {/* ⚠️ La date de la fête des mères est calculée. La MARGE de trois semaines
-        est une hypothèse, à faire confirmer par Emma. */}
-    <aside class="fdm-date" aria-label="Date limite de commande">
-      <p class="fdm-date__q">La prochaine, c'est le</p>
-      <p class="fdm-date__j">{dateFete}</p>
-      <p class="fdm-date__a">{anneeFete}</p>
-      <hr />
-      <p class="fdm-date__lim">
-        Dernier jour pour commander&nbsp;:
-        <time datetime={isoLimite}>{dateLimiteTexte}</time>
-      </p>
-      <p class="fdm-date__note">
-        Délai d'atelier actuel&nbsp;: {ATELIER.delaiActuel}. Après cette date, demandez quand
-        même&nbsp;: je vous réponds franchement.
-      </p>
-    </aside>
-  </section>
+      <h1>Cadeaux de fête des mères brodés au prénom</h1>
 
-  <!-- ===================== LES IDÉES ===================== -->
-  <section class="bande fdm-idees">
-    <div class="fdm-idees__dire">
-      <p class="sourcil">Choisir sans se tromper</p>
-      <h2 class="titre-xl">Ne cherchez pas l'objet.<br /><em>Décrivez-moi la personne.</em></h2>
-      <p class="mesure">
-        C'est comme ça que ça marche le mieux&nbsp;: vous me dites ce qu'elle fait de ses journées,
-        je vous dis ce qui se brode. Quatre exemples, pour voir le genre.
-      </p>
-    </div>
+      <div class="fm-ouv__dire">
+        <p class="chapo">
+          Trousse cousue main, drap de bain, tablier, tambour décoratif&nbsp;: je brode à la
+          machine, dans mon atelier de {SITE.ville}&nbsp;(35), des cadeaux personnalisés à son
+          prénom. Vous me donnez le prénom et la couleur, je vous soumets le motif avant
+          réalisation.
+        </p>
+        <p class="actions">
+          <a class="btn btn--wa btn--grand" href={wa}>Écrire sur WhatsApp</a>
+          <a class="btn btn--creux btn--grand" href="/contact/?occasion=fete-des-meres#devis">Demander un devis</a>
+        </p>
+        {prixMini && (
+          <p class="prix">À partir de <b>{prixMini}&nbsp;€</b></p>
+        )}
+      </div>
 
-    <ul class="idees">
-      {
-        idees.map((i) => (
-          <li>
-            <figure>
-              <Image
-                src={i.photo}
-                alt={i.alt}
-                widths={[320, 480, 700]}
-                sizes="(max-width: 48rem) 88vw, (max-width: 68rem) 44vw, 21rem"
-                loading="lazy"
-                decoding="async"
-              />
-            </figure>
-            <div class="idees__txt">
-              <p class="idees__si">{i.si}</p>
-              <h3>{i.quoi}</h3>
-              <p class="idees__dit">{i.dit}</p>
-              <p class="prix">
-                {i.prix ? (
-                  <Fragment>
-                    à partir de <b>{i.prix} €</b>
-                  </Fragment>
-                ) : (
-                  'prix selon le support — je vous le donne avant de commencer'
-                )}
-              </p>
-            </div>
-          </li>
-        ))
-      }
-    </ul>
+      <figure class="fm-ouv__photo">
+        <Image
+          src={photoFinal}
+          alt="Tambour à broder décoratif avec une fée brodée en fil rouge, prêt à accrocher"
+          widths={[360, 560, 760, 1000]}
+          sizes="(max-width: 48rem) 92vw, (max-width: 64rem) 44vw, 30rem"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </figure>
 
-    <p class="fdm-lien">
-      <a class="btn btn--wa" href={wa}>Lui décrire ma mère sur WhatsApp</a>
-      <a class="btn btn--creux" href="/sur-mesure/">Comment se passe une commande</a>
-    </p>
-  </section>
+      {/* ⚠️ La date de la fête des mères est calculée. La MARGE de trois semaines
+          est une hypothèse, à faire confirmer par Emma. */}
+      <aside class="fm-date" aria-label="Date de la fête des mères et date limite de commande">
+        <p class="fm-date__q mono">Fête des mères {anneeFete}</p>
+        <time class="fm-date__j" datetime={isoFete}>
+          <span>{jourFete}</span>
+          <span class="fm-date__m">{moisFete}</span>
+        </time>
+        <p class="fm-date__lim">
+          Commande recommandée avant le <time datetime={isoLimite}>{dateLimiteTexte}</time>.
+        </p>
+      </aside>
+    </section>
 
-  <!-- ===================== CRÉATIONS ===================== -->
-  <section class="bande fdm-creations">
-    <div class="tete">
-      <h2 class="titre-xl">Les pièces déjà brodées<br /><em>pour une fête des mères.</em></h2>
-      <p class="mesure">
-        Le tablier et les serviettes de plage partent aussi beaucoup en mai, mais je ne les ai pas
-        encore photographiés&nbsp;: demandez-moi, je vous envoie des photos par message.
-      </p>
-      <p class="indice"><span aria-hidden="true">→</span> faites défiler la rangée</p>
-    </div>
-
-    <div class="rangee" tabindex="0" role="region" aria-label="Créations pour la fête des mères">
-      {pour.map((c, i) => <CarteCreation creation={c} prioritaire={i === 0} />)}
-      <div class="rangee__fin">
-        <p>Le tablier, c'est <b>cousu puis brodé</b>.</p>
-        <p class="rangee__note">
-          Tissu, poche, prénom&nbsp;: on choisit tout. C'est la pièce la plus longue, donc la
-          première à commander.
+    <!-- ===================== LES IDÉES ===================== -->
+    <section class="bande fm-idees">
+      <div class="fm-idees__tete">
+        <h2 class="titre-xl">Choisir selon la personne</h2>
+        <p class="mesure">
+          Le plus sûr est de partir de ses habitudes&nbsp;: dites-moi comment elle occupe ses
+          journées, je vous indique ce qui se prête à la broderie. Quatre exemples.
         </p>
       </div>
-    </div>
 
-    <p class="fdm-lien">
-      <a class="btn btn--creux" href="/creations/">Voir toutes les créations</a>
-    </p>
-  </section>
+      <ul class="idees">
+        {
+          idees.map((i) => (
+            <li class="idee">
+              <div class="idee__in">
+                <figure class="idee__fig">
+                  <Image
+                    src={i.photo}
+                    alt={i.alt}
+                    widths={[320, 480, 700]}
+                    sizes="(max-width: 48rem) 88vw, 32vw"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </figure>
+                <div class="idee__txt">
+                  <p class="idee__pour mono">{i.pour}</p>
+                  <h3>{i.quoi}</h3>
+                  <p>{i.dit}</p>
+                  <p class="prix">
+                    {i.prix ? (
+                      <Fragment>
+                        à partir de <b>{i.prix}&nbsp;€</b>
+                      </Fragment>
+                    ) : (
+                      'prix selon le support, communiqué avant réalisation'
+                    )}
+                  </p>
+                  {i.lien && <a class="lien-fleche" href={i.lien}>Voir la création</a>}
+                </div>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
 
-  <!-- ===================== FAQ ===================== -->
-  <section class="bande fdm-faq" id="questions">
-    <h2 class="titre-xl">Ce qu'on me demande<br /><em>chaque mois de mai.</em></h2>
-    <div class="faq">
-      {
-        faq.map((f, i) => (
-          <details open={i === 0}>
-            <summary>{f.q}</summary>
-            <p>{f.r}</p>
-          </details>
-        ))
-      }
-    </div>
-  </section>
-
-  <!-- ===================== APPEL FINAL ===================== -->
-  <section class="final bande" id="devis">
-    <Image
-      class="final__fond"
-      src={photoFinal}
-      alt=""
-      aria-hidden="true"
-      widths={[800, 1400]}
-      sizes="100vw"
-      loading="lazy"
-      decoding="async"
-    />
-    <div class="final__in">
-      <p class="sourcil sourcil--clair">Il reste du temps, mais pas tant que ça</p>
-      <h2 class="titre-xl">Le prénom, la couleur,<br /><em>et c'est réglé.</em></h2>
-      <p class="mesure mesure--clair">
-        Écrivez-moi avant le <time datetime={isoLimite}>{dateLimiteTexte}</time>. Je réponds dans la
-        journée avec un prix, un délai et une proposition de motif — et vous validez le dessin avant
-        que je lance la machine.
-      </p>
       <p class="actions">
-        <a class="btn btn--or" href={wa}>Écrire sur WhatsApp</a>
-        <a class="btn btn--nuit" href="/contact/?occasion=fete-des-meres#devis">Remplir le formulaire</a>
+        <a class="btn btn--wa" href={wa}>Me décrire la destinataire</a>
+        <a class="lien-fleche" href="/sur-mesure/">Le déroulement d'une commande</a>
       </p>
-    </div>
-  </section>
+    </section>
+
+    <!-- ===================== CRÉATIONS ===================== -->
+    <section class="bande fm-creations loin">
+      <div class="tete tete--duo">
+        <h2 class="titre-xl">Créations pour la fête des mères</h2>
+        <div class="fm-creations__dire">
+          <p class="mesure">
+            Le tablier et les serviettes de plage sont également très demandés en mai. Je vous en
+            adresse des photographies sur demande.
+          </p>
+          <a class="lien-fleche" href="/creations/">Toutes les créations</a>
+        </div>
+      </div>
+
+      <div class="rangee" tabindex="0" role="region" aria-label="Créations pour la fête des mères, rangée défilante">
+        {pour.map((c, i) => <CarteCreation creation={c} />)}
+        <div class="rangee__fin">
+          <p>Le tablier cousu et brodé</p>
+          <p class="rangee__note">
+            Tissu, poche et prénom sont choisis avec vous. C'est la pièce la plus longue à
+            réaliser&nbsp;: je vous conseille de la commander en premier.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== FAQ ===================== -->
+    <section class="bande fm-faq loin" id="questions">
+      <h2 class="titre-xl">Questions fréquentes</h2>
+      <div class="faq">
+        {
+          faq.map((f, i) => (
+            <details open={i === 0}>
+              <summary>{f.q}</summary>
+              <p>{f.r}</p>
+            </details>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ===================== APPEL FINAL ===================== -->
+    <section class="final bande fm-fin" id="devis">
+      <div class="final__in">
+        <h2 class="titre-geant">Votre demande</h2>
+        <p class="chapo">
+          Indiquez-moi son prénom et la couleur qu'elle préfère. Je vous réponds avec un prix, un
+          délai et une proposition de motif, à valider avant réalisation. Commande recommandée
+          avant le <time datetime={isoLimite}>{dateLimiteTexte}</time>.
+        </p>
+        <p class="actions">
+          <a class="btn btn--wa btn--grand" href={wa}>Écrire sur WhatsApp</a>
+          <a class="btn btn--or btn--grand" href="/contact/?occasion=fete-des-meres#devis">Remplir le formulaire</a>
+        </p>
+        <p class="final__note">{ATELIER.delaiReponse} · {ATELIER.zones} · emballage cadeau compris.</p>
+      </div>
+    </section>
+  </div>
 </Base>
 
 <style>
-  /* Le sourcil global est en `white-space: nowrap` : les libellés d'une page
-     occasion sont plus longs que ceux de l'accueil et débordaient à 320 px.
-     Ici, ils passent à la ligne, et le filet disparaît sur petit écran. */
-  /* Sur fond sombre, le vert de `.btn--wa` disparaît dans la section : le
-     bouton principal passe en doré (fort contraste), le secondaire prend un
-     liseré clair. */
-  .btn--nuit {
-    color: var(--coquille);
-    border-color: color-mix(in oklab, var(--coquille) 48%, transparent);
-    background: rgb(255 255 255 / 0.06);
-  }
-  .btn--nuit::before {
-    background: var(--coquille);
-  }
-  .btn--nuit:hover {
-    color: var(--encre);
-    border-color: var(--coquille);
-  }
+  /* Le fil de la page : rouille #A8492A.
+     Contrastes : blanc / lin-haut dessus ≈ 5,7:1 ; cette rouille sur le lin
+     ≈ 4,8:1 (AA texte courant). */
+  .pg { --fil: #A8492A; --fil-sombre: #7A3119; }
 
-  .sourcil {
-    /* `flex-wrap` d'abord : le filet pointillé passe à la ligne suivante
-       plutôt que d'écraser le libellé, qui ne se coupe donc que s'il est
-       vraiment trop long pour toute la largeur. */
-    white-space: normal;
-    flex-wrap: wrap;
-    line-height: 1.5;
+  /* ============================ HAUT DE PAGE ============================
+     Le titre d'abord, sur toute la largeur ; dessous, trois blocs de
+     hauteurs différentes : le texte, la photo, et la date en carton rouille. */
+  .fm-ouv {
+    padding-block: clamp(1rem, 3vw, 2rem) var(--serre);
+    row-gap: clamp(1.5rem, 4vw, 2.5rem);
   }
-  @media (max-width: 40rem) {
-    .sourcil::after {
-      display: none;
-    }
+  .fm-ouv h1 { max-width: 16ch; color: var(--encre); }
+  .fm-ouv__dire { display: grid; gap: 1.3rem; justify-items: start; align-content: start; }
+  .fm-ouv__photo :global(img) {
+    width: 100%; aspect-ratio: 4 / 5; object-fit: cover;
+    border-radius: var(--r-l) var(--r-l) var(--r-l) 0;
   }
+  @media (prefers-reduced-motion: no-preference) {
+    .fm-ouv__photo { animation: deroule 1100ms var(--sortie) both; }
+    .fm-date { animation: pose 900ms var(--sortie) 350ms both; }
+  }
+  @keyframes deroule { from { clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 0 0); } }
+  @keyframes pose { from { transform: translateY(2rem) rotate(4deg); } to { transform: none; } }
 
-  /* ---------------------------------------------------------------------------
-     EN-TÊTE — pas de photo : la date EST l'image. C'est le seul cadeau du site
-     dont on connaît le jour d'avance, autant s'en servir comme argument.
-  --------------------------------------------------------------------------- */
-  .fdm-tete {
-    padding-block: clamp(2rem, 5vw, 3.5rem) clamp(2.5rem, 6vw, 4rem);
-    row-gap: clamp(1.75rem, 4vw, 2.5rem);
-    background-image: radial-gradient(
-      70% 55% at 88% 6%,
-      color-mix(in oklab, var(--rose) 58%, var(--sable-haut)) 0%,
-      transparent 66%
-    );
+  .fm-date {
+    position: relative;
+    display: grid; gap: 0.6rem; align-content: start;
+    padding: clamp(1.4rem, 3vw, 2rem);
+    background: var(--fil);
+    color: var(--lin-haut);
+    border-radius: var(--r-s);
   }
-  .fdm-mot {
-    min-width: 0;
-    display: grid;
-    gap: clamp(0.8rem, 2vw, 1.2rem);
-    justify-items: start;
-    align-content: center;
-  }
-  .fdm-mot h1 em {
-    color: var(--rouille);
-  }
-  .fdm-tete .sourcil {
-    color: var(--rouille);
-  }
-
-  .fdm-date {
-    min-width: 0;
-    align-self: center;
-    padding: clamp(1.1rem, 3vw, 1.75rem);
-    background: color-mix(in oklab, var(--sable-haut) 82%, #fff);
-    border: 1px solid color-mix(in oklab, var(--rouille) 30%, transparent);
-    border-start-end-radius: 70px;
-    box-shadow: 0 22px 44px -34px rgb(30 22 18 / 0.55);
-  }
-  .fdm-date__q {
-    font-size: var(--t-micro);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gris);
-  }
-  .fdm-date__j {
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: clamp(1.9rem, 1.2rem + 3.4vw, 3.4rem);
-    line-height: 0.98;
-    letter-spacing: -0.025em;
-    color: var(--rouille);
-    text-wrap: balance;
-    padding-block-start: 0.2rem;
-  }
-  .fdm-date__a {
-    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-    font-variant-numeric: tabular-nums;
-    font-size: var(--t-petit);
-    letter-spacing: 0.28em;
-    color: var(--encre-doux);
-  }
-  .fdm-date hr {
-    border: 0;
+  /* Le carton est perforé en haut, comme une étiquette d'atelier */
+  .fm-date::before {
+    content: ''; position: absolute; inset: 0.6rem 0.6rem auto;
     height: 2px;
-    margin-block: 0.9rem;
-    background: repeating-linear-gradient(90deg, var(--rouille) 0 6px, transparent 6px 12px);
-    opacity: 0.55;
+    background: repeating-linear-gradient(90deg, color-mix(in oklab, var(--lin-haut) 60%, transparent) 0 6px, transparent 6px 11px);
   }
-  .fdm-date__lim {
-    font-size: var(--t-corps);
-    line-height: 1.4;
-    color: var(--encre);
+  .fm-date__q { font-size: var(--t-micro); color: color-mix(in oklab, var(--lin-haut) 88%, transparent); margin-block-start: 0.6rem; }
+  .fm-date__j {
+    display: grid;
+    font-family: var(--f-titre);
+    font-size: clamp(5rem, 3.5rem + 6vw, 9rem);
+    line-height: 0.8; letter-spacing: -0.05em;
   }
-  .fdm-date__lim time {
-    display: block;
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: 1.45em;
-    line-height: 1.05;
-    font-style: italic;
-    color: var(--encre);
-  }
-  .fdm-date__note {
-    padding-block-start: 0.6rem;
-    font-size: var(--t-micro);
-    line-height: 1.5;
-    color: var(--gris);
+  .fm-date__m { font-size: 0.34em; letter-spacing: -0.02em; line-height: 1.1; }
+  .fm-date__lim {
+    padding-block-start: 0.8rem;
+    border-block-start: 1px solid color-mix(in oklab, var(--lin-haut) 35%, transparent);
+    font-size: var(--t-petit);
   }
 
-  @media (min-width: 62rem) {
-    .fdm-tete {
+  @media (min-width: 48rem) {
+    .fm-ouv {
       grid-template-columns:
         [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, 38rem)
-        [mi] minmax(0, 24rem)
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      column-gap: clamp(2rem, 5vw, 4.5rem);
-      padding-block-start: clamp(3rem, 5vw, 4.5rem);
+        [large-d] minmax(0, calc(var(--large) * 0.4)) [a] minmax(0, calc(var(--large) * 0.36))
+        [b] minmax(0, calc(var(--large) * 0.24)) [large-f] minmax(var(--marge), 1fr) [bord-f];
+      column-gap: clamp(1.25rem, 3vw, 2.5rem);
     }
-    .fdm-mot {
-      grid-column: large-d / mi;
-      grid-row: 1;
-    }
-    .fdm-date {
-      grid-column: mi / large-f;
-      grid-row: 1;
-    }
+    .fm-ouv h1 { grid-column: large-d / large-f; font-size: clamp(3.6rem, 1rem + 5.6vw, 8rem); max-width: 18ch; }
+    .fm-ouv__dire { grid-column: large-d / a; grid-row: 3; }
+    .fm-ouv__photo { grid-column: a / large-f; grid-row: 3; }
+    .fm-date { grid-column: a / large-f; grid-row: 4; justify-self: end; width: min(100%, 22rem); margin-block-start: -6rem; margin-inline-end: 1rem; }
+  }
+  @media (min-width: 64rem) {
+    .fm-ouv__photo { grid-column: a / b; }
+    .fm-date { grid-column: b / large-f; grid-row: 3; align-self: end; margin: 0 0 3rem -3rem; justify-self: stretch; width: auto; }
+    .fm-ouv__dire { padding-inline-end: 2rem; }
   }
 
-  /* ---------------------------------------------------------------------------
-     LES IDÉES — on entre par la personne (« si elle… »), pas par le rayon.
-  --------------------------------------------------------------------------- */
-  .fdm-idees {
-    padding-block: clamp(2.75rem, 6.5vw, 5rem);
-    row-gap: clamp(1.75rem, 4vw, 2.75rem);
-    background: color-mix(in oklab, var(--sable) 90%, var(--rouille));
+  /* ============================ LES IDÉES ============================
+     Chaque idée est un conteneur : sa mise en page dépend de sa propre
+     largeur (@container), pas de l'écran. Les lignes alternent. */
+  .fm-idees { padding-block: var(--respire); row-gap: clamp(2.5rem, 5vw, 4rem); }
+  .fm-idees__tete { display: grid; gap: 1.1rem; }
+  @media (min-width: 56rem) {
+    .fm-idees__tete { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: end; column-gap: 4rem; }
   }
-  .fdm-idees__dire {
-    min-width: 0;
-    display: grid;
-    gap: 0.9rem;
-    justify-items: start;
+  .idees { display: grid; gap: clamp(2.5rem, 6vw, 5rem); }
+  .idee { container-type: inline-size; }
+  .idee__in { display: grid; gap: 1.2rem; align-items: center; }
+  .idee__fig :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--r-m); }
+  .idee__txt { display: grid; gap: 0.7rem; justify-items: start; }
+  .idee__pour { font-size: var(--t-micro); color: var(--fil); }
+  .idee h3 { font-size: clamp(1.9rem, 1.3rem + 2.4vw, 3.4rem); line-height: 1; max-width: 16ch; }
+  .idee__txt > p:not(.prix):not(.idee__pour) { color: var(--encre-doux); max-width: 30rem; }
+  @container (min-width: 40rem) {
+    .idee__in { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(2rem, 5cqi, 4rem); }
+    .idee:nth-child(even) .idee__fig { order: 2; }
   }
-  .fdm-idees .titre-xl em {
-    color: var(--rouille);
+  @container (min-width: 56rem) {
+    .idee__in { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr); }
+    .idee:nth-child(even) .idee__in { grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr); }
+    .idee:nth-child(even) .idee__txt { padding-inline-start: 12%; }
   }
-  .idees {
-    min-width: 0;
-    display: grid;
-    gap: clamp(1.5rem, 3.5vw, 2.75rem);
-    grid-template-columns: repeat(auto-fit, minmax(min(19rem, 100%), 1fr));
-  }
-  .idees > li {
-    min-width: 0;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0.9rem;
-    align-content: start;
-  }
-  .idees figure {
-    margin: 0;
-    min-width: 0;
-  }
-  .idees figure :global(img) {
-    inline-size: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: 4px;
-  }
-  .idees > li:nth-child(odd) figure :global(img) {
-    border-end-start-radius: 100px;
-  }
-  .idees > li:nth-child(even) figure :global(img) {
-    border-start-end-radius: 100px;
-  }
-  .idees__txt {
-    min-width: 0;
-    display: grid;
-    gap: 0.4rem;
-    align-content: start;
-  }
-  .idees__si {
-    font-size: var(--t-micro);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    line-height: 1.45;
-    color: var(--rouille);
-  }
-  .idees h3 {
-    font-size: clamp(1.25rem, 1.1rem + 0.7vw, 1.6rem);
-  }
-  .idees__dit {
-    font-size: var(--t-petit);
-    line-height: 1.6;
-    color: var(--encre-doux);
-  }
-  /* Sur écran large, deux rangées de deux : la troisième et la quatrième
-     idée se décalent, pour que la grille ne se lise pas comme un catalogue. */
-  @media (min-width: 68rem) {
-    .idees {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      column-gap: clamp(1rem, 2.5vw, 2rem);
-    }
-    .idees > li:nth-child(even) {
-      padding-block-start: clamp(1.5rem, 4vw, 3.5rem);
-    }
-  }
-  .fdm-lien {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 0.9rem;
-  }
-
-  /* ---------------------------------------------------------------------------
-     CRÉATIONS
-  --------------------------------------------------------------------------- */
-  .fdm-creations {
-    padding-block: clamp(2.5rem, 6vw, 4.5rem);
-    row-gap: clamp(1.75rem, 4vw, 3rem);
-  }
-  .rangee__note {
-    font-family: 'Jost', sans-serif;
-    font-size: var(--t-micro);
-    line-height: 1.5;
-    color: var(--gris);
-  }
-
-  /* ---------------------------------------------------------------------------
-     FAQ
-  --------------------------------------------------------------------------- */
-  .fdm-faq {
-    padding-block: clamp(2rem, 5vw, 3.5rem) clamp(2.5rem, 6vw, 4.5rem);
-    row-gap: clamp(1.25rem, 3vw, 2rem);
-  }
-  .fdm-faq > * {
-    min-width: 0;
-  }
-  .fdm-faq .titre-xl em {
-    color: var(--rouille);
-  }
-  .faq {
-    display: grid;
-    max-width: 48rem;
-    border-block-start: 1px solid color-mix(in oklab, var(--rouille) 30%, transparent);
-  }
-  .faq details {
-    border-block-end: 1px solid color-mix(in oklab, var(--rouille) 30%, transparent);
-  }
-  .faq summary {
-    display: flex;
-    align-items: baseline;
-    gap: 0.8rem;
-    min-height: 44px;
-    padding-block: 1rem;
-    cursor: pointer;
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: clamp(1.15rem, 1.02rem + 0.6vw, 1.5rem);
-    line-height: 1.2;
-    list-style: none;
-  }
-  .faq summary::-webkit-details-marker {
-    display: none;
-  }
-  .faq summary::before {
-    content: '+';
-    flex: none;
-    inline-size: 1.1em;
-    color: var(--rouille);
-  }
-  .faq details[open] summary::before {
-    content: '−';
-  }
-  .faq summary:hover {
-    color: var(--rouille);
-  }
-  .faq p {
-    padding: 0 0 1.1rem 1.9rem;
-    max-width: 42rem;
-    font-size: var(--t-petit);
-    line-height: 1.65;
-    color: var(--encre-doux);
-  }
-
-  /* ---------------------------------------------------------------------------
-     RÉVÉLATIONS
-  --------------------------------------------------------------------------- */
+  /* Le cadre se resserre autour de la photo à l'entrée, comme un tambour */
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
-      .idees > li {
-        animation: fdm-monte linear both;
-        animation-timeline: view();
-        animation-range: entry 4% entry 52%;
-      }
+      .idee__fig { animation: cadre linear both; animation-timeline: view(); animation-range: entry 0% cover 40%; }
     }
   }
-  @keyframes fdm-monte {
-    from {
-      opacity: 0;
-      transform: translateY(22px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
+  @keyframes cadre {
+    from { clip-path: inset(12% 12% 12% 12% round 50%); }
+    to { clip-path: inset(0 0 0 0 round var(--r-m)); }
   }
-  @media (prefers-reduced-motion: reduce) {
-    .idees > li {
-      opacity: 1 !important;
-      transform: none !important;
-    }
+
+  /* ============================ CRÉATIONS ============================ */
+  .fm-creations { padding-block: var(--serre) var(--respire); row-gap: clamp(2rem, 4vw, 3rem); background: color-mix(in oklab, var(--fil) 7%, var(--lin)); }
+  .fm-creations__dire { display: grid; gap: 0.8rem; justify-items: start; }
+  .rangee__fin {
+    display: grid; align-content: center; gap: 0.9rem;
+    padding: clamp(1.4rem, 3vw, 2rem);
+    border-radius: var(--r-l);
+    border: 1.5px dashed color-mix(in oklab, var(--fil) 50%, transparent);
+    scroll-snap-align: start;
   }
+  .rangee__fin p:first-child { font-family: var(--f-titre); font-size: clamp(1.6rem, 1.3rem + 1vw, 2.2rem); line-height: 1.05; }
+  .rangee__note { font-size: var(--t-petit); color: var(--encre-doux); }
+
+  /* ============================ FAQ ============================ */
+  .fm-faq { padding-block: var(--respire) var(--serre); row-gap: 2rem; }
+  @media (min-width: 64rem) {
+    .fm-faq {
+      grid-template-columns:
+        [bord-d] minmax(var(--marge), 1fr)
+        [large-d] minmax(0, calc(var(--large) * 0.36)) [mi] minmax(0, calc(var(--large) * 0.64))
+        [large-f] minmax(var(--marge), 1fr) [bord-f];
+      align-items: start;
+    }
+    .fm-faq .titre-xl { grid-column: large-d / mi; position: sticky; top: 7rem; }
+    .fm-faq .faq { grid-column: mi / large-f; }
+  }
+  .faq { display: grid; border-block-start: 1.5px solid var(--encre); }
+  .faq details { border-block-end: 1px solid color-mix(in oklab, var(--encre) 18%, transparent); }
+  .faq summary {
+    display: flex; align-items: baseline; gap: 1rem;
+    min-height: 44px; padding-block: 1.1rem;
+    cursor: pointer; list-style: none;
+    font-family: var(--f-titre);
+    font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.85rem); line-height: 1.15;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after {
+    content: '+'; margin-inline-start: auto; flex: none;
+    font-family: var(--f-mono); font-size: 1.2rem; color: var(--fil);
+    transition: transform 300ms var(--sortie);
+  }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq summary:hover { color: var(--fil); }
+  .faq details p { padding-block-end: 1.3rem; max-width: 40rem; color: var(--encre-doux); }
+
+  /* ============================ APPEL FINAL ============================ */
+  .fm-fin { background: var(--fil); }
+  .fm-fin .chapo { max-width: 34rem; }
+  .fm-fin time { white-space: nowrap; }
+  .fm-fin .btn--wa { --texte: var(--fil-sombre); }
 </style>
