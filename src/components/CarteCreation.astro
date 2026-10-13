@@ -11,7 +11,7 @@ interface Props {
   prioritaire?: boolean;
 }
 
-const { creation, tailles = '(max-width: 40rem) 74vw, 22rem', prioritaire = false } = Astro.props;
+const { creation, tailles = '(max-width: 40rem) 74vw, (max-width: 64rem) 42vw, 24rem', prioritaire = false } = Astro.props;
 const { data, id } = creation;
 
 const urlFiche = `/creations/${id}/`;
@@ -20,7 +20,7 @@ const urlAbsolue = new URL(urlFiche, SITE.url).href;
 /* L'URL de la fiche est jointe au message : WhatsApp en affiche l'aperçu
    Open Graph, seule façon d'y faire apparaître la photo. */
 const wa = lienWhatsApp(
-  `Bonjour ${SITE.nom}, j'ai vu « ${data.titre} » sur votre site et j'aimerais le même.`,
+  `Bonjour Emma, j'ai vu « ${data.titre} » sur votre site et j'aimerais le même.`,
   urlAbsolue,
 );
 ---
@@ -28,10 +28,11 @@ const wa = lienWhatsApp(
 <article class="carte">
   <a class="carte__lien" href={urlFiche}>
     <figure class="carte__img">
+      {data.cousuMain && <span class="carte__etiquette">cousu main</span>}
       <Image
         src={data.photo}
         alt={data.alt}
-        widths={[320, 480, 620, 800]}
+        widths={[320, 480, 640, 800]}
         sizes={tailles}
         loading={prioritaire ? 'eager' : 'lazy'}
         decoding="async"
@@ -40,12 +41,24 @@ const wa = lienWhatsApp(
     <div class="carte__txt">
       <h3>{data.titre}</h3>
       <p>{data.accroche}</p>
-      {data.prixDepart && <p class="prix">à partir de {data.prixDepart} €</p>}
+      {/* ⚠️ Prix et délais d'exemple, à valider par Emma (repli de l'admin). */}
+      {
+        (data.prixDepart || data.delaiJours) && (
+          <p class="carte__ligne prix" data-reglage-creation={id}>
+            {data.prixDepart && (
+              <span>
+                dès <b>{data.prixDepart}&nbsp;€</b>
+              </span>
+            )}
+            {data.delaiJours && <span>{data.delaiJours}&nbsp;jours</span>}
+          </p>
+        )
+      }
     </div>
   </a>
 
   <p class="carte__cta">
-    <a class="lien-wa" href={wa}>Je veux le même</a>
-    <a class="lien-fleche" href={`/contact/?creation=${id}`}>Demander un devis</a>
+    <a class="lien-wa" href={wa}>Je veux la même</a>
+    <a class="lien-fleche" href={`/contact/?creation=${id}`}>Devis</a>
   </p>
 </article>

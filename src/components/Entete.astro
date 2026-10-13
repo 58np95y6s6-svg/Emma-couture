@@ -1,5 +1,5 @@
 ---
-import { SITE, lienWhatsApp } from '../config';
+import { SITE, ATELIER, lienWhatsApp } from '../config';
 
 const liens = [
   { href: '/creations/', texte: 'Créations' },
@@ -8,18 +8,30 @@ const liens = [
   { href: '/l-atelier/', texte: "L'atelier" },
   { href: '/contact/', texte: 'Contact' },
 ];
+
+const ici = Astro.url.pathname;
+const actif = (href: string) => ici === href || (href !== '/creations/' && ici.startsWith(href));
+
+/* Le statut de l'atelier vient de l'admin (repli : config). */
+const statut = {
+  ouvertes: { texte: 'Commandes ouvertes', classe: '' },
+  complet: { texte: 'Carnet complet', classe: 'statut--complet' },
+  conges: { texte: `En congés${ATELIER.retourLe ? ` jusqu'au ${ATELIER.retourLe}` : ''}`, classe: 'statut--conges' },
+}[ATELIER.commandes];
 ---
 
 <header class="entete">
   <div class="entete__in">
-    <a class="marque" href="/">
-      <span class="marque__nom">{SITE.nom}</span>
-      <span class="marque__sous">{SITE.baseline}</span>
+    <a class="marque" href="/" aria-label={`${SITE.nom}, accueil`}>
+      <span class="marque__nom">Emma <i>Broderie</i></span>
+      <span class="marque__sous">Vitré · 35</span>
     </a>
 
     <nav class="nav" aria-label="Navigation principale">
-      {liens.map((l) => <a href={l.href}>{l.texte}</a>)}
+      {liens.map((l) => <a href={l.href} aria-current={actif(l.href) ? 'page' : undefined}>{l.texte}</a>)}
     </nav>
+
+    <p class={`statut ${statut.classe}`} data-reglage="statut">{statut.texte}</p>
 
     <a class="btn btn--wa btn--petit entete__cta" href={lienWhatsApp()}>
       <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"
@@ -27,7 +39,7 @@ const liens = [
           d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"
         /></svg
       >
-      WhatsApp
+      M'écrire
     </a>
 
     <button class="burger" type="button" aria-expanded="false" aria-controls="menu-mobile">
@@ -36,8 +48,8 @@ const liens = [
     </button>
   </div>
 
-  <div class="menu" id="menu-mobile" hidden>
+  <nav class="menu" id="menu-mobile" aria-label="Menu" hidden>
     {liens.map((l) => <a href={l.href}>{l.texte}</a>)}
     <a href="/contact/#devis">Demander un devis</a>
-  </div>
+  </nav>
 </header>

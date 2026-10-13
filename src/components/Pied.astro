@@ -1,14 +1,15 @@
 ---
-import { SITE, CONTACT, ATELIER } from '../config';
+import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
 ---
 
 <footer class="pied bande">
   <div class="pied__in">
     <div class="pied__marque">
-      <p class="pied__nom">{SITE.nom}</p>
-      <p>Broderie machine &amp; couture<br />{SITE.ville} — {SITE.departement}</p>
-      <p><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></p>
-      <p><a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">@{CONTACT.instagram}</a></p>
+      <p class="pied__accroche">Une idée, même floue&nbsp;? <em>Écrivez-moi.</em></p>
+      <p class="actions">
+        <a class="btn btn--wa" href={lienWhatsApp()}>WhatsApp</a>
+        <a class="btn btn--clair" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+      </p>
     </div>
 
     <nav class="pied__nav" aria-label="Créations">
@@ -17,6 +18,7 @@ import { SITE, CONTACT, ATELIER } from '../config';
       <a href="/creations/linge-de-bain/">Linge de bain</a>
       <a href="/creations/couture/">Sacs &amp; trousses</a>
       <a href="/creations/decoration-ajouree/">Dentelle libre</a>
+      <a href="/sur-mesure/">Sur-mesure &amp; prix</a>
     </nav>
 
     <nav class="pied__nav" aria-label="Occasions">
@@ -29,17 +31,18 @@ import { SITE, CONTACT, ATELIER } from '../config';
 
     <div class="pied__nav">
       <h2>Où me trouver</h2>
-      <p>{ATELIER.zones}</p>
-      <p><a href="/brodeuse-vitre/">Brodeuse à Vitré</a></p>
-      <p><a href="/broderie-personnalisee-rennes/">Broderie à Rennes</a></p>
+      <p>{ATELIER.zones}.</p>
+      <a href="/brodeuse-vitre/">Brodeuse à Vitré</a>
+      <a href="/broderie-personnalisee-rennes/">Broderie à Rennes</a>
+      <a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">Instagram @{CONTACT.instagram}</a>
     </div>
   </div>
 
+  <p class="pied__geant" aria-hidden="true">Emma <i>Broderie</i></p>
+
   <p class="pied__bas">
-    <span>
-      {SITE.nomLegal} — micro-entreprise · SIRET {SITE.siret}
-    </span>
+    <span>{SITE.nomLegal} · micro-entreprise · SIRET {SITE.siret}</span>
     <a href="/mentions-legales/">Mentions légales</a>
-    <a href="/politique-de-confidentialite/">Politique de confidentialité</a>
+    <a href="/politique-de-confidentialite/">Confidentialité</a>
   </p>
 </footer>

@@ -476,6 +476,7 @@ function cableDeclencheur(noeud, demarrer, options) {
   const mode = noeud.dataset.declencheur || 'visible';
   const opt = options || {};
   if (mouvementReduit()) { demarrer(true); return; }
+  if (mode === 'manuel') return;
   if (mode === 'charge') { demarrer(); return; }
   if (mode === 'survol') {
     let fait = false;
@@ -640,7 +641,9 @@ function effetPrenom(noeud) {
 
       if (avancement >= 1) {
         svg.classList.add('broderie-fini');
+        svg.classList.remove('broderie-en-cours');
         enCours = false;
+        if (noeud.__broderieFini) noeud.__broderieFini();
         return false;
       }
       return true;
@@ -681,7 +684,30 @@ function effetPrenom(noeud) {
     svg.classList.toggle('broderie-fini', cible >= total);
   }
 
-  noeud.__broderie = { rejouer: () => demarrer(mouvementReduit()), poser, points: total };
+  /** Découdre : les points disparaissent dans l'ordre INVERSE de leur
+      apparition, comme quand on tire le fil. Plus rapide que la broderie. */
+  function decoudre(d) {
+    return new Promise((fin) => {
+      arrete(machine);
+      enCours = false;
+      const depart = indice;
+      let t1 = 0;
+      svg.classList.remove('broderie-fini');
+      svg.classList.add('broderie-decousu');
+      demarre({
+        tic(t) {
+          if (!t1) t1 = t;
+          const a = Math.min(1, (t - t1) / Math.max(1, d));
+          const cible = Math.round(depart * (1 - a * a));
+          while (indice > cible) { indice--; noeudsPoints[indice].classList.remove('pique'); }
+          if (a >= 1) { fin(); return false; }
+          return true;
+        },
+      });
+    });
+  }
+
+  noeud.__broderie = { rejouer: () => demarrer(mouvementReduit()), poser, decoudre, points: total };
   cableDeclencheur(noeud, demarrer);
 }
 
@@ -1046,6 +1072,86 @@ function effetCurseur(noeud) {
 }
 
 /* =============================================================================
+   EFFET 6 — data-broderie="carrousel"
+   Les prénoms s'enchaînent : brodé, pause, décousu, respiration, suivant.
+   Structure attendue :
+     <div data-broderie="carrousel" data-prenoms='[{"prenom":"Ambre","legende":"…"}]'>
+       <p data-scene>Ambre</p>          (rendu serveur : lisible sans JS)
+       <p data-legende>…</p>
+     </div>
+   La légende peut aussi vivre ailleurs dans la page : data-legende="id".
+   - s'arrête sur le dernier prénom, brodé (pas de boucle infinie) ;
+   - suspendu hors écran, en pause au survol ou au focus ;
+   - mouvement réduit : le premier prénom, brodé, sans enchaînement.
+============================================================================= */
+
+function effetCarrousel(noeud) {
+  const scene = noeud.querySelector('[data-scene]');
+  const legende = noeud.querySelector('[data-legende]')
+    || (noeud.dataset.legende && document.getElementById(noeud.dataset.legende));
+  let liste = [];
+  try { liste = JSON.parse(noeud.dataset.prenoms || '[]'); } catch (e) { liste = []; }
+  if (!scene || !liste.length) return;
+
+  const duree = parseInt(noeud.dataset.duree, 10) || 2600;
+  const pauseLecture = parseInt(noeud.dataset.pause, 10) || 2200;
+
+  function monte(i) {
+    const span = document.createElement('span');
+    span.textContent = liste[i].prenom;
+    span.dataset.declencheur = 'manuel';
+    span.dataset.duree = String(duree);
+    if (noeud.dataset.fil) span.dataset.fil = noeud.dataset.fil;
+    scene.textContent = '';
+    scene.appendChild(span);
+    effetPrenom(span);
+    return span;
+  }
+
+  if (mouvementReduit()) { monte(0); return; }
+
+  let enPause = false, visible = true;
+  noeud.addEventListener('mouseenter', () => { enPause = true; });
+  noeud.addEventListener('mouseleave', () => { enPause = false; });
+  noeud.addEventListener('focusin', () => { enPause = true; });
+  noeud.addEventListener('focusout', () => { enPause = false; });
+
+  /* Une attente qui ne s'écoule que lorsque le carrousel est visible et
+     pas en pause. Un minuteur léger, pas de boucle d'animation. */
+  const attendre = (ms) => new Promise((fin) => {
+    let reste = ms;
+    const pas = 100;
+    const t = setInterval(() => {
+      if (!enPause && visible && !document.hidden) reste -= pas;
+      if (reste <= 0) { clearInterval(t); fin(); }
+    }, pas);
+  });
+  const brode = (span) => new Promise((fin) => {
+    span.__broderieFini = fin;
+    span.__broderie.rejouer();
+  });
+
+  async function suite() {
+    for (let i = 0; i < liste.length; i++) {
+      const span = monte(i);
+      await brode(span);
+      if (i === liste.length - 1) break;
+      await attendre(pauseLecture);
+      await span.__broderie.decoudre(800);
+      /* La légende change pendant la respiration, jamais pendant la broderie. */
+      if (legende) legende.textContent = liste[i + 1].legende;
+      await attendre(400);
+    }
+  }
+
+  let lance = false;
+  surVisible(noeud, (v) => {
+    visible = v;
+    if (v && !lance) { lance = true; suite(); }
+  }, '0px');
+}
+
+/* =============================================================================
    INITIALISATION
 ============================================================================= */
 
@@ -1055,6 +1161,7 @@ const EFFETS = {
   tambour: effetTambour,
   croix: effetCroix,
   'aiguille-curseur': effetCurseur,
+  carrousel: effetCarrousel,
 };
 
 function init(racine) {
