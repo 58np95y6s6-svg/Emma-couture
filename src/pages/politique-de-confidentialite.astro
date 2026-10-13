@@ -183,7 +183,7 @@ const vt = (id: string) => `view-timeline-name: ${tl(id)}`;
             }).
           </p>
           <p>
-            Pour toute question sur cette page ou sur vos données&nbsp;:
+            Pour toute question sur cette page ou sur vos données&nbsp;:{' '}
             <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
           </p>
           <p class="note">
@@ -715,7 +715,14 @@ const vt = (id: string) => `view-timeline-name: ${tl(id)}`;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     border-radius: var(--r-s);
-    background: var(--papier);
+    /* Ombres de défilement : une ombre apparaît au bord droit tant qu'il reste
+       des colonnes à voir (couvertures « local » qui suivent le contenu). */
+    background:
+      linear-gradient(90deg, var(--papier) 30%, transparent) left / 2.5rem 100% no-repeat local,
+      linear-gradient(270deg, var(--papier) 30%, transparent) right / 2.5rem 100% no-repeat local,
+      radial-gradient(farthest-side at 0 50%, color-mix(in oklab, var(--encre) 18%, transparent), transparent) left / 0.9rem 100% no-repeat scroll,
+      radial-gradient(farthest-side at 100% 50%, color-mix(in oklab, var(--encre) 18%, transparent), transparent) right / 0.9rem 100% no-repeat scroll,
+      var(--papier);
     box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--encre) 12%, transparent);
   }
   .tableau:focus-visible {

@@ -60,25 +60,25 @@ const joursMax = Math.max(...tousJours);
 /* Les cinq étapes : une vraie séquence, la seule de la page à être numérotée. */
 const etapes = [
   {
-    t: "Vous m'écrivez",
-    r: "WhatsApp, formulaire ou téléphone. Le prénom, l'occasion, la date. Une photo d'inspiration si vous en avez une. Même flou, ça suffit pour commencer.",
+    t: 'Votre demande',
+    r: "Par WhatsApp, par le formulaire ou par téléphone, indiquez-moi le prénom ou le texte, l'occasion et la date souhaitée. Une photo d'inspiration est la bienvenue. Une idée encore imprécise suffit pour commencer.",
   },
   {
-    t: 'Je vous réponds avec un prix',
-    r: `Un prix, un délai, une proposition. ${ATELIER.delaiReponse}. Beaucoup de gens m'écrivent juste pour savoir, et c'est très bien comme ça.`,
+    t: 'Ma proposition',
+    r: `Je vous réponds avec un prix, un délai de réalisation et une proposition de motif. ${ATELIER.delaiReponse}. Cette demande ne vous engage à rien.`,
   },
   {
-    t: 'On choisit ensemble',
-    r: "Le support, l'écriture, la couleur du fil, l'emplacement. Dans mes coupons et mes bobines, ou sur le tissu que vous m'apportez.",
+    t: 'Le choix des matières',
+    r: "Nous choisissons ensemble le support, l'écriture, la couleur du fil et l'emplacement du motif, parmi mes tissus et mes fils ou sur la pièce que vous m'apportez.",
   },
   {
-    t: 'Je vous montre le motif',
-    r: "Avant de lancer la machine, je vous envoie le dessin. Si quelque chose ne va pas, on le change : tant que ce n'est pas piqué, tout est possible.",
+    t: 'La validation du motif',
+    r: "Avant de lancer la machine, je vous envoie le motif. Tant que la broderie n'est pas réalisée, tout peut encore être modifié.",
     decision: true,
   },
   {
-    t: "Je brode, j'emballe",
-    r: `Emballage cadeau compris. Remise en main propre à ${SITE.ville} ou à Rennes sur rendez-vous, sinon par la poste, partout en France.`,
+    t: 'Réalisation et remise',
+    r: `Je brode la pièce, puis je l'emballe pour qu'elle soit prête à offrir. Remise en main propre à ${SITE.ville} ou à Rennes sur rendez-vous, ou envoi soigné partout en France.`,
   },
 ];
 
@@ -88,40 +88,40 @@ const etapes = [
 --------------------------------------------------------------------------- */
 const faq = [
   {
-    q: 'Vous brodez à la main ?',
-    r: `Non, à la machine. C'est elle qui donne un prénom net, régulier, qui tient au lavage. Ce que je fais à la main, c'est la couture : les sacs, les trousses et les tabliers sont cousus main, puis brodés.`,
+    q: 'Brodez-vous à la main ?',
+    r: `Non, je travaille en broderie machine. Elle garantit un tracé net et régulier, qui résiste au lavage. La couture, en revanche, est faite par mes soins : les sacs, les trousses et les tabliers sont cousus main, puis brodés.`,
   },
   {
-    q: 'Combien de temps faut-il prévoir ?',
-    r: `En ce moment, ${ATELIER.delaiActuel} à partir de la validation du motif. Selon la pièce, de ${joursMin} à ${joursMax} jours ouvrés. Pour Noël, écrivez-moi avant la mi-novembre : après, je ne garantis plus le 24.`,
+    q: 'Quel délai faut-il prévoir ?',
+    r: `Le délai de réalisation est actuellement de ${ATELIER.delaiActuel} à compter de la validation du motif, soit de ${joursMin} à ${joursMax} jours ouvrés selon la pièce. Pour Noël, je vous conseille de me contacter avant la mi-novembre afin de garantir une livraison avant le 24 décembre.`,
   },
   {
-    q: 'Combien ça coûte ?',
-    r: `Les pièces du catalogue commencent entre ${prixMin} et ${prixMax} €. Trois choses font le prix : la taille du motif, le nombre de points et le support. Un prénom court coûte moins cher qu'un grand motif dense, parce que la machine y passe moins de temps. Vous avez le prix exact avant que je commence, et il ne vous engage à rien.`,
+    q: 'Combien coûte une broderie personnalisée ?',
+    r: `Les pièces du catalogue débutent entre ${prixMin} et ${prixMax} €. Le prix dépend de la taille du motif, du nombre de points et du support : un prénom court demande moins de temps de broderie qu'un motif large et dense. Le prix exact vous est communiqué avant toute réalisation, sans engagement.`,
   },
   {
-    q: 'Qu’est-ce que vous pouvez broder ?',
-    r: `Un prénom, une date, des mesures de naissance, une phrase, un motif. Sur du linge de bain, des vêtements, des doudous, des bavoirs, des sacs, des tabliers. Et la dentelle libre, brodée sans tissu dessous, qui tient toute seule.`,
+    q: 'Que pouvez-vous broder ?',
+    r: `Un prénom, une date, des mesures de naissance, une phrase ou un motif, sur du linge de bain, des vêtements, des doudous, des bavoirs, des sacs ou des tabliers. Je réalise également de la dentelle libre : une broderie sans tissu de support, qui tient seule.`,
   },
   {
-    q: 'Je peux vous apporter mon propre tissu ou mon vêtement ?',
-    r: `Oui, c'est fréquent. Vous m'apportez le vêtement, le drap de bain ou le coupon, je brode dessus et vous ne payez que la broderie. Dites-moi la matière avant : un tissu très fin ou très extensible demande un renfort, et je préfère le savoir avant de piquer.`,
+    q: 'Puis-je fournir mon propre tissu ou vêtement ?',
+    r: `Oui, c'est une demande fréquente. Je brode alors directement sur votre pièce, et seule la broderie est facturée. Précisez-moi la matière à l'avance : un tissu très fin ou extensible nécessite un renfort adapté.`,
   },
   {
-    q: 'Et si le motif ne me plaît pas ?',
-    r: `Vous le voyez avant que je lance la machine : l'écriture, la taille, la couleur du fil, l'emplacement. Si quelque chose ne va pas, on le change. Tant que ce n'est pas piqué, tout est possible. Après, le fil ne s'enlève plus proprement : c'est pour ça que cette étape existe.`,
+    q: 'Que se passe-t-il si le motif ne me convient pas ?',
+    r: `Je vous soumets le motif avant de lancer la machine : écriture, taille, couleur du fil et emplacement. Tant que la broderie n'est pas réalisée, tout peut être modifié. Une fois piqué, le fil ne peut plus être retiré proprement : c'est la raison d'être de cette étape de validation.`,
   },
   {
-    q: 'Comment je récupère ma commande ?',
-    r: `${ATELIER.zones}. La remise en main propre se fait sur rendez-vous, dans un lieu public convenu ensemble. Les frais d'envoi dépendent du poids et du format : je les indique avec le devis. L'emballage cadeau est compris.`,
+    q: 'Comment récupérer ma commande ?',
+    r: `${ATELIER.zones}. La remise en main propre se fait sur rendez-vous, dans un lieu public convenu ensemble. Les frais d'envoi dépendent du poids et du format ; ils figurent sur le devis. L'emballage cadeau est compris.`,
   },
   {
-    q: 'C’est pour dans trois jours. C’est possible ?',
-    r: `Parfois. Ça dépend de la pièce et de ce qui est déjà sur la machine. Écrivez-moi la date sur WhatsApp : je regarde et je vous réponds franchement. Je préfère dire non que livrer en retard.`,
+    q: 'Acceptez-vous les commandes urgentes ?',
+    r: `Cela dépend de la pièce et du planning en cours. Indiquez-moi la date souhaitée sur WhatsApp : je vérifie et je vous réponds honnêtement. Je préfère décliner une commande plutôt que de la livrer en retard.`,
   },
   {
-    q: 'Comment on entretient une broderie ?',
-    r: `Machine à 30°, pièce retournée. Repassage sur l'envers. Pas d'eau de Javel : c'est elle qui décolore le fil, pas le lavage.`,
+    q: 'Comment entretenir une broderie ?',
+    r: `Lavage en machine à 30°, pièce retournée. Repassage sur l'envers. Évitez l'eau de Javel, qui décolore le fil.`,
   },
 ];
 
@@ -162,11 +162,12 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
     </nav>
 
     <div class="sm-ouv__dire">
-      <h1>Vous m'envoyez le prénom. Je brode. <em>Vous offrez.</em></h1>
+      <h1>Commander une broderie sur mesure</h1>
       <p class="chapo">
-        Broderie personnalisée et couture sur mesure à {SITE.ville}&nbsp;(35), pour Rennes et
-        toute la France. Ici, tout ce qu'on me demande avant de commander&nbsp;: les étapes, les
-        prix, les délais, l'entretien. Sans petites lignes.
+        Broderie personnalisée et couture sur mesure à {SITE.ville}&nbsp;(35), avec remise en main
+        propre à {SITE.ville} et à Rennes, ou envoi dans toute la France. Vous trouverez ici le
+        déroulement d'une commande, les prix de départ, les délais de réalisation et les conseils
+        d'entretien.
       </p>
       <p class="actions">
         <a class="btn btn--wa btn--grand" href={lienWhatsApp()}>Écrire sur WhatsApp</a>
@@ -176,36 +177,36 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
 
     <!-- La fiche d'atelier : ce qu'on cherche en arrivant, en quatre lignes. -->
     <aside class="sm-fiche" aria-label="L'essentiel en bref">
-      <p class="sm-fiche__tete mono">fiche de commande · {SITE.ville}</p>
+      <p class="sm-fiche__tete">L'essentiel</p>
       <dl class="sm-fiche__dl">
         <div>
-          <dt>prix</dt>
+          <dt>Prix</dt>
           <dd><span class="mono">à partir de</span> <b>{prixMin}&nbsp;€</b></dd>
         </div>
         <div>
-          <dt>délai actuel</dt>
+          <dt>Délai actuel</dt>
           <dd><b>{ATELIER.delaiActuel}</b></dd>
         </div>
         <div>
-          <dt>réponse</dt>
+          <dt>Réponse</dt>
           <dd>{ATELIER.delaiReponse}</dd>
         </div>
         <div>
-          <dt>emballage</dt>
-          <dd>cadeau, compris</dd>
+          <dt>Emballage</dt>
+          <dd>emballage cadeau compris</dd>
         </div>
       </dl>
-      <p class="sm-fiche__pied mono">motif validé avant la première piqûre</p>
+      <p class="sm-fiche__pied">Le motif vous est soumis pour validation avant toute réalisation.</p>
     </aside>
   </section>
 
   <!-- ===================== LES ÉTAPES : la vraie séquence ===================== -->
   <section class="bande sm-pas" id="etapes" data-broderie="fil" data-fil="#D93D28">
     <div class="sm-pas__tete">
-      <h2 class="titre-xl">Cinq étapes, et <em>une seule</em> décision à prendre.</h2>
+      <h2 class="titre-xl">Le déroulement d'une commande</h2>
       <p class="mesure">
-        La décision, c'est l'étape&nbsp;4&nbsp;: vous validez le motif, ou vous me dites ce qui ne
-        va pas. Le reste, c'est mon travail.
+        Une seule étape vous demande une décision&nbsp;: la validation du motif. Je me charge de
+        tout le reste, de la préparation à l'emballage.
       </p>
     </div>
 
@@ -214,8 +215,8 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
         etapes.map((e, i) => (
           <li class={e.decision ? 'sm-etapes__decision' : undefined}>
             <p class="etapes__n">
-              {i + 1} / {etapes.length}
-              {e.decision && <span class="sm-etapes__marque">votre décision</span>}
+              Étape {i + 1}
+              {e.decision && <span class="sm-etapes__marque">votre validation</span>}
             </p>
             <h3>{e.t}</h3>
             <p>{e.r}</p>
@@ -228,13 +229,13 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
   <!-- ===================== PRIX : le tarif, comme une fiche d'atelier ===================== -->
   <section class="bande sm-prix" id="prix">
     <div class="sm-prix__intro">
-      <h2 class="titre-xl">Les prix commencent ici.</h2>
+      <h2 class="titre-xl">Les prix de départ</h2>
       <p class="mesure">
-        Trois choses font le prix&nbsp;: la taille du motif, le nombre de points et le support. Un
-        prénom court passe vite sous l'aiguille&nbsp;; un grand motif dense y reste longtemps. Les
-        pièces du catalogue commencent entre {prixMin} et {prixMax}&nbsp;€.
+        Le prix dépend de trois éléments&nbsp;: la taille du motif, le nombre de points et le
+        support. Un prénom court demande moins de temps de broderie qu'un motif large et dense. Les
+        pièces du catalogue débutent entre {prixMin} et {prixMax}&nbsp;€.
       </p>
-      <p class="sm-prix__note">Vous apportez votre vêtement&nbsp;? Vous ne payez que la broderie.</p>
+      <p class="sm-prix__note">Si vous fournissez le vêtement, seule la broderie est facturée.</p>
     </div>
 
     {/* ⚠️ EXEMPLES : prix et délais calculés depuis les créations provisoires. */}
@@ -247,7 +248,7 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
               <span class="sm-tarif__quoi">{f.quoi}</span>
               {f.jours && <span class="sm-tarif__delai mono">≈ {f.jours} jours ouvrés</span>}
               <span class="sm-tarif__prix prix">
-                dès <b>{f.prix}&nbsp;€</b>
+                à partir de <b>{f.prix}&nbsp;€</b>
               </span>
               <span class="sm-tarif__voir" aria-hidden="true">→</span>
             </a>
@@ -257,8 +258,8 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
     </ul>
 
     <p class="sm-prix__pied">
-      Pour un devis, je prépare le motif avant de vous répondre&nbsp;: le prix part du nombre de
-      points, pas d'une estimation au jugé.
+      Chaque devis est établi à partir du motif préparé&nbsp;: le prix correspond au nombre de
+      points réel, et non à une estimation.
       <a class="lien-fleche" href="/contact/#devis">Décrire mon projet</a>
     </p>
   </section>
@@ -268,36 +269,36 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
     <span class="regle plein sm-delais__regle" aria-hidden="true"></span>
 
     <div class="sm-delais__dire">
-      <h2 class="sm-delais__titre">Une machine. <em>Une pièce à la fois.</em></h2>
+      <h2 class="sm-delais__titre">Les délais de réalisation</h2>
       <p class="mesure mesure--clair">
-        Je brode une commande après l'autre. Votre pièce a sa place dans la file, et quand vous me
-        demandez où elle en est, je le sais sans chercher.
+        Je réalise les commandes l'une après l'autre. Chaque pièce a sa place dans le planning, et
+        je peux vous indiquer à tout moment où en est la vôtre.
       </p>
       <p class="sm-delais__actuel">
-        <span class="mono">délai actuel</span>
+        <span class="mono">Délai actuel</span>
         <b>{ATELIER.delaiActuel}</b>
-        <span class="mono">après validation du motif · de {joursMin} à {joursMax} jours ouvrés selon la pièce</span>
+        <span class="sm-delais__precision">à compter de la validation du motif, soit de {joursMin} à {joursMax} jours ouvrés selon la pièce</span>
       </p>
     </div>
 
     {/* ⚠️ « mi-novembre » : EXEMPLE de date limite, à faire confirmer par Emma. */}
     <ul class="sm-dates">
       <li>
-        <span class="sm-dates__quand mono">Noël</span>
-        <p>Écrivez-moi avant la mi-novembre. Après, je ne garantis plus le 24.</p>
+        <span class="sm-dates__quand">Noël</span>
+        <p>Pour une livraison avant le 24 décembre, merci de me contacter avant la mi-novembre.</p>
       </li>
       <li>
-        <span class="sm-dates__quand mono">Naissance</span>
-        <p>Le terme suffit. Je prépare le motif, je brode le prénom quand il arrive.</p>
+        <span class="sm-dates__quand">Naissance</span>
+        <p>La date du terme suffit&nbsp;: je prépare le motif à l'avance et je brode le prénom dès la naissance.</p>
       </li>
       <li>
-        <span class="sm-dates__quand mono">Urgent</span>
-        <p>Envoyez-moi la date sur WhatsApp. Je regarde la file et je réponds franchement.</p>
+        <span class="sm-dates__quand">Demande urgente</span>
+        <p>Indiquez-moi la date sur WhatsApp&nbsp;: je vérifie le planning et je vous réponds honnêtement.</p>
         <a
           class="btn btn--or"
           href={lienWhatsApp('Bonjour Emma, est-ce que vous pourriez broder une pièce pour une date précise ?')}
         >
-          Demander si c'est jouable
+          Vérifier une date
         </a>
       </li>
     </ul>
@@ -313,7 +314,7 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
       loading="lazy"
       decoding="async"
     />
-    <p class="bandeau__mot" aria-hidden="true">la couleur, on la choisit ensemble.</p>
+    <p class="bandeau__mot" aria-hidden="true">Le choix du fil se fait ensemble.</p>
   </div>
 
   <!-- ===================== ENTRETIEN + LIVRAISON ===================== -->
@@ -332,10 +333,10 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
     <div class="sm-soin__txt">
       {/* ⚠️ Le 30° vient du contenu des créations. Le reste des conseils
           d'entretien est à faire confirmer par Emma. [À CONFIRMER] */}
-      <h2 class="titre-xl">Ça passe en machine à&nbsp;30°.</h2>
+      <h2 class="titre-xl">Entretien d'une broderie</h2>
       <p class="mesure">
-        C'est la question qui suit le prix. Un doudou brodé se lave comme un doudou, une serviette
-        brodée comme une serviette. Le fil ne bouge pas.
+        Une broderie machine se lave comme la pièce qui la porte&nbsp;: un doudou brodé comme un
+        doudou, une serviette brodée comme une serviette. Le fil conserve sa tenue et sa couleur.
       </p>
 
       <!-- L'étiquette d'entretien, cousue comme celles des vêtements -->
@@ -350,21 +351,21 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
         </div>
         <div>
           <dt>à éviter</dt>
-          <dd>l'eau de Javel&nbsp;: c'est elle qui décolore le fil, pas le lavage</dd>
+          <dd>l'eau de Javel, qui décolore le fil</dd>
         </div>
       </dl>
     </div>
 
     <div class="sm-soin__livraison">
-      <h2 class="sm-soin__h2b">Vous récupérez la pièce emballée.</h2>
+      <h2 class="sm-soin__h2b">Remise et envoi</h2>
       <p>
         {ATELIER.zones}. La remise en main propre se fait <b>sur rendez-vous</b>, dans un lieu
-        public convenu ensemble&nbsp;: je travaille chez moi, je ne reçois pas. Les frais d'envoi
-        dépendent du poids et du format, je vous les donne avec le devis.
+        public convenu ensemble&nbsp;: je travaille à domicile et ne reçois pas de public. Les
+        frais d'envoi dépendent du poids et du format&nbsp;; ils figurent sur le devis.
       </p>
       <p class="sm-soin__cadeau">
-        L'emballage cadeau est compris. Si c'est une surprise, dites-le-moi&nbsp;: rien n'est écrit
-        sur le paquet.
+        L'emballage cadeau est compris. S'il s'agit d'une surprise, précisez-le&nbsp;: rien ne
+        sera inscrit sur le colis.
       </p>
     </div>
   </section>
@@ -372,12 +373,13 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
   <!-- ===================== FAQ ===================== -->
   <section class="bande sm-faq loin" id="questions">
     <div class="sm-faq__tete">
-      <h2 class="titre-xl">Les questions <em>qu'on me pose.</em></h2>
+      <h2 class="titre-xl">Questions fréquentes</h2>
       <p class="mesure">
-        La vôtre n'y est pas&nbsp;? Envoyez-la-moi. C'est comme ça que cette liste s'allonge.
+        Si votre question n'y figure pas, posez-la-moi directement&nbsp;: je vous répondrai
+        volontiers.
       </p>
       <a class="lien-wa" href={lienWhatsApp("Bonjour Emma, j'ai une question avant de commander :")}>
-        Poser ma question
+        Poser une question
       </a>
     </div>
 
@@ -401,10 +403,10 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
   <!-- ===================== APPEL FINAL ===================== -->
   <section class="final bande">
     <div class="final__in">
-      <h2 class="titre-geant sm-final__titre">Écrivez-moi un prénom. <em>Je m'occupe du reste.</em></h2>
+      <h2 class="titre-geant sm-final__titre">Demander un devis</h2>
       <p class="chapo">
-        Le formulaire prend deux minutes et pose une question à la fois. Ou écrivez-moi sur
-        WhatsApp&nbsp;: c'est moi qui lis.
+        Le formulaire vous guide en quelques questions courtes. Vous pouvez aussi m'écrire
+        directement sur WhatsApp&nbsp;: je lis et je réponds personnellement à chaque message.
       </p>
       <p class="actions">
         <a class="btn btn--wa btn--grand" href={lienWhatsApp()}>Écrire sur WhatsApp</a>
@@ -429,7 +431,7 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
     row-gap: clamp(1.5rem, 4vw, 3rem);
   }
   .sm-ouv__dire { display: grid; gap: clamp(1.1rem, 2.2vw, 1.8rem); justify-items: start; }
-  .sm-ouv h1 { max-width: 12ch; }
+  .sm-ouv h1 { max-width: 13ch; }
 
   /* La fiche : papier, coin replié, bord perforé en haut */
   .sm-fiche {
@@ -456,12 +458,12 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
     -webkit-mask-position: 0 0, 0 12px;
     -webkit-mask-repeat: repeat-x, no-repeat;
   }
-  .sm-fiche__tete,
-  .sm-fiche__pied {
-    font-size: var(--t-micro);
-    color: var(--coquelicot-fonce);
+  .sm-fiche__tete {
+    font-family: var(--f-titre);
+    font-size: 1.7rem;
+    line-height: 1;
   }
-  .sm-fiche__pied { color: var(--gris); padding-block-start: 0.9rem; }
+  .sm-fiche__pied { font-size: var(--t-petit); line-height: 1.45; color: var(--encre-doux); padding-block-start: 0.9rem; }
   .sm-fiche__dl { margin-block-start: 0.8rem; }
   .sm-fiche__dl > div {
     display: grid;
@@ -471,7 +473,7 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
     padding-block: 0.65rem;
     border-block-end: 1px dashed color-mix(in oklab, var(--encre) 28%, transparent);
   }
-  .sm-fiche dt { font-family: var(--f-mono); font-size: var(--t-micro); color: var(--gris); }
+  .sm-fiche dt { font-size: var(--t-petit); color: var(--gris); }
   .sm-fiche dd { margin: 0; font-size: var(--t-petit); line-height: 1.35; }
   .sm-fiche dd .mono { font-size: var(--t-micro); color: var(--gris); }
   .sm-fiche dd b {
@@ -494,7 +496,7 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
     }
     .sm-ouv__ariane { grid-column: large-d / large-f; align-self: start; }
     .sm-ouv__dire { grid-column: large-d / mi; padding-inline-end: 2rem; }
-    .sm-ouv h1 { font-size: clamp(4rem, 1rem + 5.4vw, 7.6rem); max-width: 11ch; }
+    .sm-ouv h1 { font-size: clamp(4rem, 1rem + 5vw, 7rem); max-width: 12ch; }
     .sm-fiche { grid-column: mi / large-f; justify-self: end; align-self: end; margin-block-end: 1rem; }
   }
 
@@ -551,7 +553,8 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
     .sm-etapes > li:nth-child(3) { margin-block-start: 5rem; }
     .sm-etapes > li:nth-child(4) { margin-block-start: 7.5rem; }
     .sm-etapes > li:nth-child(5) { margin-block-start: 10rem; }
-    .sm-etapes > li { min-height: 22rem; }
+    .sm-etapes > li { min-height: 22rem; padding: 1.6rem 1.5rem; }
+    .sm-etapes > li > p:last-child { font-size: var(--t-petit); }
     .sm-pas__tete {
       grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
       align-items: end;
@@ -652,9 +655,8 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
         [bord-d] minmax(var(--marge), 1fr)
         [large-d] minmax(0, calc(var(--large) * 0.34)) [mi] minmax(0, calc(var(--large) * 0.66))
         [large-f] minmax(var(--marge), 1fr) [bord-f];
-      column-gap: clamp(2rem, 4vw, 4.5rem);
     }
-    .sm-prix__intro { grid-column: large-d / mi; grid-row: 1 / span 2; position: sticky; top: 7rem; align-self: start; }
+    .sm-prix__intro { padding-inline-end: clamp(2rem, 4vw, 4.5rem); grid-column: large-d / mi; grid-row: 1 / span 2; position: sticky; top: 7rem; align-self: start; }
     .sm-tarif { grid-column: mi / large-f; }
     .sm-prix__pied { grid-column: mi / large-f; }
   }
@@ -667,13 +669,13 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
   .sm-delais__regle { margin-block-end: var(--serre); }
   .sm-delais__dire { display: grid; gap: 1.3rem; align-content: start; }
   .sm-delais__titre {
-    font-size: clamp(3rem, 1.4rem + 7vw, 8.5rem);
+    font-size: clamp(2.8rem, 1.4rem + 5.5vw, 7rem);
     line-height: 0.88;
     letter-spacing: -0.04em;
-    max-width: 9ch;
+    max-width: 11ch;
   }
-  .sm-delais__titre em { display: block; font-style: italic; color: var(--rose); }
-  .sm-delais__actuel { display: grid; gap: 0.35rem; justify-items: start; margin-block-start: 0.5rem; }
+  .sm-delais__precision { font-size: var(--t-petit); color: color-mix(in oklab, var(--lin-haut) 82%, transparent); max-width: 30rem; }
+    .sm-delais__actuel { display: grid; gap: 0.35rem; justify-items: start; margin-block-start: 0.5rem; }
   .sm-delais__actuel .mono { font-size: var(--t-micro); color: var(--tapis-trait); }
   .sm-delais__actuel b {
     font-family: var(--f-titre);
@@ -693,7 +695,8 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
   }
   .sm-dates li:last-child { border-block-end: 1px dashed color-mix(in oklab, var(--tapis-trait) 50%, transparent); }
   .sm-dates__quand {
-    font-size: var(--t-micro);
+    font-size: var(--t-petit);
+    font-weight: 500;
     padding: 0.2rem 0.7rem;
     border-radius: 999px;
     background: var(--lin-haut);
@@ -714,9 +717,8 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
         [bord-d] minmax(var(--marge), 1fr)
         [large-d] minmax(0, calc(var(--large) * 0.55)) [mi] minmax(0, calc(var(--large) * 0.45))
         [large-f] minmax(var(--marge), 1fr) [bord-f];
-      column-gap: clamp(2rem, 5vw, 5rem);
     }
-    .sm-delais__dire { grid-column: large-d / mi; }
+    .sm-delais__dire { grid-column: large-d / mi; padding-inline-end: clamp(2rem, 5vw, 5rem); }
     .sm-dates { grid-column: mi / large-f; margin-block-start: 1rem; }
   }
 
@@ -728,7 +730,7 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
   .sm-soin__fig { width: min(80%, 26rem); justify-self: center; }
   .sm-soin__fig :global(img) { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; }
   .sm-soin__txt { display: grid; gap: 1.2rem; justify-items: start; align-content: start; }
-  .sm-soin__txt .titre-xl { max-width: 11ch; }
+  .sm-soin__txt .titre-xl { max-width: 12ch; }
 
   /* L'étiquette d'entretien : satin blanc, coutures en point avant, un coin
      rabattu. Le texte en chasse fixe, comme sur une vraie étiquette. */
@@ -782,11 +784,10 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
         [bord-d] minmax(var(--marge), 1fr)
         [large-d] minmax(0, calc(var(--large) * 0.3)) [a] minmax(0, calc(var(--large) * 0.36)) [b] minmax(0, calc(var(--large) * 0.34))
         [large-f] minmax(var(--marge), 1fr) [bord-f];
-      column-gap: clamp(2rem, 3.5vw, 3.5rem);
       align-items: start;
     }
-    .sm-soin__fig { grid-column: large-d / a; width: 100%; position: sticky; top: 7rem; }
-    .sm-soin__txt { grid-column: a / b; }
+    .sm-soin__fig { grid-column: large-d / a; width: calc(100% - 3rem); justify-self: start; position: sticky; top: 7rem; }
+    .sm-soin__txt { grid-column: a / b; padding-inline-end: clamp(1.5rem, 3vw, 3rem); }
     .sm-soin__livraison { grid-column: b / large-f; margin-block-start: 8rem; }
   }
 
@@ -821,7 +822,7 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
     transition: color 200ms ease, transform 400ms var(--sortie);
   }
   .sm-q summary:hover .sm-q__q { color: var(--coquelicot-fonce); }
-  .sm-q[open] .sm-q__q { font-style: italic; }
+  .sm-q[open] .sm-q__q { color: var(--coquelicot-fonce); }
 
   /* Fermé : un « + ». Ouvert : il tourne d'un quart et devient un point de croix. */
   .sm-q__croix {
@@ -871,13 +872,12 @@ const description = `Étapes, délais, prix à partir de ${prixMin} €, entreti
         [bord-d] minmax(var(--marge), 1fr)
         [large-d] minmax(0, calc(var(--large) * 0.36)) [mi] minmax(0, calc(var(--large) * 0.64))
         [large-f] minmax(var(--marge), 1fr) [bord-f];
-      column-gap: clamp(2rem, 4vw, 4.5rem);
     }
-    .sm-faq__tete { grid-column: large-d / mi; position: sticky; top: 7rem; align-self: start; }
+    .sm-faq__tete { padding-inline-end: clamp(2rem, 4vw, 4.5rem); grid-column: large-d / mi; position: sticky; top: 7rem; align-self: start; }
     .sm-faq__liste { grid-column: mi / large-f; }
   }
 
   /* ============================ APPEL FINAL ============================ */
-  .sm-final__titre { font-size: clamp(3.2rem, 1.2rem + 8vw, 10rem); max-width: 11ch; }
+  .sm-final__titre { font-size: clamp(3.2rem, 1.2rem + 7vw, 9rem); max-width: 9ch; }
   .final .chapo { max-width: 32rem; }
 </style>

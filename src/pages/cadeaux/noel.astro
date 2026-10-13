@@ -546,7 +546,8 @@ const menu = [
   /* ============================ LA SÉRIE ============================ */
   .nl-serie { padding-block: 0 var(--respire); row-gap: clamp(2.5rem, 6vw, 4.5rem); }
   .nl-serie .regle { margin-block-end: clamp(2rem, 6vw, 5rem); }
-  .nl-serie__tete { display: grid; gap: 1.1rem; justify-items: end; text-align: end; }
+  .nl-serie__tete { display: grid; gap: 1.1rem; }
+  @media (min-width: 48rem) { .nl-serie__tete { justify-items: end; text-align: end; } }
   .nl-serie__tete .titre-xl { max-width: 15ch; }
   .nl-serie__tete .mesure { max-width: 30rem; }
 
@@ -603,8 +604,8 @@ const menu = [
     }
   }
   @keyframes accroche {
-    from { transform: translateY(-2.5rem) rotate(calc(var(--r) * -3)); opacity: 0.001; }
-    to { transform: rotate(var(--r)); opacity: 1; }
+    from { transform: translateY(-2.5rem) rotate(calc(var(--r) * -3)); }
+    to { transform: rotate(var(--r)); }
   }
 
   /* ============================ LE MENU ============================ */
@@ -640,7 +641,7 @@ const menu = [
   }
   .nl-menu__note { color: var(--encre-doux); max-width: 30rem; }
 
-  .nl-bandeau .bandeau__mot { inset-inline: auto var(--marge); text-align: end; max-width: 12ch; font-style: normal; }
+  .nl-bandeau .bandeau__mot { inset-inline: auto var(--marge); text-align: end; max-width: 16ch; font-style: normal; text-wrap: balance; }
 
   /* ============================ CRÉATIONS ============================ */
   .nl-creations { padding-block: var(--respire) var(--serre); row-gap: clamp(2rem, 4vw, 3rem); }
@@ -689,7 +690,7 @@ const menu = [
 
   /* ============================ APPEL FINAL ============================ */
   .nl-fin { background: var(--fil); }
-  .nl-fin .titre-geant { max-width: 9ch; }
+  .nl-fin .titre-geant { max-width: 12ch; }
   .nl-fin .chapo { max-width: 34rem; }
   .nl-fin time { white-space: nowrap; }
   .nl-fin .btn--wa { --texte: var(--fil-sombre); }
