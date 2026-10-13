@@ -204,7 +204,10 @@ h1 {
   letter-spacing: -0.035em;
   text-wrap: balance;
 }
-h1 em, .titre-xl em, .titre-geant em { font-style: italic; color: var(--coquelicot); }
+/* Un titre = un seul style, une seule couleur. Pas de mot basculé en
+   italique de couleur : c'est le tic le plus reconnaissable d'une page générée. */
+h1 em, h2 em, h3 em, .titre-xl em, .titre-geant em,
+h1 i, h2 i, h3 i { font-style: normal; color: inherit; }
 
 .titre-xl {
   font-size: var(--t-h2);
@@ -236,16 +239,7 @@ h3 {
   text-transform: none;
   color: var(--coquelicot-fonce);
 }
-.sourcil::before {
-  content: '';
-  display: inline-block; vertical-align: middle;
-  inline-size: 1.6rem; block-size: 2px;
-  margin-inline-end: 0.6rem;
-  /* un point avant : trois piqûres */
-  background: repeating-linear-gradient(90deg, currentColor 0 6px, transparent 6px 10px);
-}
 .sourcil--clair { color: var(--rose); }
-.sourcil--nu::before { display: none; }
 
 .mono { font-family: var(--f-mono); letter-spacing: 0.01em; }
 
@@ -281,7 +275,6 @@ h3 {
 
 .signature {
   font-size: clamp(2.2rem, 1.6rem + 2vw, 3.4rem);
-  font-style: italic;
   color: var(--coquelicot);
   line-height: 1;
 }
@@ -423,7 +416,7 @@ h3 {
   line-height: 1;
   white-space: nowrap;
 }
-.marque__nom i { font-style: italic; color: var(--coquelicot); }
+.marque__nom i { font-style: normal; }
 .marque__sous {
   display: none;
   font-family: var(--f-mono);
@@ -499,7 +492,7 @@ h3 {
   border-bottom: 1px dashed color-mix(in oklab, var(--tapis-trait) 40%, transparent);
 }
 .menu a::after { content: '→'; font-family: var(--f-texte); font-size: 1rem; color: var(--tapis-trait); }
-.menu a:last-child { border: 0; color: var(--rose); font-style: italic; }
+.menu a:last-child { border: 0; color: var(--rose); }
 
 @media (min-width: 64rem) {
   .nav, .entete__cta { display: inline-flex; }
@@ -621,7 +614,6 @@ h3 {
   -webkit-mask-image: radial-gradient(130% 90% at 50% 40%, #000 35%, transparent 100%);
 }
 .nuit h2, .nuit h3, .tapis h2, .tapis h3 { color: var(--lin-haut); }
-.nuit .titre-xl em, .tapis .titre-xl em { color: var(--rose); }
 .nuit .chapo, .tapis .chapo { color: color-mix(in oklab, var(--lin-haut) 82%, transparent); }
 .nuit .sourcil, .tapis .sourcil { color: var(--rose); }
 .nuit :focus-visible, .tapis :focus-visible { outline-color: var(--rose); }
@@ -664,7 +656,7 @@ h3 {
 @keyframes parallaxe { from { transform: translateY(-14%); } to { transform: translateY(0%); } }
 .bandeau__mot {
   position: absolute; inset: auto var(--marge) clamp(1rem, 3vw, 2.5rem);
-  font-family: var(--f-titre); font-style: italic;
+  font-family: var(--f-titre);
   font-size: clamp(2.6rem, 1rem + 8vw, 9rem);
   line-height: 0.9; letter-spacing: -0.04em;
   color: var(--lin-haut);
@@ -732,7 +724,6 @@ h3 {
 }
 .final__in { display: grid; gap: 1.2rem; justify-items: start; }
 .final .titre-xl, .final h2 { color: #fff; }
-.final .titre-xl em, .final .titre-geant em { color: var(--encre); }
 .final .sourcil { color: #fff; }
 .final .mesure, .final .chapo { color: color-mix(in oklab, #fff 90%, transparent); }
 .final :focus-visible { outline-color: #fff; }
@@ -783,7 +774,6 @@ h3 {
   color: var(--lin-haut);
   max-width: 18ch;
 }
-.pied__accroche em { color: var(--rose); }
 .pied__marque { display: grid; gap: 1rem; align-content: start; }
 .pied__nav { display: grid; gap: 0; align-content: start; }
 .pied__nav h2 {
@@ -806,7 +796,7 @@ h3 {
   /* le mot sort par le bas, coupé net par le bord : une marque, pas un titre */
   margin-block-end: -0.12em;
 }
-.pied__geant i { color: var(--coquelicot); }
+.pied__geant i { font-style: normal; }
 .pied__bas {
   display: flex; flex-wrap: wrap; gap: 0.2rem 1.4rem; align-items: center;
   padding-block: 1.2rem calc(1.2rem + env(safe-area-inset-bottom));

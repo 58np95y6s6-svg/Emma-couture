@@ -26,38 +26,29 @@ Si une maquette pourrait passer pour celle d'un autre artisan, elle est ratée.
 **Le nom affiché est « Emma Broderie »**, jamais « Emmanuelle Wagner ». C'est le nom commercial.
 Le nom légal complet n'apparaît que dans les mentions légales, avec le SIRET.
 
-**Le ton est moderne, direct et FUN.** Jamais kitsch, jamais solennel. Rejeté explicitement :
-> « Un prénom brodé, et l'objet devient le sien » → « c'est kitsch, pas moderne ».
-> Et la phrase de sous-titre : « pas fun non plus ».
+### ⚠️ Registre : PROFESSIONNEL (retour client du 13 octobre 2026, remplace le « fun »)
+> « Tu reverras les textes, ils font pas très pro, c'est du français de jeune. »
 
-À bannir : les tournures sentimentales à rallonge, les formules poétiques sur l'objet qui « prend
-vie », « devient unique » ou « traverse le temps », les phrases qui **expliquent** l'émotion au
-lieu de la provoquer, le vocabulaire de plaquette (« savoir-faire d'exception », « pièce unique
-chargée de sens »).
+Emma a 58 ans : c'est une professionnelle expérimentée qui s'adresse à des clientes exigeantes.
+Le ton « moderne, direct et fun » demandé plus tôt a produit des textes jugés trop familiers.
+Le registre attendu est **soigné, précis, chaleureux sans familiarité, rassurant** — celui d'une
+artisane reconnue.
+- Première personne et vouvoiement, mais **phrases complètes et bien construites**.
+- **Interdit** : « ça », « Moi, … », questions rhétoriques en titre (« C'est pour quand ? »,
+  « On commence ? »), slogans (« Pas de surprise »), oralité, clins d'œil, humour, points
+  d'exclamation, phrases nominales en rafale.
+- **Titres informatifs et élégants**, pas des slogans : « Créations récentes », « La dentelle
+  libre », « Pour chaque occasion », « Le déroulement d'une commande », « Parlons de votre projet ».
+- Vocabulaire juste du métier : broderie machine, motif, validation du motif avant réalisation,
+  délai de réalisation, remise en main propre, envoi soigné.
+- Toujours bannis : sentimentalisme (« l'objet prend vie »), plaquette creuse
+  (« savoir-faire d'exception », « pièce chargée de sens »), impressions invérifiables.
 
-Ce qu'on cherche : des phrases **courtes**, **concrètes**, à la **première personne**, avec un peu
-de caractère. Le concret émeut, la poésie explicative non. Un trait d'humour discret vaut mieux
-qu'une envolée. On vend un cadeau, pas un mausolée.
+### Accroche actuelle
 
-### ✅ Accroche retenue par le client
-
-> **« Dites-moi le prénom. Je sors les bobines. »**
-
-C'est le `<h1>` de la page d'accueil. Elle donne le ton de tout le reste du site : deux phrases
-courtes, une action de la visiteuse puis une action d'Emmanuelle, un détail concret d'atelier.
-Toute autre accroche de la page doit être écrite à cette hauteur-là.
-
-⚠️ Elle ne contient aucun mot-clé : compenser juste en dessous par un paragraphe d'introduction
-qui porte « broderie personnalisée », « couture sur mesure » et « Vitré », et par une balise
-`<title>` explicite. Le H1 vend, le paragraphe qui suit référence.
-
-Autres formules validées dans la même direction, réutilisables ailleurs dans le site :
-- « Écrivez-moi un prénom. Je m'occupe du reste. »
-- « Je brode des prénoms. Beaucoup de prénoms. »
-- « Un prénom, cinq cents couleurs de fil, une seule pièce. »
-- « Vous m'envoyez le prénom. Je brode. Vous offrez. »
-- « Le cadeau qu'on ne peut offrir qu'une fois. »
-- « Ça part de chez moi emballé. Vous n'avez plus qu'à sourire. »
+`<h1>` de l'accueil : **« Broderie personnalisée et couture sur mesure »**, suivi d'un paragraphe
+qui porte Vitré et l'offre. L'ancienne accroche « Dites-moi le prénom. Je sors les bobines. »
+a été retirée avec le passage au registre professionnel.
 
 ### Formules rejetées, et pourquoi
 
@@ -184,9 +175,9 @@ les anciens noms (`--sable`, `--rouille`, `--vert`…) y sont des alias, ne pas 
 | Fond | `--lin` | `#F1E9E1` | lin chaud + grain, halo rosé en haut de page |
 | Encre | `--encre` | `#1D1916` | texte, pied de page |
 | Tapis | `--tapis` | `#1F3A2F` | sections de rupture quadrillées |
-| **Coquelicot** | `--coquelicot` | `#D93D28` | LA couleur qui parle : CTA, italiques, fil du prénom. Blanc dessus = 4,5:1 |
+| **Coquelicot** | `--coquelicot` | `#D93D28` | LA couleur qui parle : CTA, fil du prénom. Blanc dessus = 4,5:1 |
 | Coquelicot foncé | `--coquelicot-fonce` | `#B5321E` | petit texte rouge sur le lin (AA) |
-| Rose poudré | `--rose` | `#EFC7BE` | toile du tambour, italiques sur le tapis |
+| Rose poudré | `--rose` | `#EFC7BE` | toile du tambour, accents sur le tapis |
 | Doré | `--dore` | `#D9B26A` | dentelle, survol des boutons clairs |
 | Gris | `--gris` | `#6B5F58` | texte secondaire, 5,1:1 sur le lin |
 
@@ -201,13 +192,19 @@ de section, tout centré, un seul `border-radius` partout, cartes à liseré col
 
 ## Typographie
 
+⚠️ **Aucun passage romain → italique dans un titre** (retour client du 13 octobre 2026 : « les
+typos qui passent de basique à italique, c'est très IA »). Un titre = un seul style, une seule
+couleur. Pas de dernier mot en italique de couleur, pas de prénom ni de signature en italique
+décoratif, pas de frise qui alterne romain et italique. La feuille globale neutralise `em` dans
+les titres ; ne pas en mettre dans le balisage.
+
 Google Fonts est le seul hébergeur autorisé (contrainte CSP des artefacts, et performance).
 Trois familles exactement : Instrument Serif, Jost, DM Mono.
 
 - **Titres** : `Instrument Serif` — choisie par le client en remplacement de Fraunces.
   Serif à très fort contraste, registre studio de design plutôt que boutique de créateur ;
-  son italique porte les accents. ⚠️ Elle n'existe qu'en **une seule graisse (400)**, romain et
-  italique : la hiérarchie se fait donc par la **taille et l'italique**, jamais par la graisse.
+  ⚠️ Elle n'existe qu'en **une seule graisse (400)**, romain et
+  italique : la hiérarchie se fait donc par la **taille**, jamais par la graisse ni par l'italique.
   Ne pas écrire de `font-weight` ni de `font-variation-settings` dessus.
   ⚠️ **Fraunces est abandonnée** : trop identifiable comme la police par défaut de l'artisanal
   généré, avec ses axes `SOFT` et `WONK` exhibés.
