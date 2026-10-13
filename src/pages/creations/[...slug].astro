@@ -448,6 +448,8 @@ const icoWa =
   .ticket--prix dd { font-size: clamp(2.1rem, 1.6rem + 2vw, 3.2rem); color: var(--coquelicot-fonce); }
 
   .fiche__actions { view-timeline: --cta-fiche block; width: 100%; }
+  .fiche__actions .btn { flex: 1 1 13rem; }
+  @media (min-width: 64rem) { .fiche__actions .btn { flex: 0 1 auto; } }
   .fiche__rassure {
     display: grid; gap: 0.35rem;
     font-size: var(--t-petit);

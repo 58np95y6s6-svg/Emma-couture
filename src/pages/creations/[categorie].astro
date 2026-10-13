@@ -417,7 +417,7 @@ const titre = `${cat.titre} | ${SITE.nom}`;
   .ariane--clair [aria-current] { color: var(--lin-haut); }
   .ariane--clair a:hover { color: var(--rose); }
   .dt__dire { display: grid; gap: clamp(1rem, 2vw, 1.5rem); align-content: start; }
-  .dt h1 { color: var(--lin-haut); max-width: 8ch; text-wrap: balance; }
+  .dt h1 { color: var(--lin-haut); max-width: 9ch; text-wrap: balance; font-size: clamp(3.6rem, 1rem + 11vw, 10.5rem); }
   .dt__tambour {
     --bois: #C9A97E; --bois-fonce: #8A6A46;
     position: relative;
@@ -467,12 +467,12 @@ const titre = `${cat.titre} | ${SITE.nom}`;
     .dt__regle { grid-column: bord-d / bord-f; }
     .dt .ariane { grid-column: large-d / large-f; }
     .dt__dire { grid-column: large-d / mi; grid-row: 3; padding-inline-end: 3rem; align-self: center; }
-    .dt__tambour { grid-column: mi / large-f; grid-row: 3 / span 2; width: min(100%, 36rem); justify-self: end; align-self: start; }
-    .dt__technique { grid-column: large-d / mi; grid-row: 4; padding-inline-end: 3rem; }
+    .dt__tambour { grid-column: mi / large-f; grid-row: 3; width: min(100%, 36rem); justify-self: end; align-self: center; }
+    .dt__technique { grid-column: large-d / large-f; grid-row: 4; margin-block-start: clamp(1rem, 3vw, 3rem); }
     .dt__etapes { grid-template-columns: repeat(3, minmax(0, 1fr)); border-block-end: 1px dashed color-mix(in oklab, var(--tapis-trait) 35%, transparent); }
-    .dt__etapes li { grid-template-columns: minmax(0, 1fr); gap: 0.4rem; border-block-end: 0; padding-inline-end: 1.2rem; }
+    .dt__etapes li { grid-template-columns: minmax(0, 1fr); align-content: start; align-items: start; gap: 0.5rem; border-block-end: 0; padding-inline-end: 1.6rem; padding-block: 1.4rem 1.6rem; }
     .dt__etapes li + li { padding-inline-start: 1.2rem; border-inline-start: 1px dashed color-mix(in oklab, var(--tapis-trait) 35%, transparent); }
-    .dt__etapes p { font-size: var(--t-petit); }
+    .dt__etapes p { font-size: var(--t-corps); }
   }
 
   /* Le tambour tourne d'un quart de tour pendant que la section défile,

@@ -2,20 +2,21 @@
 /**
  * Page locale Rennes.
  *
- * ⚠️ RÈGLE ABSOLUE DE CETTE PAGE : Emma n'est PAS à Rennes. Aucune phrase ne
- * doit laisser croire à un atelier, une boutique ou une adresse rennaise.
- * L'angle honnête est la proximité : l'atelier est à Vitré, à une trentaine de
- * kilomètres, et tout se règle par message.
+ * ⚠️ RÈGLE ABSOLUE : Emma n'est PAS à Rennes. Aucune phrase ne doit laisser
+ * croire à un atelier, une boutique ou une adresse rennaise. L'angle honnête
+ * est la proximité : l'atelier est à Vitré, et tout se règle par message.
  *
- * Elle est volontairement construite autrement que /brodeuse-vitre/ :
- *   Vitré  → on se voit, les communes autour, les marchés, l'atelier à domicile.
- *   Rennes → la distance, les trois façons de récupérer la pièce, la
- *            différence avec les ateliers de marquage rennais, les clubs et
- *            associations.
+ * Construite autrement que /brodeuse-vitre/ :
+ *   Vitré  → la présence sur place, les communes autour, les marchés.
+ *   Rennes → la distance (le mètre ruban), les façons de recevoir la pièce,
+ *            la pièce à l'unité face aux ateliers de marquage, offrir à distance.
+ *
+ * Positionnement : particuliers uniquement (CLAUDE.md). Pas de clubs, pas
+ * d'associations, pas de logos d'entreprise sur cette page.
  *
  * Cible : « broderie personnalisée Rennes », « cadeau personnalisé Rennes ».
  *
- * ⚠️ MAQUETTE — prix, délais, numéro WhatsApp, e-mail et téléphone sont
+ * ⚠️ CONTENU D'EXEMPLE : délais, numéro WhatsApp, e-mail et téléphone sont
  * provisoires (src/config.ts). Vocabulaire : broderie MACHINE.
  */
 import { Image } from 'astro:assets';
@@ -23,78 +24,68 @@ import Base from '../layouts/Base.astro';
 import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
 
 import machine from '../assets/creations/plein-ecran/machine-a-broder-en-cours-atelier-vitre.webp';
-import sacSport from '../assets/creations/galerie/sac-de-sport-cousu-brode-baskets.webp';
 import cadre from '../assets/creations/detail/cadre-naissance-brode-prenom-chambre-bebe.webp';
 import ogPage from '../assets/creations/og/atelier-mur-bobines-fil-broderie-vitre.webp';
 
-const titre = `Broderie personnalisée à Rennes — l’atelier est à 30 min | ${SITE.nom}`;
+const titre = `Broderie personnalisée à Rennes · réalisée à Vitré | ${SITE.nom}`;
 const description =
-  "Broderie personnalisée pour Rennes : prénoms, motifs et logos brodés à la machine, à l’unité. Mon atelier est à Vitré, à une trentaine de kilomètres. Remise en main propre ou envoi suivi.";
+  'Broderie personnalisée pour Rennes : prénoms et motifs brodés à la machine, à l’unité, avec validation du motif. Atelier à Vitré (35), remise en main propre sur rendez-vous ou envoi suivi.';
 
 const wa = lienWhatsApp(
-  "Bonjour Emma, je suis à Rennes et j'aimerais faire broder quelque chose.",
+  "Bonjour Emma, j'habite à Rennes et j'aimerais vous confier un projet de broderie.",
 );
 
 /*
-  ⚠️ VALEURS À CONFIRMER (ordres de grandeur, volontairement approximatifs) :
-  distance et temps de trajet Vitré → Rennes, et l'existence d'une liaison
-  ferroviaire directe. Ne jamais afficher de chiffre précis non vérifié :
-  la règle des chiffres de la direction artistique s'applique aussi ici.
+  ⚠️ VALEURS À VÉRIFIER (ordres de grandeur, volontairement approximatifs) :
+  distance routière Vitré → Rennes (~ 38 km), durée en TER (~ 25 à 35 min),
+  durée en voiture par la N157 (~ 40 min).
+  Ne jamais afficher de chiffre précis non vérifié.
 */
-const trajet = [
+const mesures = [
   { valeur: '≈ 35 km', dire: 'entre Vitré et Rennes' },
-  { valeur: '≈ 30 min', dire: 'de voiture par la nationale' },
-  { valeur: 'Ligne directe', dire: 'Rennes – Vitré en train' },
+  { valeur: '≈ 30 min', dire: 'en train, ligne directe' },
+  { valeur: '≈ 40 min', dire: 'en voiture, par la N157' },
 ];
 
 /*
-  Trois façons de récupérer la commande. Ce n'est pas une séquence d'étapes :
-  pas de numérotation (voir direction artistique § « sourcils numérotés »).
-  ⚠️ À CONFIRMER : à quelle fréquence Emma monte réellement à Rennes, et si
-  elle accepte un point de rendez-vous fixe (gare, centre, parking).
+  Les façons de recevoir la commande. Pas une séquence : pas de numéros.
+  ⚠️ À CONFIRMER : remise en main propre à Rennes (fréquence, lieux possibles).
 */
-const recuperer = [
+const recevoir = [
   {
-    eti: 'En main propre',
-    nom: 'Je vous la remets à Rennes',
-    dire: "Je monte à Rennes de temps en temps. Si nos dates tombent bien, on se retrouve à l'endroit qui vous arrange — vous voyez la pièce avant de l'offrir, et il n'y a pas de frais d'envoi.",
-    fil: 'var(--rouille)',
+    nom: 'Par envoi suivi',
+    dire: "La pièce part de Vitré en colis suivi, sous emballage cadeau. Elle peut être adressée chez vous ou directement à la personne à qui vous l'offrez.",
   },
   {
-    eti: 'Par la poste',
-    nom: 'Colis suivi, emballage compris',
-    dire: "C'est le plus simple, et de loin le plus choisi. Depuis Vitré, le colis n'a que quelques dizaines de kilomètres à faire : il arrive vite, emballé pour être offert tel quel.",
-    fil: 'var(--olive)',
+    nom: 'En main propre à Rennes',
+    dire: "Lorsque j'ai un déplacement prévu à Rennes, nous convenons d'un lieu et d'un horaire. Indiquez-moi votre date limite dès le premier message.",
   },
   {
-    eti: 'Sur place',
-    nom: 'Ou vous passez par Vitré',
-    dire: "Si vous venez déjà par ici — un week-end, une visite, le château — on se voit à Vitré. Il y a aussi une ligne de train directe depuis la gare de Rennes.",
-    fil: 'var(--jean)',
+    nom: 'En main propre à Vitré',
+    dire: "Si vous passez par Vitré, nous pouvons nous y retrouver sur rendez-vous. L'adresse précise vous est communiquée après accord.",
   },
 ];
 
 /*
-  FAQ locale Rennes. Questions différentes de celles de la page Vitré :
-  livraison, déplacement, délai vu de Rennes, pièce à l'unité.
+  FAQ Rennes. Questions différentes de celles de la page Vitré.
   Le JSON-LD est généré depuis ce tableau, il ne peut donc pas en diverger.
 */
 const faq = [
   {
-    q: 'Vous livrez à Rennes ?',
-    r: "Oui, en colis suivi, et c'est ce que choisissent la plupart des clientes rennaises. L'emballage cadeau est compris : vous pouvez faire envoyer directement chez la personne à qui vous offrez.",
+    q: 'Livrez-vous à Rennes ?',
+    r: "Oui, par envoi suivi, sous emballage cadeau. Vous pouvez également faire adresser la pièce directement à la personne à qui vous l'offrez.",
   },
   {
-    q: 'Vous vous déplacez à Rennes pour une remise en main propre ?',
-    r: "Ça arrive, mais je ne vais pas vous promettre un rendez-vous demain : je monte à Rennes de temps en temps, pas tous les jours. Dites-moi votre date limite dès le premier message, on verra si un passage tombe dedans — sinon le colis fait très bien le travail.",
+    q: 'Une remise en main propre à Rennes est-elle possible ?',
+    r: "Oui, lorsque j'ai un déplacement prévu à Rennes. Indiquez-moi votre date limite dès votre premier message : je vous dirai si une remise en main propre est envisageable, sinon la pièce vous est expédiée.",
   },
   {
-    q: 'Combien de temps entre ma demande et la pièce brodée ?',
-    r: `Comptez ${ATELIER.delaiActuel} pour la fabrication, plus l'envoi. Avant ça, il y a un aller-retour rapide : je vous montre le motif, vous validez, et seulement là la machine démarre.`,
+    q: 'Quel délai prévoir entre ma demande et la réception ?',
+    r: `Le délai de réalisation est actuellement de ${ATELIER.delaiActuel} à compter de la validation du motif, auquel s'ajoute le délai d'acheminement en cas d'envoi.`,
   },
   {
-    q: 'Je peux commander une seule pièce, ou il faut une quantité minimum ?',
-    r: "Une seule pièce, sans problème. Un doudou, une serviette, un polo : je brode à l'unité. C'est même la différence principale avec un atelier de marquage, qui travaille par lots.",
+    q: 'Puis-je commander une seule pièce ?',
+    r: "Oui. Je brode à l'unité : un doudou, une serviette, une trousse. Il n'y a aucune quantité minimum.",
   },
 ];
 
@@ -107,6 +98,9 @@ const jsonFaq = {
     acceptedAnswer: { '@type': 'Answer', text: f.r },
   })),
 };
+
+/* Le mètre ruban : un chiffre tous les 5 cm. Décoratif. */
+const ruban = Array.from({ length: 8 }, (_, i) => i * 5);
 ---
 
 <Base
@@ -117,158 +111,158 @@ const jsonFaq = {
 >
   <script type="application/ld+json" set:html={JSON.stringify(jsonFaq)} is:inline />
 
-  <!-- ===================== HAUT DE PAGE (texte seul) ===================== -->
-  <section class="bande ren-haut">
-    <div class="ren-haut__dire">
-      <p class="sourcil ren-sourcil">Rennes &amp; alentours — atelier à {SITE.ville}&nbsp;(35)</p>
+  <!-- ===================== HAUT DE PAGE ===================== -->
+  <section class="bande re-ouv">
+    <nav class="ariane" aria-label="Fil d'Ariane">
+      <a href="/">Accueil</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Broderie personnalisée à Rennes</span>
+    </nav>
 
-      <h1>Je ne brode pas à Rennes.<br />Je brode <em>à trente minutes.</em></h1>
+    <h1>Broderie personnalisée à Rennes</h1>
 
+    <div class="re-ouv__bas">
       <p class="chapo">
-        Mon atelier est à Vitré, en Ille-et-Vilaine. Je brode à la machine des prénoms, des motifs et
-        des logos&nbsp;: linge de bain, vêtements, cadeaux de naissance, tenues de club. Pour une
-        broderie personnalisée à Rennes, tout se règle par message — et vous choisissez comment vous
-        récupérez la pièce.
+        Mon atelier se trouve à {SITE.ville}, à proximité de Rennes. J'y réalise des broderies
+        machine personnalisées pour les particuliers&nbsp;: prénoms et motifs sur le linge de bain,
+        les vêtements, les cadeaux de naissance, ainsi que des sacs et trousses cousus main. Tout
+        se règle par message, et vous choisissez la façon de recevoir votre pièce.
       </p>
-
       <p class="actions">
-        <a class="btn btn--wa" href={wa}>Écrire sur WhatsApp</a>
-        <a class="btn btn--creux" href="/contact/#devis">Demander un devis</a>
+        <a class="btn btn--wa btn--grand" href={wa}>Écrire sur WhatsApp</a>
+        <a class="btn btn--creux btn--grand" href="/contact/#devis">Demander un devis</a>
       </p>
     </div>
+  </section>
 
-    <!-- ⚠️ Valeurs à confirmer : voir const trajet. -->
-    <ul class="ren-trajet">
+  <!-- ===================== LE MÈTRE RUBAN ===================== -->
+  <div class="bande re-ruban-zone">
+    <div class="re-ruban plein" aria-hidden="true">
+      <div class="re-ruban__bande">
+        <span class="re-ruban__bout re-ruban__bout--d">{SITE.ville}</span>
+        <span class="re-ruban__chiffres">
+          {ruban.map((n) => <span>{n}</span>)}
+        </span>
+        <span class="re-ruban__bout re-ruban__bout--f">Rennes</span>
+      </div>
+    </div>
+
+    {/* ⚠️ Valeurs à vérifier : voir const mesures. */}
+    <ul class="re-mesures">
       {
-        trajet.map((t) => (
+        mesures.map((m) => (
           <li>
-            <b>{t.valeur}</b>
-            <span>{t.dire}</span>
+            <b>{m.valeur}</b>
+            <span>{m.dire}</span>
           </li>
         ))
       }
     </ul>
-  </section>
+  </div>
 
-  <!-- ===================== BANDE PHOTO PLEINE LARGEUR ===================== -->
-  <div class="ren-bandeau">
+  <!-- ===================== BANDEAU MACHINE ===================== -->
+  <div class="bandeau re-bandeau">
     <Image
       src={machine}
       alt="Broderie en cours sous la tête de la machine : cerisiers en fleurs et colibri en fil de couleur"
       widths={[800, 1400, 2000, 2400]}
       sizes="100vw"
-      loading="eager"
-      fetchpriority="high"
+      loading="lazy"
       decoding="async"
     />
-    <p class="ren-bandeau__mot">
-      La machine est ici, à Vitré. Vos prénoms partent vers Rennes.
-    </p>
+    <p class="bandeau__mot" aria-hidden="true">Brodé à Vitré</p>
   </div>
 
-  <!-- ===================== RÉCUPÉRER SA COMMANDE ===================== -->
-  <section class="bande ren-recup">
-    <div class="ren-recup__tete">
-      <p class="sourcil">La vraie question</p>
-      <h2 class="titre-xl">Comment vous récupérez votre commande.</h2>
+  <!-- ===================== RECEVOIR ===================== -->
+  <section class="bande re-recevoir">
+    <div class="re-recevoir__tete">
+      <h2 class="titre-xl">Recevoir votre commande</h2>
       <p class="mesure">
-        C’est tout ce qui change quand la brodeuse n’est pas dans votre rue. Trois possibilités, et
-        vous décidez au moment du devis.
+        Vous choisissez au moment du devis. Les frais d'envoi éventuels y sont indiqués, avant
+        toute validation.
+        {/* ⚠️ À CONFIRMER : frais de port et transporteur. */}
       </p>
     </div>
 
-    <ul class="ren-recup__liste">
+    <ul class="re-voies">
       {
-        recuperer.map((r) => (
-          <li style={`--f:${r.fil}`}>
-            <p class="ren-recup__eti">{r.eti}</p>
+        recevoir.map((r) => (
+          <li class="re-voie">
             <h3>{r.nom}</h3>
-            <p class="ren-recup__dire">{r.dire}</p>
+            <p>{r.dire}</p>
           </li>
         ))
       }
     </ul>
   </section>
 
-  <!-- ===================== LA DIFFÉRENCE ===================== -->
-  <section class="bande ren-diff">
-    <figure class="ren-diff__fig">
+  <!-- ===================== L'UNITÉ ET LA VALIDATION ===================== -->
+  <section class="bande re-unite loin">
+    <figure class="re-unite__fig">
       <Image
         src={cadre}
         alt="Cadre de naissance brodé au prénom, accroché au mur d’une chambre de bébé"
         widths={[420, 700, 1000]}
-        sizes="(max-width: 62rem) 92vw, 40vw"
+        sizes="(max-width: 64rem) 92vw, 40vw"
         loading="lazy"
         decoding="async"
       />
     </figure>
 
-    <div class="ren-diff__dire">
-      <h2 class="titre-xl">À l’unité, et validé <em>avant</em> d’être piqué.</h2>
-      <p>
-        À Rennes, la broderie, c’est surtout du marquage professionnel&nbsp;: des vêtements de
-        travail, par lots, avec un minimum de pièces à commander.
-        <!-- ⚠️ Constat issu de la recherche concurrentielle de CLAUDE.md. À faire relire par Emma
-             avant mise en ligne : on décrit un marché, on ne dénigre personne. -->
+    <div class="re-unite__dire">
+      <h2 class="titre-xl">Une pièce à l'unité, un motif validé avant la réalisation</h2>
+      <p class="mesure">
+        À Rennes, la broderie est surtout proposée par des ateliers de marquage, qui travaillent
+        sur des vêtements professionnels, par lots et avec un minimum de commande.
+        {/* ⚠️ Constat issu de la recherche concurrentielle de CLAUDE.md. À faire relire par
+             Emma : on décrit un marché, on ne dénigre personne. */}
       </p>
-      <p>
-        Moi je brode une serviette. Un doudou. Un polo. Et avant de lancer la machine, je vous envoie
-        le motif&nbsp;: la police du prénom, la taille, la couleur du fil. Si quelque chose ne va
-        pas, on le change — tant que ce n’est pas piqué, tout est possible.
+      <p class="mesure">
+        Je travaille différemment&nbsp;: je brode une seule pièce, pour une personne. Avant de
+        lancer la machine, je vous soumets le motif (écriture du prénom, taille, emplacement,
+        couleurs de fil). Tant que la broderie n'est pas lancée, tout peut encore être ajusté.
       </p>
-      <p class="ren-diff__signe">C’est moi qui réponds, qui brode et qui emballe.</p>
       <p class="actions">
-        <a class="btn btn--creux" href="/sur-mesure/">Comment ça se passe</a>
+        <a class="lien-fleche" href="/sur-mesure/">Le déroulement d'une commande</a>
+        <a class="lien-fleche" href="/l-atelier/">L'atelier</a>
       </p>
     </div>
   </section>
 
-  <!-- ===================== CLUBS & ASSOCIATIONS ===================== -->
-  <section class="bande ren-clubs">
-    <div class="ren-clubs__dire">
-      <p class="sourcil sourcil--clair ren-sourcil">Clubs, associations, petites équipes</p>
-      <h2 class="titre-xl">Vingt sweats à marquer,<br /><em>ou deux.</em></h2>
+  <!-- ===================== OFFRIR À DISTANCE (tapis) ===================== -->
+  <section class="bande tapis re-offrir loin">
+    <div class="re-offrir__dire">
+      <h2 class="titre-xl">Offrir sans se déplacer</h2>
+      <p class="chapo">
+        Lorsque la personne à qui vous offrez n'habite pas à Rennes, la pièce peut lui être
+        adressée directement, sous emballage cadeau, sans passer par chez vous.
+      </p>
       <p class="mesure mesure--clair">
-        Logo de club, nom sur le dos, sigle d’association, sac de sport de l’équipe&nbsp;: je brode
-        aussi pour des groupes de la métropole rennaise. Sans lot minimum, et sans frais de dossier
-        pour ressortir un fichier que j’ai déjà.
-        <!-- ⚠️ À CONFIRMER avec Emma : ses conditions réelles pour les commandes de groupe
-             (quantités, tarif dégressif, conservation du fichier de broderie d'une année sur
-             l'autre). L'inventaire photos confirme l'activité : polos de club, sweats
-             d'association, serviettes de sapeurs-pompiers, logos brodés. -->
-      </p>
-      <p class="ren-clubs__pratique">
-        Envoyez-moi le logo dans la meilleure qualité que vous ayez, le nombre de pièces et la date
-        du tournoi ou de l’assemblée. Je vous dis ce qui tient dans le délai.
-      </p>
-      <p class="actions">
-        <a class="btn btn--or" href={wa}>Parler d’une commande de groupe</a>
+        Vous validez le motif par message, vous m'indiquez l'adresse de livraison, et je me charge
+        du reste.
+        {/* ⚠️ À CONFIRMER avec Emma : envoi direct au destinataire, mot d'accompagnement. */}
       </p>
     </div>
 
-    <figure class="ren-clubs__fig">
-      <Image
-        src={sacSport}
-        alt="Sac de sport cousu et brodé d’une paire de baskets et d’un prénom"
-        widths={[380, 620, 1000]}
-        sizes="(max-width: 62rem) 92vw, 34vw"
-        loading="lazy"
-        decoding="async"
-      />
-    </figure>
+    <div class="re-paquet" aria-hidden="true">
+      <span class="re-paquet__ficelle"></span>
+      <span class="re-paquet__etiquette">
+        <span>à offrir</span>
+        <span>{SITE.ville} → partout en France</span>
+      </span>
+    </div>
   </section>
 
-  <!-- ===================== FAQ LOCALE ===================== -->
-  <section class="bande ren-faq" id="questions">
-    <h2 class="titre-xl">Ce qu’on me demande depuis Rennes.</h2>
-
-    <div class="ren-faq__liste">
+  <!-- ===================== FAQ ===================== -->
+  <section class="bande re-faq loin" id="questions">
+    <h2 class="titre-xl">Questions fréquentes depuis Rennes</h2>
+    <div class="re-faq__liste">
       {
         faq.map((f) => (
-          <details class="ren-faq__item">
+          <details class="re-faq__item">
             <summary>
               <span>{f.q}</span>
-              <span class="ren-faq__plus" aria-hidden="true" />
+              <span class="re-faq__plus" aria-hidden="true" />
             </summary>
             <p>{f.r}</p>
           </details>
@@ -277,475 +271,199 @@ const jsonFaq = {
     </div>
   </section>
 
-  <!-- ===================== APPEL FINAL (bande claire) ===================== -->
-  <section class="bande ren-final" id="devis">
-    <div class="ren-final__in">
-      <h2 class="titre-xl">Écrivez-moi le prénom.<br /><em>Le reste, c’est mon travail.</em></h2>
-      <p class="mesure">
-        Une occasion, une date, un prénom, même flou&nbsp;: je réponds avec un prix, un délai et une
-        proposition de motif. {ATELIER.delaiReponse}, et ça ne vous engage à rien.
+  <!-- ===================== APPEL FINAL ===================== -->
+  <section class="final bande re-final" id="devis">
+    <div class="final__in">
+      <h2 class="titre-xl">Votre projet de broderie</h2>
+      <p class="chapo">
+        Indiquez-moi le prénom, l'occasion et la date souhaitée. Je vous réponds avec un prix, un
+        délai et une proposition de motif, sans engagement. {ATELIER.delaiReponse}.
       </p>
       <p class="actions">
-        <a class="btn btn--wa" href={wa}>Écrire sur WhatsApp</a>
-        <a class="btn btn--creux" href="/contact/#devis">Remplir le formulaire</a>
+        <a class="btn btn--wa btn--grand" href={wa}>Écrire sur WhatsApp</a>
+        <a class="btn btn--or btn--grand" href="/contact/#devis">Remplir le formulaire</a>
       </p>
-      <p class="ren-final__note">
-        Par e-mail&nbsp;: <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>. Par téléphone&nbsp;:
-        <a href={`tel:${CONTACT.telephone}`}>{CONTACT.telephone}</a>.<br />
-        Vous êtes plutôt du côté de Vitré&nbsp;?
-        <a href="/brodeuse-vitre/">La page de l’atelier est ici.</a>
+      <p class="final__note">
+        <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> ·
+        <a href={`tel:${CONTACT.telephone}`}>{CONTACT.telephone}</a> · Vous habitez près de
+        {' '}{SITE.ville}&nbsp;? <a href="/brodeuse-vitre/">Brodeuse à Vitré</a>
       </p>
     </div>
   </section>
 </Base>
 
-<style is:global>
-  /* --------------------------------------------------------------------------
-     Page locale Rennes. Styles préfixés `ren-`, aucun fichier partagé touché.
-     Rythme vertical volontairement différent de /brodeuse-vitre/ : haut de page
-     sans photo, bande photo large juste dessous, section sombre placée plus
-     tard, appel final clair au lieu de sombre.
-  -------------------------------------------------------------------------- */
-
-  /* 1. Haut de page : le texte porte tout, les repères de trajet le complètent. */
-  .ren-haut {
-    padding-block: clamp(2.2rem, 6vw, 4.5rem) clamp(1.6rem, 4vw, 3rem);
-    row-gap: clamp(1.6rem, 3.5vw, 2.6rem);
+<style>
+  /* ============================ HAUT DE PAGE ============================ */
+  .re-ouv {
+    padding-block: 0.5rem clamp(2rem, 4vw, 3rem);
+    row-gap: clamp(1.2rem, 3vw, 2.2rem);
   }
-  .ren-haut__dire {
-    display: grid;
-    gap: clamp(0.9rem, 2vw, 1.4rem);
-    justify-items: start;
+  /* Le titre occupe toute la largeur : une seule ligne sur grand écran */
+  .re-ouv h1 {
+    font-size: clamp(3rem, 0.6rem + 8.4vw, 9.6rem);
+    line-height: 0.88;
+    max-width: 14ch;
   }
-  /* `.sourcil` est en `white-space: nowrap` dans la feuille globale : un
-     libellé long débordait de 32 px à 320 px de large. On l'autorise à passer
-     à la ligne sur petit écran, et le filet pointillé du `::after` disparaît —
-     c'est ce que fait `.sourcil--hero` sur la page d'accueil. Sur ordinateur
-     le libellé tient sur une ligne : on ne touche à rien. */
-  @media (max-width: 40rem) {
-    .ren-sourcil {
-      white-space: normal;
-      line-height: 1.5;
-    }
-    .ren-sourcil::after {
-      display: none;
-    }
-  }
-  .ren-haut h1 {
-    max-width: 22ch;
-  }
-  .ren-haut .chapo {
-    max-width: 38rem;
+  .re-ouv__bas { display: grid; gap: 1.5rem; justify-items: start; }
+  @media (min-width: 64rem) {
+    .re-ouv { min-height: calc(62svh - 4.5rem); align-content: end; }
+    .re-ouv h1 { max-width: none; }
+    .re-ouv__bas { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); align-items: end; column-gap: 4rem; justify-items: stretch; }
+    .re-ouv__bas .actions { justify-content: flex-end; }
   }
 
-  .ren-trajet {
-    display: grid;
-    gap: 0.9rem clamp(1.4rem, 4vw, 3.5rem);
-    grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr));
-    padding-block-start: clamp(0.8rem, 2vw, 1.4rem);
-    border-block-start: 1px solid color-mix(in oklab, var(--brique) 26%, transparent);
+  /* ============================ MÈTRE RUBAN ============================ */
+  .re-ruban-zone { padding-block: 1rem clamp(3rem, 7vw, 5rem); row-gap: 2rem; }
+  .re-ruban { overflow: hidden; padding-block: 1.2rem; }
+  .re-ruban__bande {
+    position: relative;
+    display: flex; align-items: stretch;
+    block-size: 3.6rem;
+    background-color: var(--dore);
+    background-image:
+      linear-gradient(90deg, var(--encre) 1.5px, transparent 1.5px),
+      linear-gradient(90deg, color-mix(in oklab, var(--encre) 70%, transparent) 1px, transparent 1px);
+    background-size: calc(var(--cm) * 5) 1.3rem, var(--cm) 0.7rem;
+    background-repeat: repeat-x;
+    background-position: 0 0, 0 0;
+    box-shadow: 0 14px 26px -16px color-mix(in oklab, var(--encre) 60%, transparent);
+    transform: rotate(-0.6deg);
+    transform-origin: 0 50%;
   }
-  .ren-trajet li {
-    min-width: 0;
-    display: grid;
-    gap: 0.1rem;
-    align-content: start;
-  }
-  .ren-trajet b {
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.3rem);
-    line-height: 1;
-    letter-spacing: -0.015em;
-    color: var(--rouille);
-  }
-  .ren-trajet span {
-    font-size: var(--t-micro);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--gris);
-    max-width: 13rem;
-  }
-
-  /* 2. Bande photo pleine largeur, collée sous le haut de page. */
-  .ren-bandeau {
-    display: grid;
-    grid-template-areas: 'a';
-    /* La piste doit valoir la hauteur du conteneur, pas la hauteur intrinsèque
-       de la photo : sinon la légende et le voile sombre, posés en `end`, se
-       retrouvent hors de la zone rognée (bug constaté sur la page Rennes). */
-    grid-template-rows: minmax(0, 1fr);
-    isolation: isolate;
-    height: clamp(210px, 36vw, 480px);
-    overflow: hidden;
-  }
-  .ren-bandeau img {
-    grid-area: a;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  .ren-bandeau::after {
-    content: '';
-    grid-area: a;
-    background: linear-gradient(
-      to top,
-      rgba(22, 18, 14, 0.7) 0%,
-      rgba(22, 18, 14, 0.1) 55%,
-      transparent 100%
-    );
-  }
-  .ren-bandeau__mot {
-    grid-area: a;
-    z-index: 1;
-    align-self: end;
-    justify-self: end;
-    margin: 0 var(--marge) clamp(0.9rem, 2.5vw, 1.8rem);
-    max-width: 26rem;
-    text-align: end;
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: clamp(1.1rem, 0.9rem + 1.3vw, 1.9rem);
-    line-height: 1.15;
-    color: #fbf3e9;
-    text-wrap: balance;
-    text-shadow: 0 1px 2px rgb(24 20 16 / 0.6), 0 8px 30px rgb(24 20 16 / 0.5);
-  }
-
-  /* 3. Récupérer sa commande : trois lignes séparées par un filet de fil. */
-  .ren-recup {
-    padding-block: clamp(2.8rem, 6vw, 5rem);
-    row-gap: clamp(1.6rem, 3.5vw, 2.4rem);
-  }
-  .ren-recup__tete {
-    display: grid;
-    gap: clamp(0.8rem, 2vw, 1.2rem);
-    justify-items: start;
-  }
-  .ren-recup__tete .titre-xl {
-    font-size: clamp(1.8rem, 1.2rem + 2.2vw, 3.2rem);
-    max-width: 24ch;
-  }
-  .ren-recup__liste {
-    display: grid;
-    gap: 0;
-  }
-  .ren-recup__liste > li {
-    min-width: 0;
-    display: grid;
-    gap: 0.35rem;
-    padding-block: clamp(1.1rem, 2.5vw, 1.6rem);
-    border-block-start: 1px solid color-mix(in oklab, var(--brique) 26%, transparent);
-  }
-  .ren-recup__liste > li:last-child {
-    border-block-end: 1px solid color-mix(in oklab, var(--brique) 26%, transparent);
-  }
-  .ren-recup__eti {
-    font-size: var(--t-micro);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--f, var(--brique));
-  }
-  .ren-recup__liste h3 {
-    max-width: 24ch;
-  }
-  .ren-recup__dire {
-    /* Texte courant : jamais sous 16 px. */
-    font-size: var(--t-corps);
-    line-height: 1.65;
-    color: var(--encre-doux);
-    max-width: 44rem;
-  }
-
-  @media (min-width: 52rem) {
-    .ren-recup__liste > li {
-      grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
-      column-gap: clamp(1.5rem, 4vw, 3.5rem);
-      align-items: baseline;
-    }
-    .ren-recup__eti {
-      grid-column: 1;
-      grid-row: 1;
-      padding-block-start: 0.45rem;
-    }
-    .ren-recup__liste h3 {
-      grid-column: 2;
-      grid-row: 1;
-    }
-    .ren-recup__dire {
-      grid-column: 2;
-      grid-row: 2;
-      padding-block-start: 0.35rem;
-    }
-  }
-
-  /* 4. La différence : photo et texte, image à gauche sur grand écran. */
-  .ren-diff {
-    padding-block: clamp(2.5rem, 5vw, 4.5rem);
-    row-gap: clamp(1.5rem, 3vw, 2.4rem);
-    background: color-mix(in oklab, var(--sable) 90%, var(--olive));
-  }
-  .ren-diff__fig {
-    margin: 0;
-    max-width: 34rem;
-  }
-  .ren-diff__fig img {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: 2px 2px 90px 2px;
-    box-shadow: 0 30px 56px -42px rgba(36, 28, 24, 0.85);
-  }
-  .ren-diff__dire {
-    display: grid;
-    gap: clamp(0.7rem, 1.8vw, 1.1rem);
-    justify-items: start;
-    align-content: center;
-  }
-  .ren-diff__dire .titre-xl {
-    font-size: clamp(1.75rem, 1.15rem + 2.2vw, 3rem);
-    max-width: 20ch;
-  }
-  .ren-diff__dire > p:not(.ren-diff__signe) {
-    font-size: var(--t-corps);
-    line-height: 1.65;
-    color: var(--encre-doux);
-    max-width: 34rem;
-  }
-  .ren-diff__signe {
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-style: italic;
-    font-size: clamp(1.15rem, 1rem + 0.8vw, 1.6rem);
-    line-height: 1.2;
-    color: var(--mauve);
-    max-width: 24ch;
-  }
-
-  @media (min-width: 62rem) {
-    .ren-diff {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, 28rem)
-        [mi] minmax(0, 40rem)
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      column-gap: clamp(2rem, 4vw, 4rem);
-    }
-    .ren-diff__fig {
-      grid-column: large-d / mi;
-      grid-row: 1;
-      max-width: none;
-    }
-    .ren-diff__dire {
-      grid-column: mi / large-f;
-      grid-row: 1;
-    }
-  }
-
-  /* 5. Clubs & associations : rupture sombre, tirée vers le bleu de jean. */
-  .ren-clubs {
-    padding-block: clamp(3rem, 7vw, 5.5rem);
-    row-gap: clamp(1.6rem, 3.5vw, 2.6rem);
-    color: var(--coquille);
-    background:
-      radial-gradient(
-        65% 55% at 88% 8%,
-        color-mix(in oklab, var(--jean) 72%, var(--vert-2)) 0%,
-        transparent 62%
-      ),
-      linear-gradient(172deg, #1d2620, var(--vert) 72%, #131814);
-  }
-  .ren-clubs__dire {
-    display: grid;
-    gap: clamp(0.8rem, 2vw, 1.3rem);
-    justify-items: start;
-    align-content: center;
-  }
-  .ren-clubs .titre-xl {
-    max-width: 20ch;
-  }
-  .ren-clubs .titre-xl em {
-    color: var(--dore);
-  }
-  .ren-clubs__pratique {
-    font-size: var(--t-corps);
-    line-height: 1.6;
-    max-width: 34rem;
-    color: color-mix(in oklab, var(--rose) 58%, #c9beb6);
-    padding-block-start: 0.7rem;
-    border-block-start: 1px solid rgba(251, 244, 236, 0.16);
-  }
-  .ren-clubs__fig {
-    margin: 0;
-    max-width: 22rem;
-  }
-  .ren-clubs__fig img {
-    width: 100%;
-    border-radius: 2px;
-    box-shadow: 0 30px 60px -40px #000;
-  }
-
-  @media (min-width: 62rem) {
-    .ren-clubs {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, 40rem)
-        [mi] minmax(0, 26rem)
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      column-gap: clamp(2rem, 4vw, 4.5rem);
-    }
-    .ren-clubs__dire {
-      grid-column: large-d / mi;
-      grid-row: 1;
-    }
-    .ren-clubs__fig {
-      grid-column: mi / large-f;
-      grid-row: 1;
-      max-width: none;
-    }
-  }
-
-  /* 6. FAQ : même mécanique que la page Vitré, mais posée à droite. */
-  .ren-faq {
-    padding-block: clamp(2.8rem, 6vw, 4.8rem);
-    row-gap: clamp(1.3rem, 3vw, 2rem);
-  }
-  .ren-faq .titre-xl {
-    font-size: clamp(1.7rem, 1.15rem + 2vw, 2.9rem);
-    max-width: 22ch;
-  }
-  .ren-faq__liste {
-    max-width: 46rem;
-    border-block-start: 1px solid color-mix(in oklab, var(--brique) 28%, transparent);
-  }
-  .ren-faq__item {
-    border-block-end: 1px solid color-mix(in oklab, var(--brique) 28%, transparent);
-  }
-  .ren-faq__item summary {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    min-height: 3.1rem;
-    padding-block: 0.85rem;
-    cursor: pointer;
-    list-style: none;
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: clamp(1.05rem, 0.98rem + 0.5vw, 1.35rem);
-    line-height: 1.25;
-  }
-  .ren-faq__item summary::-webkit-details-marker {
-    display: none;
-  }
-  .ren-faq__item summary:hover {
-    color: var(--rouille);
-  }
-  .ren-faq__plus {
+  .re-ruban__chiffres { flex: 1 1 auto; display: flex; overflow: hidden; padding-inline-start: 0; }
+  .re-ruban__chiffres span {
     flex: none;
-    position: relative;
-    width: 1rem;
-    height: 1rem;
+    inline-size: calc(var(--cm) * 5);
+    padding: 1.35rem 0 0 0.25rem;
+    font-family: var(--f-mono);
+    font-size: 0.8rem;
+    color: var(--encre);
   }
-  .ren-faq__plus::before,
-  .ren-faq__plus::after {
-    content: '';
-    position: absolute;
-    inset-block-start: 50%;
-    inset-inline-start: 0;
-    width: 1rem;
-    height: 1.5px;
-    background: var(--rouille);
-    transition: transform 240ms ease;
+  .re-ruban__bout {
+    flex: none;
+    display: grid; place-items: center;
+    padding-inline: 1rem;
+    font-family: var(--f-titre);
+    font-size: clamp(1.2rem, 1rem + 1vw, 1.7rem);
+    background: var(--encre); color: var(--lin-haut);
   }
-  .ren-faq__plus::after {
-    transform: rotate(90deg);
+  .re-ruban__bout--f { background: var(--coquelicot); color: #fff; }
+  @media (prefers-reduced-motion: no-preference) {
+    .re-ruban__bande { animation: deroule 1600ms var(--sortie) 200ms both; }
   }
-  .ren-faq__item[open] .ren-faq__plus::after {
-    transform: rotate(0deg);
+  @keyframes deroule { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+  .re-mesures { display: grid; gap: 1.2rem; }
+  .re-mesures li { display: grid; gap: 0.15rem; padding-block-start: 0.9rem; border-block-start: 1px dashed color-mix(in oklab, var(--encre) 30%, transparent); }
+  .re-mesures b { font-family: var(--f-titre); font-weight: 400; font-size: clamp(2.2rem, 1.6rem + 2vw, 3.4rem); line-height: 1; }
+  .re-mesures span { font-size: var(--t-petit); color: var(--encre-doux); }
+  @media (min-width: 48rem) { .re-mesures { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; } }
+
+  /* ============================ BANDEAU ============================ */
+  .re-bandeau { block-size: clamp(13rem, 36vw, 30rem); }
+
+  /* ============================ RECEVOIR ============================ */
+  .re-recevoir { padding-block: var(--respire) var(--serre); row-gap: clamp(2rem, 4vw, 3rem); }
+  .re-recevoir__tete { display: grid; gap: 1rem; justify-items: end; text-align: end; }
+  .re-recevoir__tete .mesure { max-width: 28rem; }
+  .re-voies { display: grid; gap: 1rem; }
+  .re-voie {
+    display: grid; gap: 0.8rem; align-content: start;
+    padding: clamp(1.5rem, 3.5vw, 2.6rem);
+    border-radius: var(--r-l);
+    background: var(--papier);
+    border: 1px solid color-mix(in oklab, var(--encre) 10%, transparent);
   }
-  .ren-faq__item > p {
-    padding-block: 0 1.1rem;
-    max-width: 40rem;
-    font-size: var(--t-corps);
-    line-height: 1.65;
-    color: var(--encre-doux);
-  }
-  @media (min-width: 62rem) {
-    .ren-faq__liste {
-      justify-self: end;
-      width: 100%;
-    }
+  .re-voie h3 { font-size: clamp(1.8rem, 1.3rem + 1.6vw, 2.6rem); line-height: 1; }
+  .re-voie p { color: var(--encre-doux); max-width: 32rem; }
+  .re-voie:first-child { background: var(--encre); color: var(--lin-haut); border-color: transparent; }
+  .re-voie:first-child h3 { color: var(--lin-haut); }
+  .re-voie:first-child p { color: color-mix(in oklab, var(--lin-haut) 84%, transparent); font-size: var(--t-chapo); line-height: 1.45; }
+  @media (min-width: 56rem) {
+    .re-voies { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: auto auto; }
+    .re-voie:first-child { grid-row: 1 / span 2; align-content: end; min-height: 26rem; }
   }
 
-  /* 7. Appel final : bande claire et rosée — la page Vitré, elle, finit sombre. */
-  .ren-final {
-    padding-block: clamp(2.8rem, 6vw, 5rem);
+  /* ============================ UNITÉ ============================ */
+  .re-unite { padding-block: var(--serre) var(--respire); row-gap: 2.5rem; align-items: center; }
+  .re-unite__fig :global(img) { inline-size: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; }
+  .re-unite__fig { inline-size: min(100%, 32rem); justify-self: center; }
+  .re-unite__dire { display: grid; gap: 1.1rem; justify-items: start; }
+  .re-unite__dire .titre-xl { font-size: clamp(2.2rem, 1.3rem + 3.4vw, 4.6rem); max-width: 16ch; }
+  @media (min-width: 64rem) {
+    .re-unite { grid-template-columns: [bord-d] minmax(var(--marge), 1fr) [large-d] minmax(0, calc(var(--large) * 0.45)) [mi] minmax(0, calc(var(--large) * 0.55)) [large-f] minmax(var(--marge), 1fr) [bord-f]; }
+    .re-unite__fig { grid-column: large-d / mi; grid-row: 1; margin-inline-end: 3rem; }
+    .re-unite__dire { grid-column: mi / large-f; grid-row: 1; }
+  }
+
+  /* ============================ OFFRIR (tapis) ============================ */
+  .re-offrir { padding-block: var(--serre); row-gap: 3rem; align-items: center; overflow-x: clip; }
+  .re-offrir__dire { display: grid; gap: 1.2rem; }
+  .re-paquet {
     position: relative;
+    inline-size: min(70vw, 20rem);
+    aspect-ratio: 5 / 4;
+    justify-self: center;
+    border-radius: var(--r-s);
     background:
-      radial-gradient(
-        55% 65% at 90% 15%,
-        color-mix(in oklab, var(--ocre) 34%, transparent),
-        transparent 68%
-      ),
-      linear-gradient(
-        172deg,
-        color-mix(in oklab, var(--rose) 70%, var(--sable-haut)),
-        color-mix(in oklab, var(--brique) 18%, var(--rose)) 100%
-      );
+      repeating-linear-gradient(45deg, color-mix(in oklab, var(--encre) 6%, transparent) 0 2px, transparent 2px 9px),
+      var(--lin-bas);
+    box-shadow: 0 30px 50px -24px rgb(0 0 0 / 0.7);
+    transform: rotate(-4deg);
   }
-  .ren-final::before {
-    content: '';
-    position: absolute;
-    inset-inline: 0;
-    inset-block-start: 0;
-    height: 2px;
-    background: repeating-linear-gradient(90deg, var(--brique) 0 12px, transparent 12px 22px);
-    opacity: 0.5;
+  .re-paquet__ficelle::before, .re-paquet__ficelle::after {
+    content: ''; position: absolute; background: var(--coquelicot);
   }
-  .ren-final__in {
-    display: grid;
-    gap: clamp(0.8rem, 2vw, 1.2rem);
-    justify-items: start;
+  .re-paquet__ficelle::before { inset-block: 0; inset-inline-start: 58%; inline-size: 5px; }
+  .re-paquet__ficelle::after { inset-inline: 0; inset-block-start: 40%; block-size: 5px; }
+  .re-paquet__etiquette {
+    position: absolute; inset-block-start: 52%; inset-inline-start: 8%;
+    display: grid; gap: 0.1rem;
+    padding: 0.6rem 0.9rem;
+    background: var(--papier); color: var(--encre);
+    border-radius: var(--r-s);
+    font-family: var(--f-mono); font-size: var(--t-micro);
+    transform: rotate(6deg);
+    box-shadow: 0 8px 16px -10px rgb(0 0 0 / 0.5);
   }
-  .ren-final .titre-xl {
-    max-width: 22ch;
-  }
-  .ren-final__note {
-    font-size: var(--t-corps);
-    line-height: 1.7;
-    color: color-mix(in oklab, var(--encre) 78%, var(--brique));
-  }
-  .ren-final__note a {
-    text-decoration-color: color-mix(in oklab, var(--brique) 60%, transparent);
-    text-underline-offset: 3px;
-  }
-
-  /* Apparitions douces, seulement si le navigateur sait animer au défilement. */
+  .re-paquet__etiquette span:first-child { color: var(--coquelicot-fonce); }
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
-      .ren-recup__liste > li,
-      .ren-trajet li,
-      .ren-diff__fig {
-        animation: ren-monte linear both;
-        animation-timeline: view();
-        animation-range: entry 4% cover 34%;
-      }
+      .re-paquet { animation: glisse linear both; animation-timeline: view(); animation-range: entry 0% cover 50%; }
     }
   }
-  @keyframes ren-monte {
-    from {
-      opacity: 0;
-      transform: translateY(22px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
+  @keyframes glisse { from { transform: translateX(30%) rotate(8deg); } to { transform: rotate(-4deg); } }
+  @media (min-width: 64rem) {
+    .re-offrir { grid-template-columns: [bord-d] minmax(var(--marge), 1fr) [large-d] minmax(0, calc(var(--large) * 0.6)) [mi] minmax(0, calc(var(--large) * 0.4)) [large-f] minmax(var(--marge), 1fr) [bord-f]; }
+    .re-offrir__dire { grid-column: large-d / mi; padding-inline-end: 3rem; }
+    .re-paquet { grid-column: mi / large-f; inline-size: 100%; max-inline-size: 22rem; }
   }
-  @media (prefers-reduced-motion: reduce) {
-    .ren-recup__liste > li,
-    .ren-trajet li,
-    .ren-diff__fig {
-      opacity: 1 !important;
-      transform: none !important;
-      animation: none !important;
-    }
+
+  /* ============================ FAQ ============================ */
+  .re-faq { padding-block: var(--respire) var(--serre); row-gap: 2rem; }
+  .re-faq .titre-xl { max-width: 16ch; }
+  .re-faq__liste { max-width: 56rem; border-block-start: 1px solid color-mix(in oklab, var(--encre) 18%, transparent); }
+  .re-faq__item { border-block-end: 1px solid color-mix(in oklab, var(--encre) 18%, transparent); }
+  .re-faq__item summary {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    min-height: 3.5rem; padding-block: 1.1rem;
+    cursor: pointer; list-style: none;
+    font-family: var(--f-titre);
+    font-size: clamp(1.35rem, 1.1rem + 1vw, 1.9rem);
+    line-height: 1.15;
   }
+  .re-faq__item summary::-webkit-details-marker { display: none; }
+  .re-faq__plus { position: relative; flex: none; inline-size: 1.1rem; block-size: 1.1rem; }
+  .re-faq__plus::before, .re-faq__plus::after {
+    content: ''; position: absolute; inset: 50% 0 auto; block-size: 1.5px; background: currentColor;
+    transition: transform 300ms var(--sortie);
+  }
+  .re-faq__plus::after { transform: rotate(90deg); }
+  .re-faq__item[open] .re-faq__plus::after { transform: rotate(0deg); }
+  .re-faq__item p { padding-block-end: 1.3rem; max-width: 42rem; color: var(--encre-doux); }
+  @media (min-width: 64rem) { .re-faq__liste { margin-inline-start: auto; inline-size: 62%; } }
+
+  /* ============================ FINAL ============================ */
+  .re-final .titre-xl { max-width: 12ch; }
+  .re-final .chapo { max-width: 36rem; }
 </style>

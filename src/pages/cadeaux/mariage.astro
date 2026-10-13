@@ -1,9 +1,10 @@
 ---
 /**
  * /cadeaux/mariage/ — page d'atterrissage.
- * Intention unique : « cadeau mariage brodé ».
- * Angle : les délais sont longs, et la dentelle ajourée est la pièce
- * qu'on ne trouve pas ailleurs.
+ * Intention unique : « cadeau mariage brodé ». Ne pas y viser la naissance,
+ * Noël ni la fête des mères.
+ * Angle : les séries (témoins, cortège) qui demandent de l'anticipation, et la
+ * dentelle libre, pièce que l'on ne trouve presque nulle part ailleurs.
  *
  * ⚠️ MAQUETTE. Prix et délais viennent de src/config.ts et du contenu.
  * Vocabulaire : broderie MACHINE. Jamais « brodé à la main ».
@@ -14,17 +15,18 @@ import Base from '../../layouts/Base.astro';
 import CarteCreation from '../../components/CarteCreation.astro';
 import { SITE, ATELIER, lienWhatsApp } from '../../config';
 
-import photoPapillon from '../../assets/creations/plein-ecran/papillon-brode-dentelle-ajouree-coquelicots.webp';
+import photoPapillon from '../../assets/creations/galerie/papillon-brode-dentelle-ajouree-coquelicots.webp';
 import photoArbre from '../../assets/creations/plein-ecran/arbre-de-vie-brode-dentelle-ajouree-fil-dore.webp';
 import photoArbreDetail from '../../assets/creations/detail/arbre-de-vie-brode-dentelle-ajouree-fil-dore.webp';
+import photoOg from '../../assets/creations/plein-ecran/papillon-brode-dentelle-ajouree-coquelicots.webp';
 
 const toutes = (await getCollection('creations', ({ data }) => !data.masquee)).sort(
   (a, b) => a.data.ordre - b.data.ordre,
 );
 const pour = toutes.filter((c) => c.data.occasions.includes('mariage'));
-/* Une seule création est rattachée au mariage pour l'instant. On complète avec
-   des pièces voisines — cousues, brodées au prénom — et on l'écrit noir sur
-   blanc plutôt que d'inventer des cartes. */
+/* Une seule création est rattachée au mariage pour l'instant. On complète
+   avec des pièces cousues et brodées au prénom, et on l'écrit clairement
+   plutôt que d'inventer des cartes. */
 const voisines = toutes.filter((c) => !pour.includes(c) && c.data.cousuMain).slice(0, 2);
 
 const dentelle = pour.find((c) => c.data.categorie === 'decoration-ajouree') ?? pour[0];
@@ -35,36 +37,36 @@ const wa = lienWhatsApp(
   `Bonjour ${SITE.nom}, c'est pour un mariage. J'aimerais parler d'une pièce brodée.`,
 );
 
-const og = await getImage({ src: photoPapillon, width: 1200, height: 630, format: 'jpeg' });
+const og = await getImage({ src: photoOg, width: 1200, height: 630, format: 'jpeg' });
 
 const titre = `Cadeau de mariage brodé & dentelle ajourée — ${SITE.ville} (35) | ${SITE.nom}`;
-const description = `Cadeau de mariage brodé à ${SITE.ville} (35) : pochettes des témoins, mouchoirs au prénom, dentelle ajourée à coudre sur la robe. Une série pour tout le cortège.`;
+const description = `Cadeau de mariage brodé à ${SITE.ville} (35) : pochettes des témoins, mouchoirs au prénom, dentelle ajourée à coudre sur la robe. Une série pour tout le cortège, envoi partout en France.`;
 
 /* ⚠️ EXEMPLE : « deux à trois mois avant la date » est une recommandation
    déduite du délai d'atelier, à faire confirmer par Emma. Les prix et les
    délais chiffrés, eux, viennent du contenu des créations. */
 const faq = [
   {
-    q: 'Combien de temps avant le mariage faut-il s\'y prendre ?',
-    r: `Plus tôt que pour n'importe quel autre cadeau. Une série de pochettes ou une pièce en dentelle, ce n'est pas une pièce unique : c'est plusieurs pièces identiques, à valider une fois et à broder l'une après l'autre. Le délai d'atelier est aujourd'hui de ${ATELIER.delaiActuel}${delaiDentelle ? `, et une pièce en dentelle demande environ ${delaiDentelle} jours ouvrés à elle seule` : ''}. Comptez large : deux à trois mois avant la date, vous êtes tranquille.`,
+    q: 'Combien de temps avant le mariage faut-il commander ?',
+    r: `Plus tôt que pour un cadeau isolé. Une série de pochettes ou une pièce en dentelle se compose de plusieurs pièces identiques, validées une fois puis brodées l'une après l'autre. Le délai de l'atelier est actuellement de ${ATELIER.delaiActuel}${delaiDentelle ? `, et une pièce en dentelle demande à elle seule environ ${delaiDentelle} jours ouvrés` : ''}. Deux à trois mois avant la date vous assurent une préparation sereine.`,
   },
   {
-    q: 'Vous brodez directement sur ma robe ?',
-    r: `Non, et c'est une bonne nouvelle : je brode la dentelle à part, sans support tissu. Elle vous arrive finie, elle tient toute seule, et elle se pose là où vous voulez — sur la robe, sur un voile, sur une ceinture, sur un ruban. Dites-moi le support dès le départ : ça change la taille et la densité du motif.`,
+    q: 'Brodez-vous directement sur la robe ?',
+    r: `Non : la dentelle est brodée séparément, sans support tissu. Elle vous est livrée terminée et se pose ensuite à l'endroit choisi, sur la robe, un voile, une ceinture ou un ruban. Précisez-moi le support dès le départ : il détermine la taille et la densité du motif.`,
   },
   {
     q: 'Quel budget prévoir ?',
     r: prixDentelle
-      ? `Une pièce en dentelle ajourée commence à ${prixDentelle} €. Pour une série — pochettes, mouchoirs, rubans du cortège — le prix dépend du support et du nombre de pièces : je vous fais un devis chiffré avant de commencer, sans surprise ensuite.`
-      : `Le prix dépend du support et du nombre de pièces. Je vous fais un devis chiffré avant de commencer, sans surprise ensuite.`,
+      ? `Une pièce en dentelle ajourée est proposée à partir de ${prixDentelle} €. Pour une série (pochettes, mouchoirs, rubans du cortège), le prix dépend du support et du nombre de pièces : je vous établis un devis détaillé avant toute réalisation.`
+      : `Le prix dépend du support et du nombre de pièces. Je vous établis un devis détaillé avant toute réalisation.`,
   },
   {
-    q: 'Vous pouvez broder la même chose pour tous les témoins ?',
-    r: `Oui, c'est même le cas le plus fréquent : même motif, même fil, un prénom différent sur chaque pièce. Envoyez-moi la liste des prénoms en une fois, avec l'orthographe exacte — c'est la seule chose que je ne peux pas deviner.`,
+    q: 'Pouvez-vous broder le même motif pour tous les témoins ?',
+    r: `Oui, c'est la demande la plus fréquente : un même motif, un même fil, et un prénom différent sur chaque pièce. Merci de m'envoyer la liste complète en une fois, avec l'orthographe exacte de chaque prénom.`,
   },
   {
-    q: 'Et si le motif ne me plaît pas ?',
-    r: `Vous le voyez avant moi. Je vous envoie le dessin, vous dites oui ou vous demandez un changement. Tant que ce n'est pas piqué, tout est possible — et sur un mariage, c'est exactement pour ça qu'il faut de la marge dans le calendrier.`,
+    q: 'Que se passe-t-il si le motif ne me convient pas ?',
+    r: `Le motif vous est toujours soumis avant réalisation. Vous le validez ou demandez une modification : tant que la broderie n'est pas lancée, tout peut être ajusté. C'est précisément pour cette raison qu'un mariage demande de la marge dans le calendrier.`,
   },
 ];
 
@@ -77,6 +79,29 @@ const faqLd = {
     acceptedAnswer: { '@type': 'Answer', text: f.r },
   })),
 };
+
+const pieces = [
+  {
+    nom: 'La pochette des témoins',
+    txt: 'Le prénom brodé sur le rabat, un même motif pour tout le cortège. Offerte la veille, elle sert le jour même.',
+  },
+  {
+    nom: 'Le mouchoir brodé',
+    txt: 'Pour les parents des mariés ou les grands-parents. Un prénom, des initiales ou la date, brodés dans un angle.',
+  },
+  {
+    nom: 'La dentelle ajourée',
+    txt: 'Brodée sans tissu, elle tient seule et se coud sur une robe, un voile ou une ceinture. C’est la pièce la plus longue à réaliser.',
+  },
+];
+
+/* ⚠️ EXEMPLE : rétroplanning recommandé, à faire valider par Emma. */
+const plan = [
+  { q: 'Trois mois avant', t: 'Nous définissons les supports et le nombre de pièces. Je vous indique ce qui est réalisable dans le délai.' },
+  { q: 'Deux mois avant', t: 'Je vous soumets le motif. Vous vérifiez l’orthographe de chaque prénom avant validation.' },
+  { q: 'Un mois avant', t: '', delai: true },
+  { q: 'Deux semaines avant', t: 'Les pièces vous sont remises. Il reste le temps de les faire coudre, de les emballer ou d’ajuster un détail.' },
+];
 ---
 
 <Base
@@ -87,674 +112,408 @@ const faqLd = {
 >
   <script type="application/ld+json" set:html={JSON.stringify(faqLd)} is:inline />
 
-  <!-- ===================== EN-TÊTE PLEINE LARGEUR ===================== -->
-  <section class="bande mar-tete">
-    <div class="mar-tete__fond">
-      <Image
-        src={photoPapillon}
-        alt="Papillon brodé en dentelle ajourée, ailes rouges et noires, surmonté de coquelicots"
-        widths={[800, 1400, 2000]}
-        sizes="100vw"
-        loading="eager"
-        fetchpriority="high"
-        decoding="async"
-      />
-    </div>
-    <div class="mar-mot">
-      <p class="sourcil sourcil--clair">Mariage — {SITE.ville}, Rennes, toute la France</p>
-      <h1>Un mariage, ça se brode<br /><em>bien avant le jour J.</em></h1>
-      <p class="mar-chapo">
-        Pochettes des témoins, mouchoirs au prénom, dentelle ajourée à coudre sur la robe&nbsp;:
-        je brode les pièces de votre mariage à {SITE.ville}&nbsp;(35). Un motif, validé une fois,
-        brodé autant de fois qu'il y a de prénoms.
-      </p>
-      <p class="actions">
-        <a class="btn btn--or" href={wa}>Écrire sur WhatsApp</a>
-        <a class="btn btn--nuit" href="/contact/?occasion=mariage#devis">Demander un devis</a>
-      </p>
-    </div>
-  </section>
+  <div class="pg">
+    <!-- ===================== HAUT DE PAGE ===================== -->
+    <section class="bande ma-ouv">
+      <nav class="ariane ma-ariane" aria-label="Fil d'Ariane">
+        <a href="/">Accueil</a><span aria-hidden="true">/</span>
+        <span aria-current="page">Cadeau de mariage</span>
+      </nav>
 
-  <!-- ===================== LES TROIS PIÈCES ===================== -->
-  <section class="bande mar-quoi">
-    <div class="mar-quoi__dire">
-      <h2 class="titre-xl">Trois pièces, trois usages.</h2>
-      <p class="mesure">
-        Le reste se discute&nbsp;: un ruban de bouquet, un coussin d'alliances, une étiquette de
-        cadeau d'invité. Dites-moi ce que vous avez en tête, même sans référence.
-      </p>
-    </div>
-
-    <ul class="pieces">
-      <li>
-        <p class="pieces__n">La pochette des témoins</p>
-        <p>
-          Le prénom brodé sur le rabat, le même motif pour tout le cortège. C'est le cadeau qu'on
-          donne la veille, et qui sert le lendemain.
+      <div class="ma-ouv__mot">
+        <h1>Cadeaux de mariage brodés et dentelle ajourée</h1>
+        <p class="ma-ouv__chapo">
+          Pochettes des témoins, mouchoirs au prénom, dentelle ajourée à coudre sur la robe&nbsp;:
+          je réalise en broderie machine, à {SITE.ville}&nbsp;(35), les pièces de votre mariage.
+          Un motif validé une seule fois, puis brodé pour chaque personne du cortège.
         </p>
-      </li>
-      <li>
-        <p class="pieces__n">Le mouchoir brodé</p>
-        <p>
-          Pour la mère de la mariée, pour le père, pour celui qui va pleurer. Prénom, initiales ou
-          la date&nbsp;: ça tient dans un coin, et ça se garde.
-        </p>
-      </li>
-      <li>
-        <p class="pieces__n">La dentelle ajourée</p>
-        <p>
-          Brodée sans tissu, elle tient toute seule. Elle se coud sur une robe, un voile, une
-          ceinture. C'est la pièce dont on me parle le plus, et la plus longue à faire.
-        </p>
-      </li>
-    </ul>
-  </section>
-
-  <!-- ===================== DENTELLE LIBRE — SECTION SOMBRE ===================== -->
-  <section class="bande mar-nuit">
-    <figure class="mar-nuit__fig">
-      <Image
-        src={photoArbre}
-        alt="Arbre de vie brodé en dentelle ajourée fil doré, pièce autoportante sans support tissu, sur fond sombre"
-        widths={[480, 800, 1200]}
-        sizes="(max-width: 62rem) 100vw, 46vw"
-        loading="lazy"
-        decoding="async"
-      />
-      <figcaption>Dentelle libre, fil doré. Aucun tissu dessous&nbsp;: il ne reste que le fil.</figcaption>
-    </figure>
-
-    <div class="mar-nuit__dire">
-      <p class="sourcil sourcil--clair">Ce qu'on ne trouve presque pas ailleurs</p>
-      <h2 class="titre-xl">La dentelle qui<br /><em>tient toute seule.</em></h2>
-      <p class="mesure mesure--clair">
-        La machine brode dans le vide, sur un support qui disparaît au rinçage. Ce qui reste, c'est
-        un motif en fil, ajouré, qu'on peut coudre sur une robe ou glisser dans un cadre.
-      </p>
-      <p class="mesure mesure--clair">
-        Sur un mariage, c'est ce qui permet d'ajouter quelque chose de brodé à une robe déjà
-        achetée — sans toucher à la robe avant la dernière minute.
-      </p>
-      {
-        prixDentelle && (
-          <p class="prix prix--clair">
-            Dentelle ajourée à partir de <b>{prixDentelle} €</b>
-            {delaiDentelle ? ` · environ ${delaiDentelle} jours ouvrés` : ''}
-          </p>
-        )
-      }
-      <p class="actions">
-        <a class="btn btn--or" href="/creations/">Voir les pièces en dentelle</a>
-      </p>
-    </div>
-  </section>
-
-  <!-- ===================== RÉTROPLANNING ===================== -->
-  <section class="bande mar-plan">
-    <div class="mar-plan__dire">
-      <p class="sourcil">Le calendrier</p>
-      <h2 class="titre-xl">Quand me parler,<br /><em>et de quoi.</em></h2>
-      <p class="mesure">
-        Une série, ça ne se rattrape pas en trois jours. Voilà l'ordre dans lequel les choses se
-        passent quand tout va bien.
-      </p>
-    </div>
-
-    {/* ⚠️ EXEMPLE : ce rétroplanning est une recommandation à faire valider par Emma. */}
-    <ol class="plan">
-      <li>
-        <p class="plan__q">3 mois avant</p>
-        <p>
-          On parle des supports et du nombre de pièces. Je vous dis tout de suite ce qui tient dans
-          le délai et ce qui ne tient pas.
-        </p>
-      </li>
-      <li>
-        <p class="plan__q">2 mois avant</p>
-        <p>
-          Je vous envoie le motif. Vous validez l'orthographe des prénoms — c'est le moment de
-          vérifier deux fois.
-        </p>
-      </li>
-      <li>
-        <p class="plan__q">1 mois avant</p>
-        <p>
-          Je brode la série. Délai d'atelier actuel&nbsp;: <b>{ATELIER.delaiActuel}</b>.
-        </p>
-      </li>
-      <li>
-        <p class="plan__q">2 semaines avant</p>
-        <p>
-          Vous avez les pièces en main. Il reste du temps pour les faire coudre, les emballer, ou
-          changer d'avis sur un détail.
-        </p>
-      </li>
-    </ol>
-
-    <p class="actions">
-      <a class="btn btn--wa" href={wa}>Donner ma date de mariage</a>
-      <a class="btn btn--creux" href="/sur-mesure/">Comment se passe une commande</a>
-    </p>
-  </section>
-
-  <!-- ===================== CRÉATIONS ===================== -->
-  <section class="bande mar-creations">
-    <div class="tete">
-      <h2 class="titre-xl">Ce qui existe déjà en photo.</h2>
-      <p class="mesure">
-        Les pochettes et les mouchoirs partent chez les client·es avant que j'aie pensé à les
-        photographier&nbsp;: ils ne sont pas encore sur le site. Voici les pièces que je peux vous
-        montrer aujourd'hui, dentelle libre comprise.
-      </p>
-      <p class="indice"><span aria-hidden="true">→</span> faites défiler la rangée</p>
-    </div>
-
-    <div class="rangee" tabindex="0" role="region" aria-label="Créations pour un mariage">
-      {pour.map((c, i) => <CarteCreation creation={c} prioritaire={i === 0} />)}
-      {voisines.map((c) => <CarteCreation creation={c} />)}
-      <div class="rangee__fin">
-        <p>Une pochette de témoin, <b>ça se fabrique de zéro</b>.</p>
-        <p class="rangee__note">
-          Tissu, doublure, prénom&nbsp;: demandez-moi des photos de celles déjà parties, je vous les
-          envoie par message.
+        <p class="actions">
+          <a class="btn btn--or btn--grand" href={wa}>Écrire sur WhatsApp</a>
+          <a class="btn btn--clair btn--grand" href="/contact/?occasion=mariage#devis">Demander un devis</a>
         </p>
       </div>
-    </div>
 
-    <p class="mar-lien">
-      <a class="btn btn--creux" href="/creations/">Voir toutes les créations</a>
-    </p>
-  </section>
+      <figure class="ma-ouv__arche">
+        <Image
+          src={photoPapillon}
+          alt="Papillon brodé en dentelle ajourée, ailes rouges et noires, surmonté de coquelicots"
+          widths={[360, 560, 800, 1000]}
+          sizes="(max-width: 56rem) 80vw, 30rem"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+        <figcaption class="mono">Dentelle libre, brodée sans tissu</figcaption>
+      </figure>
+    </section>
 
-  <!-- ===================== FAQ ===================== -->
-  <section class="bande mar-faq" id="questions">
-    <h2 class="titre-xl">Cinq questions<br /><em>avant de vous lancer.</em></h2>
-    <div class="faq">
-      {
-        faq.map((f, i) => (
-          <details open={i === 0}>
-            <summary>{f.q}</summary>
-            <p>{f.r}</p>
-          </details>
-        ))
-      }
-    </div>
-  </section>
-
-  <!-- ===================== APPEL FINAL ===================== -->
-  <section class="bande mar-fin" id="devis">
-    <figure class="mar-fin__fig">
-      <Image
-        src={photoArbreDetail}
-        alt="Gros plan sur la dentelle ajourée : les fils dorés se croisent sans support tissu"
-        widths={[320, 480, 700]}
-        sizes="(max-width: 62rem) 62vw, 20rem"
-        loading="lazy"
-        decoding="async"
-      />
-    </figure>
-    <div class="mar-fin__mot">
-      <h2 class="titre-xl">Vous avez une date.<br /><em>Commençons par là.</em></h2>
-      <p class="mesure">
-        Dites-moi le jour du mariage et le nombre de personnes à équiper. Je réponds dans la journée
-        avec un prix, un délai et ce qui est encore possible dans le temps qui reste.
+    <!-- ===================== LES PIÈCES ===================== -->
+    <section class="bande ma-pieces">
+      <h2 class="titre-xl">Les pièces du mariage</h2>
+      <ul class="pieces">
+        {
+          pieces.map((p) => (
+            <li>
+              <h3>{p.nom}</h3>
+              <p>{p.txt}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="ma-pieces__note mesure">
+        D'autres pièces sont possibles&nbsp;: ruban de bouquet, coussin d'alliances, étiquettes
+        des cadeaux d'invités. Décrivez-moi votre projet, même sans modèle précis.
       </p>
+    </section>
+
+    <!-- ===================== LA DENTELLE LIBRE ===================== -->
+    <section class="bande tapis ma-dentelle">
+      <figure class="ma-dentelle__fig" data-broderie="tambour">
+        <Image
+          src={photoArbre}
+          alt="Arbre de vie brodé en dentelle ajourée fil doré, pièce autoportante sans support tissu"
+          widths={[480, 800, 1200]}
+          sizes="(max-width: 64rem) 88vw, 40vw"
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+
+      <div class="ma-dentelle__dire">
+        <h2 class="titre-xl">La dentelle libre</h2>
+        <p class="chapo">
+          La machine brode sur un support qui disparaît au rinçage. Il ne reste que le fil&nbsp;:
+          un motif ajouré, autoportant, que l'on coud sur une robe ou que l'on glisse dans un cadre.
+        </p>
+        <p class="mesure mesure--clair">
+          Pour un mariage, elle permet d'ajouter une broderie à une robe déjà achetée, sans
+          intervenir sur la robe avant les derniers essayages.
+        </p>
+        {
+          prixDentelle && (
+            <p class="prix prix--clair">
+              Dentelle ajourée à partir de <b>{prixDentelle}&nbsp;€</b>
+              {delaiDentelle ? ` · environ ${delaiDentelle} jours ouvrés` : ''}
+            </p>
+          )
+        }
+        <p class="actions">
+          <a class="btn btn--or" href="/creations/decoration-ajouree/">Voir les pièces en dentelle</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ===================== LE CALENDRIER ===================== -->
+    <section class="bande ma-plan loin">
+      <div class="ma-plan__tete">
+        <h2 class="titre-xl">Le calendrier recommandé</h2>
+        <p class="mesure">
+          Une série se prépare à l'avance. Voici les étapes d'une commande de mariage, de la
+          première prise de contact à la remise des pièces.
+        </p>
+      </div>
+
+      <ol class="plan">
+        {
+          plan.map((p, i) => (
+            <li>
+              <span class="plan__n mono">{i + 1}</span>
+              <p class="plan__q">{p.q}</p>
+              <p>
+                {p.delai ? (
+                  <Fragment>
+                    Je brode la série. Délai de l'atelier actuellement&nbsp;:{' '}
+                    <b>{ATELIER.delaiActuel}</b>.
+                  </Fragment>
+                ) : (
+                  p.t
+                )}
+              </p>
+            </li>
+          ))
+        }
+      </ol>
+
       <p class="actions">
-        <a class="btn btn--wa" href={wa}>Écrire sur WhatsApp</a>
-        <a class="btn btn--creux" href="/contact/?occasion=mariage#devis">Remplir le formulaire</a>
+        <a class="btn btn--wa" href={wa}>Indiquer la date du mariage</a>
+        <a class="lien-fleche" href="/sur-mesure/">Le déroulement d'une commande</a>
       </p>
-      <p class="mar-fin__note">{ATELIER.zones}.</p>
-    </div>
-  </section>
+    </section>
+
+    <!-- ===================== CRÉATIONS ===================== -->
+    <section class="bande ma-creations loin">
+      <div class="tete tete--duo">
+        <h2 class="titre-xl">Créations pour un mariage</h2>
+        <div class="ma-creations__dire">
+          <p class="mesure">
+            Les pochettes et les mouchoirs ne sont pas encore photographiés sur le site. Voici les
+            pièces que je peux vous présenter aujourd'hui, dentelle libre comprise.
+          </p>
+          <a class="lien-fleche" href="/creations/">Toutes les créations</a>
+        </div>
+      </div>
+
+      <div class="rangee" tabindex="0" role="region" aria-label="Créations pour un mariage, rangée défilante">
+        {pour.map((c, i) => <CarteCreation creation={c} prioritaire={i === 0} />)}
+        {voisines.map((c) => <CarteCreation creation={c} />)}
+        <div class="rangee__fin">
+          <p>La pochette des témoins</p>
+          <p class="rangee__note">
+            Tissu, doublure et prénom sont choisis avec vous. Je vous adresse sur demande des
+            photographies des pièces déjà réalisées.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== FAQ ===================== -->
+    <section class="bande ma-faq loin" id="questions">
+      <h2 class="titre-xl">Questions fréquentes</h2>
+      <div class="faq">
+        {
+          faq.map((f, i) => (
+            <details open={i === 0}>
+              <summary>{f.q}</summary>
+              <p>{f.r}</p>
+            </details>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- ===================== APPEL FINAL ===================== -->
+    <section class="final bande ma-fin" id="devis">
+      <div class="ma-fin__in">
+        <figure class="ma-fin__fig">
+          <Image
+            src={photoArbreDetail}
+            alt="Gros plan sur la dentelle ajourée : les fils dorés se croisent sans support tissu"
+            widths={[320, 480, 700]}
+            sizes="(max-width: 56rem) 60vw, 22rem"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+        <div class="final__in">
+          <h2 class="titre-xl">Préparer votre commande</h2>
+          <p class="chapo">
+            Indiquez-moi la date du mariage et le nombre de personnes concernées. Je vous réponds
+            avec un prix, un délai et ce qu'il est possible de réaliser dans le temps disponible.
+          </p>
+          <p class="actions">
+            <a class="btn btn--wa btn--grand" href={wa}>Écrire sur WhatsApp</a>
+            <a class="btn btn--or btn--grand" href="/contact/?occasion=mariage#devis">Remplir le formulaire</a>
+          </p>
+          <p class="final__note">{ATELIER.delaiReponse} · {ATELIER.zones}.</p>
+        </div>
+      </div>
+    </section>
+  </div>
 </Base>
 
 <style>
-  /* Le sourcil global est en `white-space: nowrap` : les libellés d'une page
-     occasion sont plus longs que ceux de l'accueil et débordaient à 320 px.
-     Ici, ils passent à la ligne, et le filet disparaît sur petit écran. */
-  /* Sur fond sombre, le vert de `.btn--wa` disparaît dans la section : le
-     bouton principal passe en doré (fort contraste), le secondaire prend un
-     liseré clair. */
-  .btn--nuit {
-    color: var(--coquille);
-    border-color: color-mix(in oklab, var(--coquille) 48%, transparent);
-    background: rgb(255 255 255 / 0.06);
-  }
-  .btn--nuit::before {
-    background: var(--coquille);
-  }
-  .btn--nuit:hover {
-    color: var(--encre);
-    border-color: var(--coquille);
-  }
+  /* Le fil de la page : mauve #6B5560 (la broderie du prénom « Alicia »).
+     Contrastes : blanc / lin-haut dessus ≈ 6,8:1 ; ce mauve sur le lin ≈ 5,6:1. */
+  .pg { --fil: #6B5560; --fil-sombre: #4E3D46; }
 
-  .sourcil {
-    /* `flex-wrap` d'abord : le filet pointillé passe à la ligne suivante
-       plutôt que d'écraser le libellé, qui ne se coupe donc que s'il est
-       vraiment trop long pour toute la largeur. */
-    white-space: normal;
-    flex-wrap: wrap;
-    line-height: 1.5;
-  }
-  @media (max-width: 40rem) {
-    .sourcil::after {
-      display: none;
-    }
-  }
-
-  /* ---------------------------------------------------------------------------
-     EN-TÊTE — photo pleine largeur, texte posé dessus. Volontairement très
-     différent du bandeau scindé des autres pages occasions.
-  --------------------------------------------------------------------------- */
-  .mar-tete {
+  /* ============================ HAUT DE PAGE ============================
+     Pleine largeur mauve, semée d'un ajour de points (la dentelle), et une
+     arche qui déborde sur la section suivante. */
+  .ma-ouv {
     position: relative;
     isolation: isolate;
-    overflow: hidden;
-    padding-block: clamp(3.5rem, 9vw, 7rem) clamp(3rem, 7vw, 5.5rem);
-    color: var(--coquille);
-    background: var(--vert);
+    color: var(--lin-haut);
+    background-color: var(--fil);
+    margin-block-start: -4.4rem;
+    padding-block: calc(4.4rem + clamp(1rem, 3vw, 2rem)) 0;
+    row-gap: clamp(1.5rem, 4vw, 2.5rem);
+    margin-block-end: clamp(6rem, 18vw, 12rem);
   }
-  .mar-tete__fond {
-    position: absolute;
-    inset: 0;
-    z-index: -2;
-    overflow: hidden;
+  .ma-ouv::before {
+    content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    /* L'ajour : une trame de petits jours, qui s'éteint vers le bas */
+    background-image:
+      radial-gradient(circle, color-mix(in oklab, var(--lin-haut) 16%, transparent) 1.4px, transparent 1.8px),
+      radial-gradient(circle, color-mix(in oklab, var(--lin-haut) 9%, transparent) 1px, transparent 1.4px);
+    background-size: 22px 22px, 22px 22px;
+    background-position: 0 0, 11px 11px;
+    mask-image: linear-gradient(180deg, #000 10%, transparent 95%);
+    -webkit-mask-image: linear-gradient(180deg, #000 10%, transparent 95%);
   }
-  .mar-tete__fond :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 50% 34%;
-    opacity: 0.5;
-    filter: saturate(0.85);
+  .ma-ariane { color: color-mix(in oklab, var(--lin-haut) 80%, transparent); }
+  .ma-ariane [aria-current] { color: var(--lin-haut); }
+  .ma-ariane a:hover { color: var(--lin-haut); }
+  .ma-ouv :focus-visible { outline-color: var(--lin-haut); }
+
+  .ma-ouv__mot { display: grid; gap: clamp(1rem, 2.2vw, 1.6rem); justify-items: start; }
+  .ma-ouv h1 { max-width: 13ch; }
+  .ma-ouv__chapo {
+    font-size: var(--t-chapo); line-height: 1.45; max-width: 34rem;
+    color: color-mix(in oklab, var(--lin-haut) 92%, transparent);
   }
-  .mar-tete::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background:
-      radial-gradient(72% 70% at 12% 26%, color-mix(in oklab, var(--mauve) 78%, #000) 0%, transparent 72%),
-      linear-gradient(168deg, rgb(24 20 24 / 0.82), rgb(24 20 24 / 0.62) 55%, rgb(20 26 20 / 0.9));
+  .ma-ouv .btn--or { --survol: var(--encre); }
+  .ma-ouv .btn--or:hover, .ma-ouv .btn--or:focus-visible { color: var(--lin-haut); }
+
+  .ma-ouv__arche {
+    width: min(84%, 28rem);
+    justify-self: end;
+    margin-block-end: calc(-1 * clamp(6rem, 18vw, 12rem));
+    display: grid; gap: 0.6rem;
   }
-  .mar-mot {
-    min-width: 0;
-    display: grid;
-    gap: clamp(0.85rem, 2vw, 1.3rem);
-    justify-items: start;
-    max-width: 46rem;
+  .ma-ouv__arche :global(img) {
+    width: 100%; aspect-ratio: 3 / 4; object-fit: cover;
+    border-radius: 999px 999px var(--r-s) var(--r-s);
+    box-shadow: 0 50px 80px -50px color-mix(in oklab, #000 80%, transparent);
   }
-  .mar-mot h1 em {
-    color: color-mix(in oklab, var(--rose) 78%, var(--dore));
+  .ma-ouv__arche figcaption { font-size: var(--t-micro); color: var(--gris); justify-self: end; }
+  @media (prefers-reduced-motion: no-preference) {
+    .ma-ouv__arche :global(img) { animation: arche 1200ms var(--sortie) both; }
   }
-  .mar-chapo {
-    font-size: var(--t-chapo);
-    line-height: 1.5;
-    max-width: 34rem;
-    color: color-mix(in oklab, var(--coquille) 88%, var(--rose));
+  @keyframes arche {
+    from { clip-path: inset(100% 0 0 0 round 999px 999px 6px 6px); }
+    to { clip-path: inset(0 0 0 0 round 999px 999px 6px 6px); }
   }
 
-  /* ---------------------------------------------------------------------------
-     TROIS PIÈCES — un index en trois colonnes, sans photo : ce sont des
-     usages, pas des produits en stock.
-  --------------------------------------------------------------------------- */
-  .mar-quoi {
-    padding-block: clamp(2.5rem, 6vw, 4.5rem);
-    row-gap: clamp(1.5rem, 3.5vw, 2.5rem);
-  }
-  .mar-quoi__dire {
-    min-width: 0;
-    display: grid;
-    gap: 0.9rem;
-  }
-  .pieces {
-    min-width: 0;
-    display: grid;
-    gap: clamp(1.2rem, 3vw, 2.5rem);
-    grid-template-columns: repeat(auto-fit, minmax(min(16rem, 100%), 1fr));
-    border-block-start: 1px solid color-mix(in oklab, var(--mauve) 40%, transparent);
-    padding-block-start: clamp(1rem, 2.5vw, 1.8rem);
-  }
-  .pieces > li {
-    min-width: 0;
-    display: grid;
-    gap: 0.45rem;
-    align-content: start;
-  }
-  .pieces__n {
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.85rem);
-    line-height: 1.08;
-    letter-spacing: -0.012em;
-    color: var(--mauve);
-  }
-  .pieces > li > p:not(.pieces__n) {
-    font-size: var(--t-petit);
-    line-height: 1.6;
-    color: var(--encre-doux);
-    max-width: 26rem;
-  }
-
-  /* ---------------------------------------------------------------------------
-     SECTION SOMBRE — la photo sort par le bord gauche, le texte tient à
-     droite. L'inverse de la composition de la page d'accueil.
-  --------------------------------------------------------------------------- */
-  .mar-nuit {
-    padding-block: clamp(2.5rem, 6vw, 5rem);
-    row-gap: clamp(1.5rem, 3.5vw, 2.5rem);
-    color: var(--coquille);
-    background:
-      radial-gradient(70% 55% at 88% 8%, color-mix(in oklab, var(--mauve) 62%, var(--vert)) 0%, transparent 62%),
-      linear-gradient(170deg, #241E24, var(--vert) 62%, #151B16);
-  }
-  .mar-nuit__fig {
-    grid-column: bord-d / large-f;
-    min-width: 0;
-    margin: 0;
-  }
-  .mar-nuit__fig :global(img) {
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-    border-radius: 0 4px 4px 0;
-    box-shadow: 0 34px 60px -44px #000;
-  }
-  .mar-nuit__fig figcaption {
-    padding: 0.65rem var(--marge) 0;
-    font-size: var(--t-micro);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: color-mix(in oklab, var(--rose) 66%, var(--gris));
-  }
-  .mar-nuit__dire {
-    min-width: 0;
-    display: grid;
-    gap: clamp(0.8rem, 2vw, 1.2rem);
-    justify-items: start;
-  }
-  .mar-nuit .titre-xl em {
-    color: var(--dore);
-  }
-
-  @media (min-width: 62rem) {
-    .mar-nuit {
+  @media (min-width: 56rem) {
+    .ma-ouv {
       grid-template-columns:
         [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, 30rem)
-        [mi] minmax(0, 32rem)
+        [large-d] minmax(0, calc(var(--large) * 0.6)) [mi] minmax(0, calc(var(--large) * 0.4))
         [large-f] minmax(var(--marge), 1fr) [bord-f];
-      column-gap: clamp(2rem, 4vw, 4rem);
-      align-items: center;
+      column-gap: clamp(2rem, 5vw, 5rem);
+      align-items: start;
     }
-    .mar-nuit__fig {
-      grid-column: bord-d / mi;
-      grid-row: 1;
-    }
-    .mar-nuit__fig figcaption {
-      padding-inline: 0 0;
-      margin-inline-start: var(--marge);
-    }
-    .mar-nuit__dire {
-      grid-column: mi / large-f;
-      grid-row: 1;
-    }
+    .ma-ariane { grid-column: large-d / large-f; }
+    .ma-ouv__mot { grid-column: large-d / mi; padding-block: clamp(1rem, 4vw, 4rem) clamp(3rem, 6vw, 5rem); }
+    .ma-ouv__arche { grid-column: mi / large-f; width: 100%; }
+    .ma-ouv h1 { font-size: clamp(3.6rem, 1rem + 4.8vw, 6.8rem); }
   }
 
-  /* ---------------------------------------------------------------------------
-     RÉTROPLANNING — quatre jalons reliés par un fil pointillé. Le dispositif
-     encode une vraie séquence : les numéros seraient redondants, ce sont les
-     dates qui portent l'information.
-  --------------------------------------------------------------------------- */
-  .mar-plan {
-    padding-block: clamp(2.75rem, 7vw, 5.5rem);
-    row-gap: clamp(1.5rem, 3.5vw, 2.5rem);
-    background: color-mix(in oklab, var(--sable) 88%, var(--mauve));
+  /* ============================ LES PIÈCES ============================ */
+  .ma-pieces { padding-block: var(--serre) var(--respire); row-gap: clamp(2rem, 4vw, 3rem); }
+  .pieces { display: grid; border-block-start: 1.5px solid var(--encre); }
+  .pieces li {
+    display: grid; gap: 0.5rem 3rem;
+    padding-block: clamp(1.2rem, 3vw, 2rem);
+    border-block-end: 1px dashed color-mix(in oklab, var(--encre) 22%, transparent);
   }
-  .mar-plan__dire {
-    min-width: 0;
-    display: grid;
-    gap: 0.9rem;
-  }
-  .mar-plan .titre-xl em {
-    color: var(--mauve);
-  }
-  .mar-plan .sourcil {
-    color: var(--mauve);
-  }
-  .plan {
-    min-width: 0;
-    display: grid;
-    gap: clamp(1.4rem, 3vw, 2rem);
-    grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
-    position: relative;
-  }
-  .plan > li {
-    min-width: 0;
-    display: grid;
-    gap: 0.4rem;
-    align-content: start;
-    padding-block-start: 1.5rem;
-    position: relative;
-  }
-  /* Le fil : un pointillé horizontal sur ordinateur, vertical en colonne. */
-  .plan > li::before {
-    content: '';
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline: 0 0;
-    height: 2px;
-    background: repeating-linear-gradient(
-      90deg,
-      var(--mauve) 0 7px,
-      transparent 7px 13px
-    );
-    opacity: 0.65;
-  }
-  .plan > li::after {
-    content: '';
-    position: absolute;
-    inset-block-start: -3px;
-    inset-inline-start: 0;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--mauve);
-  }
-  .plan__q {
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: clamp(1.35rem, 1.1rem + 1vw, 2rem);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    color: var(--encre);
-  }
-  .plan > li > p:not(.plan__q) {
-    font-size: var(--t-petit);
-    line-height: 1.6;
-    color: var(--encre-doux);
-    max-width: 22rem;
-  }
-  .plan b {
-    font-weight: 500;
-    color: var(--encre);
+  .pieces h3 { font-size: clamp(2rem, 1.3rem + 3vw, 4rem); line-height: 1; color: var(--fil); }
+  .pieces p { color: var(--encre-doux); max-width: 30rem; }
+  @media (min-width: 56rem) {
+    .ma-pieces { grid-template-columns: [bord-d] minmax(var(--marge), 1fr) [large-d] minmax(0, calc(var(--large) * 0.62)) [mi] minmax(0, calc(var(--large) * 0.38)) [large-f] minmax(var(--marge), 1fr) [bord-f]; }
+    .ma-pieces .titre-xl { grid-column: large-d / mi; }
+    .pieces { grid-column: large-d / large-f; }
+    .pieces li { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: end; }
+    /* Les trois lignes s'indentent, comme un ourlet repris */
+    .pieces li:nth-child(2) { padding-inline-start: 8%; }
+    .pieces li:nth-child(3) { padding-inline-start: 16%; }
+    .ma-pieces__note { grid-column: mi / large-f; }
   }
 
-  /* ---------------------------------------------------------------------------
-     CRÉATIONS
-  --------------------------------------------------------------------------- */
-  .mar-creations {
-    padding-block: clamp(2.5rem, 6vw, 4.5rem);
-    row-gap: clamp(1.75rem, 4vw, 3rem);
+  /* ============================ LA DENTELLE ============================ */
+  .ma-dentelle { row-gap: clamp(2.5rem, 6vw, 4rem); align-items: center; }
+  .ma-dentelle__fig { width: min(100%, 34rem); justify-self: center; }
+  .ma-dentelle__fig :global(img) { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; }
+  .ma-dentelle__dire { display: grid; gap: 1.2rem; justify-items: start; }
+  @media (min-width: 64rem) {
+    .ma-dentelle { grid-template-columns: [bord-d] minmax(var(--marge), 1fr) [large-d] minmax(0, calc(var(--large) * 0.5)) [mi] minmax(0, calc(var(--large) * 0.5)) [large-f] minmax(var(--marge), 1fr) [bord-f]; }
+    .ma-dentelle__fig { grid-column: large-d / mi; grid-row: 1; padding-inline-end: 3rem; }
+    .ma-dentelle__dire { grid-column: mi / large-f; grid-row: 1; }
   }
-  .rangee__note {
-    font-family: 'Jost', sans-serif;
+
+  /* ============================ LE CALENDRIER ============================
+     Une vraie séquence : numérotée. Un fil horizontal relie les étapes. */
+  .ma-plan { padding-block: var(--respire) var(--serre); row-gap: clamp(2rem, 4vw, 3rem); }
+  .ma-plan__tete { display: grid; gap: 1.1rem; }
+  .plan { display: grid; gap: 1.8rem; position: relative; }
+  .plan li { position: relative; display: grid; gap: 0.5rem; align-content: start; padding-inline-start: 3.2rem; }
+  .plan__n {
+    position: absolute; inset-inline-start: 0; inset-block-start: 0;
+    display: grid; place-items: center;
+    width: 2.2rem; height: 2.2rem; border-radius: 50%;
+    background: var(--fil); color: var(--lin-haut);
     font-size: var(--t-micro);
-    line-height: 1.5;
-    color: var(--gris);
   }
-  .mar-lien {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem 0.9rem;
+  .plan__q { font-family: var(--f-titre); font-size: clamp(1.7rem, 1.3rem + 1.4vw, 2.5rem); line-height: 1; }
+  .plan li > p:last-child { color: var(--encre-doux); max-width: 26rem; }
+  .plan b { font-weight: 500; color: var(--encre); }
+  .plan::before {
+    content: ''; position: absolute; inset-block: 1.1rem 1rem; inset-inline-start: calc(1.1rem - 1px);
+    width: 2px;
+    background: repeating-linear-gradient(180deg, var(--fil) 0 8px, transparent 8px 13px);
   }
-
-  /* ---------------------------------------------------------------------------
-     FAQ
-  --------------------------------------------------------------------------- */
-  .mar-faq {
-    padding-block: clamp(2rem, 5vw, 3.5rem) clamp(2.5rem, 6vw, 4.5rem);
-    row-gap: clamp(1.25rem, 3vw, 2rem);
-  }
-  .mar-faq > * {
-    min-width: 0;
-  }
-  .mar-faq .titre-xl em {
-    color: var(--mauve);
-  }
-  .faq {
-    display: grid;
-    max-width: 48rem;
-    border-block-start: 1px solid color-mix(in oklab, var(--mauve) 34%, transparent);
-  }
-  .faq details {
-    border-block-end: 1px solid color-mix(in oklab, var(--mauve) 34%, transparent);
-  }
-  .faq summary {
-    display: flex;
-    align-items: baseline;
-    gap: 0.8rem;
-    min-height: 44px;
-    padding-block: 1rem;
-    cursor: pointer;
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: clamp(1.15rem, 1.02rem + 0.6vw, 1.5rem);
-    line-height: 1.2;
-    list-style: none;
-  }
-  .faq summary::-webkit-details-marker {
-    display: none;
-  }
-  .faq summary::before {
-    content: '+';
-    flex: none;
-    inline-size: 1.1em;
-    color: var(--mauve);
-  }
-  .faq details[open] summary::before {
-    content: '−';
-  }
-  .faq summary:hover {
-    color: var(--mauve);
-  }
-  .faq p {
-    padding: 0 0 1.1rem 1.9rem;
-    max-width: 42rem;
-    font-size: var(--t-petit);
-    line-height: 1.65;
-    color: var(--encre-doux);
-  }
-
-  /* ---------------------------------------------------------------------------
-     APPEL FINAL — clair, pas sombre : la page a déjà sa section de rupture.
-  --------------------------------------------------------------------------- */
-  .mar-fin {
-    padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(3rem, 7vw, 5.5rem);
-    row-gap: clamp(1.5rem, 3.5vw, 2.25rem);
-    background: color-mix(in oklab, var(--sable) 80%, var(--rose));
-  }
-  .mar-fin__fig {
-    min-width: 0;
-    margin: 0;
-    max-width: 20rem;
-  }
-  .mar-fin__fig :global(img) {
-    width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border-radius: 50% 4px 50% 50%;
-    box-shadow: 0 24px 44px -34px rgb(30 22 18 / 0.7);
-  }
-  .mar-fin__mot {
-    min-width: 0;
-    display: grid;
-    gap: clamp(0.8rem, 2vw, 1.2rem);
-    justify-items: start;
-  }
-  .mar-fin .titre-xl em {
-    color: var(--mauve);
-  }
-  .mar-fin__note {
-    font-size: var(--t-micro);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--gris);
-  }
-  @media (min-width: 62rem) {
-    .mar-fin {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, 20rem)
-        [mi] minmax(0, 40rem)
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      column-gap: clamp(2rem, 4vw, 4rem);
-      align-items: center;
-    }
-    .mar-fin__fig {
-      grid-column: large-d / mi;
-      grid-row: 1;
-    }
-    .mar-fin__mot {
-      grid-column: mi / large-f;
-      grid-row: 1;
+  @media (min-width: 56rem) {
+    .ma-plan__tete { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: end; column-gap: 4rem; }
+    .plan { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2rem; }
+    .plan li { padding-inline-start: 0; padding-block-start: 3.4rem; }
+    .plan::before {
+      inset-block: 1.1rem auto; inset-inline: 1.1rem 0; width: auto; height: 2px;
+      background: repeating-linear-gradient(90deg, var(--fil) 0 8px, transparent 8px 13px);
+      transform-origin: 0 50%;
     }
   }
-
-  /* ---------------------------------------------------------------------------
-     RÉVÉLATIONS
-  --------------------------------------------------------------------------- */
   @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .plan > li,
-      .pieces > li {
-        animation: mar-monte linear both;
-        animation-timeline: view();
-        animation-range: entry 6% entry 56%;
-      }
-      .mar-nuit__fig {
-        animation: mar-glisse linear both;
-        animation-timeline: view();
-        animation-range: entry 4% cover 36%;
-      }
+    @media (prefers-reduced-motion: no-preference) and (min-width: 56rem) {
+      .plan::before { animation: tire linear both; animation-timeline: view(); animation-range: entry 20% cover 50%; }
     }
   }
-  @keyframes mar-monte {
-    from {
-      opacity: 0;
-      transform: translateY(18px);
-    }
-    to {
-      opacity: 1;
-      transform: none;
-    }
+  @keyframes tire { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+  /* ============================ CRÉATIONS ============================ */
+  .ma-creations { padding-block: var(--serre) var(--respire); row-gap: clamp(2rem, 4vw, 3rem); }
+  .ma-creations__dire { display: grid; gap: 0.8rem; justify-items: start; }
+  .rangee__fin {
+    display: grid; align-content: center; gap: 0.9rem;
+    padding: clamp(1.4rem, 3vw, 2rem);
+    border-radius: var(--r-l);
+    border: 1.5px dashed color-mix(in oklab, var(--fil) 50%, transparent);
+    scroll-snap-align: start;
   }
-  @keyframes mar-glisse {
-    from {
-      opacity: 0;
-      transform: translateX(-28px);
-      clip-path: inset(0 0 0 18%);
+  .rangee__fin p:first-child { font-family: var(--f-titre); font-size: clamp(1.6rem, 1.3rem + 1vw, 2.2rem); line-height: 1.05; }
+  .rangee__note { font-size: var(--t-petit); color: var(--encre-doux); }
+
+  /* ============================ FAQ ============================ */
+  .ma-faq { padding-block: var(--serre) var(--respire); row-gap: 2rem; }
+  @media (min-width: 64rem) {
+    .ma-faq {
+      grid-template-columns:
+        [bord-d] minmax(var(--marge), 1fr)
+        [large-d] minmax(0, calc(var(--large) * 0.64)) [mi] minmax(0, calc(var(--large) * 0.36))
+        [large-f] minmax(var(--marge), 1fr) [bord-f];
+      align-items: start;
     }
-    to {
-      opacity: 1;
-      transform: none;
-      clip-path: inset(0 0 0 0);
-    }
+    /* Le titre à droite, les questions à gauche : l'inverse des autres pages */
+    .ma-faq .titre-xl { grid-column: mi / large-f; grid-row: 1; position: sticky; top: 7rem; padding-inline-start: 3rem; }
+    .ma-faq .faq { grid-column: large-d / mi; grid-row: 1; }
   }
-  @media (prefers-reduced-motion: reduce) {
-    .plan > li,
-    .pieces > li,
-    .mar-nuit__fig {
-      opacity: 1 !important;
-      transform: none !important;
-      clip-path: none !important;
-    }
+  .faq { display: grid; border-block-start: 1.5px solid var(--encre); }
+  .faq details { border-block-end: 1px solid color-mix(in oklab, var(--encre) 18%, transparent); }
+  .faq summary {
+    display: flex; align-items: baseline; gap: 1rem;
+    min-height: 44px; padding-block: 1.1rem;
+    cursor: pointer; list-style: none;
+    font-family: var(--f-titre);
+    font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.85rem); line-height: 1.15;
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after {
+    content: '+'; margin-inline-start: auto; flex: none;
+    font-family: var(--f-mono); font-size: 1.2rem; color: var(--fil);
+    transition: transform 300ms var(--sortie);
+  }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq summary:hover { color: var(--fil); }
+  .faq details p { padding-block-end: 1.3rem; max-width: 40rem; color: var(--encre-doux); }
+
+  /* ============================ APPEL FINAL ============================ */
+  .ma-fin { background: var(--fil); }
+  .ma-fin__in { display: grid; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+  .ma-fin__fig { width: min(60%, 18rem); }
+  .ma-fin__fig :global(img) { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 50%; box-shadow: 0 0 0 10px color-mix(in oklab, var(--lin-haut) 18%, transparent); }
+  .ma-fin .chapo { max-width: 34rem; }
+  .ma-fin .btn--wa { --texte: var(--fil); }
+  @media (min-width: 56rem) {
+    .ma-fin__in { grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr); }
+    .ma-fin__fig { width: 100%; max-width: 22rem; }
   }
 </style>

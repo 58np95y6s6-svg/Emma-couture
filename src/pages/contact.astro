@@ -51,22 +51,22 @@ const indexCreations = Object.fromEntries(
   ])
 );
 
-/* Fourchettes de budget. ⚠️ Indicatif, à faire valider par Emma. */
+/* Fourchettes de budget. ⚠️ EXEMPLES indicatifs, à faire valider par Emma. */
 const BUDGETS = [
   'Moins de 30 €',
   'Entre 30 et 50 €',
   'Entre 50 et 100 €',
   'Plus de 100 €',
-  "Je n'en ai aucune idée",
+  'Je ne sais pas encore',
 ];
 
 const TYPES = [
   { v: 'Une pièce du catalogue', d: 'Doudou, drap de bain, cadre de naissance, chaussette de Noël…' },
-  { v: 'Un vêtement ou du linge que je vous apporte', d: 'Polo, sweat, doudoune, serviette, drap de famille' },
-  { v: 'Un sac, une trousse ou un tablier à coudre', d: 'Je le couds, puis je le brode' },
-  { v: 'De la dentelle libre', d: 'Pièce ajourée, sans tissu dessous : arbre de vie, papillon, initiale' },
-  { v: "Un logo de club, d'association ou d'entreprise", d: 'Série de polos, sweats, serviettes' },
-  { v: 'Je ne sais pas encore', d: "Dites-moi l'idée, je vous propose quelque chose" },
+  { v: 'Un vêtement ou du linge que je vous apporte', d: 'Sweat, polo, serviette, linge de maison' },
+  { v: 'Un sac, une trousse ou un tablier à coudre', d: 'Cousu main, puis brodé' },
+  { v: 'De la dentelle libre', d: 'Broderie sans tissu de support : arbre de vie, papillon, initiale' },
+  { v: "Un logo de club, d'association ou d'entreprise", d: 'Polos, sweats, serviettes' },
+  { v: 'Je ne sais pas encore', d: 'Décrivez-moi votre idée, je vous ferai une proposition' },
 ];
 
 const OCCASIONS_FORM = [
@@ -80,8 +80,8 @@ const OCCASIONS_FORM = [
   'Pas d’occasion particulière',
 ];
 
-const titre = `Contact & devis — broderie personnalisée à ${SITE.ville} | ${SITE.nom}`;
-const description = `Racontez-moi votre projet de broderie personnalisée ou de couture sur mesure : quelques questions courtes et je vous réponds avec un prix et un délai. WhatsApp, e-mail ou téléphone, comme vous préférez. ${SITE.ville}, Rennes et toute la France.`;
+const titre = `Contact et devis · broderie personnalisée à ${SITE.ville} | ${SITE.nom}`;
+const description = `Décrivez votre projet de broderie personnalisée ou de couture sur mesure en quelques questions courtes : je vous réponds avec un prix et un délai. WhatsApp, e-mail ou téléphone. ${SITE.ville}, Rennes et toute la France.`;
 ---
 
 <Base
@@ -107,7 +107,7 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
             src={c.data.photo}
             alt={c.data.alt}
             widths={[180, 360]}
-            sizes="90px"
+            sizes="96px"
             loading="lazy"
             decoding="async"
           />
@@ -116,33 +116,40 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
     }
   </template>
 
-  <!-- ===================== OUVERTURE ===================== -->
-  <section class="bande ct-tete">
-    <div class="ct-tete__in">
-      <p class="sourcil">Contact &amp; devis</p>
-      <h1>Dites-moi ce que vous avez<br />en tête. <em>Même flou.</em></h1>
+  <section class="bande ct" id="devis">
+    <nav class="ariane ct-ariane" aria-label="Fil d'Ariane">
+      <a href="/">Accueil</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Contact</span>
+    </nav>
+
+    <!-- ===================== OUVERTURE ===================== -->
+    <div class="ct-tete">
+      <h1>Contact et demande de devis</h1>
       <p class="chapo">
-        Quelques questions courtes, deux minutes, et je vous réponds avec un prix et un délai.
-        Broderie personnalisée et couture sur mesure, depuis {SITE.ville}&nbsp;(35).
+        Décrivez-moi votre projet de broderie personnalisée ou de couture sur mesure en quelques
+        questions courtes. Je vous réponds avec un prix, un délai de réalisation et une
+        proposition. Atelier à {SITE.ville}&nbsp;(35), remise en main propre à {SITE.ville} et à
+        Rennes, envoi dans toute la France.
       </p>
-      <ul class="ct-rassure">
+      <ul class="rassure">
         <li><b>{ATELIER.delaiReponse}</b></li>
         <li>Délai actuel&nbsp;: <b>{ATELIER.delaiActuel}</b></li>
         <li>Sans engagement</li>
       </ul>
+      <p class="ct-tete__wa">
+        <a class="lien-fleche" href={lienWhatsApp()}>Je préfère écrire sur WhatsApp</a>
+      </p>
     </div>
-  </section>
 
-  <!-- ===================== FORMULAIRE + RACCOURCIS ===================== -->
-  <section class="bande ct-corps" id="devis">
-    <!-- ---------- Le formulaire ---------- -->
+    <!-- ===================== LE FORMULAIRE ===================== -->
     <div class="ct-form__hote">
       {
         ATELIER.commandes !== 'ouvertes' && (
           <p class="ct-alerte">
             {ATELIER.commandes === 'conges'
-              ? `Je suis en congés${ATELIER.retourLe ? ` jusqu'au ${ATELIER.retourLe}` : ''}. Vous pouvez m'écrire : je réponds à mon retour.`
-              : 'Mon planning est complet pour le moment. Écrivez-moi quand même : je vous dis à partir de quand je peux reprendre.'}
+              ? `Je suis en congés${ATELIER.retourLe ? ` jusqu'au ${ATELIER.retourLe}` : ''}. Vous pouvez néanmoins m'écrire : je vous répondrai à mon retour.`
+              : 'Mon planning est actuellement complet. Vous pouvez néanmoins m’écrire : je vous indiquerai à partir de quelle date je peux réaliser votre commande.'}
           </p>
         )
       }
@@ -173,14 +180,14 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
         <input type="hidden" name="creation_url" value="" />
         <input type="hidden" name="creation_image" value="" />
 
-        <!-- Vignette de la pièce concernée -->
+        <!-- Vignette de la pièce concernée, cadrée dans un tambour -->
         <div class="ct-piece" id="ct-piece" hidden>
           <div class="ct-piece__img" id="ct-piece-img"></div>
           <div class="ct-piece__txt">
-            <p class="ct-piece__quoi">Votre demande porte sur</p>
+            <p class="ct-piece__quoi">Votre demande concerne</p>
             <p class="ct-piece__titre" id="ct-piece-titre"></p>
             <p class="ct-piece__liens">
-              <a id="ct-piece-lien" href="/creations/">Revoir la fiche</a>
+              <a id="ct-piece-lien" href="/creations/">Voir la fiche</a>
               <button type="button" class="ct-piece__non" id="ct-piece-non">
                 Ce n'est pas cette pièce
               </button>
@@ -194,8 +201,8 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
         <!-- ÉTAPE 1 — type de projet -->
         <div class="ct-pas" data-pas>
           <fieldset class="ct-champ" tabindex="-1">
-            <legend>Qu'est-ce que je brode&nbsp;?</legend>
-            <p class="ct-aide">Une seule réponse. On affinera ensemble.</p>
+            <legend>Quel type de pièce souhaitez-vous&nbsp;?</legend>
+            <p class="ct-aide">Une seule réponse&nbsp;; nous préciserons ensemble.</p>
             <div class="ct-options">
               {
                 TYPES.map((t, i) => (
@@ -219,8 +226,10 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
         <!-- ÉTAPE 2 — occasion -->
         <div class="ct-pas" data-pas>
           <fieldset class="ct-champ" tabindex="-1">
-            <legend>C'est pour quelle occasion&nbsp;?</legend>
-            <p class="ct-aide">Ça m'aide à vous proposer le bon support et la bonne écriture.</p>
+            <legend>Pour quelle occasion&nbsp;?</legend>
+            <p class="ct-aide">
+              Cette information m'aide à vous proposer le support et l'écriture adaptés.
+            </p>
             <div class="ct-options ct-options--serre">
               {
                 OCCASIONS_FORM.map((o) => (
@@ -237,20 +246,20 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
         <!-- ÉTAPE 3 — date -->
         <div class="ct-pas" data-pas>
           <fieldset class="ct-champ" tabindex="-1">
-            <legend>Pour quand&nbsp;?</legend>
+            <legend>Pour quelle date&nbsp;?</legend>
             <p class="ct-aide">
-              La date est la vraie contrainte. Si elle est serrée, dites-le&nbsp;: je regarde ce qui
-              tient.
+              La date souhaitée détermine le planning. Si elle est proche, indiquez-le&nbsp;: je
+              vérifierai ce qui est réalisable.
             </p>
             <div class="ct-duo">
               <p class="ct-ligne">
-                <label for="date_souhaitee">La date à laquelle vous voulez l'avoir en main</label>
+                <label for="date_souhaitee">Date à laquelle vous souhaitez recevoir la pièce</label>
                 <input type="date" id="date_souhaitee" name="date_souhaitee" />
               </p>
             </div>
             <label class="ct-case">
               <input type="checkbox" name="date_souple" value="Pas de date précise" />
-              <span>Je n'ai pas de date précise, je ne suis pas pressé·e</span>
+              <span>Je n'ai pas de date précise</span>
             </label>
           </fieldset>
         </div>
@@ -258,10 +267,10 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
         <!-- ÉTAPE 4 — budget -->
         <div class="ct-pas" data-pas>
           <fieldset class="ct-champ" tabindex="-1">
-            <legend>Votre budget, à peu près&nbsp;?</legend>
+            <legend>Quel budget envisagez-vous&nbsp;?</legend>
             <p class="ct-aide">
-              Ce n'est pas un engagement. C'est ce qui me permet de vous proposer un support et une
-              taille de motif cohérents, plutôt qu'un devis hors sujet.
+              Cette indication ne vous engage pas. Elle me permet de vous proposer un support et
+              une taille de motif adaptés.
             </p>
             <div class="ct-options ct-options--serre">
               {
@@ -279,27 +288,31 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
         <!-- ÉTAPE 5 — texte à broder + précisions -->
         <div class="ct-pas" data-pas>
           <fieldset class="ct-champ" tabindex="-1">
-            <legend>Qu'est-ce qu'on écrit dessus&nbsp;?</legend>
+            <legend>Quel texte souhaitez-vous faire broder&nbsp;?</legend>
             <p class="ct-ligne">
-              <label for="texte_broder">Le texte à broder</label>
+              <label for="texte_broder">Texte à broder</label>
               <input
                 type="text"
                 id="texte_broder"
                 name="texte_broder"
                 maxlength="120"
                 autocomplete="off"
-                placeholder="Ambre — 16 janvier 2026 — 3,85 kg"
+                placeholder="Ambre, 16 janvier 2026, 3,85 kg"
+                aria-describedby="note-texte"
               />
-              <span class="ct-note">Prénom, date, mesures, une phrase. Vide si vous hésitez.</span>
+              <span class="ct-note" id="note-texte">
+                Prénom, date, mesures ou courte phrase. Vous pouvez laisser ce champ vide si vous
+                hésitez encore.
+              </span>
             </p>
             <p class="ct-ligne">
-              <label for="precisions">Le reste, si vous en avez envie</label>
+              <label for="precisions">Précisions <span class="ct-facultatif">facultatif</span></label>
               <textarea
                 id="precisions"
                 name="precisions"
                 rows="5"
                 maxlength="2000"
-                placeholder="Couleur du tissu, couleur du fil, écriture cursive ou bâton, dimensions, ce que vous voulez éviter…"
+                placeholder="Couleur du tissu et du fil, écriture cursive ou capitales, dimensions, éléments à éviter…"
               ></textarea>
             </p>
           </fieldset>
@@ -308,15 +321,18 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
         <!-- ÉTAPE 6 — photo d'inspiration -->
         <div class="ct-pas" data-pas>
           <fieldset class="ct-champ" tabindex="-1">
-            <legend>Une photo d'inspiration&nbsp;? <span class="ct-option">Optionnel</span></legend>
+            <legend>Avez-vous une photo d'inspiration&nbsp;? <span class="ct-facultatif">facultatif</span></legend>
             <p class="ct-aide">
-              Une capture d'écran, un dessin d'enfant, la photo du vêtement à broder. C'est souvent
-              plus clair que trois paragraphes.
+              Une capture d'écran, un dessin ou la photo du vêtement à broder&nbsp;: une image est
+              souvent plus parlante qu'une longue description.
             </p>
             <p class="ct-ligne">
               <label for="inspiration">Choisir une photo</label>
-              <input type="file" id="inspiration" name="inspiration" accept="image/*" />
-              <span class="ct-note">Une seule photo, moins de 8 Mo. Vous pouvez aussi l'envoyer ensuite sur WhatsApp.</span>
+              <input type="file" id="inspiration" name="inspiration" accept="image/*" aria-describedby="note-photo" />
+              <span class="ct-note" id="note-photo">
+                Une seule photo, de moins de 8&nbsp;Mo. Vous pourrez aussi me l'envoyer ensuite
+                sur WhatsApp.
+              </span>
             </p>
           </fieldset>
         </div>
@@ -324,10 +340,10 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
         <!-- ÉTAPE 7 — coordonnées -->
         <div class="ct-pas" data-pas>
           <fieldset class="ct-champ" tabindex="-1">
-            <legend>Et vous, vous êtes qui&nbsp;?</legend>
+            <legend>Vos coordonnées</legend>
             <div class="ct-duo">
               <p class="ct-ligne">
-                <label for="prenom">Votre prénom <span class="ct-oblig">obligatoire</span></label>
+                <label for="prenom">Prénom <span class="ct-oblig">obligatoire</span></label>
                 <input
                   type="text"
                   id="prenom"
@@ -338,24 +354,26 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
                 />
               </p>
               <p class="ct-ligne">
-                <label for="ville">Votre ville</label>
+                <label for="ville">Ville</label>
                 <input
                   type="text"
                   id="ville"
                   name="ville"
                   autocomplete="address-level2"
                   maxlength="80"
-                  placeholder="Vitré, Rennes, ailleurs…"
+                  placeholder="Vitré, Rennes…"
                 />
               </p>
               <p class="ct-ligne">
-                <label for="email">Votre e-mail <span class="ct-oblig">obligatoire</span></label>
+                <label for="email">Adresse e-mail <span class="ct-oblig">obligatoire</span></label>
                 <input type="email" id="email" name="email" required autocomplete="email" />
               </p>
               <p class="ct-ligne">
-                <label for="telephone">Votre téléphone</label>
-                <input type="tel" id="telephone" name="telephone" autocomplete="tel" />
-                <span class="ct-note">Nécessaire si vous préférez WhatsApp ou un appel.</span>
+                <label for="telephone">Téléphone</label>
+                <input type="tel" id="telephone" name="telephone" autocomplete="tel" aria-describedby="note-tel" />
+                <span class="ct-note" id="note-tel">
+                  Nécessaire si vous souhaitez une réponse par WhatsApp ou par téléphone.
+                </span>
               </p>
             </div>
           </fieldset>
@@ -364,11 +382,11 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
         <!-- ÉTAPE 8 — canal de réponse -->
         <div class="ct-pas" data-pas>
           <fieldset class="ct-champ" tabindex="-1">
-            <legend>Je vous réponds comment&nbsp;?</legend>
+            <legend>Comment préférez-vous être recontacté·e&nbsp;?</legend>
             <div class="ct-options ct-options--serre">
               <label class="ct-opt ct-opt--court">
                 <input type="radio" name="canal" value="WhatsApp" required />
-                <span class="ct-opt__nom">Sur WhatsApp</span>
+                <span class="ct-opt__nom">Par WhatsApp</span>
               </label>
               <label class="ct-opt ct-opt--court">
                 <input type="radio" name="canal" value="E-mail" required />
@@ -383,9 +401,9 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
             <label class="ct-case ct-case--large">
               <input type="checkbox" name="nouveautes" value="Oui" />
               <span>
-                Prévenez-moi des nouveautés et des dates limites de commande pour Noël. Quelques
-                messages par an, jamais plus.
-                <a href="/politique-de-confidentialite/">Comment j'utilise vos données</a>
+                Je souhaite être prévenu·e des nouveautés et des dates limites de commande pour
+                Noël, à raison de quelques messages par an.
+                <a href="/politique-de-confidentialite/">Utilisation de mes données</a>
               </span>
             </label>
           </fieldset>
@@ -399,62 +417,66 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
 
         <!-- Envoi : toujours présent dans le HTML, donc utilisable sans JS -->
         <div class="ct-envoi" id="ct-envoi">
-          <button type="submit" class="btn btn--wa ct-envoi__btn">Envoyer ma demande</button>
+          <button type="submit" class="btn btn--wa btn--grand ct-envoi__btn">Envoyer ma demande</button>
           <p class="ct-rgpd">
-            Vos réponses me servent uniquement à vous répondre et à préparer votre commande. Elles
-            ne sont ni revendues ni transmises.
+            Vos réponses servent uniquement à traiter votre demande et à préparer votre commande.
+            Elles ne sont ni revendues ni transmises.
             <a href="/politique-de-confidentialite/">Politique de confidentialité</a>
           </p>
         </div>
       </form>
     </div>
 
-    <!-- ---------- Raccourcis ---------- -->
-    <aside class="ct-aside" aria-label="Autres façons de me joindre">
-      <div class="ct-aside__in">
-        <h2 class="ct-aside__h2">Ou plus simplement.</h2>
-        <p class="ct-aside__p">
-          Le formulaire n'est pas obligatoire. Un message de trois mots me suffit pour commencer.
-        </p>
+    <!-- ===================== AUTRES MOYENS ===================== -->
+    <aside class="ct-aside tapis" aria-labelledby="ct-aside-titre">
+      <h2 class="ct-aside__h2" id="ct-aside-titre">Autres moyens de me contacter</h2>
+      <p class="ct-aside__p">
+        Le formulaire n'est pas obligatoire&nbsp;: un simple message suffit pour commencer.
+      </p>
 
-        <ul class="ct-canaux">
-          <li>
-            <a class="btn btn--wa" href={lienWhatsApp()}>
-              <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"
-                ><path
-                  d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"
-                /></svg
-              >
-              Écrire sur WhatsApp
-            </a>
-          </li>
-          <li><a class="btn btn--creux" href={`tel:${CONTACT.telephone}`}>Appeler {CONTACT.telephone}</a></li>
-          <li><a class="btn btn--creux" href={`mailto:${CONTACT.email}`}>Envoyer un e-mail</a></li>
-        </ul>
+      <ul class="ct-canaux">
+        <li>
+          <a class="btn btn--wa" href={lienWhatsApp()}>
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"
+              ><path
+                d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"
+              /></svg
+            >
+            Écrire sur WhatsApp
+          </a>
+        </li>
+        <li><a class="btn btn--creux" href={`tel:${CONTACT.telephone}`}>Appeler le {CONTACT.telephone}</a></li>
+        <li><a class="btn btn--creux" href={`mailto:${CONTACT.email}`}>Envoyer un e-mail</a></li>
+      </ul>
 
-        <dl class="ct-infos">
-          <dt>Où je suis</dt>
+      <dl class="ct-infos">
+        <div>
+          <dt>Atelier</dt>
           <dd>
-            {SITE.ville} ({SITE.codePostal}), en {SITE.departement}. Je travaille chez moi&nbsp;: je
-            ne reçois pas, mais on peut se retrouver.
+            {SITE.ville} ({SITE.codePostal}), {SITE.departement}. Je travaille à domicile et ne
+            reçois pas de public&nbsp;; un rendez-vous peut être convenu dans un lieu public.
           </dd>
-          <dt>Où je livre</dt>
+        </div>
+        <div>
+          <dt>Livraison</dt>
           <dd>{ATELIER.zones}. Remise en main propre sur rendez-vous.</dd>
-          <dt>Quand je réponds</dt>
-          <dd>{ATELIER.delaiReponse}. Le délai de fabrication actuel est de {ATELIER.delaiActuel}.</dd>
-          <dt>Ailleurs</dt>
+        </div>
+        <div>
+          <dt>Réponse</dt>
+          <dd>{ATELIER.delaiReponse}. Délai de réalisation actuel&nbsp;: {ATELIER.delaiActuel}.</dd>
+        </div>
+        <div>
+          <dt>Instagram</dt>
           <dd>
-            <a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">
-              @{CONTACT.instagram}
-            </a>{' '}
-            — les pièces en cours passent souvent là d'abord.
+            <a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">@{CONTACT.instagram}</a>,
+            où les pièces récentes sont publiées en premier.
           </dd>
-        </dl>
+        </div>
+      </dl>
 
-        <p class="ct-aside__lien">
-          <a class="lien-fleche" href="/sur-mesure/#questions">Les questions qu'on me pose</a>
-        </p>
-      </div>
+      <p>
+        <a class="lien-fleche lien-fleche--clair" href="/sur-mesure/#questions">Questions fréquentes</a>
+      </p>
     </aside>
   </section>
 </Base>
@@ -678,7 +700,6 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
     }
   }
 </script>
-
 <style>
   /* ==========================================================================
      /contact/ — styles propres à la page. Préfixe `ct-`.
@@ -688,70 +709,78 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
      règle [hidden] explicite.
      ========================================================================== */
 
-  /* --- Ouverture -------------------------------------------------------- */
-  .ct-tete {
-    padding-block: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 3.5vw, 2.5rem);
-  }
-  .ct-tete__in {
-    display: grid;
-    gap: clamp(0.85rem, 2vw, 1.25rem);
-    justify-items: start;
-    max-width: 40rem;
-  }
-  .ct-tete h1 {
-    max-width: 22ch;
-  }
-  .ct-rassure {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem 1rem;
-    font-size: var(--t-petit);
-    color: var(--encre-doux);
-  }
-  .ct-rassure li {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .ct-rassure li + li::before {
-    content: '';
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--rouille);
-  }
-  .ct-rassure b {
-    font-weight: 500;
-    color: var(--encre);
-  }
-
-  /* --- Corps : formulaire + colonne raccourcis -------------------------- */
-  .ct-corps {
-    padding-block: 0 clamp(3rem, 7vw, 5.5rem);
-    row-gap: clamp(2rem, 5vw, 3rem);
+  /* --- Mise en page : une seule section ---------------------------------
+     Téléphone : titre → formulaire → autres moyens (ordre du DOM).
+     Ordinateur : titre et autres moyens à gauche, formulaire à droite,
+     visible dès l'arrivée sans défiler. */
+  .ct {
+    padding-block: clamp(0.5rem, 2vw, 1.5rem) var(--respire);
+    row-gap: clamp(1.5rem, 4vw, 2.5rem);
     align-items: start;
   }
+  @media (min-width: 64rem) {
+    .ct {
+      grid-template-columns:
+        [bord-d] minmax(var(--marge), 1fr)
+        [large-d] minmax(0, calc(var(--large) * 0.4)) [mi] minmax(0, calc(var(--large) * 0.6))
+        [large-f] minmax(var(--marge), 1fr) [bord-f];
+      grid-template-rows: auto auto 1fr;
+    }
+    .ct-ariane { grid-column: large-d / large-f; grid-row: 1; }
+    .ct-tete { grid-column: large-d / mi; grid-row: 2; padding-inline-end: clamp(2rem, 4vw, 4rem); }
+    .ct-aside { grid-column: large-d / mi; grid-row: 3; margin-inline-end: clamp(2rem, 4vw, 4rem); }
+    .ct-form__hote { grid-column: mi / large-f; grid-row: 2 / span 2; }
+  }
 
+  /* --- Ouverture -------------------------------------------------------- */
+  .ct-tete {
+    display: grid;
+    gap: clamp(1rem, 2vw, 1.4rem);
+    justify-items: start;
+  }
+  .ct-tete h1 {
+    font-size: clamp(2.9rem, 1.6rem + 4.4vw, 5.6rem);
+    max-width: 11ch;
+  }
+  .ct-tete .chapo { font-size: clamp(1.1rem, 1rem + 0.4vw, 1.3rem); }
+  @media (min-width: 64rem) { .ct-tete__wa { display: none; } }
+
+  /* --- Le formulaire : une fiche de commande ---------------------------- */
   .ct-alerte {
     font-size: var(--t-petit);
-    background: color-mix(in oklab, var(--ocre) 30%, var(--sable-haut));
-    border-inline-start: 3px solid var(--rouille);
+    background: color-mix(in oklab, var(--dore) 35%, var(--lin-haut));
+    border-inline-start: 3px solid var(--coquelicot);
     padding: 0.85rem 1.05rem;
-    border-radius: 0 6px 6px 0;
+    border-radius: 0 var(--r-s) var(--r-s) 0;
     margin-block-end: 1.2rem;
   }
 
   .ct-form {
+    position: relative;
     display: grid;
-    gap: clamp(1.2rem, 3vw, 1.8rem);
-    background: color-mix(in oklab, var(--sable-haut) 82%, transparent);
-    border: 1px solid color-mix(in oklab, var(--brique) 24%, transparent);
-    border-radius: 4px 4px 4px 26px;
-    padding: clamp(1.1rem, 3.5vw, 2.2rem);
+    gap: clamp(1.3rem, 3vw, 1.9rem);
+    background: var(--papier);
+    border-radius: var(--r-l);
+    padding: clamp(1.25rem, 4vw, 2.75rem);
     min-width: 0;
+    box-shadow:
+      0 1px 0 color-mix(in oklab, var(--encre) 6%, transparent),
+      0 40px 70px -45px color-mix(in oklab, var(--encre) 55%, transparent);
     /* L'en-tête est collant : sans cette marge, le haut du formulaire
        passerait dessous à chaque changement d'étape. */
     scroll-margin-block-start: 5.5rem;
+  }
+  /* une couture en point avant tout autour de la fiche */
+  .ct-form::before {
+    content: '';
+    position: absolute;
+    inset: 9px;
+    border: 1.5px dashed color-mix(in oklab, var(--coquelicot) 32%, transparent);
+    border-radius: calc(var(--r-l) - 7px);
+    pointer-events: none;
+  }
+  @media (max-width: 26rem) {
+    .ct-form { margin-inline: calc(var(--marge) * -0.5); }
   }
 
   /* Le leurre anti-spam : hors écran, jamais dans le parcours clavier. */
@@ -764,47 +793,54 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
     white-space: nowrap;
   }
 
-  /* --- Vignette de la création rattachée -------------------------------- */
+  /* --- Vignette de la création rattachée, dans un tambour --------------- */
   .ct-piece {
+    --bois: #C9A97E;
+    --bois-fonce: #8A6A46;
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.4rem 0.9rem;
+    gap: 0.5rem 1.2rem;
     align-items: center;
-    padding: 0.7rem 0.85rem;
-    background: color-mix(in oklab, var(--rose) 52%, var(--sable-haut));
-    border-radius: 3px 16px 3px 16px;
+    padding: 1rem 1.1rem 1rem 1.3rem;
+    background: var(--rose);
+    border-radius: var(--r-m);
   }
-  .ct-piece[hidden] {
-    display: none;
+  .ct-piece[hidden] { display: none; }
+  .ct-piece__img {
+    width: clamp(4.75rem, 18vw, 6rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--lin-bas);
+    box-shadow:
+      0 0 0 5px var(--bois),
+      0 0 0 6.5px var(--bois-fonce),
+      0 0 0 9px var(--bois),
+      0 14px 24px -12px color-mix(in oklab, var(--encre) 60%, transparent);
+    margin: 9px;
   }
   .ct-piece__img :global(img) {
-    width: 90px;
-    height: 112px;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    border-radius: 2px;
   }
-  .ct-piece__txt {
-    display: grid;
-    gap: 0.15rem;
-    min-width: 0;
+  @media (prefers-reduced-motion: no-preference) {
+    .ct-piece:not([hidden]) .ct-piece__img { animation: ct-tend 900ms var(--sortie) both; }
   }
-  .ct-piece__quoi {
-    font-size: var(--t-micro);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--brique);
-  }
+  @keyframes ct-tend { from { transform: scale(0.8) rotate(-12deg); opacity: 0.001; } }
+  .ct-piece__txt { display: grid; gap: 0.2rem; min-width: 0; }
+  .ct-piece__quoi { font-size: var(--t-petit); color: var(--encre-doux); }
   .ct-piece__titre {
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: clamp(1.15rem, 1rem + 0.8vw, 1.5rem);
-    line-height: 1.12;
+    font-family: var(--f-titre);
+    font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem);
+    line-height: 1.05;
+    color: var(--encre);
   }
   .ct-piece__liens {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.3rem 1rem;
-    font-size: var(--t-micro);
-    padding-block-start: 0.2rem;
+    gap: 0 1.2rem;
+    font-size: var(--t-petit);
   }
   .ct-piece__liens a,
   .ct-piece__non {
@@ -812,61 +848,55 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
     display: inline-flex;
     align-items: center;
     font: inherit;
-    letter-spacing: 0.04em;
-    color: var(--encre-doux);
+    color: var(--encre);
     background: none;
     border: 0;
     padding: 0;
     cursor: pointer;
     text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-color: color-mix(in oklab, var(--brique) 50%, transparent);
+    text-underline-offset: 4px;
+    text-decoration-color: color-mix(in oklab, var(--coquelicot-fonce) 60%, transparent);
   }
   .ct-piece__liens a:hover,
-  .ct-piece__non:hover {
-    color: var(--rouille);
-  }
+  .ct-piece__non:hover { color: var(--coquelicot-fonce); }
 
-  /* --- Jauge d'avancement ---------------------------------------------- */
+  /* --- Jauge : un fil en point avant qui se brode d'étape en étape ------ */
   .ct-jauge {
     --part: 0.125;
-    font-size: var(--t-micro);
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--brique);
-    padding-block-end: 0.7rem;
-    border-block-end: 2px solid color-mix(in oklab, var(--brique) 20%, transparent);
+    display: grid;
+    gap: 0.6rem;
+    font-size: var(--t-petit);
+    color: var(--encre-doux);
     position: relative;
   }
-  .ct-jauge[hidden] {
-    display: none;
-  }
+  .ct-jauge[hidden] { display: none; }
+  .ct-jauge::before,
   .ct-jauge::after {
     content: '';
-    position: absolute;
-    inset-inline-start: 0;
-    inset-block-end: -2px;
-    height: 2px;
-    width: 100%;
-    background: var(--rouille);
+    grid-row: 2;
+    grid-column: 1;
+    height: 3px;
+    border-radius: 2px;
+    background: repeating-linear-gradient(90deg, currentColor 0 10px, transparent 10px 16px);
+  }
+  .ct-jauge::before { color: color-mix(in oklab, var(--encre) 16%, transparent); }
+  .ct-jauge::after {
+    color: var(--coquelicot);
     transform: scaleX(var(--part));
     transform-origin: left;
-    transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition: transform 520ms var(--sortie);
   }
   @media (prefers-reduced-motion: reduce) {
-    .ct-jauge::after {
-      transition: none;
-    }
+    .ct-jauge::after { transition: none; }
   }
 
   /* --- Une étape -------------------------------------------------------- */
-  .ct-pas {
-    display: grid;
-    min-width: 0;
+  .ct-pas { display: grid; min-width: 0; }
+  .ct-pas[hidden] { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    .ct-form--etapes .ct-pas:not([hidden]) { animation: ct-pas 500ms var(--sortie) both; }
   }
-  .ct-pas[hidden] {
-    display: none;
-  }
+  @keyframes ct-pas { from { opacity: 0.001; transform: translateX(18px); } }
 
   .ct-champ {
     border: 0;
@@ -874,40 +904,39 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
     padding: 0;
     min-width: 0;
     display: grid;
-    gap: 0.75rem;
+    gap: 0.9rem;
   }
-  .ct-champ:focus {
-    outline: none;
-  }
+  .ct-champ:focus { outline: none; }
   .ct-champ > legend {
     padding: 0;
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: clamp(1.45rem, 1.15rem + 1.4vw, 2.1rem);
-    line-height: 1.08;
-    letter-spacing: -0.015em;
+    font-family: var(--f-titre);
+    font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.7rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
     color: var(--encre);
-    margin-block-end: 0.35rem;
+    margin-block-end: 0.3rem;
+    text-wrap: balance;
   }
-  .ct-option {
-    font-family: 'Jost', sans-serif;
-    font-size: var(--t-micro);
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+  .ct-facultatif {
+    font-family: var(--f-texte);
+    font-size: var(--t-petit);
+    font-weight: 400;
+    letter-spacing: 0;
     color: var(--gris);
-    vertical-align: 0.35em;
-    margin-inline-start: 0.4rem;
+    margin-inline-start: 0.35rem;
+    vertical-align: 0.2em;
   }
   .ct-aide {
-    font-size: var(--t-petit);
+    font-size: var(--t-corps);
     line-height: 1.55;
     color: var(--encre-doux);
-    max-width: 38rem;
+    max-width: 36rem;
   }
 
   /* Les groupes de choix : cartes cliquables, bouton radio natif conservé. */
   .ct-options {
     display: grid;
-    gap: 0.5rem;
+    gap: 0.55rem;
     grid-template-columns: minmax(0, 1fr);
   }
   @media (min-width: 34rem) {
@@ -915,52 +944,42 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
       grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
     }
   }
-
   .ct-opt {
+    position: relative;
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.1rem 0.7rem;
+    gap: 0.1rem 0.85rem;
     align-items: start;
-    min-height: 3rem;
-    padding: 0.7rem 0.9rem;
-    border: 1.5px solid color-mix(in oklab, var(--brique) 26%, transparent);
-    border-radius: 3px;
-    background: color-mix(in oklab, var(--sable-haut) 55%, transparent);
+    min-height: 3.25rem;
+    padding: 0.85rem 1rem;
+    border: 1.5px solid color-mix(in oklab, var(--encre) 16%, transparent);
+    border-radius: var(--r-m);
+    background: var(--lin-haut);
     cursor: pointer;
-    transition: border-color 200ms ease, background 200ms ease;
+    transition: border-color 200ms ease, background 200ms ease, transform 250ms var(--sortie);
   }
   .ct-opt:hover {
-    border-color: color-mix(in oklab, var(--rouille) 60%, transparent);
-    background: var(--sable-haut);
+    border-color: color-mix(in oklab, var(--coquelicot) 55%, transparent);
+    transform: translateY(-1px);
   }
   .ct-opt:has(input:checked) {
-    border-color: var(--rouille);
-    background: color-mix(in oklab, var(--rose) 40%, var(--sable-haut));
+    border-color: var(--coquelicot);
+    background: color-mix(in oklab, var(--rose) 55%, var(--lin-haut));
   }
   .ct-opt:has(input:focus-visible) {
-    outline: 2.5px solid var(--rouille);
+    outline: 2.5px solid var(--coquelicot);
     outline-offset: 2px;
   }
   .ct-opt input {
-    accent-color: var(--rouille);
-    width: 1.15rem;
-    height: 1.15rem;
-    margin: 0.2rem 0 0;
+    accent-color: var(--coquelicot-fonce);
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0.15rem 0 0;
     grid-row: 1 / span 2;
-    flex: none;
   }
-  .ct-opt--court input {
-    grid-row: 1;
-    align-self: center;
-    margin-block-start: 0;
-  }
-  .ct-opt--court {
-    align-items: center;
-  }
-  .ct-opt__nom {
-    font-size: 1rem;
-    line-height: 1.35;
-  }
+  .ct-opt--court { align-items: center; }
+  .ct-opt--court input { grid-row: 1; align-self: center; margin-block-start: 0; }
+  .ct-opt__nom { font-size: 1rem; line-height: 1.35; font-weight: 500; }
   .ct-opt__d {
     grid-column: 2;
     font-size: var(--t-petit);
@@ -971,39 +990,21 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
   /* Champs texte ------------------------------------------------------- */
   .ct-duo {
     display: grid;
-    gap: 0.9rem;
+    gap: 1rem;
     grid-template-columns: minmax(0, 1fr);
   }
   @media (min-width: 34rem) {
-    .ct-duo {
-      grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
-    }
+    .ct-duo { grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); }
   }
-
-  .ct-ligne {
-    display: grid;
-    gap: 0.3rem;
-    min-width: 0;
-  }
-  .ct-ligne label {
-    font-size: var(--t-petit);
-    font-weight: 500;
-    letter-spacing: 0.015em;
-    color: var(--encre);
-  }
+  .ct-ligne { display: grid; gap: 0.35rem; min-width: 0; }
+  .ct-ligne label { font-size: 1rem; font-weight: 500; color: var(--encre); }
   .ct-oblig {
-    font-size: var(--t-micro);
+    font-size: var(--t-petit);
     font-weight: 400;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--rouille);
+    color: var(--coquelicot-fonce);
     margin-inline-start: 0.3rem;
   }
-  .ct-note {
-    font-size: var(--t-micro);
-    line-height: 1.5;
-    color: var(--gris);
-  }
+  .ct-note { font-size: var(--t-petit); line-height: 1.5; color: var(--gris); }
 
   .ct-ligne input,
   .ct-ligne textarea {
@@ -1013,80 +1014,92 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
     line-height: 1.5;
     color: var(--encre);
     background: #fff;
-    border: 1.5px solid color-mix(in oklab, var(--brique) 30%, transparent);
-    border-radius: 3px;
-    padding: 0.7rem 0.85rem;
-    min-height: 3rem;
+    border: 1.5px solid color-mix(in oklab, var(--encre) 22%, transparent);
+    border-radius: var(--r-s);
+    padding: 0.75rem 0.9rem;
+    min-height: 3.1rem;
     width: 100%;
     max-width: 100%;
+    transition: border-color 200ms ease, box-shadow 200ms ease;
   }
-  .ct-ligne textarea {
-    resize: vertical;
-    min-height: 7rem;
-  }
+  .ct-ligne textarea { resize: vertical; min-height: 8rem; }
   .ct-ligne input:hover,
-  .ct-ligne textarea:hover {
-    border-color: color-mix(in oklab, var(--brique) 50%, transparent);
+  .ct-ligne textarea:hover { border-color: color-mix(in oklab, var(--encre) 45%, transparent); }
+  .ct-ligne input:focus-visible,
+  .ct-ligne textarea:focus-visible {
+    outline: 2.5px solid var(--coquelicot);
+    outline-offset: 1px;
+    border-color: var(--coquelicot);
   }
   .ct-ligne input::placeholder,
-  .ct-ligne textarea::placeholder {
-    color: color-mix(in oklab, var(--gris) 70%, #fff);
-  }
+  .ct-ligne textarea::placeholder { color: color-mix(in oklab, var(--gris) 75%, #fff); }
   .ct-ligne input[aria-invalid='true'],
   .ct-ligne textarea[aria-invalid='true'] {
-    border-color: var(--rouille);
-    background: color-mix(in oklab, var(--rose) 22%, #fff);
+    border-color: var(--coquelicot-fonce);
+    background: color-mix(in oklab, var(--rose) 25%, #fff);
   }
   .ct-ligne input[type='file'] {
     padding: 0.6rem 0.7rem;
-    background: color-mix(in oklab, var(--sable-haut) 60%, #fff);
+    background: var(--lin-haut);
+    border-style: dashed;
     cursor: pointer;
   }
-  .ct-ligne input[type='date'] {
-    max-width: 16rem;
+  .ct-ligne input[type='file']::file-selector-button {
+    font: inherit;
+    font-size: var(--t-petit);
+    min-height: 2.75rem;
+    margin-inline-end: 0.8rem;
+    padding: 0.4rem 1rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--encre);
+    color: var(--lin-haut);
+    cursor: pointer;
   }
+  .ct-ligne input[type='date'] { max-width: 17rem; }
 
   /* Cases à cocher ------------------------------------------------------ */
   .ct-case {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.7rem;
+    gap: 0.75rem;
     align-items: start;
     min-height: 2.9rem;
-    padding-block: 0.5rem;
-    font-size: var(--t-petit);
+    padding-block: 0.55rem;
+    font-size: 1rem;
     line-height: 1.5;
     color: var(--encre-doux);
     cursor: pointer;
   }
   .ct-case input {
-    accent-color: var(--rouille);
-    width: 1.2rem;
-    height: 1.2rem;
+    accent-color: var(--coquelicot-fonce);
+    width: 1.25rem;
+    height: 1.25rem;
     margin: 0.15rem 0 0;
   }
   .ct-case--large {
     margin-block-start: 0.6rem;
-    padding: 0.85rem 1rem;
-    background: color-mix(in oklab, var(--sable-haut) 70%, transparent);
-    border: 1px dashed color-mix(in oklab, var(--brique) 34%, transparent);
-    border-radius: 3px 14px 3px 14px;
+    padding: 0.95rem 1.05rem;
+    font-size: var(--t-petit);
+    background: var(--lin-haut);
+    border-radius: var(--r-m);
   }
   .ct-case a {
-    text-decoration-color: color-mix(in oklab, var(--rouille) 60%, transparent);
+    display: inline-block;
+    color: var(--encre);
+    text-decoration-color: color-mix(in oklab, var(--coquelicot-fonce) 60%, transparent);
     text-underline-offset: 3px;
-    white-space: nowrap;
   }
 
-  /* Message d'erreur ---------------------------------------------------- */
+  /* Message d'erreur (créé par le script) ------------------------------- */
   .ct-form :global(.ct-err) {
     font-size: var(--t-petit);
     font-weight: 500;
     color: #8C2A1C;
     background: color-mix(in oklab, var(--rose) 55%, #fff);
-    border-inline-start: 3px solid var(--rouille);
-    padding: 0.6rem 0.85rem;
-    border-radius: 0 4px 4px 0;
+    border-inline-start: 3px solid var(--coquelicot-fonce);
+    padding: 0.65rem 0.9rem;
+    border-radius: 0 var(--r-s) var(--r-s) 0;
   }
 
   /* Navigation et envoi ------------------------------------------------- */
@@ -1095,141 +1108,63 @@ const description = `Racontez-moi votre projet de broderie personnalisée ou de 
     flex-wrap: wrap;
     gap: 0.7rem 0.9rem;
     align-items: center;
+    padding-block-start: 0.4rem;
   }
-  .ct-nav[hidden] {
-    display: none;
-  }
-  .ct-nav button[hidden] {
-    display: none;
-  }
-  .ct-nav #ct-suiv {
-    margin-inline-start: auto;
-  }
+  .ct-nav[hidden] { display: none; }
+  .ct-nav button[hidden] { display: none; }
+  .ct-nav .btn { font-size: 1rem; }
+  .ct-nav #ct-suiv { margin-inline-start: auto; min-width: 9rem; }
 
-  .ct-envoi {
-    display: grid;
-    gap: 0.8rem;
-    justify-items: start;
-  }
-  .ct-rgpd {
-    font-size: var(--t-micro);
-    line-height: 1.55;
-    color: var(--gris);
-    max-width: 40rem;
-  }
+  .ct-envoi { display: grid; gap: 0.9rem; justify-items: start; }
+  .ct-rgpd { font-size: var(--t-petit); line-height: 1.55; color: var(--gris); max-width: 40rem; }
   .ct-rgpd a {
-    text-decoration-color: color-mix(in oklab, var(--rouille) 55%, transparent);
+    color: var(--encre-doux);
+    text-decoration-color: color-mix(in oklab, var(--coquelicot-fonce) 55%, transparent);
     text-underline-offset: 3px;
   }
 
   /* En mode étapes, le bouton d'envoi n'apparaît qu'à la dernière étape.
      Sans JavaScript, la classe .ct-form--etapes n'est jamais posée : le
      bouton reste visible et le formulaire est envoyable d'un bloc. */
-  .ct-form--etapes .ct-envoi__btn {
-    display: none;
-  }
-  .ct-form--etapes .ct-envoi--pret .ct-envoi__btn {
-    display: inline-flex;
-  }
+  .ct-form--etapes .ct-envoi__btn { display: none; }
+  .ct-form--etapes .ct-envoi--pret .ct-envoi__btn { display: inline-flex; }
 
-  /* --- Colonne raccourcis --------------------------------------------- */
-  .ct-aside__in {
+  /* --- Autres moyens : un coin de tapis de coupe ----------------------- */
+  .ct-aside.tapis {
     display: grid;
-    gap: clamp(0.8rem, 2vw, 1.15rem);
+    gap: 1.1rem;
     justify-items: start;
-    padding: clamp(1.1rem, 3vw, 1.7rem);
-    color: var(--coquille);
-    border-radius: 4px 4px 22px 4px;
-    background:
-      radial-gradient(70% 60% at 90% 5%, color-mix(in oklab, var(--mauve) 60%, var(--vert)) 0%, transparent 65%),
-      linear-gradient(170deg, var(--vert-2), var(--vert) 70%, #12180F);
+    padding: clamp(1.4rem, 4vw, 2.4rem);
+    border-radius: var(--r-l);
+    overflow: hidden;
   }
   .ct-aside__h2 {
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.3rem);
-    line-height: 1.03;
+    font-size: clamp(1.8rem, 1.3rem + 1.6vw, 2.5rem);
+    line-height: 1.02;
     letter-spacing: -0.02em;
   }
-  .ct-aside__p {
-    font-size: var(--t-petit);
-    color: color-mix(in oklab, var(--rose) 62%, #C9BEB6);
-    max-width: 26rem;
-  }
-  .ct-canaux {
-    display: grid;
-    gap: 0.55rem;
-    width: 100%;
-  }
-  .ct-canaux li {
-    min-width: 0;
-  }
-  .ct-canaux .btn {
-    width: 100%;
-  }
-  .ct-canaux .btn--creux {
-    color: var(--coquille);
-    border-color: color-mix(in oklab, var(--rose) 45%, transparent);
-  }
-  .ct-canaux .btn--creux::before {
-    background: var(--coquille);
-  }
-  .ct-canaux .btn--creux:hover {
-    color: var(--encre);
-    border-color: var(--coquille);
-  }
+  .ct-aside__p { color: color-mix(in oklab, var(--lin-haut) 84%, transparent); max-width: 28rem; }
+  .ct-canaux { display: grid; gap: 0.6rem; width: 100%; }
+  .ct-canaux li { min-width: 0; }
+  .ct-canaux .btn { width: 100%; }
 
-  .ct-infos {
+  .ct-infos { display: grid; width: 100%; margin-block-start: 0.4rem; }
+  .ct-infos > div {
     display: grid;
-    gap: 0;
-    width: 100%;
-    margin-block-start: 0.4rem;
+    gap: 0.15rem;
+    padding-block: 0.85rem;
+    border-block-start: 1px dashed color-mix(in oklab, var(--tapis-trait) 45%, transparent);
   }
-  .ct-infos dt {
-    font-size: var(--t-micro);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--dore);
-    padding-block-start: 0.85rem;
-  }
+  .ct-infos dt { font-size: var(--t-petit); font-weight: 500; color: var(--dore); }
   .ct-infos dd {
     margin: 0;
     font-size: var(--t-petit);
     line-height: 1.55;
-    color: color-mix(in oklab, var(--rose) 60%, #C9BEB6);
-    padding-block-end: 0.85rem;
-    border-block-end: 1px solid color-mix(in oklab, var(--rose) 18%, transparent);
+    color: color-mix(in oklab, var(--lin-haut) 84%, transparent);
   }
   .ct-infos dd a {
+    color: var(--lin-haut);
     text-decoration-color: color-mix(in oklab, var(--dore) 70%, transparent);
     text-underline-offset: 3px;
-  }
-  .ct-aside__lien .lien-fleche {
-    color: var(--coquille);
-    border-color: color-mix(in oklab, var(--rose) 45%, transparent);
-    min-height: 2.75rem;
-    display: inline-flex;
-    align-items: center;
-  }
-  .ct-aside__lien .lien-fleche:hover {
-    color: var(--dore);
-    border-color: var(--dore);
-  }
-
-  @media (min-width: 62rem) {
-    .ct-corps {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.62)) minmax(0, calc(var(--large) * 0.38))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      column-gap: clamp(1.5rem, 3vw, 2.8rem);
-    }
-    .ct-form__hote {
-      grid-column: large-d / span 1;
-    }
-    .ct-aside {
-      grid-column: span 1 / large-f;
-      position: sticky;
-      inset-block-start: 5.5rem;
-    }
   }
 </style>
