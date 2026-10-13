@@ -28,6 +28,7 @@ const { titre, variante = 'simple', id } = Astro.props;
 
 <style>
   .ts { row-gap: 1rem; margin-block-end: clamp(2rem, 4vw, 3rem); }
+  .ts:last-child { margin-block-end: 0; }
   .ts__titre { grid-column: 1 / -1; font-size: var(--t-h2); line-height: 0.98; letter-spacing: -0.025em; text-wrap: balance; }
   .ts__dire { grid-column: 1 / -1; display: grid; gap: 0.9rem; justify-items: start; max-width: 34rem; }
   .ts__chapo { color: var(--encre-doux); }

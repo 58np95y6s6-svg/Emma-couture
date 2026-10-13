@@ -7,10 +7,12 @@ interface Props {
   faits: string[];
   /** Sur fond sombre ou coloré. */
   clair?: boolean;
+  /** Nom accessible de la liste, ex. « Communes desservies ». */
+  label?: string;
 }
-const { faits, clair = false } = Astro.props;
+const { faits, clair = false, label } = Astro.props;
 ---
 
-<ul class:list={['faits', { 'faits--clair': clair }]}>
+<ul class:list={['faits', { 'faits--clair': clair }]} aria-label={label}>
   {faits.map((f) => <li>{f}</li>)}
 </ul>

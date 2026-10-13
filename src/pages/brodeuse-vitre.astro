@@ -14,12 +14,15 @@
  * ⚠️ CONTENU D'EXEMPLE : prix, délais, numéro WhatsApp, e-mail et téléphone
  * sont provisoires (src/config.ts). Vocabulaire : broderie MACHINE.
  */
-import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
+import HautDePage from '../components/HautDePage.astro';
+import TeteSection from '../components/TeteSection.astro';
+import ListeLignes from '../components/ListeLignes.astro';
+import FAQ from '../components/FAQ.astro';
+import AppelFinal from '../components/AppelFinal.astro';
+import { SITE, ATELIER, lienWhatsApp } from '../config';
 
-import portrait from '../assets/creations/hero-mobile/emma-brodeuse-vitre-portrait.webp';
-import bobines from '../assets/creations/bandeau/atelier-mur-bobines-fil-broderie-vitre.webp';
+import sacAdos from '../assets/creations/galerie/sac-a-dos-enfant-brode-prenom-malo.webp';
 import ogPage from '../assets/creations/og/emma-brodeuse-vitre-portrait.webp';
 
 import pLinge from '../assets/creations/galerie/serviette-brodee-prenom-alicia-rose.webp';
@@ -30,10 +33,10 @@ import pDeco from '../assets/creations/galerie/tambour-decoratif-brode-fee-rouge
 const titre = `Brodeuse à Vitré (35) · broderie personnalisée et couture | ${SITE.nom}`;
 const description =
   'Brodeuse à Vitré (35) : broderie machine personnalisée au prénom, dentelle libre, sacs et trousses cousus main. Remise en main propre sur rendez-vous à Vitré, envoi partout en France.';
+const fil = [{ nom: 'Brodeuse à Vitré', url: '/brodeuse-vitre/' }];
 
-const wa = lienWhatsApp(
-  "Bonjour Emma, j'habite à Vitré ou dans les environs et j'aimerais vous confier un projet de broderie.",
-);
+const messageWa =
+  "Bonjour Emma, j'habite à Vitré ou dans les environs et j'aimerais vous confier un projet de broderie.";
 
 /*
   ⚠️ À CONFIRMER AVEC EMMA — liste plausible, non validée.
@@ -62,39 +65,36 @@ const communes = [
 */
 const pieces = [
   {
-    img: pLinge,
+    image: pLinge,
     alt: 'Drap de bain rose avec le prénom Alicia brodé en fil mauve sur la bordure',
-    nom: 'Le linge de bain',
-    dire: 'Drap de bain, serviette, peignoir, cape de bain, brodés au prénom.',
+    titre: 'Le linge de bain',
+    texte: 'Drap de bain, serviette, peignoir, cape de bain, brodés au prénom.',
     href: '/creations/linge-de-bain/',
   },
   {
-    img: pNaissance,
+    image: pNaissance,
     alt: 'Lapin en peluche, prénom et date brodés sur les oreilles, cadeau de naissance',
-    nom: 'Les cadeaux de naissance',
-    dire: 'Doudou, bavoir, cadre de naissance avec le prénom, la date et le poids.',
+    titre: 'Les cadeaux de naissance',
+    texte: 'Doudou, bavoir, cadre de naissance avec le prénom, la date et le poids.',
     href: '/creations/naissance/',
   },
   {
-    img: pCouture,
+    image: pCouture,
     alt: 'Trousse en tissu cousue main, prénom Lisa brodé sur le rabat',
-    nom: 'Les sacs et trousses',
-    dire: 'Cousus main à l’atelier, puis brodés. Le tissu et la doublure se choisissent ensemble.',
+    titre: 'Les sacs et trousses',
+    texte: 'Cousus main à l’atelier, puis brodés. Le tissu et la doublure se choisissent ensemble.',
     href: '/creations/couture/',
   },
   {
-    img: pDeco,
+    image: pDeco,
     alt: 'Tambour à broder décoratif : une fée en robe rouge brodée, prêt à accrocher',
-    nom: 'Les pièces décoratives',
-    dire: 'Tambour décoratif, cadre, dentelle libre ajourée, à accrocher ou à poser.',
+    titre: 'Les pièces décoratives',
+    texte: 'Tambour décoratif, cadre, dentelle libre ajourée, à accrocher ou à poser.',
     href: '/creations/decoration-ajouree/',
   },
 ];
 
-/*
-  FAQ locale. Le JSON-LD est généré depuis ce tableau : les deux ne peuvent
-  pas diverger. Ne pas ajouter de question au balisage sans l'afficher.
-*/
+/* FAQ locale. Le composant FAQ affiche ces questions et émet le JSON-LD. */
 const faq = [
   {
     q: 'Où récupérer ma commande à Vitré ?',
@@ -114,196 +114,85 @@ const faq = [
   },
 ];
 
-const jsonFaq = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faq.map((f) => ({
-    '@type': 'Question',
-    name: f.q,
-    acceptedAnswer: { '@type': 'Answer', text: f.r },
-  })),
-};
 ---
 
-<Base
-  titre={titre}
-  description={description}
-  imageOg={ogPage.src}
-  fil={[{ nom: 'Brodeuse à Vitré', url: '/brodeuse-vitre/' }]}
->
-  <script type="application/ld+json" set:html={JSON.stringify(jsonFaq)} is:inline />
+<Base titre={titre} description={description} imageOg={ogPage.src} fil={fil}>
+  <HautDePage
+    titre="Brodeuse à Vitré"
+    fil={fil}
+    image={sacAdos}
+    alt="Sac à dos d'enfant brodé au prénom Malo"
+    faits={[ATELIER.delaiReponse, `Délai actuel : ${ATELIER.delaiActuel}`, 'Remise en main propre sur rendez-vous']}
+  >
+    <p>
+      Je réalise à {SITE.ville} des broderies machine personnalisées&nbsp;: prénoms, motifs et
+      dentelle libre, sur le linge, les vêtements et les cadeaux de naissance. Je couds aussi les
+      sacs, les trousses et les tabliers que je brode. Pour un cadeau personnalisé à Vitré, la
+      pièce vous est remise en main propre, sur rendez-vous, dans un lieu convenu par message.
+    </p>
+    <a slot="actions" class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>Écrire sur WhatsApp</a>
+    <a slot="actions" class="btn btn--creux btn--grand" href="/contact/#devis">Demander un devis</a>
+  </HautDePage>
 
-  <!-- ===================== HAUT DE PAGE ===================== -->
-  <section class="bande vi-ouv">
-    <nav class="ariane vi-ariane" aria-label="Fil d'Ariane">
-      <a href="/">Accueil</a>
-      <span aria-hidden="true">/</span>
-      <span aria-current="page">Brodeuse à Vitré</span>
-    </nav>
-
-    <div class="vi-ouv__dire">
-      <h1>Brodeuse à Vitré</h1>
-      <p class="chapo">
-        Je réalise à {SITE.ville} des broderies machine personnalisées&nbsp;: prénoms, motifs et
-        dentelle libre, sur le linge, les vêtements et les cadeaux de naissance. Je couds aussi les
-        sacs, les trousses et les tabliers que je brode. Pour un cadeau personnalisé à Vitré, la
-        pièce vous est remise en main propre, sur rendez-vous.
-      </p>
-      <p class="actions">
-        <a class="btn btn--wa btn--grand" href={wa}>Écrire sur WhatsApp</a>
-        <a class="btn btn--creux btn--grand" href="/contact/#devis">Demander un devis</a>
-      </p>
-      <ul class="rassure">
-        <li><b>{ATELIER.delaiReponse}</b></li>
-        <li>Délai de réalisation&nbsp;: <b>{ATELIER.delaiActuel}</b></li>
-      </ul>
-    </div>
-
-    <div class="vi-ouv__visuel">
-      <figure class="vi-arche">
-        <Image
-          src={portrait}
-          alt="Portrait d'Emma, brodeuse et couturière à Vitré, souriante, en plein air"
-          widths={[360, 560, 760, 1000]}
-          sizes="(max-width: 64rem) 82vw, 30vw"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-        />
-      </figure>
-
-      <!-- Un ticket de retrait : trois informations vraies, présentées comme
-           le bon qu'on agrafe au paquet. -->
-      <dl class="vi-ticket">
-        <div>
-          <dt>Retrait</dt>
-          <dd>En main propre, sur rendez-vous</dd>
-        </div>
-        <div>
-          <dt>Lieu</dt>
-          <dd>Convenu par message, dans Vitré</dd>
-        </div>
-        <div>
-          <dt>Frais d'envoi</dt>
-          <dd>Aucun</dd>
-        </div>
-      </dl>
-    </div>
-  </section>
-
-  <!-- ===================== DEUX FAÇONS DE RECEVOIR ===================== -->
-  <section class="bande vi-recevoir">
-    <h2 class="titre-xl">Recevoir votre pièce</h2>
-
-    <div class="vi-recevoir__duo">
-      <article class="vi-carte vi-carte--main">
+  <!-- ===================== RECEVOIR VOTRE PIÈCE ===================== -->
+  <section class="bande vi-section" id="recevoir">
+    <TeteSection titre="Recevoir votre pièce" />
+    <div class="grille">
+      <div class="vi-col">
         <h3>En main propre, à Vitré</h3>
-        <p>
+        <p class="mesure">
           Nous fixons ensemble le lieu et l'horaire par message. Vous découvrez la pièce avant de
-          l'offrir, sans frais de port ni délai d'acheminement.
+          l'offrir, sans frais de port ni délai d'acheminement. Mon atelier se trouve à mon
+          domicile&nbsp;: l'adresse précise n'est communiquée qu'après accord.
         </p>
-        <p class="vi-carte__note">
+        <p class="vi-note">
           {/* ⚠️ À CONFIRMER : point de rendez-vous habituel à Vitré. */}
           Le point de rendez-vous est choisi selon vos disponibilités.
         </p>
-      </article>
-
-      <article class="vi-carte">
+      </div>
+      <div class="vi-col">
         <h3>Par envoi suivi</h3>
-        <p>
-          Si vous préférez, j'expédie la pièce en colis suivi, sous emballage cadeau, partout en
+        <p class="mesure">
+          Si vous le préférez, j'expédie la pièce en colis suivi, sous emballage cadeau, partout en
           France. C'est la solution la plus simple pour offrir à une personne qui habite loin.
         </p>
-        <p class="vi-carte__note">
+        <p class="vi-note">
           {/* ⚠️ À CONFIRMER : frais de port et transporteur. */}
           Les frais d'envoi sont indiqués dans le devis, avant toute validation.
         </p>
-      </article>
+      </div>
     </div>
   </section>
-
-  <!-- ===================== BANDEAU ===================== -->
-  <div class="bandeau vi-bandeau">
-    <Image
-      src={bobines}
-      alt="Mur de l’atelier de Vitré couvert de bobines de fil à broder de toutes les couleurs"
-      widths={[800, 1400, 2000, 2400]}
-      sizes="100vw"
-      loading="lazy"
-      decoding="async"
-    />
-    <p class="bandeau__mot" aria-hidden="true">Brodé à Vitré</p>
-  </div>
 
   <!-- ===================== CE QUE JE RÉALISE ===================== -->
-  <section class="bande vi-pieces">
-    <div class="tete tete--duo">
-      <h2 class="titre-xl">Ce que je réalise</h2>
-      <p class="mesure">
-        Chaque pièce est brodée à l'unité, au prénom ou au motif de votre choix. Quatre familles
-        pour vous donner une idée&nbsp;; le reste se décide ensemble.
+  <section class="bande vi-section" id="pieces">
+    <TeteSection titre="Ce que je réalise" variante="duo">
+      <p>
+        Chaque pièce est brodée à l'unité, au prénom ou au motif de votre choix. Ces quatre
+        familles donnent un aperçu&nbsp;; le reste se décide ensemble.
       </p>
-    </div>
-
-    <ul class="vi-liste">
-      {
-        pieces.map((p) => (
-          <li>
-            <a class="vi-ligne" href={p.href}>
-              <span class="vi-ligne__img">
-                <Image
-                  src={p.img}
-                  alt={p.alt}
-                  widths={[240, 360, 520]}
-                  sizes="(max-width: 48rem) 34vw, 14rem"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </span>
-              <span class="vi-ligne__nom">{p.nom}</span>
-              <span class="vi-ligne__dire">{p.dire}</span>
-              <span class="vi-ligne__fleche" aria-hidden="true">→</span>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
+    </TeteSection>
+    <ListeLignes lignes={pieces} />
   </section>
 
-  <!-- ===================== AUTOUR DE VITRÉ (tapis) ===================== -->
-  <section class="bande tapis vi-autour loin">
-    <div class="vi-cercle" aria-hidden="true">
-      <svg viewBox="0 0 400 400" class="vi-cercle__svg">
-        <defs>
-          <path id="vi-tour" d="M200,200 m-160,0 a160,160 0 1,1 320,0 a160,160 0 1,1 -320,0" />
-        </defs>
-        <circle cx="200" cy="200" r="182" class="vi-cercle__bois" />
-        <circle cx="200" cy="200" r="138" class="vi-cercle__fil" />
-        <text class="vi-cercle__txt" textLength="1000" lengthAdjust="spacing">
-          <textPath href="#vi-tour" startOffset="0">
-            Pays de Vitré · Ille-et-Vilaine · remise en main propre · envoi en France ·
-          </textPath>
-        </text>
-      </svg>
-      <p class="vi-cercle__ville">Vitré</p>
-    </div>
-
-    <div class="vi-autour__dire">
-      <h2 class="titre-xl">Vitré et ses environs</h2>
-      <p class="mesure mesure--clair">
-        Je travaille pour les particuliers de {SITE.ville} et des communes voisines. Indiquez-moi
-        simplement d'où vous êtes&nbsp;: nous choisissons ensemble le point de rendez-vous le plus
-        pratique, ou je vous adresse la pièce par envoi suivi.
-      </p>
-
-      {/* ⚠️ À CONFIRMER : périmètre réel de déplacement d'Emma (voir const communes). */}
-      <ul class="vi-communes" aria-label="Communes proches de Vitré">
-        {communes.map((c) => <li>{c}</li>)}
-      </ul>
-
+  <!-- ===================== AUTOUR DE VITRÉ (le seul tapis de la page) ===================== -->
+  <section class="bande tapis loin" id="environs">
+    <div class="grille">
+      <div class="vi-autour">
+        <h2>Vitré et ses environs</h2>
+        <p class="mesure mesure--clair">
+          Je travaille pour les particuliers de {SITE.ville} et des communes voisines. Indiquez-moi
+          d'où vous êtes&nbsp;: nous choisissons ensemble le point de rendez-vous le plus pratique,
+          ou je vous adresse la pièce par envoi suivi.
+        </p>
+        {/* ⚠️ À CONFIRMER : périmètre réel de déplacement d'Emma (voir const communes). */}
+        <ul class="faits" aria-label="Communes proches de Vitré">
+          {communes.map((c) => <li>{c}</li>)}
+        </ul>
+      </div>
       <div class="vi-marches">
         <h3>Les marchés de créateurs</h3>
-        <p>
+        <p class="mesure mesure--clair">
           Je participe à des marchés de créateurs dans le pays de Vitré. C'est l'occasion de voir
           les pièces, d'apprécier la qualité du fil et de passer commande de vive voix. Les
           prochaines dates sont annoncées sur cette page dès qu'elles sont fixées.
@@ -317,254 +206,31 @@ const jsonFaq = {
     </div>
   </section>
 
-  <!-- ===================== FAQ ===================== -->
-  <section class="bande vi-faq loin" id="questions">
-    <div class="vi-faq__tete">
-      <h2 class="titre-xl">Questions fréquentes</h2>
-      <p class="mesure">
-        Une autre question&nbsp;? <a class="lien-fleche" href={wa}>Posez-la sur WhatsApp</a>
-      </p>
-    </div>
+  <FAQ questions={faq} />
 
-    <div class="vi-faq__liste">
-      {
-        faq.map((f) => (
-          <details class="vi-faq__item">
-            <summary>
-              <span>{f.q}</span>
-              <span class="vi-faq__plus" aria-hidden="true" />
-            </summary>
-            <p>{f.r}</p>
-          </details>
-        ))
-      }
-    </div>
-  </section>
-
-  <!-- ===================== APPEL FINAL ===================== -->
-  <section class="final bande vi-final" id="devis">
-    <div class="final__in">
-      <h2 class="titre-xl">Parlons de votre projet</h2>
-      <p class="chapo">
-        Indiquez-moi le prénom, l'occasion et la date souhaitée. Je vous réponds avec un prix, un
-        délai et une proposition de motif, sans engagement de votre part.
-      </p>
-      <p class="actions">
-        <a class="btn btn--wa btn--grand" href={wa}>Écrire sur WhatsApp</a>
-        <a class="btn btn--or btn--grand" href="/contact/#devis">Remplir le formulaire</a>
-      </p>
-      <p class="final__note">
-        Par téléphone&nbsp;: <a href={`tel:${CONTACT.telephone}`}>{CONTACT.telephone}</a> · Vous êtes
-        à Rennes&nbsp;? <a href="/broderie-personnalisee-rennes/">Broderie personnalisée à Rennes</a>
-      </p>
-    </div>
-  </section>
+  <AppelFinal messageWa={messageWa}>
+    <p>
+      Indiquez-moi le prénom, l'occasion et la date souhaitée. Je vous réponds avec un prix, un
+      délai et une proposition de motif, sans engagement de votre part. Vous habitez à
+      Rennes&nbsp;? Consultez la page <a href="/broderie-personnalisee-rennes/">broderie personnalisée à Rennes</a>.
+    </p>
+  </AppelFinal>
 </Base>
 
 <style>
-  /* ============================ HAUT DE PAGE ============================ */
-  .vi-ouv {
-    padding-block: 0.5rem clamp(3.5rem, 8vw, 7rem);
-    row-gap: clamp(1.5rem, 4vw, 2.5rem);
+  .vi-section { padding-block: var(--serre); }
+  .tapis .grille, .vi-section .grille { row-gap: 2.5rem; }
+  .vi-col, .vi-autour, .vi-marches { display: grid; gap: 1rem; align-content: start; }
+  .vi-col {
+    padding-block-start: 1.25rem;
+    border-block-start: 1px solid color-mix(in oklab, currentColor 18%, transparent);
   }
-  .vi-ouv__dire { display: grid; gap: clamp(1.1rem, 2.4vw, 1.8rem); justify-items: start; }
-  .vi-ouv h1 { font-size: clamp(3.4rem, 1rem + 9vw, 11rem); line-height: 0.86; max-width: 8ch; }
-
-  .vi-ouv__visuel {
-    position: relative;
-    display: grid;
-    justify-items: center;
-    padding-block-end: 2rem;
-  }
-  /* Une arche : le haut arrondi d'une fenêtre de Vitré, le bas droit */
-  .vi-arche { inline-size: min(82vw, 26rem); }
-  .vi-arche :global(img) {
-    inline-size: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    object-position: 50% 25%;
-    border-radius: 999px 999px var(--r-m) var(--r-m);
-  }
-
-  /* Le ticket de retrait, dentelé sur le bord gauche comme un bon détachable */
-  .vi-ticket {
-    position: relative;
-    margin: -3.5rem 0 0 auto;
-    inline-size: min(100%, 22rem);
-    display: grid;
-    padding: 1rem 1.2rem 1rem 1.6rem;
-    background: var(--papier);
-    border-radius: 0 var(--r-s) var(--r-s) 0;
-    box-shadow: 0 16px 34px -18px color-mix(in oklab, var(--encre) 60%, transparent);
-    transform: rotate(2deg);
-    font-family: var(--f-mono);
-    font-size: var(--t-micro);
-    -webkit-mask: radial-gradient(circle 5px at 0 50%, transparent 98%, #000) 0 0 / 100% 14px;
-    mask: radial-gradient(circle 5px at 0 50%, transparent 98%, #000) 0 0 / 100% 14px;
-  }
-  .vi-ticket > div {
-    display: flex; justify-content: space-between; gap: 1rem;
-    padding-block: 0.45rem;
-    border-block-end: 1px dashed color-mix(in oklab, var(--encre) 25%, transparent);
-  }
-  .vi-ticket > div:last-child { border: 0; }
-  .vi-ticket dt { color: var(--coquelicot-fonce); flex: none; }
-  .vi-ticket dd { margin: 0; text-align: end; color: var(--encre); }
-
-  @media (min-width: 64rem) {
-    .vi-ouv { grid-template-columns: [bord-d] minmax(var(--marge), 1fr) [large-d] minmax(0, calc(var(--large) * 0.62)) [mi] minmax(0, calc(var(--large) * 0.38)) [large-f] minmax(var(--marge), 1fr) [bord-f]; min-height: calc(100svh - 4.5rem); }
-    .vi-ariane { grid-column: large-d / large-f; }
-    .vi-ouv__dire { grid-column: large-d / mi; align-self: center; padding-inline-end: 3rem; }
-    .vi-ouv__visuel { grid-column: mi / large-f; align-self: center; }
-    .vi-arche { inline-size: 100%; }
-    .vi-ticket { position: absolute; inset-block-end: 0; inset-inline-start: -6rem; margin: 0; }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .vi-ouv__dire > * { animation: arrive 800ms var(--sortie) both; }
-    .vi-ouv__dire > :nth-child(2) { animation-delay: 90ms; }
-    .vi-ouv__dire > :nth-child(3) { animation-delay: 180ms; }
-    .vi-ouv__dire > :nth-child(4) { animation-delay: 260ms; }
-    .vi-ticket { animation: agrafe 900ms var(--sortie) 500ms both; }
-  }
-  @keyframes arrive { from { transform: translateY(24px); opacity: 0.001; } to { transform: none; opacity: 1; } }
-  @keyframes agrafe { from { transform: translateY(-24px) rotate(-6deg); opacity: 0.001; } to { transform: rotate(2deg); opacity: 1; } }
-
-  /* ============================ RECEVOIR ============================ */
-  .vi-recevoir { padding-block: var(--serre) var(--respire); row-gap: clamp(2rem, 4vw, 3rem); }
-  .vi-recevoir__duo { display: grid; gap: 1rem; }
-  .vi-carte {
-    display: grid; gap: 0.9rem; align-content: start;
-    padding: clamp(1.5rem, 4vw, 3rem);
-    border-radius: var(--r-l);
-    border: 1.5px dashed color-mix(in oklab, var(--encre) 30%, transparent);
-  }
-  .vi-carte--main { background: var(--rose); border-color: transparent; }
-  .vi-carte h3 { font-size: clamp(1.9rem, 1.3rem + 2vw, 3rem); line-height: 1; }
-  .vi-carte p { color: var(--encre-doux); max-width: 34rem; }
-  .vi-carte--main p:not(.vi-carte__note) { color: var(--encre); font-size: var(--t-chapo); line-height: 1.45; }
-  .vi-carte__note { font-size: var(--t-petit); padding-block-start: 0.8rem; border-block-start: 1px solid color-mix(in oklab, var(--encre) 15%, transparent); }
-  @media (min-width: 56rem) {
-    .vi-recevoir__duo { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 1.5rem; align-items: start; }
-    .vi-carte:not(.vi-carte--main) { margin-block-start: 4rem; }
-  }
-
-  /* ============================ PIÈCES ============================ */
-  .vi-pieces { padding-block: var(--respire) var(--serre); row-gap: clamp(2rem, 4vw, 3rem); }
-  .vi-liste { border-block-start: 1px solid color-mix(in oklab, var(--encre) 18%, transparent); }
-  .vi-ligne {
-    display: grid;
-    grid-template-columns: minmax(0, 6.5rem) minmax(0, 1fr) auto;
-    grid-template-areas: 'img nom fleche' 'img dire fleche';
-    column-gap: clamp(1rem, 3vw, 2.5rem);
-    row-gap: 0.25rem;
-    align-items: center;
-    padding-block: clamp(1rem, 2.5vw, 1.6rem);
-    border-block-end: 1px solid color-mix(in oklab, var(--encre) 18%, transparent);
-    text-decoration: none;
-    color: inherit;
-  }
-  .vi-ligne__img { grid-area: img; overflow: hidden; border-radius: var(--r-s); align-self: start; }
-  .vi-ligne__img :global(img) { inline-size: 100%; aspect-ratio: 4 / 5; object-fit: cover; transition: transform 700ms var(--sortie); }
-  .vi-ligne__nom {
-    grid-area: nom; align-self: end;
-    font-family: var(--f-titre);
-    font-size: clamp(1.7rem, 1rem + 3vw, 4.4rem);
-    line-height: 0.95; letter-spacing: -0.02em;
-    transition: color 250ms ease, transform 500ms var(--sortie);
-  }
-  .vi-ligne__dire { grid-area: dire; align-self: start; font-size: var(--t-petit); color: var(--encre-doux); max-width: 30rem; }
-  .vi-ligne__fleche {
-    grid-area: fleche;
-    display: grid; place-items: center;
-    inline-size: 2.75rem; block-size: 2.75rem; border-radius: 50%;
-    border: 1px solid color-mix(in oklab, var(--encre) 25%, transparent);
-    transition: background 250ms ease, color 250ms ease, transform 400ms var(--sortie);
-  }
-  .vi-ligne:hover .vi-ligne__nom, .vi-ligne:focus-visible .vi-ligne__nom { color: var(--coquelicot-fonce); transform: translateX(0.4rem); }
-  .vi-ligne:hover .vi-ligne__img :global(img) { transform: scale(1.06); }
-  .vi-ligne:hover .vi-ligne__fleche { background: var(--encre); color: var(--lin-haut); transform: rotate(-45deg); }
+  .vi-col .mesure { color: var(--encre-doux); }
+  .vi-note { font-size: var(--t-petit); color: var(--gris); }
+  .vi-autour .faits { margin-block-start: 0.5rem; }
   @media (min-width: 48rem) {
-    .vi-ligne { grid-template-columns: minmax(0, 9rem) minmax(0, 1.2fr) minmax(0, 1fr) auto; grid-template-areas: 'img nom dire fleche'; }
-    .vi-ligne__nom, .vi-ligne__dire { align-self: center; }
+    .vi-col { grid-column: span 6; }
+    .vi-autour { grid-column: 1 / span 6; }
+    .vi-marches { grid-column: 8 / -1; }
   }
-
-  /* ============================ AUTOUR (tapis) ============================ */
-  .vi-autour { row-gap: clamp(2.5rem, 6vw, 4rem); align-items: center; }
-  .vi-cercle { position: relative; inline-size: min(80vw, 28rem); justify-self: center; display: grid; place-items: center; }
-  .vi-cercle__svg { inline-size: 100%; block-size: auto; overflow: visible; }
-  .vi-cercle__bois { fill: none; stroke: #C9A97E; stroke-width: 10; }
-  .vi-cercle__fil { fill: color-mix(in oklab, var(--rose) 14%, transparent); stroke: var(--rose); stroke-width: 1.5; stroke-dasharray: 9 7; }
-  .vi-cercle__txt { font-family: var(--f-mono); font-size: 15.5px; letter-spacing: 0.08em; fill: var(--tapis-trait); }
-  .vi-cercle__ville {
-    position: absolute;
-    font-family: var(--f-titre);
-    font-size: clamp(3.2rem, 1.5rem + 7vw, 6.5rem);
-    line-height: 1; letter-spacing: -0.03em;
-    color: var(--lin-haut);
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .vi-cercle__svg { animation: tourne 90s linear infinite; }
-  }
-  @keyframes tourne { to { transform: rotate(360deg); } }
-
-  .vi-autour__dire { display: grid; gap: 1.4rem; justify-items: start; }
-  .vi-communes {
-    display: flex; flex-wrap: wrap; gap: 0.35rem 0;
-    font-size: var(--t-chapo);
-    font-family: var(--f-titre);
-    color: var(--lin-haut);
-    line-height: 1.25;
-  }
-  .vi-communes li:not(:last-child)::after {
-    content: '';
-    display: inline-block; vertical-align: middle;
-    inline-size: 1.4rem; block-size: 2px;
-    margin-inline: 0.55rem;
-    background: repeating-linear-gradient(90deg, var(--coquelicot) 0 5px, transparent 5px 9px);
-  }
-  .vi-marches {
-    display: grid; gap: 0.6rem;
-    padding-block-start: 1.4rem;
-    border-block-start: 1px dashed color-mix(in oklab, var(--tapis-trait) 50%, transparent);
-    max-width: 36rem;
-  }
-  .vi-marches p { color: color-mix(in oklab, var(--lin-haut) 84%, transparent); }
-  @media (min-width: 64rem) {
-    .vi-autour { grid-template-columns: [bord-d] minmax(var(--marge), 1fr) [large-d] minmax(0, calc(var(--large) * 0.42)) [mi] minmax(0, calc(var(--large) * 0.58)) [large-f] minmax(var(--marge), 1fr) [bord-f]; }
-    .vi-cercle { grid-column: large-d / mi; inline-size: 100%; max-inline-size: 30rem; margin-inline-end: 3rem; }
-    .vi-autour__dire { grid-column: mi / large-f; }
-  }
-
-  /* ============================ FAQ ============================ */
-  .vi-faq { padding-block: var(--respire) var(--serre); row-gap: 2rem; }
-  .vi-faq__tete { display: grid; gap: 1rem; align-content: start; }
-  .vi-faq__liste { border-block-start: 1px solid color-mix(in oklab, var(--encre) 18%, transparent); }
-  .vi-faq__item { border-block-end: 1px solid color-mix(in oklab, var(--encre) 18%, transparent); }
-  .vi-faq__item summary {
-    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
-    min-height: 3.5rem; padding-block: 1.1rem;
-    cursor: pointer; list-style: none;
-    font-family: var(--f-titre);
-    font-size: clamp(1.35rem, 1.1rem + 1vw, 1.9rem);
-    line-height: 1.15;
-  }
-  .vi-faq__item summary::-webkit-details-marker { display: none; }
-  .vi-faq__plus { position: relative; flex: none; inline-size: 1.1rem; block-size: 1.1rem; }
-  .vi-faq__plus::before, .vi-faq__plus::after {
-    content: ''; position: absolute; inset: 50% 0 auto; block-size: 1.5px; background: currentColor;
-    transition: transform 300ms var(--sortie);
-  }
-  .vi-faq__plus::after { transform: rotate(90deg); }
-  .vi-faq__item[open] .vi-faq__plus::after { transform: rotate(0deg); }
-  .vi-faq__item p { padding-block-end: 1.3rem; max-width: 40rem; color: var(--encre-doux); }
-  @media (min-width: 64rem) {
-    .vi-faq { grid-template-columns: [bord-d] minmax(var(--marge), 1fr) [large-d] minmax(0, calc(var(--large) * 0.38)) [mi] minmax(0, calc(var(--large) * 0.62)) [large-f] minmax(var(--marge), 1fr) [bord-f]; }
-    .vi-faq__tete { grid-column: large-d / mi; position: sticky; top: 7rem; align-self: start; padding-inline-end: 3rem; }
-    .vi-faq__liste { grid-column: mi / large-f; }
-  }
-
-  /* ============================ FINAL ============================ */
-  .vi-final .titre-xl { max-width: 12ch; }
-  .vi-final .chapo { max-width: 36rem; }
 </style>
