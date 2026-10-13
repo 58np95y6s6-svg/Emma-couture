@@ -1,0 +1,64 @@
+---
+/**
+ * FAQ — un seul composant pour tout le site.
+ * Titre en col. 1-4 (collant sur grand écran), questions en col. 6-12.
+ * Émet le JSON-LD FAQPage : ne pas en ajouter d'autre dans la page.
+ */
+interface Props {
+  titre?: string;
+  questions: { q: string; r: string }[];
+}
+const { titre = 'Questions fréquentes', questions } = Astro.props;
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: questions.map(({ q, r }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: { '@type': 'Answer', text: r },
+  })),
+};
+---
+
+<section class="faq bande loin" aria-labelledby="faq-titre">
+  <div class="grille">
+    <h2 class="faq__titre" id="faq-titre">{titre}</h2>
+    <div class="faq__liste">
+      {
+        questions.map(({ q, r }) => (
+          <details>
+            <summary>{q}</summary>
+            <p>{r}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonld)} />
+</section>
+
+<style>
+  .faq { padding-block: var(--respire); }
+  .faq__titre { grid-column: 1 / -1; font-size: var(--t-h2); line-height: 0.98; letter-spacing: -0.025em; margin-block-end: 1.5rem; }
+  .faq__liste { grid-column: 1 / -1; border-block-start: 1px solid color-mix(in oklab, var(--encre) 15%, transparent); }
+  details { border-block-end: 1px solid color-mix(in oklab, var(--encre) 15%, transparent); }
+  summary {
+    display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;
+    min-height: 3.5rem; padding-block: 1.1rem;
+    font-family: var(--f-titre); font-size: var(--t-h3); line-height: 1.15;
+    cursor: pointer; list-style: none;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::after {
+    content: '+'; flex: none;
+    font-family: var(--f-texte); font-size: 1.5rem; line-height: 1;
+    transition: transform 300ms var(--sortie);
+  }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { padding-block-end: 1.4rem; max-width: 62ch; color: var(--encre-doux); }
+  @media (min-width: 64rem) {
+    .faq__titre { grid-column: 1 / span 4; position: sticky; top: 7rem; align-self: start; margin: 0; }
+    .faq__liste { grid-column: 6 / -1; }
+  }
+</style>

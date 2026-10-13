@@ -20,7 +20,7 @@ const urlAbsolue = new URL(urlFiche, SITE.url).href;
 /* L'URL de la fiche est jointe au message : WhatsApp en affiche l'aperçu
    Open Graph, seule façon d'y faire apparaître la photo. */
 const wa = lienWhatsApp(
-  `Bonjour Emma, j'ai vu « ${data.titre} » sur votre site et j'aimerais le même.`,
+  `Bonjour Emma, j'ai vu « ${data.titre} » sur votre site et j'aimerais un modèle similaire.`,
   urlAbsolue,
 );
 ---
@@ -28,7 +28,6 @@ const wa = lienWhatsApp(
 <article class="carte">
   <a class="carte__lien" href={urlFiche}>
     <figure class="carte__img">
-      {data.cousuMain && <span class="carte__etiquette">cousu main</span>}
       <Image
         src={data.photo}
         alt={data.alt}

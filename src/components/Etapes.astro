@@ -1,0 +1,51 @@
+---
+/**
+ * ÉTAPES — le seul composant pour toutes les séquences du site.
+ * Colonnes égales sur grand écran, verticales sur téléphone. Filet plein au
+ * dessus de chaque étape, numéro en chasse fixe. Fond uni : pas de couleur
+ * par position. Seule l'étape `cle` (la validation du motif) porte le rouge.
+ */
+interface Etape {
+  titre: string;
+  texte: string;
+  cle?: boolean;
+}
+interface Props {
+  etapes: Etape[];
+}
+const { etapes } = Astro.props;
+---
+
+<ol class="etp" style={`--n:${etapes.length}`}>
+  {
+    etapes.map((e, i) => (
+      <li class:list={{ 'etp--cle': e.cle }}>
+        <p class="etp__n mono">{String(i + 1).padStart(2, '0')}</p>
+        <h3>{e.titre}</h3>
+        <p class="etp__texte">{e.texte}</p>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .etp { display: grid; gap: 0 clamp(1rem, 2vw, 2rem); counter-reset: none; }
+  .etp > li {
+    display: grid; gap: 0.6rem; align-content: start;
+    padding-block: 1.1rem 1.8rem;
+    border-block-start: 1px solid color-mix(in oklab, currentColor 22%, transparent);
+  }
+  .etp__n { font-size: var(--t-micro); opacity: 0.7; }
+  .etp h3 { font-size: var(--t-h3); }
+  .etp__texte { font-size: var(--t-petit); line-height: 1.55; opacity: 0.85; max-width: 34ch; }
+  .etp--cle { border-block-start: 2px solid var(--coquelicot); }
+  .etp--cle .etp__n { color: var(--coquelicot-fonce); opacity: 1; }
+  :global(.tapis) .etp--cle .etp__n { color: var(--rose); }
+  :global(.tapis) .etp--cle { border-block-start-color: var(--rose); }
+  @media (min-width: 48rem) {
+    .etp { grid-template-columns: repeat(min(var(--n), 3), minmax(0, 1fr)); }
+  }
+  @media (min-width: 64rem) {
+    .etp { grid-template-columns: repeat(var(--n), minmax(0, 1fr)); }
+  }
+</style>

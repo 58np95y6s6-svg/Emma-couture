@@ -67,6 +67,7 @@
 
   /* Mise en page */
   --marge: clamp(1rem, 4.5vw, 4.5rem);
+  --gout:  clamp(1rem, 2vw, 2rem);       /* gouttière de la grille à 12 colonnes */
   --large: 84rem;
   --mesure: 36rem;
   --cm: clamp(28px, 3.2vw, 40px);   /* un « centimètre » du tapis de coupe */
@@ -80,10 +81,13 @@
   --t-petit: clamp(0.9rem, 0.86rem + 0.2vw, 0.98rem);
   --t-corps: clamp(1rem, 0.96rem + 0.25vw, 1.125rem);
   --t-chapo: clamp(1.15rem, 1.02rem + 0.65vw, 1.5rem);
-  --t-h3:    clamp(1.45rem, 1.2rem + 1vw, 2.1rem);
-  --t-h2:    clamp(2.5rem, 1.4rem + 5vw, 6.2rem);
-  --t-h1:    clamp(2.9rem, 1.2rem + 7.4vw, 9rem);
-  --t-geant: clamp(4.2rem, 1.6rem + 12vw, 15rem);
+  /* Échelle FERMÉE : les pages n'écrivent pas de font-size sur les titres.
+     Le H1 de l'accueil est le plus grand du site. */
+  --t-h3:    clamp(1.3rem, 1.1rem + 0.7vw, 1.75rem);
+  --t-h2:    clamp(2.1rem, 1.3rem + 3vw, 4.2rem);
+  --t-h1:    clamp(2.6rem, 1.4rem + 4.2vw, 5.4rem);
+  --t-h1-accueil: clamp(2.8rem, 1.2rem + 5.4vw, 6.6rem);
+  --t-geant: var(--t-h2);
 
   /* Formes : trois rayons, pas un seul partout */
   --r-s: 6px;
@@ -187,6 +191,25 @@ a { color: inherit; }
 .bande > * { grid-column: large-d / large-f; min-width: 0; }
 .bande > .plein { grid-column: bord-d / bord-f; }
 
+/* La grille unique : 12 colonnes dans la zone `large`. Tout bloc commence
+   et finit sur une ligne de colonne. Pas de retrait en %, pas de marge
+   négative, pas de décalage en escalier, pas de rotation. */
+.grille {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gout);
+}
+.grille > * { grid-column: 1 / -1; min-width: 0; }
+
+/* Ligne de faits : du texte, séparé par des points médians. */
+.faits {
+  display: flex; flex-wrap: wrap; gap: 0.25rem 0;
+  font-size: var(--t-petit);
+  color: var(--encre-doux);
+}
+.faits li:not(:last-child)::after { content: '·'; margin-inline: 0.6em; opacity: 0.6; }
+.faits--clair, .tapis .faits, .final .faits { color: inherit; opacity: 0.9; }
+
 .mesure { max-width: var(--mesure); }
 .mesure + .mesure { margin-block-start: 1em; }
 .mesure--clair { color: color-mix(in oklab, var(--lin-haut) 84%, transparent); }
@@ -203,8 +226,8 @@ h1, h2, h3, .titre-xl, .titre-geant, .signature, blockquote p {
 
 h1 {
   font-size: var(--t-h1);
-  line-height: 0.92;
-  letter-spacing: -0.035em;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 /* Un titre = un seul style, une seule couleur. Pas de mot basculé en
@@ -212,16 +235,11 @@ h1 {
 h1 em, h2 em, h3 em, .titre-xl em, .titre-geant em,
 h1 i, h2 i, h3 i { font-style: normal; color: inherit; }
 
-.titre-xl {
+.titre-xl, .titre-geant, h2 {
   font-size: var(--t-h2);
-  line-height: 0.94;
-  letter-spacing: -0.03em;
+  line-height: 0.98;
+  letter-spacing: -0.025em;
   text-wrap: balance;
-}
-.titre-geant {
-  font-size: var(--t-geant);
-  line-height: 0.82;
-  letter-spacing: -0.045em;
 }
 
 h3 {
@@ -305,20 +323,11 @@ h3 {
   isolation: isolate;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 300ms var(--sortie), color 250ms ease, border-color 250ms ease;
+  transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
 }
 .btn .ico { width: 1.2em; height: 1.2em; fill: currentColor; flex: none; }
-/* Le remplissage monte depuis le bas, en cercle : un tambour qui se tend. */
-.btn::before {
-  content: ''; position: absolute; inset: -40%; z-index: -1;
-  background: var(--survol);
-  border-radius: 50%;
-  transform: translateY(75%) scale(0.4);
-  transition: transform 520ms var(--sortie);
-}
-.btn:hover::before, .btn:focus-visible::before { transform: none; }
-.btn:hover { transform: translateY(-2px); }
-.btn:active { transform: translateY(0) scale(0.98); }
+.btn:hover, .btn:focus-visible { background: var(--survol); }
+.btn:active { transform: scale(0.98); }
 
 .btn--wa { --fond: var(--coquelicot); --texte: #fff; --survol: var(--encre); }
 .btn--creux {
@@ -451,12 +460,9 @@ h3 {
 .statut::before {
   content: ''; width: 8px; height: 8px; border-radius: 50%;
   background: #3E9B5F;
-  box-shadow: 0 0 0 0 color-mix(in oklab, #3E9B5F 60%, transparent);
-  animation: pouls 2.4s ease-out infinite;
 }
-.statut--complet::before { background: var(--dore); animation: none; }
-.statut--conges::before { background: var(--gris); animation: none; }
-@keyframes pouls { 70%, 100% { box-shadow: 0 0 0 7px transparent; } }
+.statut--complet::before { background: var(--dore); }
+.statut--conges::before { background: var(--gris); }
 
 .entete__cta { display: none; }
 
@@ -492,7 +498,7 @@ h3 {
   text-decoration: none;
   font-family: var(--f-titre);
   font-size: 2rem; line-height: 1;
-  border-bottom: 1px dashed color-mix(in oklab, var(--tapis-trait) 40%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--tapis-trait) 40%, transparent);
 }
 .menu a::after { content: '→'; font-family: var(--f-texte); font-size: 1rem; color: var(--tapis-trait); }
 .menu a:last-child { border: 0; color: var(--rose); }
@@ -501,7 +507,7 @@ h3 {
   .nav, .entete__cta { display: inline-flex; }
   .burger, .menu { display: none !important; }
 }
-@media (min-width: 80rem) { .marque__sous { display: inline; } .statut { display: inline-flex; } }
+@media (min-width: 80rem) { .statut { display: inline-flex; } }
 
 /* -----------------------------------------------------------------------------
    8. EN-TÊTES DE SECTION — volontairement variés d'une section à l'autre
@@ -545,11 +551,11 @@ h3 {
 .carte {
   container-type: inline-size;
   position: relative;
-  display: grid;
-  align-content: start;
+  display: flex; flex-direction: column;
   gap: 0.9rem;
 }
-.carte__lien { display: grid; gap: 0.9rem; text-decoration: none; color: inherit; }
+/* Les cartes d'une rangée ont la même hauteur : prix et boutons alignés. */
+.carte__lien { flex: 1; display: flex; flex-direction: column; gap: 0.9rem; text-decoration: none; color: inherit; }
 .carte__img {
   position: relative;
   aspect-ratio: 4 / 5;
@@ -561,32 +567,16 @@ h3 {
   width: 100%; height: 100%; object-fit: cover;
   transition: transform 900ms var(--sortie);
 }
-/* Le tambour : au survol, un cercle de « bois » se resserre sur la photo. */
-.carte__img::after {
-  content: ''; position: absolute; inset: 0;
-  border-radius: inherit;
-  box-shadow: inset 0 0 0 0 var(--lin);
-  transition: box-shadow 500ms var(--sortie);
-  pointer-events: none;
-}
-.carte__lien:hover .carte__img img, .carte__lien:focus-visible .carte__img img { transform: scale(1.06); }
-.carte__lien:hover .carte__img::after { box-shadow: inset 0 0 0 8px var(--lin); }
+.carte__lien:hover .carte__img img, .carte__lien:focus-visible .carte__img img { transform: scale(1.04); }
 
-.carte__etiquette {
-  position: absolute; inset-block-start: 0.7rem; inset-inline-start: 0.7rem;
-  z-index: 1;
-  font-family: var(--f-mono); font-size: 0.72rem;
-  padding: 0.3rem 0.65rem; border-radius: 999px;
-  background: color-mix(in oklab, var(--lin-haut) 85%, transparent);
-  backdrop-filter: blur(8px);
-}
-.carte__txt { display: grid; gap: 0.3rem; }
+.carte__txt { flex: 1; display: flex; flex-direction: column; gap: 0.3rem; }
 .carte h3 { font-size: clamp(1.45rem, 9cqi, 2rem); }
 .carte__txt > p:not(.prix) { font-size: var(--t-petit); color: var(--encre-doux); line-height: 1.45; }
 .carte__ligne {
   display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem;
+  margin-block-start: auto;
   padding-block-start: 0.55rem;
-  border-block-start: 1px dashed color-mix(in oklab, var(--encre) 25%, transparent);
+  border-block-start: 1px solid color-mix(in oklab, var(--encre) 15%, transparent);
 }
 .carte__cta { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .carte__cta .lien-fleche { font-size: var(--t-micro); }
@@ -628,7 +618,7 @@ h3 {
 
 /* La règle graduée, en haut d'une section tapis */
 .regle {
-  display: block;
+  display: none;
   block-size: 18px;
   background-image:
     linear-gradient(90deg, var(--tapis-trait) 1px, transparent 1px),
@@ -678,15 +668,12 @@ h3 {
   background: var(--papier);
   border: 1px solid color-mix(in oklab, var(--encre) 8%, transparent);
 }
-.etapes > li:nth-child(2) { background: var(--rose); }
-.etapes > li:nth-child(3) { background: var(--tapis); color: var(--lin-haut); }
-.etapes > li:nth-child(3) p { color: color-mix(in oklab, var(--lin-haut) 85%, transparent); }
+
 .etapes__n {
   font-family: var(--f-mono);
   font-size: var(--t-micro);
   color: var(--coquelicot-fonce);
 }
-.etapes > li:nth-child(3) .etapes__n { color: var(--rose); }
 .etapes p { color: var(--encre-doux); }
 @media (min-width: 56rem) { .etapes { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
@@ -694,18 +681,11 @@ h3 {
    13. RÉASSURANCE — une ligne de faits, en chasse fixe
 ----------------------------------------------------------------------------- */
 .rassure {
-  display: flex; flex-wrap: wrap; gap: 0.5rem;
-  font-family: var(--f-mono);
-  font-size: var(--t-micro);
+  display: flex; flex-wrap: wrap; gap: 0.25rem 0;
+  font-size: var(--t-petit);
   color: var(--encre-doux);
 }
-.rassure li {
-  display: inline-flex; align-items: center; gap: 0.45rem;
-  padding: 0.4rem 0.8rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in oklab, var(--encre) 16%, transparent);
-  background: color-mix(in oklab, var(--papier) 55%, transparent);
-}
+.rassure li:not(:last-child)::after { content: '·'; margin-inline: 0.6em; opacity: 0.6; }
 .rassure b { font-weight: 500; color: var(--encre); }
 
 /* -----------------------------------------------------------------------------
@@ -719,12 +699,7 @@ h3 {
   color: #fff;
   padding-block: var(--respire);
 }
-.final__fond {
-  position: absolute; inset: 0; z-index: -1;
-  width: 100%; height: 100%; object-fit: cover;
-  mix-blend-mode: multiply; opacity: 0.22;
-  filter: grayscale(1) contrast(1.2);
-}
+.final__fond { display: none; }
 .final__in { display: grid; gap: 1.2rem; justify-items: start; }
 .final .titre-xl, .final h2 { color: #fff; }
 .final .sourcil { color: #fff; }
@@ -732,7 +707,7 @@ h3 {
 .final :focus-visible { outline-color: #fff; }
 .final .btn--wa { --fond: #fff; --texte: var(--coquelicot-fonce); --survol: var(--encre); }
 .final .btn--wa:hover, .final .btn--wa:focus-visible { color: #fff; }
-.final .btn--or, .final .btn--creux {
+.final .btn--or, .final .btn--creux, .final .btn--clair {
   --fond: transparent; --texte: #fff; --survol: #fff;
   border-color: color-mix(in oklab, #fff 55%, transparent);
 }
@@ -769,7 +744,7 @@ h3 {
   grid-template-columns: minmax(0, 1fr);
 }
 @media (min-width: 40rem) { .pied__in { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 64rem) { .pied__in { grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 64rem) { .pied__in { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .pied__accroche {
   font-family: var(--f-titre);
   font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.8rem);
@@ -785,25 +760,11 @@ h3 {
 }
 .pied__nav a, .pied__nav p { display: flex; align-items: center; min-height: 44px; font-size: var(--t-petit); }
 .pied__nav p { min-height: 0; padding-block: 0.3rem; }
-.pied__geant {
-  grid-column: bord-d / bord-f;
-  margin-block-start: clamp(2rem, 6vw, 5rem);
-  font-family: var(--f-titre);
-  font-size: clamp(3.4rem, 0.5rem + 15.5vw, 17rem);
-  line-height: 0.75;
-  letter-spacing: -0.05em;
-  white-space: nowrap;
-  text-align: center;
-  color: var(--lin-haut);
-  user-select: none;
-  /* le mot sort par le bas, coupé net par le bord : une marque, pas un titre */
-  margin-block-end: -0.12em;
-}
-.pied__geant i { font-style: normal; }
 .pied__bas {
   display: flex; flex-wrap: wrap; gap: 0.2rem 1.4rem; align-items: center;
+  margin-block-start: var(--serre);
   padding-block: 1.2rem calc(1.2rem + env(safe-area-inset-bottom));
-  border-block-start: 1px dashed color-mix(in oklab, var(--lin-haut) 22%, transparent);
+  border-block-start: 1px solid color-mix(in oklab, var(--lin-haut) 22%, transparent);
   font-family: var(--f-mono); font-size: 0.75rem;
 }
 .pied__bas a { display: inline-flex; align-items: center; min-height: 44px; }
@@ -859,7 +820,6 @@ h3 {
 ----------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 1ms !important; animation-duration: 1ms !important; animation-iteration-count: 1 !important; }
-  .statut::before { animation: none !important; }
   .bandeau img { transform: none; height: 100%; }
 }
 
@@ -867,7 +827,7 @@ h3 {
    20. IMPRESSION
 ----------------------------------------------------------------------------- */
 @media print {
-  .entete, .flottant, .progression, .pied__geant { display: none; }
+  .entete, .flottant, .progression { display: none; }
   body { background: #fff; color: #000; }
   body::before { display: none; }
 }

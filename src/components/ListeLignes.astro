@@ -1,0 +1,90 @@
+---
+/**
+ * LISTE EN LIGNES — rangées séparées par un filet plein :
+ * [vignette carrée facultative] [titre] [description] [méta : prix, délai] [flèche si lien]
+ * Sert aux tarifs, aux catégories, aux pièces d'une occasion, aux faits d'une fiche.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Ligne {
+  titre: string;
+  texte?: string;
+  meta?: string;
+  href?: string;
+  image?: ImageMetadata;
+  alt?: string;
+}
+interface Props {
+  lignes: Ligne[];
+}
+const { lignes } = Astro.props;
+const avecImages = lignes.some((l) => l.image);
+---
+
+<ul class:list={['ll', { 'll--images': avecImages }]}>
+  {
+    lignes.map((l) => {
+      const Balise = l.href ? 'a' : 'div';
+      return (
+        <li>
+          <Balise class="ll__ligne" href={l.href}>
+            {avecImages && (
+              <span class="ll__img">
+                {l.image && (
+                  <Image src={l.image} alt={l.alt ?? ''} widths={[120, 240]} sizes="6rem" loading="lazy" decoding="async" />
+                )}
+              </span>
+            )}
+            <span class="ll__titre">{l.titre}</span>
+            {l.texte && <span class="ll__texte">{l.texte}</span>}
+            {l.meta && <span class="ll__meta mono">{l.meta}</span>}
+            {l.href && <span class="ll__fleche" aria-hidden="true">→</span>}
+          </Balise>
+        </li>
+      );
+    })
+  }
+</ul>
+
+<style>
+  .ll { border-block-start: 1px solid color-mix(in oklab, currentColor 18%, transparent); }
+  .ll > li { border-block-end: 1px solid color-mix(in oklab, currentColor 18%, transparent); }
+  .ll__ligne {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'titre fleche' 'texte texte' 'meta meta';
+    gap: 0.3rem 1rem; align-items: baseline;
+    padding-block: 1.1rem;
+    min-height: 3.5rem;
+    color: inherit; text-decoration: none;
+  }
+  .ll--images .ll__ligne {
+    grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+    grid-template-areas: 'img titre fleche' 'img texte texte' 'img meta meta';
+    align-items: start;
+  }
+  .ll__img { grid-area: img; aspect-ratio: 1; border-radius: var(--r-s); overflow: hidden; background: var(--lin-bas); }
+  .ll__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .ll__titre { grid-area: titre; font-family: var(--f-titre); font-size: var(--t-h3); line-height: 1.1; }
+  .ll__texte { grid-area: texte; font-size: var(--t-petit); opacity: 0.8; max-width: 52ch; }
+  .ll__meta { grid-area: meta; font-size: var(--t-micro); opacity: 0.85; }
+  .ll__fleche { grid-area: fleche; transition: transform 300ms var(--sortie); }
+  a.ll__ligne:hover .ll__titre { color: var(--coquelicot-fonce); }
+  :global(.tapis) a.ll__ligne:hover .ll__titre { color: var(--rose); }
+  a.ll__ligne:hover .ll__fleche { transform: translateX(4px); }
+
+  @media (min-width: 48rem) {
+    .ll__ligne {
+      grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 2fr) 1.5rem;
+      grid-template-areas: 'titre texte meta fleche';
+      align-items: baseline;
+    }
+    .ll--images .ll__ligne {
+      grid-template-columns: 5.5rem minmax(0, 4fr) minmax(0, 5fr) minmax(0, 2fr) 1.5rem;
+      grid-template-areas: 'img titre texte meta fleche';
+      align-items: center;
+    }
+    .ll__meta { text-align: end; }
+  }
+</style>

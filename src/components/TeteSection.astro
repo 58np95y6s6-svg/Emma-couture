@@ -1,0 +1,42 @@
+---
+/**
+ * En-tête de section — deux variantes, pas plus.
+ *  simple : H2 (col. 1-8), chapô dessous (col. 1-6).
+ *  duo    : H2 (col. 1-6), chapô (col. 8-12) aligné en bas du H2, lien dessous.
+ * Toujours aligné à gauche. Pas de sourcil par défaut.
+ */
+interface Props {
+  titre: string;
+  variante?: 'simple' | 'duo';
+  /** id du H2, pour aria-labelledby. */
+  id?: string;
+}
+const { titre, variante = 'simple', id } = Astro.props;
+---
+
+<div class:list={['ts grille', `ts--${variante}`]}>
+  <h2 class="ts__titre" id={id}>{titre}</h2>
+  {
+    (Astro.slots.has('default') || Astro.slots.has('lien')) && (
+      <div class="ts__dire">
+        <div class="ts__chapo"><slot /></div>
+        <slot name="lien" />
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .ts { row-gap: 1rem; margin-block-end: clamp(2rem, 4vw, 3rem); }
+  .ts__titre { grid-column: 1 / -1; font-size: var(--t-h2); line-height: 0.98; letter-spacing: -0.025em; text-wrap: balance; }
+  .ts__dire { grid-column: 1 / -1; display: grid; gap: 0.9rem; justify-items: start; max-width: 34rem; }
+  .ts__chapo { color: var(--encre-doux); }
+  :global(.tapis) .ts__chapo, :global(.final) .ts__chapo { color: inherit; opacity: 0.88; }
+  @media (min-width: 48rem) {
+    .ts--simple .ts__titre { grid-column: 1 / span 8; }
+    .ts--simple .ts__dire { grid-column: 1 / span 6; }
+    .ts--duo { align-items: end; }
+    .ts--duo .ts__titre { grid-column: 1 / span 6; }
+    .ts--duo .ts__dire { grid-column: 8 / -1; }
+  }
+</style>

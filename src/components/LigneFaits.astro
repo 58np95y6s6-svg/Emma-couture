@@ -1,0 +1,16 @@
+---
+/**
+ * Une ligne de faits vérifiables : « À partir de 32 € · Délai actuel 2 semaines · … ».
+ * Du texte, pas des pastilles. Les valeurs viennent de config / du contenu.
+ */
+interface Props {
+  faits: string[];
+  /** Sur fond sombre ou coloré. */
+  clair?: boolean;
+}
+const { faits, clair = false } = Astro.props;
+---
+
+<ul class:list={['faits', { 'faits--clair': clair }]}>
+  {faits.map((f) => <li>{f}</li>)}
+</ul>

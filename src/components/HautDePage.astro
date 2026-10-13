@@ -1,0 +1,113 @@
+---
+/**
+ * HAUT DE PAGE des pages internes — un seul gabarit pour tout le site.
+ *
+ *   fil d'Ariane (col. 1-12)
+ *   H1 (col. 1-7) · chapô (slot par défaut) · actions (slot "actions") · faits
+ *   photo 4:5 (col. 8-12), haut aligné sur le haut du H1
+ *
+ * Options : `fond` (couleur d'une occasion : texte clair), pas d'`image`
+ * (pages légales, contact, merci). Aucun objet superposé à la photo.
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import FilAriane from './FilAriane.astro';
+import LigneFaits from './LigneFaits.astro';
+
+interface Props {
+  titre: string;
+  fil: { nom: string; url: string }[];
+  image?: ImageMetadata;
+  alt?: string;
+  /** Cadrage de la photo, ex. '50% 30%'. */
+  cadrage?: string;
+  faits?: string[];
+  /** Couleur de fond d'occasion (#hex). Le texte passe en clair. */
+  fond?: string;
+}
+
+const { titre, fil, image, alt = '', cadrage = '50% 40%', faits = [], fond } = Astro.props;
+const aActions = Astro.slots.has('actions');
+---
+
+<header
+  class:list={['hdp bande', { 'hdp--fond': fond, 'hdp--seul': !image }]}
+  style={fond ? `--hdp-fond:${fond}` : undefined}
+>
+  <div class="grille">
+    <div class="hdp__fil"><FilAriane fil={fil} /></div>
+
+    <div class="hdp__texte">
+      <h1>{titre}</h1>
+      <div class="hdp__chapo chapo"><slot /></div>
+      {aActions && <p class="actions"><slot name="actions" /></p>}
+      {faits.length > 0 && <LigneFaits faits={faits} clair={!!fond} />}
+    </div>
+
+    {
+      image && (
+        <figure class="hdp__photo">
+          <Image
+            src={image}
+            alt={alt}
+            widths={[400, 640, 880, 1000]}
+            sizes="(max-width: 48rem) 92vw, 36vw"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            style={`object-position:${cadrage}`}
+          />
+        </figure>
+      )
+    }
+  </div>
+</header>
+
+<style>
+  .hdp {
+    padding-block: clamp(1rem, 2vw, 1.5rem) var(--serre);
+  }
+  .hdp--fond {
+    background: var(--hdp-fond);
+    color: #fff;
+    margin-block-start: -4.5rem;           /* passe sous l'en-tête flottant */
+    padding-block-start: calc(4.5rem + clamp(1rem, 2vw, 1.5rem));
+  }
+  .hdp--fond :global(.ariane), .hdp--fond :global(.ariane [aria-current]) { color: color-mix(in oklab, #fff 85%, transparent); }
+  .hdp--fond .hdp__chapo { color: color-mix(in oklab, #fff 90%, transparent); }
+  .hdp--fond :global(.btn--wa) { --fond: #fff; --texte: var(--encre); --survol: var(--encre); }
+  .hdp--fond :global(.btn--wa:hover) { color: #fff; }
+  .hdp--fond :global(.btn--creux) { --texte: #fff; --survol: #fff; border-color: color-mix(in oklab, #fff 55%, transparent); }
+  .hdp--fond :global(.btn--creux:hover) { color: var(--encre); }
+  .hdp--fond :global(:focus-visible) { outline-color: #fff; }
+
+  .hdp__fil { grid-column: 1 / -1; }
+  .hdp__texte {
+    grid-column: 1 / -1;
+    display: grid; gap: 1.25rem; align-content: start; justify-items: start;
+    padding-block-start: clamp(1rem, 3vw, 2.5rem);
+  }
+  .hdp h1 { font-size: var(--t-h1); max-width: 16ch; }
+  .hdp__chapo { max-width: 34rem; }
+  .hdp__chapo :global(p + p) { margin-block-start: 0.8em; }
+
+  .hdp__photo {
+    grid-column: 1 / -1;
+    margin-block-start: 1rem;
+    border-radius: var(--r-m);
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    background: var(--lin-bas);
+  }
+  .hdp__photo :global(img) { width: 100%; height: 100%; object-fit: cover; }
+
+  @media (min-width: 48rem) {
+    .hdp__texte { grid-column: 1 / span 7; }
+    .hdp--seul .hdp__texte { grid-column: 1 / span 9; }
+    .hdp__photo {
+      grid-column: 8 / -1;
+      margin-block-start: clamp(1rem, 3vw, 2.5rem);
+      aspect-ratio: 4 / 5;
+    }
+  }
+</style>

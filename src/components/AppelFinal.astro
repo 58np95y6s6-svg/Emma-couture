@@ -1,0 +1,73 @@
+---
+/**
+ * APPEL FINAL — la dernière section de chaque page, et la seule.
+ * Bande coquelicot pleine largeur, grille 7/5 :
+ *   gauche : H2, chapô (slot), deux boutons ;
+ *   droite : les coordonnées directes, en liste à filets.
+ */
+import { CONTACT, ATELIER, lienWhatsApp } from '../config';
+
+interface Props {
+  titre?: string;
+  /** Message WhatsApp pré-rempli propre à la page. */
+  messageWa?: string;
+  /** Lien du formulaire (ex. /contact/?occasion=noel#devis). */
+  lienDevis?: string;
+}
+const {
+  titre = 'Parlons de votre projet',
+  messageWa,
+  lienDevis = '/contact/#devis',
+} = Astro.props;
+---
+
+<section class="final bande" aria-labelledby="final-titre">
+  <div class="grille">
+    <div class="af__dire">
+      <h2 id="final-titre">{titre}</h2>
+      <div class="chapo">
+        <slot>
+          <p>
+            Un prénom, une date et une première idée suffisent pour commencer. Je vous réponds avec
+            une proposition, un prix et un délai, sans engagement de votre part.
+          </p>
+        </slot>
+      </div>
+      <p class="actions">
+        <a class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>Me contacter sur WhatsApp</a>
+        <a class="btn btn--creux btn--grand" href={lienDevis}>Demander un devis</a>
+      </p>
+    </div>
+
+    <dl class="af__coord">
+      <div><dt>Téléphone</dt><dd><a href={`tel:${CONTACT.telephone}`}>{CONTACT.telephone}</a></dd></div>
+      <div><dt>E-mail</dt><dd><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></dd></div>
+      <div><dt>Réponse</dt><dd>{ATELIER.delaiReponse}</dd></div>
+      <div><dt>Délai actuel</dt><dd>{ATELIER.delaiActuel}</dd></div>
+      <div><dt>Remise</dt><dd>Vitré, Rennes, envoi en France</dd></div>
+    </dl>
+  </div>
+</section>
+
+<style>
+  .af__dire { grid-column: 1 / -1; display: grid; gap: 1.3rem; justify-items: start; }
+  .af__dire h2 { font-size: var(--t-h2); line-height: 0.98; letter-spacing: -0.025em; max-width: 14ch; }
+  .af__dire .chapo { max-width: 32rem; }
+  .af__coord {
+    grid-column: 1 / -1;
+    margin-block-start: 2.5rem;
+    border-block-start: 1px solid color-mix(in oklab, #fff 40%, transparent);
+  }
+  .af__coord > div {
+    display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 1rem;
+    padding-block: 0.9rem;
+    border-block-end: 1px solid color-mix(in oklab, #fff 40%, transparent);
+  }
+  .af__coord dt { font-family: var(--f-mono); font-size: var(--t-micro); opacity: 0.85; }
+  .af__coord dd { margin: 0; overflow-wrap: anywhere; }
+  .af__coord a { color: #fff; }
+  @media (min-width: 64rem) {
+    .af__dire { grid-column: 1 / span 7; }
+    .af__coord { grid-column: 9 / -1; margin-block-start: 0; align-self: end; }
+  }
+</style>

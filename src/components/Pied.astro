@@ -1,15 +1,14 @@
 ---
-import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
+import { SITE, CONTACT, ATELIER } from '../config';
 ---
 
 <footer class="pied bande">
   <div class="pied__in">
-    <div class="pied__marque">
-      <p class="pied__accroche">Un projet de broderie&nbsp;? Je vous réponds personnellement.</p>
-      <p class="actions">
-        <a class="btn btn--wa" href={lienWhatsApp()}>WhatsApp</a>
-        <a class="btn btn--clair" href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
-      </p>
+    <div class="pied__nav">
+      <h2>Emma Broderie</h2>
+      <p>Broderie machine et couture sur mesure, à {SITE.ville} ({SITE.departement}).</p>
+      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+      <a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">Instagram @{CONTACT.instagram}</a>
     </div>
 
     <nav class="pied__nav" aria-label="Créations">
@@ -34,11 +33,8 @@ import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
       <p>{ATELIER.zones}.</p>
       <a href="/brodeuse-vitre/">Brodeuse à Vitré</a>
       <a href="/broderie-personnalisee-rennes/">Broderie à Rennes</a>
-      <a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">Instagram @{CONTACT.instagram}</a>
     </div>
   </div>
-
-  <p class="pied__geant" aria-hidden="true">Emma Broderie</p>
 
   <p class="pied__bas">
     <span>{SITE.nomLegal} · micro-entreprise · SIRET {SITE.siret}</span>

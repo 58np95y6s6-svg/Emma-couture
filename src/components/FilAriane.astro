@@ -1,0 +1,31 @@
+---
+/**
+ * Fil d'Ariane visible. Le JSON-LD BreadcrumbList est émis par Base.astro
+ * à partir de la même prop `fil` : passer la même liste aux deux.
+ * Toujours en tête de page, colonne 1, sur une ligne.
+ */
+interface Props {
+  /** Sans l'accueil, ajouté ici. Le dernier élément est la page courante. */
+  fil: { nom: string; url: string }[];
+}
+const { fil } = Astro.props;
+---
+
+<nav class="ariane" aria-label="Fil d'Ariane">
+  <a href="/">Accueil</a>
+  {
+    fil.map((e, i) =>
+      i === fil.length - 1 ? (
+        <>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{e.nom}</span>
+        </>
+      ) : (
+        <>
+          <span aria-hidden="true">/</span>
+          <a href={e.url}>{e.nom}</a>
+        </>
+      ),
+    )
+  }
+</nav>
