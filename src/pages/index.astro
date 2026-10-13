@@ -327,7 +327,8 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
   .tambour {
     --bois: #C9A97E;
     --bois-fonce: #8A6A46;
-    width: min(100%, 26rem);
+    /* l'anneau de bois (17 px de chaque côté) compte dans la largeur */
+    width: min(calc(100% - 34px), 26rem);
     aspect-ratio: 1;
     border-radius: 50%;
     display: grid; place-items: center;
