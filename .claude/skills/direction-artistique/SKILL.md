@@ -119,8 +119,10 @@ réellement. Remplacer par un simple libellé, ou par rien.
 **2. Le gabarit de titre répété.** Sourcil en capitales espacées → grand titre coupé en trois
 lignes par des `<br>` → dernier segment en italique dans la couleur d'accent → paragraphe.
 Une fois c'est une signature, cinq fois c'est un moule.
-→ **Varier** : une section sans sourcil, un titre sur une seule ligne, un titre sans italique,
-un titre posé à droite. L'irrégularité est ce qui fait qu'une page semble composée par quelqu'un.
+→ **Ne PAS « varier » en décalant** : cette consigne, appliquée mécaniquement, a produit des
+titres à droite, des escaliers et des rotations que le client a jugés « non logiques ». La
+variété vient du contenu, des photos et de l'échelle — jamais d'un décalage. Voir les règles
+de composition ci-dessous.
 
 **3. Le rythme vertical identique.** Toutes les sections au même `padding-block`.
 → Serrer certaines sections, en aérer d'autres. Une page conçue a des respirations inégales.
@@ -218,6 +220,38 @@ de rupture brutaux, `text-wrap: balance` sur les titres, interlettrage léger su
 Les **ruptures d'échelle franches** font partie de la direction : un mot énorme contre un texte
 minuscule.
 
+## ⚠️ Règles de composition (audit d'octobre 2026, retour client « décalages non logiques »)
+
+Le moderne vient de la **rigueur et de l'échelle** (codes Kinfolk, Cereal, Aesop, ateliers
+japonais) : grille stricte, grandes photos, typographie seule, légendes sobres, vide utile.
+Un audit indépendant a montré que le site était « 16 maquettes, pas un système ».
+
+- **R1. Aucune rotation** (sauf le « + » d'un accordéon).
+- **R2. Une seule grille** : `.grille` (12 colonnes, `--gout`) dans `.bande`. Découpes : 12 ; 6/6 ;
+  7/5 ; 5/7 ; 4/8 ; col. 1-6 + col. 8-12 ; 4/4/4 ; 3/3/3/3. Interdits : retraits en %, marges
+  négatives (sauf plein écran), `justify-self: end` sur un texte.
+- **R3. Pas d'escalier** : jamais de marge décalée par `nth-child`. Cartes alignées en haut et en bas.
+- **R4. Tout aligné à gauche**, au même x que le logo. Aucun titre à droite.
+- **R5. Échelle fermée** : `--t-h1-accueil` (le plus grand), `--t-h1` (toutes les pages internes),
+  `--t-h2`, `--t-h3`. Aucun `font-size` de titre dans le CSS d'une page.
+- **R6. Une signature par page** : le tambour à broder n'existe que sur l'accueil (prénom brodé) ;
+  une section `.tapis` au plus par page ; un bandeau photo au plus par page, sans slogan ; la photo
+  du mur de bobines est réservée à l'accueil.
+- **R7. Aucun faux objet** : ticket, étiquette carton, épingle, ficelle, colis, guirlande, règle
+  graduée, texte sur cercle, ruban de chantier, bordure pointillée « couture ».
+- **R8. Deux formes** : `--r-m` pour photos et cartes (0 en plein écran), pilule pour boutons et
+  filtres. Ni arche, ni cercle, ni rayons asymétriques sur les photos.
+- **R9. Le mono pour les données** (prix, délais, légendes), en une ligne. Pas de pilules en série :
+  `LigneFaits`.
+- **R10. Un seul filet** : trait plein 1 px à 15-20 % de l'encre. Pas de pointillés décoratifs.
+- **R11. Pas de couleur par position.** Une couleur d'occasion vit sur sa page et sa carte.
+- **R12. Une seule fin de page** : `AppelFinal`.
+- **R13. Espacements** : `--serre` ou `--respire` ; changement de fond OU filet, pas les deux.
+
+**Composants canoniques** (`src/components/`), à utiliser au lieu de recréer : `HautDePage`,
+`FilAriane`, `TeteSection` (simple | duo), `Etapes`, `FAQ` (émet son JSON-LD), `ListeLignes`,
+`LigneFaits`, `AppelFinal`, `CarteCreation`.
+
 ## Mise en page : le plein écran est la norme
 
 Le conteneur centré étroit est **réservé aux blocs de texte long**. Tout le reste — images, bandes
@@ -226,7 +260,7 @@ de couleur, galerie, hero, séparateurs — touche les deux bords de l'écran.
 Rythme attendu : pleine largeur → colonne étroite → pleine largeur → section sombre en rupture.
 C'est cette respiration qui distingue un vrai site d'une page de gabarit.
 
-Prévoir au minimum : un hero full-bleed, une bande photo pleine largeur, une galerie qui déborde
+Sur l'accueil seulement : une bande photo pleine largeur, une galerie qui déborde
 du bord droit avec `scroll-snap`, une section sombre pleine largeur au milieu.
 
 ## Chaleur : quatre leviers, à utiliser ensemble
