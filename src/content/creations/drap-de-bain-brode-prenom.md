@@ -10,5 +10,5 @@ delaiJours: 7
 ordre: 30
 ---
 
-Le cadeau qui sert tous les jours. Vous choisissez la couleur du drap, celle du
-fil et l'écriture ; je brode le prénom dans l'angle.
+Un cadeau utile au quotidien. Vous choisissez la couleur du drap de bain, celle du fil et
+l'écriture ; je brode le prénom dans l'angle.

@@ -1,6 +1,6 @@
 ---
 titre: "L'arbre de vie en dentelle"
-accroche: "Brodé sans support : il ne reste que le fil."
+accroche: "Brodé sans tissu : il ne reste que le fil."
 categorie: decoration-ajouree
 occasions: [mariage, retraite, anniversaire]
 photo: ../../assets/creations/galerie/arbre-de-vie-brode-dentelle-ajouree-fil-dore.webp
@@ -11,8 +11,9 @@ ordre: 15
 enAvant: true
 ---
 
-La machine brode dans le vide, sur un support qui disparaît au rinçage. Il ne
-reste que le fil, ajouré, qui se tient tout seul.
+Une pièce en dentelle libre : le motif est brodé sur un support soluble, qui disparaît au
+rinçage. Il ne reste que le fil, ajouré et autoportant.
 
-Ça se glisse dans un cadre, ça s'accroche à une fenêtre, ça se coud sur une robe.
-C'est ce que je préfère faire — et ce qu'on trouve le moins ailleurs.
+L'arbre de vie se présente sous cadre, se suspend à une fenêtre ou se coud sur un vêtement.
+C'est la technique que je pratique avec le plus de plaisir, et l'une des plus rares dans la
+région.

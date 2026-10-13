@@ -11,5 +11,5 @@ ordre: 20
 enAvant: true
 ---
 
-Un cadre brodé se choisit avec les parents : le motif, l'écriture, la couleur du
-fil. Je vous montre le dessin avant de lancer la machine.
+Le cadre de naissance se compose avec les parents : motif, écriture et couleur du fil. Je vous
+adresse le motif pour validation avant toute réalisation.

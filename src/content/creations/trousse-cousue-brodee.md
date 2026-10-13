@@ -12,5 +12,5 @@ ordre: 40
 enAvant: true
 ---
 
-Celle-là, je la couds avant de la broder. Vous prenez dans mes coupons, ou vous
-m'apportez le vôtre.
+Je confectionne cette trousse avant de la broder. Le tissu se choisit parmi mes coupons, ou
+vous pouvez me confier le vôtre.

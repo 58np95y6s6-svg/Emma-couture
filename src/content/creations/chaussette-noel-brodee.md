@@ -10,5 +10,8 @@ delaiJours: 10
 ordre: 50
 ---
 
-À commander avant la mi-novembre : passé cette date, je ne garantis plus la
-livraison pour le 24.
+Une chaussette par personne, avec le prénom brodé sur le revers.
+
+<!-- ⚠️ Date limite à confirmer par Emma. -->
+Pour une livraison avant le 24 décembre, je vous recommande de commander avant la
+mi-novembre.

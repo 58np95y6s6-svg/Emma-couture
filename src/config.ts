@@ -55,7 +55,7 @@ export const ATELIER = {
  */
 export function lienWhatsApp(message?: string, urlCreation?: string): string {
   const texte = [
-    message ?? `Bonjour ${SITE.nom}, j'aimerais faire broder quelque chose.`,
+    message ?? `Bonjour Emma, je souhaiterais un renseignement pour une broderie personnalisée.`,
     urlCreation,
   ]
     .filter(Boolean)

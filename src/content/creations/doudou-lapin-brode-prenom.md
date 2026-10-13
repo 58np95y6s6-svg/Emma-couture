@@ -12,8 +12,7 @@ enAvant: true
 accordClient: false
 ---
 
-C'est la pièce qu'on offre à la maternité et qu'on retrouve vingt ans plus tard
-au fond d'un placard. Je brode le prénom sur une oreille, la date et les mesures
-sur l'autre.
+Un cadeau de naissance que l'on conserve longtemps. Je brode le prénom sur une oreille, la
+date de naissance et les mesures sur l'autre.
 
-Le doudou passe en machine à 30°, le fil ne bouge pas.
+Le doudou se lave en machine à 30 °C ; la broderie ne bouge pas.
