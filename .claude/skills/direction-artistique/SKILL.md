@@ -162,21 +162,36 @@ Son monde matériel, à puiser pour toute décision visuelle : un mur de centain
 une machine à broder, un tapis de coupe vert quadrillé en centimètres, des cadres (tambours) en
 millimètres, du fil polyester 40, des densités de points, des prénoms en lettres cursives.
 
+## Direction en place : « le tapis de coupe » (octobre 2026)
+
+Refonte complète demandée par le client : « très moderne, très performant, pas de l'IA slop ».
+Trois motifs, tous pris dans l'atelier réel d'Emma, structurent tout le site :
+1. **Le tapis de coupe** : sections de rupture vert profond, quadrillées au centimètre
+   (`.tapis`, et `.regle` pour les graduations). Le quadrillage s'éteint vers les bords.
+2. **Le tambour à broder** : cercle de toile dans un anneau de bois avec sa vis de serrage
+   (`.tambour` sur l'accueil) ; c'est là que le prénom se brode. Le portrait d'Emma est dans
+   un petit tambour accroché au grand. Les photos d'occasions s'ouvrent depuis un cercle.
+3. **La fiche d'atelier** : toutes les étiquettes techniques (prix, délais, légendes, fil
+   d'Ariane, statut) en chasse fixe `DM Mono`, minuscules, précédées d'un point avant.
+
 ## Couleur
 
-Le fond blanc clinique est **banni** : c'est ce qui rendait les propositions froides.
+Le fond blanc clinique est **banni**. Les valeurs vivent dans `src/styles/global.css` (§ 1) ;
+les anciens noms (`--sable`, `--rouille`, `--vert`…) y sont des alias, ne pas en créer de nouveaux.
 
-| Rôle | Valeur | D'où ça vient |
-|---|---|---|
-| Encre | `#2A2320` | brun chaud, jamais du noir pur |
-| Rose poudré | `#E8CFC6` | le drap de bain « Alicia » |
-| Mauve profond | `#6B5560` | la broderie du prénom « Alicia » |
-| Fil doré | `#B89355` | l'arbre de vie en dentelle |
-| Gris doux | `#8A7E78` | texte secondaire |
+| Rôle | Jeton | Valeur | Usage |
+|---|---|---|---|
+| Fond | `--lin` | `#F1E9E1` | lin chaud + grain, halo rosé en haut de page |
+| Encre | `--encre` | `#1D1916` | texte, pied de page |
+| Tapis | `--tapis` | `#1F3A2F` | sections de rupture quadrillées |
+| **Coquelicot** | `--coquelicot` | `#D93D28` | LA couleur qui parle : CTA, italiques, fil du prénom. Blanc dessus = 4,5:1 |
+| Coquelicot foncé | `--coquelicot-fonce` | `#B5321E` | petit texte rouge sur le lin (AA) |
+| Rose poudré | `--rose` | `#EFC7BE` | toile du tambour, italiques sur le tapis |
+| Doré | `--dore` | `#D9B26A` | dentelle, survol des boutons clairs |
+| Gris | `--gris` | `#6B5F58` | texte secondaire, 5,1:1 sur le lin |
 
-À **enrichir** en puisant dans ses photos, c'est là qu'est la chaleur : ocre, rouille brûlée,
-vert de tapis de coupe (`#2F4B3F`), bleu de jean, rouge de la fée (`#C2453B`).
-Prévoir une couleur profonde pour les sections de rupture.
+Couleurs des occasions (panneaux pleins) : `OCCASIONS` dans `src/config.ts`.
+Le rouge s'utilise avec parcimonie sur le lin ; l'appel final est la seule grande surface rouge.
 
 Le neutre doit être **choisi**, jamais un gris pur : le biaiser vers l'accent de la page.
 
@@ -187,6 +202,7 @@ de section, tout centré, un seul `border-radius` partout, cartes à liseré col
 ## Typographie
 
 Google Fonts est le seul hébergeur autorisé (contrainte CSP des artefacts, et performance).
+Trois familles exactement : Instrument Serif, Jost, DM Mono.
 
 - **Titres** : `Instrument Serif` — choisie par le client en remplacement de Fraunces.
   Serif à très fort contraste, registre studio de design plutôt que boutique de créateur ;
@@ -196,7 +212,9 @@ Google Fonts est le seul hébergeur autorisé (contrainte CSP des artefacts, et 
   ⚠️ **Fraunces est abandonnée** : trop identifiable comme la police par défaut de l'artisanal
   généré, avec ses axes `SOFT` et `WONK` exhibés.
 - **Texte courant** : `Jost`.
-- **Chiffres techniques** (références de fil, tailles de cadre, nombre de points) : une chasse fixe.
+- **Étiquettes et chiffres techniques** : `DM Mono` 400/500 (`.mono`, `.sourcil`, `.prix`).
+  Le « sourcil » n'est plus en capitales espacées : c'est une étiquette mono en minuscules,
+  à poser avec parcimonie (pas une par section).
 
 Règles : texte courant proche de 65 caractères par ligne, échelle fluide en `clamp()` sans points
 de rupture brutaux, `text-wrap: balance` sur les titres, interlettrage léger sur les capitales.
@@ -234,6 +252,7 @@ L'animation est **structurante, pas décorative**. Le moteur maison
 | `data-broderie="tambour"` | révélation d'image à travers un tambour à broder |
 | `data-broderie="croix"` | grille de points de croix qui se remplit |
 | `data-broderie="aiguille-curseur"` | traînée de points derrière le curseur natif, sur ordinateur |
+| `data-broderie="carrousel"` | enchaînement de prénoms (brodé → décousu → suivant), `data-prenoms` JSON `[{prenom, legende, fil?}]`, `data-legende="id"` |
 
 Options : `data-fil="#6B5560"`, `data-duree="2600"`, `data-declencheur="visible|charge|survol"`.
 

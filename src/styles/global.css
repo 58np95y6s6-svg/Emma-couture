@@ -438,6 +438,7 @@ h3 {
   min-height: 44px; padding-inline: 0.85rem;
   border-radius: 999px;
   font-size: var(--t-petit); text-decoration: none;
+  white-space: nowrap;
   transition: background 200ms ease, color 200ms ease;
 }
 .nav a:hover { background: color-mix(in oklab, var(--encre) 8%, transparent); }
@@ -501,10 +502,10 @@ h3 {
 .menu a:last-child { border: 0; color: var(--rose); font-style: italic; }
 
 @media (min-width: 64rem) {
-  .nav, .entete__cta, .statut { display: inline-flex; }
+  .nav, .entete__cta { display: inline-flex; }
   .burger, .menu { display: none !important; }
 }
-@media (min-width: 80rem) { .marque__sous { display: inline; } }
+@media (min-width: 80rem) { .marque__sous { display: inline; } .statut { display: inline-flex; } }
 
 /* -----------------------------------------------------------------------------
    8. EN-TÊTES DE SECTION — volontairement variés d'une section à l'autre

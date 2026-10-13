@@ -1101,7 +1101,8 @@ function effetCarrousel(noeud) {
     span.textContent = liste[i].prenom;
     span.dataset.declencheur = 'manuel';
     span.dataset.duree = String(duree);
-    if (noeud.dataset.fil) span.dataset.fil = noeud.dataset.fil;
+    const fil = liste[i].fil || noeud.dataset.fil;
+    if (fil) span.dataset.fil = fil;
     scene.textContent = '';
     scene.appendChild(span);
     effetPrenom(span);
