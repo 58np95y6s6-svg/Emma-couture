@@ -6,15 +6,24 @@
  * message, pour que l'aperçu affiche la photo) et le formulaire de devis
  * pré-rempli. Maillage vers la catégorie, les occasions et le sur-mesure.
  *
+ * Mise en page : HautDePage (texte col. 1-7, photo col. 8-12), puis le texte
+ * de la pièce (col. 1-6) et ses liens (col. 8-12), le déroulement (Etapes),
+ * les autres pièces en rangée et l'appel final.
+ *
  * Sur téléphone, une barre d'action collante en bas d'écran reprend les deux
- * appels dès que ceux du panneau sortent de l'écran ; elle remplace le bouton
- * WhatsApp flottant du gabarit, masqué sur cette page.
+ * appels dès que ceux du haut de page sortent de l'écran ; elle remplace le
+ * bouton WhatsApp flottant du gabarit, masqué sur cette page.
  */
 import type { GetStaticPaths } from 'astro';
 import { getCollection, render } from 'astro:content';
 import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import CarteCreation from '../../components/CarteCreation.astro';
+import HautDePage from '../../components/HautDePage.astro';
+import TeteSection from '../../components/TeteSection.astro';
+import Etapes from '../../components/Etapes.astro';
+import ListeLignes from '../../components/ListeLignes.astro';
+import AppelFinal from '../../components/AppelFinal.astro';
 import { SITE, ATELIER, OCCASIONS, lienWhatsApp } from '../../config';
 
 /** Libellés d'affichage. Les slugs viennent de src/content.config.ts. */
@@ -63,16 +72,15 @@ const autres = [...memeCategorie, ...toutes.filter((c) => c.id !== id && !memeCa
 const urlFiche = `/creations/${id}/`;
 const urlAbsolue = new URL(urlFiche, SITE.url).href;
 
-/* Accord : « la même » pour une trousse, « le même » pour un cadre. Le genre
-   se lit dans l'article du titre ; un titre élidé est traité au masculin. */
+/* Accord du titre de page : « brodée » pour une trousse, « brodé » pour un
+   cadre. Le genre se lit dans l'article ; un titre élidé est traité au masculin. */
 const feminin = /^la\s/i.test(data.titre.trim());
-const meme = feminin ? 'la même' : 'le même';
 const brode = feminin ? 'brodée' : 'brodé';
 
 /* WhatsApp : l'URL de la fiche est jointe au message. C'est l'aperçu Open
    Graph du lien qui porte la photo — wa.me n'accepte aucune pièce jointe. */
 const wa = lienWhatsApp(
-  `Bonjour ${SITE.nom}, j'ai vu « ${data.titre} » sur votre site et j'aimerais ${meme}.`,
+  `Bonjour ${SITE.nom}, j'ai vu « ${data.titre} » sur votre site et j'aimerais un modèle similaire.`,
   urlAbsolue,
 );
 const devis = `/contact/?creation=${id}`;
@@ -136,18 +144,34 @@ const description = `${data.accroche} ${
 
 const icoWa =
   'M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z';
+
+const fil = [
+  { nom: 'Créations', url: '/creations/' },
+  { nom: categorieNom, url: `/creations/${data.categorie}/` },
+  { nom: data.titre, url: urlFiche },
+];
+
+/* Un seul délai sur la fiche : la durée de réalisation de la pièce. Le délai
+   actuel de l'atelier figure dans l'appel final.
+   ⚠️ Prix et délais : exemples à valider par Emma (repli de l'admin). */
+const faits = [
+  ...(data.prixDepart ? [`À partir de ${data.prixDepart} €`] : ['Prix sur devis']),
+  ...(data.delaiJours ? [`Réalisation : ${data.delaiJours} jours`] : []),
+  data.cousuMain ? `Cousu main et brodé à ${SITE.ville}` : `Brodé à ${SITE.ville}`,
+];
+
+/* Liens utiles : les occasions qui ont une page, la catégorie, le sur-mesure. */
+const liens = [
+  ...occasions
+    .filter((o) => o.lien)
+    .map((o) => ({ titre: o.nom, href: o.lien as string })),
+  { titre: `Toutes les pièces « ${categorieNom} »`, href: `/creations/${data.categorie}/` },
+  { titre: "Le déroulement d'une commande", href: '/sur-mesure/' },
+];
+const occasionsSansPage = occasions.filter((o) => !o.lien).map((o) => o.nom.toLowerCase());
 ---
 
-<Base
-  titre={titre}
-  description={description}
-  imageOg={og.src}
-  fil={[
-    { nom: 'Créations', url: '/creations/' },
-    { nom: categorieNom, url: `/creations/${data.categorie}/` },
-    { nom: data.titre, url: urlFiche },
-  ]}
->
+<Base titre={titre} description={description} imageOg={og.src} fil={fil}>
   {/*
     ⚠️ CONTENU D'EXEMPLE
     Prix, délais, numéro WhatsApp et e-mail sont provisoires (src/config.ts
@@ -156,189 +180,88 @@ const icoWa =
 
   <script type="application/ld+json" set:html={JSON.stringify(produit)} />
 
-  <!-- ===================== FICHE ===================== -->
-  <section class="bande fiche">
-    <nav class="ariane fiche__ariane" aria-label="Fil d'Ariane">
-      <a href="/">Accueil</a>
-      <span aria-hidden="true">/</span>
-      <a href="/creations/">Créations</a>
-      <span aria-hidden="true">/</span>
-      <a href={`/creations/${data.categorie}/`}>{categorieNom}</a>
-      <span aria-hidden="true">/</span>
-      <span aria-current="page">{data.titre}</span>
-    </nav>
+  <HautDePage titre={data.titre} fil={fil} image={data.photo} alt={data.alt} faits={faits}>
+    <p>{data.accroche}</p>
+    <a slot="actions" class="btn btn--wa btn--grand fiche__cta" href={wa}>
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d={icoWa} /></svg>
+      Je veux la même
+    </a>
+    <a slot="actions" class="btn btn--creux btn--grand" href={devis}>Demander un devis</a>
+  </HautDePage>
 
-    <div class="fiche__photos">
-      <figure class="fiche__grande">
-        <Image
-          src={data.photo}
-          alt={data.alt}
-          widths={[390, 620, 800, 1000]}
-          sizes="(max-width: 64rem) 100vw, 50vw"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-        />
-        <figcaption class="fiche__ref mono">réf. {id}</figcaption>
-      </figure>
-
-      {
-        data.photos.length > 0 && (
-          <ul class="fiche__vues">
-            {data.photos.map((p, i) => (
-              <li>
-                <Image
-                  src={p}
-                  alt={`${data.titre}, vue ${i + 2}`}
-                  widths={[320, 480, 620]}
-                  sizes="(max-width: 64rem) 45vw, 22vw"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </li>
-            ))}
-          </ul>
-        )
-      }
-    </div>
-
-    <div class="fiche__panneau">
-      <div class="fiche__collant">
-        <p class="fiche__cat">
-          <a href={`/creations/${data.categorie}/`}>{categorieNom}</a>
-          {data.cousuMain && <span>cousu main</span>}
-        </p>
-
-        <h1>{data.titre}</h1>
-        <p class="chapo">{data.accroche}</p>
-
-        {/* ⚠️ Prix et délais : exemples à valider par Emma (repli de l'admin). */}
-        <dl class="tickets" data-reglage-creation={id}>
-          {
-            data.prixDepart && (
-              <div class="ticket ticket--prix">
-                <dt>à partir de</dt>
-                <dd>{data.prixDepart}&nbsp;€</dd>
-              </div>
-            )
-          }
-          {
-            data.delaiJours && (
-              <div class="ticket">
-                <dt>réalisation</dt>
-                <dd>{data.delaiJours}&nbsp;jours ouvrés</dd>
-              </div>
-            )
-          }
-          <div class="ticket">
-            <dt>délai de l'atelier</dt>
-            <dd>{ATELIER.delaiActuel}</dd>
-          </div>
-          <div class="ticket">
-            <dt>{data.cousuMain ? 'cousu et brodé à' : 'brodé à'}</dt>
-            <dd>{SITE.ville}</dd>
-          </div>
-        </dl>
-
-        <p class="actions fiche__actions">
-          <a class="btn btn--wa btn--grand" href={wa}>
-            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d={icoWa} /></svg>
-            Je veux {meme}
-          </a>
-          <a class="btn btn--creux btn--grand" href={devis}>Demander un devis</a>
-        </p>
-
-        <ul class="fiche__rassure">
-          <li>Motif soumis pour validation avant broderie</li>
-          <li>Emballage cadeau compris</li>
-          <li>{ATELIER.zones}</li>
+  {
+    data.photos.length > 0 && (
+      <section class="bande vues" aria-label="Autres vues">
+        <ul class="grille">
+          {data.photos.map((p, i) => (
+            <li>
+              <Image
+                src={p}
+                alt={`${data.titre}, vue ${i + 2}`}
+                widths={[320, 480, 620]}
+                sizes="(max-width: 48rem) 46vw, 22vw"
+                loading="lazy"
+                decoding="async"
+              />
+            </li>
+          ))}
         </ul>
-      </div>
-    </div>
-  </section>
+      </section>
+    )
+  }
 
-  <!-- ===================== LE TEXTE + LE MAILLAGE ===================== -->
+  <!-- ===================== LE TEXTE + LES LIENS ===================== -->
   <section class="bande detail">
-    <div class="detail__texte">
-      <h2 class="detail__h2">À propos de cette pièce</h2>
-      <div class="prose">
-        <Content />
+    <div class="grille">
+      <div class="detail__texte">
+        <h2>À propos de cette pièce</h2>
+        <div class="prose mesure">
+          <Content />
+        </div>
+        <p class="detail__rassure">
+          Motif soumis pour validation avant broderie. Emballage cadeau compris. {ATELIER.zones}.
+        </p>
       </div>
-    </div>
 
-    <aside class="detail__cote" aria-label="Occasions et liens utiles">
-      <h2 class="detail__h3">Pour quelle occasion</h2>
-      {
-        occasions.length > 0 ? (
-          <ul class="detail__occ">
-            {occasions.map((o) =>
-              o.lien ? (
-                <li>
-                  <a href={o.lien}>{o.nom}</a>
-                </li>
-              ) : (
-                <li>
-                  <span>{o.nom}</span>
-                </li>
-              ),
-            )}
-          </ul>
-        ) : (
-          <p class="detail__vide">Elle convient à toutes les occasions.</p>
-        )
-      }
-      <p class="detail__liens">
-        <a class="lien-fleche" href="/sur-mesure/">Le déroulement d'une commande</a>
-        <a class="lien-fleche" href={`/creations/${data.categorie}/`}>
-          Toutes les pièces «&nbsp;{categorieNom}&nbsp;»
-        </a>
-      </p>
-    </aside>
+      <aside class="detail__cote" aria-labelledby="cote-titre">
+        <h3 id="cote-titre">Occasions et liens utiles</h3>
+        {occasionsSansPage.length > 0 && (
+          <p class="detail__occ">Elle convient aussi pour {occasionsSansPage.join(', ')}.</p>
+        )}
+        <ListeLignes lignes={liens} />
+      </aside>
+    </div>
   </section>
 
-  <!-- ===================== DÉROULEMENT : une vraie séquence ===================== -->
-  <section class="bande tapis etapes-fiche loin">
-    <h2 class="titre-xl">Le déroulement d'une commande</h2>
-    <ol class="sequence">
-      <li>
-        <span class="mono">1</span>
-        <h3>Votre demande</h3>
-        <p>
-          Indiquez-moi le prénom, la couleur souhaitée et la date. Le lien de cette fiche suffit
-          pour que je sache de quelle pièce il s'agit.
-        </p>
-      </li>
-      <li>
-        <span class="mono">2</span>
-        <h3>La validation du motif</h3>
-        <p>
-          Je vous envoie le motif et le prix définitif. Rien n'est brodé avant votre accord, et
-          chaque détail peut être modifié jusque-là.
-        </p>
-      </li>
-      <li>
-        <span class="mono">3</span>
-        <h3>La remise</h3>
-        <p>
-          La pièce vous est remise en main propre à {SITE.ville} ou à Rennes, ou envoyée
-          soigneusement emballée partout en France.
-        </p>
-      </li>
-    </ol>
-    <p class="actions">
-      <a class="btn btn--or" href={devis}>Demander un devis pour cette pièce</a>
-    </p>
+  <!-- ===================== DÉROULEMENT ===================== -->
+  <section class="bande deroule loin">
+    <TeteSection titre="Le déroulement d'une commande" />
+    <Etapes
+      etapes={[
+        {
+          titre: 'Votre demande',
+          texte: "Indiquez-moi le prénom, la couleur souhaitée et la date. Le lien de cette fiche suffit pour que je sache de quelle pièce il s'agit.",
+        },
+        {
+          titre: 'La validation du motif',
+          texte: "Je vous envoie le motif et le prix définitif. Rien n'est brodé avant votre accord, et chaque détail peut être modifié jusque-là.",
+          cle: true,
+        },
+        {
+          titre: 'La remise',
+          texte: `La pièce vous est remise en main propre à ${SITE.ville} ou à Rennes, ou envoyée soigneusement emballée partout en France.`,
+        },
+      ]}
+    />
   </section>
 
   <!-- ===================== AUTRES PIÈCES ===================== -->
   {
     autres.length > 0 && (
       <section class="bande suite loin">
-        <div class="suite__tete">
-          <h2 class="titre-xl">Dans la même veine</h2>
-          <a class="lien-fleche" href="/creations/">Toutes les créations</a>
-        </div>
-
+        <TeteSection titre="Autres créations" variante="duo">
+          <a slot="lien" class="lien-fleche" href="/creations/">Toutes les créations</a>
+        </TeteSection>
         <div class="rangee" tabindex="0" role="region" aria-label="Autres créations, rangée défilante">
           {autres.map((c) => (
             <CarteCreation creation={c} tailles="(max-width: 40rem) 74vw, (max-width: 64rem) 42vw, 24rem" />
@@ -348,262 +271,85 @@ const icoWa =
     )
   }
 
+  <AppelFinal titre="Une question sur cette pièce" messageWa={`Bonjour ${SITE.nom}, j'ai vu « ${data.titre} » sur votre site et j'aimerais un modèle similaire. ${urlAbsolue}`} lienDevis={devis}>
+    <p>
+      Indiquez-moi le prénom, la couleur et la date souhaitée. Je vous réponds avec une proposition,
+      un prix et un délai, sans engagement de votre part.
+    </p>
+  </AppelFinal>
+
   <!-- ===================== BARRE D'ACTION (téléphone) =====================
-       Collante en bas d'écran tant que la page défile, posée au-dessus du
-       pied de page à la fin. Elle remplace le bouton flottant du gabarit. -->
+       Collante en bas d'écran tant que la page défile. Elle remplace le
+       bouton flottant du gabarit. -->
   <div class="barre-action">
     <p class="barre-action__prix mono" aria-hidden="true">
       {data.prixDepart ? <>dès <b>{data.prixDepart}&nbsp;€</b></> : <b>sur devis</b>}
     </p>
-    <a class="btn btn--wa barre-action__wa" href={wa}>
+    <a class="btn btn--wa" href={wa}>
       <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d={icoWa} /></svg>
-      Je veux {meme}
+      Je veux la même
     </a>
-    <a class="btn btn--creux barre-action__devis" href={devis}>Devis</a>
+    <a class="btn btn--creux" href={devis}>Devis</a>
   </div>
 </Base>
 
 <style>
   /* Le bouton flottant du gabarit est remplacé ici par la barre d'action. */
   :global(.flottant) { display: none !important; }
-  /* La barre suit les CTA du panneau : la portée de leur timeline est posée
-     sur <main>, ancêtre commun. */
+  /* La barre suit le bouton WhatsApp du haut de page : portée posée sur <main>. */
   :global(#contenu) { timeline-scope: --cta-fiche; }
+  .fiche__cta { view-timeline: --cta-fiche block; }
 
-  /* ============================ FICHE ============================
-     Téléphone : la photo prend toute la largeur, bord à bord.
-     Ordinateur : la photo occupe la moitié gauche jusqu'au bord de l'écran,
-     le panneau reste collé à droite pendant qu'on la parcourt. */
-  .fiche {
-    padding-block: 0 var(--serre);
-    row-gap: clamp(1rem, 3vw, 2rem);
-  }
-  .fiche__ariane { min-width: 0; }
-  .fiche__ariane [aria-current] {
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;
-  }
+  .vues { padding-block: 0 var(--serre); }
+  .vues li { grid-column: span 6; }
+  .vues li :global(img) { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--r-m); }
+  @media (min-width: 48rem) { .vues li { grid-column: span 3; } }
 
-  .fiche__photos { grid-column: bord-d / bord-f; display: grid; gap: 0.6rem; min-width: 0; }
-  .fiche__grande { position: relative; overflow: hidden; background: var(--lin-bas); }
-  .fiche__grande :global(img) {
-    width: 100%; aspect-ratio: 4 / 5; object-fit: cover;
-  }
-  .fiche__ref {
-    position: absolute; inset-block-end: 0.8rem; inset-inline-start: 0.8rem;
-    max-width: calc(100% - 1.6rem);
-    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    padding: 0.3rem 0.7rem;
-    border-radius: var(--r-s);
-    background: color-mix(in oklab, var(--lin-haut) 86%, transparent);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    font-size: 0.75rem;
-    color: var(--encre-doux);
-  }
-  .fiche__vues {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(8rem, 100%), 1fr));
-    gap: 0.6rem;
-    padding-inline: var(--marge);
-  }
-  .fiche__vues :global(img) { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--r-s); }
-
-  .fiche__panneau { min-width: 0; }
-  .fiche__collant { display: grid; gap: clamp(0.9rem, 2vw, 1.3rem); justify-items: start; }
-  .fiche__cat { display: flex; flex-wrap: wrap; align-items: center; gap: 0.2rem 1rem; font-family: var(--f-mono); font-size: var(--t-micro); }
-  .fiche__cat a {
-    display: inline-flex; align-items: center; min-height: 44px;
-    color: var(--coquelicot-fonce);
-    text-underline-offset: 4px;
-  }
-  .fiche__cat span {
-    padding: 0.25rem 0.6rem; border-radius: var(--r-s);
-    border: 1px solid color-mix(in oklab, var(--encre) 25%, transparent);
-    color: var(--encre-doux);
-  }
-  .fiche h1 { max-width: 14ch; font-size: clamp(2.8rem, 1.4rem + 5vw, 6.2rem); }
-  .fiche .chapo { max-width: 32rem; }
-
-  /* Les étiquettes : comme des tickets de fiche d'atelier, la valeur en grand. */
-  .tickets {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    width: 100%;
-    max-width: 34rem;
-    border: 1.5px dashed color-mix(in oklab, var(--encre) 32%, transparent);
-    border-radius: var(--r-m);
-    background: color-mix(in oklab, var(--papier) 60%, transparent);
-  }
-  .ticket { display: grid; gap: 0.15rem; padding: 0.85rem 1rem; min-width: 0; }
-  .ticket:nth-child(even) { border-inline-start: 1px dashed color-mix(in oklab, var(--encre) 22%, transparent); }
-  .ticket:nth-child(n + 3) { border-block-start: 1px dashed color-mix(in oklab, var(--encre) 22%, transparent); }
-  .ticket dt { font-family: var(--f-mono); font-size: var(--t-micro); color: var(--gris); }
-  .ticket dd {
-    margin: 0;
-    font-family: var(--f-titre);
-    font-size: clamp(1.35rem, 1.1rem + 1vw, 1.9rem);
-    line-height: 1.05;
-    color: var(--encre);
-  }
-  .ticket--prix dd { font-size: clamp(2.1rem, 1.6rem + 2vw, 3.2rem); color: var(--coquelicot-fonce); }
-
-  .fiche__actions { view-timeline: --cta-fiche block; width: 100%; }
-  .fiche__actions .btn { flex: 1 1 13rem; }
-  @media (min-width: 64rem) { .fiche__actions .btn { flex: 0 1 auto; } }
-  .fiche__rassure {
-    display: grid; gap: 0.35rem;
-    font-size: var(--t-petit);
-    color: var(--encre-doux);
-    max-width: 32rem;
-  }
-  .fiche__rassure li { display: flex; gap: 0.7rem; align-items: baseline; }
-  .fiche__rassure li::before {
-    content: ''; flex: none;
-    inline-size: 1.1rem; block-size: 2px;
-    transform: translateY(-0.3em);
-    background: repeating-linear-gradient(90deg, var(--coquelicot) 0 5px, transparent 5px 8px);
-  }
-
-  @media (min-width: 64rem) {
-    .fiche {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.52))
-        [mi] minmax(0, calc(var(--large) * 0.48))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      padding-block-start: 0;
-      align-items: start;
-    }
-    .fiche__ariane { grid-column: mi / large-f; grid-row: 1; padding-inline-start: clamp(2rem, 4vw, 4.5rem); }
-    .fiche__photos { grid-column: bord-d / mi; grid-row: 1 / span 2; }
-    .fiche__grande { border-radius: 0 var(--r-l) var(--r-l) 0; }
-    .fiche__grande :global(img) { max-height: calc(100svh - 5rem); min-height: 36rem; }
-    .fiche__vues { padding-inline: var(--marge) 0; }
-    .fiche__panneau { grid-column: mi / large-f; grid-row: 2; padding-inline-start: clamp(2rem, 4vw, 4.5rem); }
-    .fiche__collant { position: sticky; top: 6.5rem; }
-  }
-  @media (min-width: 90rem) {
-    .fiche__grande :global(img) { aspect-ratio: 5 / 5.4; }
-  }
-
-  /* ============================ DÉTAIL ============================ */
-  .detail {
-    padding-block: var(--serre);
-    row-gap: clamp(2.5rem, 5vw, 3.5rem);
-  }
-  .detail__texte { display: grid; gap: 1rem; }
-  .detail__h2 { font-size: var(--t-h3); }
-  .prose {
-    display: grid; gap: 1.1rem;
-    max-width: var(--mesure);
-    font-size: var(--t-corps);
-    line-height: 1.7;
-    color: var(--encre-doux);
-  }
-  .prose :global(p) { text-wrap: pretty; }
-  .prose :global(p:first-child) { font-size: var(--t-chapo); line-height: 1.45; color: var(--encre); }
+  /* ============================ DÉTAIL : col. 1-6 / 8-12 ============================ */
+  .detail { padding-block: var(--serre); }
+  .detail .grille { row-gap: 3rem; align-items: start; }
+  .detail__texte, .detail__cote { display: grid; gap: 1.25rem; align-content: start; }
+  .prose { display: grid; gap: 1.1rem; color: var(--encre-doux); }
   .prose :global(strong) { font-weight: 500; color: var(--encre); }
-  .prose :global(ul), .prose :global(ol) { display: grid; gap: 0.5rem; padding-inline-start: 1.2rem; list-style: disc; }
-
-  .detail__cote {
-    display: grid; gap: 0.9rem; align-content: start;
-    padding: clamp(1.3rem, 3vw, 2rem);
-    border-radius: var(--r-l);
-    background: var(--rose);
-  }
-  .detail__h3 { font-size: var(--t-h3); }
-  .detail__occ { display: flex; flex-wrap: wrap; gap: 0.45rem; }
-  .detail__occ a, .detail__occ span {
-    display: inline-flex; align-items: center;
-    min-height: 44px; padding: 0.4rem 1rem;
-    border-radius: 999px;
-    font-size: var(--t-petit);
-    text-decoration: none;
-    background: var(--lin-haut);
-    color: var(--encre);
-  }
-  .detail__occ a:hover { background: var(--encre); color: var(--lin-haut); }
-  .detail__occ span { background: transparent; border: 1px dashed color-mix(in oklab, var(--encre) 40%, transparent); }
-  .detail__vide { font-size: var(--t-petit); }
-  .detail__liens { display: grid; justify-items: start; }
-
-  @media (min-width: 64rem) {
-    .detail {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.58))
-        [mi] minmax(0, calc(var(--large) * 0.42))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      align-items: start;
-    }
-    .detail__texte { grid-column: large-d / mi; padding-inline-end: 4rem; }
-    .detail__cote { grid-column: mi / large-f; }
+  .prose :global(ul), .prose :global(ol) { display: grid; gap: 0.4rem; padding-inline-start: 1.2rem; list-style: disc; }
+  .detail__rassure, .detail__occ { font-size: var(--t-petit); color: var(--encre-doux); }
+  @media (min-width: 48rem) {
+    .detail__texte { grid-column: 1 / span 6; }
+    .detail__cote { grid-column: 8 / -1; }
   }
 
-  /* ============================ DÉROULEMENT ============================ */
-  .etapes-fiche { padding-block: var(--serre); row-gap: clamp(2rem, 4vw, 3rem); }
-  .etapes-fiche .titre-xl { max-width: 14ch; }
-  .sequence {
-    display: grid;
-    border-block-start: 1.5px dashed color-mix(in oklab, var(--tapis-trait) 55%, transparent);
-  }
-  .sequence li {
-    display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); column-gap: 0.8rem; row-gap: 0.4rem;
-    padding-block: 1.3rem;
-    border-block-end: 1px dashed color-mix(in oklab, var(--tapis-trait) 35%, transparent);
-  }
-  .sequence .mono { grid-row: span 2; font-size: 1rem; color: var(--rose); padding-block-start: 0.35rem; }
-  .sequence p { color: color-mix(in oklab, var(--lin-haut) 86%, transparent); max-width: 30rem; }
-  @media (min-width: 56rem) {
-    .sequence { grid-template-columns: repeat(3, minmax(0, 1fr)); border-block-end: 1px dashed color-mix(in oklab, var(--tapis-trait) 35%, transparent); }
-    .sequence li { grid-template-columns: minmax(0, 1fr); border-block-end: 0; padding-inline-end: 1.5rem; }
-    .sequence li + li { padding-inline-start: 1.5rem; border-inline-start: 1px dashed color-mix(in oklab, var(--tapis-trait) 35%, transparent); }
-    .sequence .mono { grid-row: auto; }
-  }
-
-  /* ============================ AUTRES PIÈCES ============================ */
-  .suite { padding-block: var(--respire) var(--serre); row-gap: clamp(1.5rem, 3vw, 2.5rem); }
-  .suite__tete { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 0.6rem 2rem; }
-  .suite :global(.carte__lien) { text-decoration: none; }
+  .deroule { padding-block: var(--serre); }
+  .suite { padding-block: var(--serre) var(--respire); }
 
   /* ============================ BARRE D'ACTION ============================ */
   .barre-action {
     position: sticky; inset-block-end: 0; z-index: 80;
     display: grid;
     grid-template-columns: minmax(0, auto) minmax(0, 1.5fr) minmax(0, 1fr);
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem var(--marge) calc(0.6rem + env(safe-area-inset-bottom));
-    padding-inline: max(var(--marge), env(safe-area-inset-left)) max(var(--marge), env(safe-area-inset-right));
-    background: color-mix(in oklab, var(--lin-haut) 90%, transparent);
-    backdrop-filter: blur(14px) saturate(1.3);
-    -webkit-backdrop-filter: blur(14px) saturate(1.3);
-    border-block-start: 1.5px dashed color-mix(in oklab, var(--encre) 25%, transparent);
+    align-items: center; gap: 0.5rem;
+    padding: 0.6rem max(var(--marge), env(safe-area-inset-right)) calc(0.6rem + env(safe-area-inset-bottom)) max(var(--marge), env(safe-area-inset-left));
+    background: color-mix(in oklab, var(--lin-haut) 92%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-block-start: 1px solid color-mix(in oklab, var(--encre) 18%, transparent);
   }
-  .barre-action .btn { min-height: 3rem; padding: 0.5rem 0.9rem; font-size: 0.95rem; white-space: nowrap; }
-  .barre-action__prix { font-size: 0.75rem; color: var(--gris); line-height: 1.1; }
-  .barre-action__prix b { display: block; font-family: var(--f-titre); font-weight: 400; font-size: 1.5rem; color: var(--encre); }
+  .barre-action .btn { min-height: 3rem; padding: 0.5rem 0.9rem; white-space: nowrap; }
+  .barre-action__prix { font-size: var(--t-micro); color: var(--gris); line-height: 1.1; }
+  .barre-action__prix b { display: block; font-weight: 400; font-size: 1.2rem; color: var(--encre); }
   @media (max-width: 23rem) {
     .barre-action { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
-    .barre-action__prix { display: none; }
-    .barre-action .btn .ico { display: none; }
+    .barre-action__prix, .barre-action .ico { display: none; }
   }
   @media (min-width: 64rem) { .barre-action { display: none; } }
 
-  /* La barre s'efface tant que les boutons du panneau sont à l'écran. */
+  /* La barre s'efface tant que le bouton du haut de page est à l'écran. */
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {
-      .barre-action {
-        animation: barre-cta linear both;
-        animation-timeline: --cta-fiche;
-        animation-range: entry 0% exit 100%;
-      }
+      .barre-action { animation: barre-cta linear both; animation-timeline: --cta-fiche; animation-range: entry 0% exit 100%; }
     }
   }
   @keyframes barre-cta {
-    0%   { transform: none; visibility: visible; }
-    12%  { transform: translateY(110%); visibility: hidden; }
-    88%  { transform: translateY(110%); visibility: hidden; }
-    100% { transform: none; visibility: visible; }
+    0%, 100% { transform: none; visibility: visible; }
+    12%, 88% { transform: translateY(110%); visibility: hidden; }
   }
 </style>

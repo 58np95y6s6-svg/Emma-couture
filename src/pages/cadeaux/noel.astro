@@ -8,17 +8,25 @@
  *
  * ⚠️ MAQUETTE. Prix et délais viennent de src/config.ts et du contenu des
  * créations : provisoires tant qu'Emma ne les a pas confirmés.
+ * Gabarit commun aux quatre pages occasions : HautDePage (fond de l'occasion)
+ * → section propre à l'occasion (ici sur le tapis) → Etapes → créations → FAQ
+ * → AppelFinal.
+ *
  * Vocabulaire : broderie MACHINE. Jamais « brodé à la main ».
  */
 import { Image, getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import HautDePage from '../../components/HautDePage.astro';
+import TeteSection from '../../components/TeteSection.astro';
+import ListeLignes from '../../components/ListeLignes.astro';
+import Etapes from '../../components/Etapes.astro';
 import CarteCreation from '../../components/CarteCreation.astro';
-import { SITE, ATELIER, lienWhatsApp } from '../../config';
+import FAQ from '../../components/FAQ.astro';
+import AppelFinal from '../../components/AppelFinal.astro';
+import { SITE, ATELIER, OCCASIONS, lienWhatsApp } from '../../config';
 
 import photoChaussette from '../../assets/creations/galerie/chaussette-de-noel-brodee-prenom.webp';
-import photoBobines from '../../assets/creations/bandeau/atelier-mur-bobines-fil-broderie-vitre.webp';
-import photoMachine from '../../assets/creations/plein-ecran/machine-a-broder-en-cours-atelier-vitre.webp';
 
 const toutes = (await getCollection('creations', ({ data }) => !data.masquee)).sort(
   (a, b) => a.data.ordre - b.data.ordre,
@@ -30,7 +38,6 @@ const voisines = toutes.filter((c) => !pour.includes(c)).slice(0, 3);
 
 const chaussette = pour[0];
 const prixChaussette = chaussette?.data.prixDepart ?? null;
-const delaiChaussette = chaussette?.data.delaiJours ?? null;
 
 /* ---------------------------------------------------------------------------
    ⚠️ DATE LIMITE DE COMMANDE — À CONFIRMER PAR EMMA.
@@ -50,14 +57,18 @@ const anneeNoel =
 const isoLimite = `${anneeNoel}-11-${String(LIMITE_JOUR).padStart(2, '0')}`;
 const dateLimite = `${LIMITE_JOUR} ${LIMITE_MOIS}`;
 
-const wa = lienWhatsApp(
-  `Bonjour ${SITE.nom}, c'est pour Noël. J'aimerais des pièces brodées au prénom.`,
-);
+const occasion = OCCASIONS.find((o) => o.slug === 'noel')!;
+
+const messageWa = `Bonjour ${SITE.nom}, c'est pour Noël. J'aimerais des pièces brodées au prénom.`;
+const wa = lienWhatsApp(messageWa);
+const lienDevis = '/contact/?occasion=noel#devis';
 
 const og = await getImage({ src: photoChaussette, width: 1200, height: 630, format: 'jpeg' });
 
 const titre = `Chaussette de Noël brodée au prénom, cadeau personnalisé — ${SITE.ville} (35) | ${SITE.nom}`;
 const description = `Chaussette de Noël brodée au prénom et cadeau de Noël personnalisé, brodés à ${SITE.ville} (35)${prixChaussette ? ` dès ${prixChaussette} €` : ''}. Une pièce par personne. Commande avant le ${dateLimite} pour Noël.`;
+
+const fil = [{ nom: 'Cadeau de Noël', url: '/cadeaux/noel/' }];
 
 const faq = [
   {
@@ -71,627 +82,148 @@ const faq = [
   {
     q: 'Combien coûte une chaussette de Noël brodée au prénom ?',
     r: prixChaussette
-      ? `À partir de ${prixChaussette} €${delaiChaussette ? `, et ${delaiChaussette} jours ouvrés une fois le motif validé` : ''}. Pour un pyjama, un plaid ou une boule, le prix dépend du support et de la taille du motif : je vous donne un prix ferme avant de commencer.`
+      ? `À partir de ${prixChaussette} €. Pour un pyjama, un plaid ou une boule, le prix dépend du support et de la taille du motif : je vous donne un prix ferme avant de commencer.`
       : `Le prix dépend du support et de la taille du motif. Je vous donne un prix ferme avant de commencer.`,
   },
   {
-    q: 'Le pyjama et le plaid passent en machine ?',
+    q: 'Le pyjama et le plaid passent-ils en machine ?',
     r: `Oui, à 30 degrés. Le fil polyester ne rétrécit pas et ne déteint pas sur les tissus clairs : la broderie s'entretient comme le vêtement.`,
   },
   {
-    q: 'Je peux vous confier le vêtement ou le plaid à broder ?',
+    q: 'Puis-je vous confier le vêtement ou le plaid à broder ?',
     r: `Oui. Vous pouvez me le remettre en main propre ou me l'envoyer : j'examine le tissu, je vous indique les possibilités de broderie et nous choisissons le fil ensemble. Prévoyez quelques jours supplémentaires pour l'acheminement.`,
   },
 ];
 
-const faqLd = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faq.map((f) => ({
-    '@type': 'Question',
-    name: f.q,
-    acceptedAnswer: { '@type': 'Answer', text: f.r },
-  })),
-};
-
-/* ⚠️ Prénoms d'EXEMPLE — ceux déjà visibles sur les photos du site.
-   La flèche verticale de chaque étiquette dessine la courbe d'une guirlande. */
-const guirlande = ['Malo', 'Alicia', 'Keanu', 'Lisa', 'Ambre'].map((p, i, t) => {
-  const c = (t.length - 1) / 2;
-  return { p, y: (1 - ((i - c) / c) ** 2) * 2.6, r: [-6, 4, -2, 5, -4][i] };
-});
-
 const menu = [
-  { nom: 'La chaussette de cheminée', note: 'prénom brodé sur le revers' },
-  { nom: 'Le pyjama de Noël', note: 'prénom ou initiale sur la poitrine' },
-  { nom: 'Le plaid', note: 'un grand motif, un prénom' },
-  { nom: 'La boule brodée', note: 'en dentelle libre, ou sur feutrine' },
+  { titre: 'La chaussette de cheminée', texte: 'Prénom brodé sur le revers.', meta: prixChaussette ? `dès ${prixChaussette} €` : undefined },
+  { titre: 'Le pyjama de Noël', texte: 'Prénom ou initiale sur la poitrine.' },
+  { titre: 'Le plaid', texte: 'Un grand motif et un prénom.' },
+  { titre: 'La boule brodée', texte: 'En dentelle libre, ou sur feutrine.' },
 ];
 ---
 
-<Base
-  titre={titre}
-  description={description}
-  imageOg={og.src}
-  fil={[{ nom: 'Cadeau de Noël', url: '/cadeaux/noel/' }]}
->
-  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} is:inline />
+<Base titre={titre} description={description} imageOg={og.src} fil={fil}>
+  {/* ⚠️ « Commandes avant le 15 novembre » : date [À CONFIRMER PAR EMMA] (voir LIMITE_JOUR). */}
+  <HautDePage
+    titre="Chaussettes et cadeaux de Noël brodés au prénom"
+    fil={fil}
+    image={photoChaussette}
+    alt="Chaussette de Noël rouge à revers blanc, brodée au prénom et de drapeaux, devant un mur de bobines de fil"
+    fond={occasion.fil}
+    faits={[
+      `Commandes avant le ${dateLimite}`,
+      ...(prixChaussette ? [`La chaussette dès ${prixChaussette} €`] : []),
+      `Délai actuel : ${ATELIER.delaiActuel}`,
+    ]}
+  >
+    <p>
+      Je réalise en broderie machine, dans mon atelier de {SITE.ville}&nbsp;(35), des cadeaux de
+      Noël personnalisés&nbsp;: chaussette de cheminée brodée au prénom, pyjama, plaid, boule. Le
+      motif est validé une seule fois, puis brodé pour chaque membre de la famille. Remise en main
+      propre à {SITE.ville} et à Rennes, envoi soigné partout en France.
+    </p>
+    <a slot="actions" class="btn btn--wa btn--grand" href={wa}>Me contacter sur WhatsApp</a>
+    <a slot="actions" class="btn btn--creux btn--grand" href={lienDevis}>Demander un devis</a>
+  </HautDePage>
 
-  <div class="pg">
-    <!-- ===================== HAUT DE PAGE : LA DATE ===================== -->
-    <section class="bande nl-ouv">
-      <nav class="ariane nl-ariane" aria-label="Fil d'Ariane">
-        <a href="/">Accueil</a><span aria-hidden="true">/</span>
-        <span aria-current="page">Cadeau de Noël</span>
-      </nav>
-
-      <div class="nl-ouv__mot">
-        <h1>Chaussettes et cadeaux de Noël brodés au prénom</h1>
-        <p class="nl-ouv__chapo">
-          Je réalise en broderie machine, dans mon atelier de {SITE.ville}&nbsp;(35), des cadeaux
-          de Noël personnalisés&nbsp;: chaussette de cheminée brodée au prénom, pyjama, plaid, boule.
-          Le motif est validé une seule fois, puis brodé pour chaque membre de la famille. Remise
-          en main propre à {SITE.ville} et à Rennes, envoi soigné partout en France.
-        </p>
-        {
-          prixChaussette && (
-            /* ⚠️ Prix d'exemple, repris du contenu de la création. */
-            <p class="prix prix--clair nl-ouv__prix">
-              La chaussette, à partir de <b>{prixChaussette}&nbsp;€</b>
-            </p>
-          )
-        }
-        <p class="actions">
-          <a class="btn btn--or btn--grand" href={wa}>Réserver sur WhatsApp</a>
-          <a class="btn btn--clair btn--grand" href="/contact/?occasion=noel#devis">Demander un devis</a>
-        </p>
-      </div>
-
-      <div class="nl-ouv__objet">
-        <figure class="nl-ouv__photo">
-          <Image
-            src={photoChaussette}
-            alt="Chaussette de Noël rouge à revers blanc, brodée au prénom et de drapeaux, devant un mur de bobines de fil"
-            widths={[360, 560, 760]}
-            sizes="(max-width: 48rem) 78vw, (max-width: 64rem) 46vw, 26rem"
-            loading="eager"
-            fetchpriority="high"
-            decoding="async"
-          />
-        </figure>
-
-        <!-- L'étiquette cadeau : la date limite, cousue au point avant. -->
-        <p class="nl-tag">
-          <span class="nl-tag__haut">Dernier jour de commande</span>
-          <time class="nl-tag__date" datetime={isoLimite}>
-            <span class="nl-tag__j">{LIMITE_JOUR}</span>
-            <span class="nl-tag__m">{LIMITE_MOIS}</span>
-          </time>
-          <span class="nl-tag__bas">pour une livraison avant le 24&nbsp;décembre</span>
-        </p>
-      </div>
-    </section>
-
-    <!-- ===================== LE CALENDRIER ===================== -->
-    <section class="bande nl-quand">
-      <div class="nl-quand__tete">
-        <h2 class="titre-xl">Le calendrier des commandes de Noël</h2>
-        <p class="mesure">
-          Les commandes de Noël se préparent en novembre&nbsp;: en décembre, l'atelier et les
-          services postaux sont saturés. Délai de réalisation actuel&nbsp;:
-          <b>{ATELIER.delaiActuel}</b>, validation du motif comprise.
-        </p>
-      </div>
-
-      {/* ⚠️ EXEMPLE : découpage en trois périodes à faire valider par Emma.
-          Seule la « mi-novembre » vient de son propre texte. */}
-      <ol class="nl-cal">
-        <li style="--c: var(--olive)">
-          <span class="nl-cal__fil" aria-hidden="true"></span>
-          <p class="nl-cal__quand">Jusqu'au <time datetime={isoLimite}>{dateLimite}</time></p>
-          <p class="nl-cal__etat mono">tout est possible</p>
-          <p>
-            Une série de chaussettes, un plaid, un vêtement que vous me confiez&nbsp;: nous avons le
-            temps de valider le motif et d'y apporter des modifications.
-          </p>
-        </li>
-        <li style="--c: var(--dore)">
-          <span class="nl-cal__fil" aria-hidden="true"></span>
-          <p class="nl-cal__quand">Fin novembre</p>
-          <p class="nl-cal__etat mono">au cas par cas</p>
-          <p>
-            J'étudie chaque demande selon les commandes en cours et je vous réponds clairement, en
-            vous proposant au besoin un autre support plus rapide à réaliser.
-          </p>
-        </li>
-        <li style="--c: var(--fil)">
-          <span class="nl-cal__fil" aria-hidden="true"></span>
-          <p class="nl-cal__quand">En décembre</p>
-          <p class="nl-cal__etat mono">plus de garantie pour le 24</p>
-          <p>
-            Je ne garantis plus la livraison avant le 24&nbsp;décembre. Je reste disponible pour
-            les cadeaux du Nouvel An et des fêtes de début d'année.
-          </p>
-        </li>
-      </ol>
-
-      <p class="actions">
-        <a class="btn btn--wa" href={wa}>Réserver sur WhatsApp</a>
-        <a class="lien-fleche" href="/sur-mesure/">Le déroulement d'une commande</a>
-      </p>
-    </section>
-
-    <!-- ===================== LA SÉRIE : sur le tapis ===================== -->
-    <section class="bande tapis nl-serie">
-      <span class="regle plein" aria-hidden="true"></span>
-      <div class="nl-serie__tete">
-        <h2 class="titre-xl">Une série pour toute la famille</h2>
-        <p class="mesure mesure--clair">
-          C'est la commande de Noël la plus fréquente&nbsp;: la même chaussette pour chaque membre
-          de la famille, avec un prénom différent sur chacune. Vous validez le motif une seule fois,
-          je réalise ensuite toute la série.
-        </p>
-      </div>
-
-      {/* ⚠️ Prénoms d'exemple, repris des photos du site. */}
-      <div class="nl-guirlande">
-        <svg class="nl-guirlande__fil" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
-          <path d="M0 2 Q50 30 100 2" vector-effect="non-scaling-stroke" />
-        </svg>
-        <ul aria-label="Exemple de série : un prénom par chaussette">
-          {
-            guirlande.map((g) => (
-              <li style={`--y:${g.y.toFixed(2)}rem; --r:${g.r}deg`}>
-                <span class="nl-guirlande__p">{g.p}</span>
-                <span class="nl-guirlande__n mono">même motif</span>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </section>
-
-    <!-- ===================== CE QUI SE BRODE ===================== -->
-    <section class="bande nl-menu">
-      <h2 class="titre-xl">Ce que je brode pour les fêtes</h2>
-      <div class="nl-menu__liste">
-        <ul class="fetes">
-          {
-            menu.map((m) => (
-              <li>
-                <span class="fetes__n">{m.nom}</span>
-                <span class="fetes__fil" aria-hidden="true" />
-                <span class="fetes__p">{m.note}</span>
-              </li>
-            ))
-          }
-        </ul>
-        <p class="nl-menu__note">
-          Je brode également les torchons, sacs à pain ou bonnets&nbsp;: tout textile qui peut
-          être tendu dans un cadre de broderie.
-        </p>
-      </div>
-    </section>
-
-    <div class="bandeau nl-bandeau">
-      <Image
-        src={photoBobines}
-        alt="Mur de l'atelier couvert de bobines de fil à broder de toutes les couleurs"
-        widths={[800, 1400, 2000, 2400]}
-        sizes="100vw"
-        loading="lazy"
-        decoding="async"
-      />
-      <p class="bandeau__mot" aria-hidden="true">Le fil choisi avec vous</p>
-    </div>
-
-    <!-- ===================== CRÉATIONS ===================== -->
-    <section class="bande nl-creations loin">
-      <div class="tete tete--duo">
-        <h2 class="titre-xl">Créations de Noël</h2>
-        <div class="nl-creations__dire">
-          <p class="mesure">
-            Une seule pièce de Noël est photographiée pour le moment. Les créations suivantes
-            relèvent d'autres occasions, mais sont réalisées selon le même procédé.
-          </p>
-          <a class="lien-fleche" href="/creations/noel/">Les créations de Noël</a>
-        </div>
-      </div>
-
-      <div class="rangee" tabindex="0" role="region" aria-label="Créations pour Noël, rangée défilante">
-        {pour.map((c, i) => <CarteCreation creation={c} prioritaire={i === 0} />)}
-        {voisines.map((c) => <CarteCreation creation={c} />)}
-        <div class="rangee__fin">
-          <p>Pyjama, plaid et boule brodée</p>
-          <p class="mono">Je vous adresse sur demande des photographies des pièces réalisées.</p>
-          <a class="lien-fleche" href="/creations/">Toutes les créations</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================== FAQ ===================== -->
-    <section class="bande nl-faq loin" id="questions">
-      <h2 class="titre-xl">Questions fréquentes</h2>
-      <div class="faq">
-        {
-          faq.map((f, i) => (
-            <details open={i === 0}>
-              <summary>{f.q}</summary>
-              <p>{f.r}</p>
-            </details>
-          ))
-        }
-      </div>
-    </section>
-
-    <!-- ===================== APPEL FINAL ===================== -->
-    <section class="final bande nl-fin" id="devis">
-      <Image
-        class="final__fond"
-        src={photoMachine}
-        alt=""
-        aria-hidden="true"
-        widths={[800, 1400]}
-        sizes="100vw"
-        loading="lazy"
-        decoding="async"
-      />
-      <div class="final__in">
-        <h2 class="titre-geant">Votre commande de Noël</h2>
+  <!-- ===================== LA SÉRIE (le seul tapis de la page) ===================== -->
+  <section class="bande tapis oc-a" aria-labelledby="serie-titre">
+    <div class="grille">
+      <div class="oc-a__dire">
+        <h2 id="serie-titre">Une série pour toute la famille</h2>
         <p class="chapo">
-          Indiquez-moi les prénoms, même si la liste n'est pas encore complète. Je vous réponds
-          avec un prix, un délai et un motif à valider avant réalisation. Pour une livraison avant
-          le 24&nbsp;décembre, merci de commander avant le <time datetime={isoLimite}>{dateLimite}</time>.
+          C'est la commande de Noël la plus fréquente&nbsp;: la même chaussette pour chaque membre
+          de la famille, avec un prénom différent sur chacune.
         </p>
-        <p class="actions">
-          <a class="btn btn--wa btn--grand" href={wa}>Écrire sur WhatsApp</a>
-          <a class="btn btn--or btn--grand" href="/contact/?occasion=noel#devis">Remplir le formulaire</a>
+        <p class="mesure mesure--clair">
+          Vous validez le motif une seule fois, je réalise ensuite toute la série. Merci de
+          m'envoyer la liste complète des prénoms en une fois, avec leur orthographe exacte.
         </p>
-        <p class="final__note">{ATELIER.delaiReponse} · {ATELIER.zones} · emballage cadeau compris.</p>
       </div>
-    </section>
-  </div>
+      <div class="oc-a__liste">
+        <h3 class="lu-seulement">Ce que je brode pour les fêtes</h3>
+        <ListeLignes lignes={menu} />
+        <p class="oc-a__note">
+          Je brode également les torchons, sacs à pain ou bonnets&nbsp;: tout textile qui peut être
+          tendu dans un cadre de broderie.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== LE CALENDRIER ===================== -->
+  <section class="bande oc-etapes">
+    <TeteSection titre="Le calendrier des commandes de Noël">
+      <p>
+        Les commandes de Noël se préparent en novembre&nbsp;: en décembre, l'atelier et les services
+        postaux sont saturés. Délai de réalisation actuel&nbsp;: {ATELIER.delaiActuel}, validation
+        du motif comprise.
+      </p>
+    </TeteSection>
+    {/* ⚠️ EXEMPLE : découpage en trois périodes à faire valider par Emma.
+        Seule la « mi-novembre » vient de son propre texte. */}
+    <Etapes
+      etapes={[
+        {
+          titre: `Jusqu'au ${dateLimite}`,
+          texte:
+            "Tout est possible : une série de chaussettes, un plaid, un vêtement que vous me confiez. Nous avons le temps de valider le motif et d'y apporter des modifications.",
+        },
+        {
+          titre: 'Fin novembre',
+          texte:
+            "J'étudie chaque demande selon les commandes en cours et je vous réponds clairement, en vous proposant au besoin un autre support plus rapide à réaliser.",
+        },
+        {
+          titre: 'En décembre',
+          texte:
+            "Je ne garantis plus la livraison avant le 24 décembre. Je reste disponible pour les cadeaux du Nouvel An et des fêtes de début d'année.",
+        },
+      ]}
+    />
+    <p class="actions oc-etapes__suite">
+      <a class="lien-fleche" href="/sur-mesure/">Le déroulement d'une commande</a>
+    </p>
+  </section>
+
+  <!-- ===================== CRÉATIONS ===================== -->
+  <section class="bande oc-creations loin">
+    <TeteSection titre="Créations de Noël" variante="duo">
+      <p>
+        Une seule pièce de Noël est photographiée pour le moment. Les créations suivantes relèvent
+        d'autres occasions, mais sont réalisées selon le même procédé. Je vous adresse sur demande
+        des photographies des pyjamas, plaids et boules déjà réalisés.
+      </p>
+      <a slot="lien" class="lien-fleche" href="/creations/noel/">Les créations de Noël</a>
+    </TeteSection>
+    <div class="rangee" tabindex="0" role="region" aria-label="Créations pour Noël, rangée défilante">
+      {pour.map((c) => <CarteCreation creation={c} />)}
+      {voisines.map((c) => <CarteCreation creation={c} />)}
+    </div>
+  </section>
+
+  <FAQ questions={faq} />
+
+  <AppelFinal titre="Votre commande de Noël" messageWa={messageWa} lienDevis={lienDevis}>
+    <p>
+      Indiquez-moi les prénoms, même si la liste n'est pas encore complète. Je vous réponds avec un
+      prix, un délai et un motif à valider avant réalisation. Pour une livraison avant le
+      24&nbsp;décembre, merci de commander avant le <time datetime={isoLimite}>{dateLimite}</time>.
+    </p>
+  </AppelFinal>
 </Base>
 
 <style>
-  /* Le fil de la page : rouge de Noël #B03A52.
-     Contrastes vérifiés : blanc / lin-haut dessus ≈ 5,8:1 (AA) ; ce rouge sur
-     le lin ≈ 4,9:1 (AA, texte courant). */
-  .pg { --fil: #B03A52; --fil-sombre: #7E2238; }
-
-  /* ============================ HAUT DE PAGE ============================ */
-  .nl-ouv {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
-    color: var(--lin-haut);
-    background-color: var(--fil);
-    /* Un velours : lumière chaude en haut à gauche, creux sombre en bas. */
-    background-image:
-      radial-gradient(70% 60% at 12% 0%, color-mix(in oklab, var(--rose) 28%, transparent), transparent 70%),
-      radial-gradient(80% 70% at 100% 100%, color-mix(in oklab, var(--fil-sombre) 85%, transparent), transparent 70%);
-    padding-block: clamp(1rem, 3vw, 2rem) clamp(3rem, 8vw, 6rem);
-    row-gap: clamp(1.5rem, 4vw, 3rem);
-    margin-block-start: -4.4rem;      /* passe sous l'en-tête flottant */
-    padding-block-start: calc(4.4rem + clamp(1rem, 3vw, 2rem));
-  }
-  /* Grain de feutrine, à peine visible */
-  .nl-ouv::before {
-    content: ''; position: absolute; inset: 0; z-index: -1;
-    background-image: var(--grain); background-size: 240px;
-    mix-blend-mode: soft-light; opacity: 0.5; pointer-events: none;
-  }
-  .nl-ariane { color: color-mix(in oklab, var(--lin-haut) 80%, transparent); }
-  .nl-ariane [aria-current] { color: var(--lin-haut); }
-  .nl-ariane a:hover { color: var(--lin-haut); }
-  .nl-ouv :focus-visible { outline-color: var(--lin-haut); }
-
-  .nl-ouv__mot { display: grid; gap: clamp(1rem, 2.2vw, 1.6rem); justify-items: start; }
-  .nl-ouv h1 { max-width: 12ch; }
-  .nl-ouv__chapo {
-    font-size: var(--t-chapo); line-height: 1.45;
-    max-width: 33rem;
-    color: color-mix(in oklab, var(--lin-haut) 92%, transparent);
-    text-wrap: pretty;
-  }
-  .nl-ouv__prix { color: color-mix(in oklab, var(--lin-haut) 85%, transparent); }
-  .nl-ouv .btn--or { --survol: var(--encre); }
-  .nl-ouv .btn--or:hover, .nl-ouv .btn--or:focus-visible { color: var(--lin-haut); }
-
-  /* L'objet : la photo en arche, l'étiquette accrochée devant */
-  .nl-ouv__objet {
-    position: relative;
-    display: grid;
-    width: min(100%, 30rem);
-    justify-self: center;
-    padding-block-end: 3rem;
-  }
-  .nl-ouv__photo { grid-area: 1 / 1; width: 74%; justify-self: end; }
-  .nl-ouv__photo :global(img) {
-    width: 100%; aspect-ratio: 4 / 5; object-fit: cover;
-    border-radius: 999px 999px var(--r-m) var(--r-m);
-    box-shadow: 0 40px 70px -40px #000;
-  }
-
-  .nl-tag {
-    grid-area: 1 / 1;
-    align-self: end; justify-self: start;
-    position: relative;
-    z-index: 2;
-    margin-block-end: -3rem;
-    display: grid; justify-items: start; gap: 0.15rem;
-    width: min(48%, 14rem);
-    padding: 1.7rem 1.2rem 1.1rem 1.3rem;
-    background: var(--lin-haut);
-    color: var(--encre);
-    border-radius: var(--r-s) var(--r-s) var(--r-s) var(--r-l);
-    /* Le point avant, cousu à 7 px du bord */
-    outline: 2px dashed color-mix(in oklab, var(--fil) 70%, transparent);
-    outline-offset: -9px;
-    box-shadow: 0 26px 40px -22px color-mix(in oklab, #000 70%, transparent);
-    transform: rotate(-5deg);
-    transform-origin: 30% -2rem;
-  }
-  /* L'œillet et la ficelle */
-  .nl-tag::before {
-    content: ''; position: absolute;
-    inset-block-start: 0.65rem; inset-inline-start: 1.3rem;
-    width: 0.7rem; height: 0.7rem; border-radius: 50%;
-    background: var(--fil);
-    box-shadow: inset 0 0 0 2px var(--dore);
-  }
-  .nl-tag::after {
-    content: ''; position: absolute;
-    inset-block-end: calc(100% - 1rem); inset-inline-start: calc(1.3rem + 0.32rem);
-    width: 2px; height: 5.5rem;
-    background: repeating-linear-gradient(180deg, var(--dore) 0 7px, transparent 7px 11px);
-    transform-origin: 50% 100%;
-    transform: rotate(18deg);
-  }
-  .nl-tag__haut, .nl-tag__bas {
-    font-family: var(--f-mono); font-size: var(--t-micro); line-height: 1.35;
-    color: var(--encre-doux);
-  }
-  .nl-tag__date { display: grid; line-height: 0.8; color: var(--fil); }
-  .nl-tag__j {
-    font-family: var(--f-titre);
-    font-size: clamp(5.5rem, 4rem + 6vw, 8.5rem);
-    letter-spacing: -0.05em;
-  }
-  .nl-tag__m {
-    font-family: var(--f-titre);
-    font-size: clamp(1.9rem, 1.5rem + 1.6vw, 2.6rem);
-    letter-spacing: -0.02em;
-    margin-block: -0.1em 0.4rem;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .nl-tag { animation: balance 2.4s var(--sortie) 300ms both; }
-    .nl-ouv__photo { animation: monte-arche 1100ms var(--sortie) both; }
-  }
-  @keyframes balance {
-    0% { transform: rotate(14deg); }
-    35% { transform: rotate(-11deg); }
-    65% { transform: rotate(-2deg); }
-    100% { transform: rotate(-5deg); }
-  }
-  @keyframes monte-arche {
-    from { clip-path: inset(100% 0 0 0 round 999px 999px 0 0); }
-    to { clip-path: inset(0 0 0 0 round 999px 999px 0 0); }
-  }
-
-  @media (min-width: 48rem) {
-    .nl-ouv {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.56)) [mi] minmax(0, calc(var(--large) * 0.44))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      column-gap: clamp(1.5rem, 4vw, 4rem);
-      align-items: center;
-    }
-    .nl-ariane { grid-column: large-d / large-f; }
-    .nl-ouv__mot { grid-column: large-d / mi; }
-    .nl-ouv__objet { grid-column: mi / large-f; }
-  }
+  /* Gabarit commun aux pages occasions (mêmes classes oc-* sur les quatre). */
+  .oc-a .grille { row-gap: 2.5rem; }
+  .oc-a__dire { display: grid; gap: 1.25rem; align-content: start; }
+  .oc-a__note { margin-block-start: 1.25rem; font-size: var(--t-petit); opacity: 0.88; }
+  .oc-etapes { padding-block: var(--respire) var(--serre); }
+  .oc-etapes__suite { margin-block-start: 1.5rem; }
+  .oc-creations { padding-block: var(--serre); }
   @media (min-width: 64rem) {
-    .nl-ouv { min-height: min(100svh, 56rem); align-content: center; }
-    .nl-ouv h1 { font-size: clamp(4rem, 1rem + 5.2vw, 7.2rem); }
+    .oc-a__dire { grid-column: 1 / span 5; }
+    .oc-a__liste { grid-column: 6 / -1; }
   }
-
-  /* ============================ LE CALENDRIER ============================ */
-  .nl-quand {
-    padding-block: var(--respire) var(--serre);
-    row-gap: clamp(2rem, 4.5vw, 3.5rem);
-  }
-  .nl-quand__tete { display: grid; gap: 1.1rem; }
-  .nl-quand b { font-weight: 500; }
-
-  .nl-cal { display: grid; gap: clamp(1.6rem, 3vw, 2.4rem); }
-  .nl-cal > li { display: grid; gap: 0.45rem; align-content: start; max-width: 28rem; }
-  /* Un fil épais, cousu au point avant, dans la couleur de la période :
-     vert = possible, doré = incertain, rouge = non garanti. */
-  .nl-cal__fil {
-    display: block; height: 6px; margin-block-end: 0.8rem;
-    border-radius: 3px;
-    background: repeating-linear-gradient(90deg, var(--c) 0 22px, transparent 22px 30px);
-    transform-origin: 0 50%;
-  }
-  .nl-cal__quand {
-    font-family: var(--f-titre);
-    font-size: clamp(2rem, 1.4rem + 2.2vw, 3.2rem);
-    line-height: 1; letter-spacing: -0.02em;
-  }
-  .nl-cal__etat {
-    font-size: var(--t-micro);
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    color: var(--encre-doux);
-  }
-  .nl-cal__etat::before { content: ''; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--c); }
-  .nl-cal > li > p:last-child { color: var(--encre-doux); }
-  @media (min-width: 56rem) {
-    .nl-cal { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 0; }
-    .nl-cal > li { padding-inline-end: clamp(1.5rem, 3vw, 3rem); max-width: none; }
-    .nl-cal__fil { margin-inline-end: calc(-1 * clamp(1.5rem, 3vw, 3rem)); border-radius: 0; }
-    .nl-quand__tete { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); align-items: end; column-gap: 4rem; }
-  }
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .nl-cal__fil { animation: tire linear both; animation-timeline: view(); animation-range: entry 10% cover 40%; }
-      .nl-cal > li:nth-child(2) .nl-cal__fil { animation-range: entry 25% cover 48%; }
-      .nl-cal > li:nth-child(3) .nl-cal__fil { animation-range: entry 40% cover 56%; }
-    }
-  }
-  @keyframes tire { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-
-  /* ============================ LA SÉRIE ============================ */
-  .nl-serie { padding-block: 0 var(--respire); row-gap: clamp(2.5rem, 6vw, 4.5rem); }
-  .nl-serie .regle { margin-block-end: clamp(2rem, 6vw, 5rem); }
-  .nl-serie__tete { display: grid; gap: 1.1rem; }
-  @media (min-width: 48rem) { .nl-serie__tete { justify-items: end; text-align: end; } }
-  .nl-serie__tete .titre-xl { max-width: 15ch; }
-  .nl-serie__tete .mesure { max-width: 30rem; }
-
-  .nl-guirlande { position: relative; }
-  .nl-guirlande__fil { display: none; }
-  .nl-guirlande ul {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(8.5rem, 100%), 1fr));
-    gap: 1.2rem 0.9rem;
-  }
-  .nl-guirlande li {
-    position: relative;
-    display: grid; justify-items: center; gap: 0.2rem;
-    padding: 1.5rem 0.8rem 0.9rem;
-    border-radius: var(--r-s) var(--r-s) var(--r-m) var(--r-m);
-    background: var(--lin-haut);
-    color: var(--encre);
-    outline: 1.5px dashed color-mix(in oklab, var(--fil) 55%, transparent);
-    outline-offset: -6px;
-    transform: rotate(calc(var(--r) * 0.5));
-  }
-  .nl-guirlande li::before {
-    content: ''; position: absolute; inset-block-start: 0.5rem; inset-inline-start: 50%;
-    width: 0.55rem; height: 0.55rem; margin-inline-start: -0.275rem; border-radius: 50%;
-    background: var(--tapis);
-  }
-  .nl-guirlande__p {
-    font-family: var(--f-titre);
-    font-size: clamp(1.9rem, 1.4rem + 2vw, 3rem);
-    line-height: 1; color: var(--fil);
-  }
-  .nl-guirlande__n { font-size: var(--t-micro); color: var(--gris); }
-
-  @media (min-width: 48rem) {
-    .nl-guirlande { padding-block-start: 1rem; }
-    .nl-guirlande__fil {
-      display: block; position: absolute; inset: 0 -2% auto; width: 104%; height: 5.6rem;
-      overflow: visible;
-    }
-    .nl-guirlande__fil path {
-      fill: none; stroke: var(--dore); stroke-width: 2; stroke-dasharray: 7 5;
-    }
-    .nl-guirlande ul { display: flex; justify-content: space-between; gap: 0.8rem; }
-    .nl-guirlande li {
-      flex: 0 1 11rem;
-      margin-block-start: calc(var(--y) + 0.4rem);
-      transform-origin: 50% -1.2rem;
-      transform: rotate(var(--r));
-    }
-  }
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) and (min-width: 48rem) {
-      .nl-guirlande li { animation: accroche linear both; animation-timeline: view(); animation-range: entry 0% cover 45%; }
-    }
-  }
-  @keyframes accroche {
-    from { transform: translateY(-2.5rem) rotate(calc(var(--r) * -3)); }
-    to { transform: rotate(var(--r)); }
-  }
-
-  /* ============================ LE MENU ============================ */
-  .nl-menu { padding-block: var(--serre) clamp(2.5rem, 6vw, 4.5rem); row-gap: 2rem; }
-  .nl-menu .titre-xl { max-width: 13ch; }
-  .nl-menu__liste { display: grid; gap: 1.2rem; }
-  @media (min-width: 64rem) {
-    .nl-menu {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.42)) [mi] minmax(0, calc(var(--large) * 0.58))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      align-items: end;
-    }
-    .nl-menu .titre-xl { grid-column: large-d / mi; }
-    .nl-menu__liste { grid-column: mi / large-f; padding-inline-start: 3rem; }
-  }
-  .fetes { display: grid; }
-  .fetes > li {
-    display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2rem 0.7rem;
-    padding-block: 0.9rem;
-    border-block-end: 1px solid color-mix(in oklab, var(--encre) 14%, transparent);
-  }
-  .fetes__n { font-family: var(--f-titre); font-size: clamp(1.4rem, 1.15rem + 1vw, 2rem); line-height: 1.1; }
-  .fetes__fil {
-    flex: 1 1 2rem; min-inline-size: 1.5rem; align-self: center;
-    border-block-end: 2px dotted color-mix(in oklab, var(--fil) 55%, transparent);
-  }
-  .fetes__p { font-family: var(--f-mono); font-size: var(--t-micro); color: var(--gris); }
-  @media (max-width: 33.999rem) {
-    .fetes__fil { display: none; }
-    .fetes__p { flex-basis: 100%; }
-  }
-  .nl-menu__note { color: var(--encre-doux); max-width: 30rem; }
-
-  .nl-bandeau .bandeau__mot { inset-inline: auto var(--marge); text-align: end; max-width: 16ch; font-style: normal; text-wrap: balance; }
-
-  /* ============================ CRÉATIONS ============================ */
-  .nl-creations { padding-block: var(--respire) var(--serre); row-gap: clamp(2rem, 4vw, 3rem); }
-  .nl-creations__dire { display: grid; gap: 0.8rem; justify-items: start; }
-  .rangee__fin {
-    display: grid; align-content: center; gap: 0.9rem;
-    padding: clamp(1.4rem, 3vw, 2rem);
-    border-radius: var(--r-l);
-    border: 1.5px dashed color-mix(in oklab, var(--fil) 45%, transparent);
-    scroll-snap-align: start;
-  }
-  .rangee__fin p:first-child { font-family: var(--f-titre); font-size: clamp(1.6rem, 1.3rem + 1vw, 2.2rem); line-height: 1.05; }
-  .rangee__fin .mono { font-size: var(--t-micro); color: var(--encre-doux); }
-
-  /* ============================ FAQ ============================ */
-  .nl-faq { padding-block: var(--serre) var(--respire); row-gap: 2rem; }
-  @media (min-width: 64rem) {
-    .nl-faq {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.36)) [mi] minmax(0, calc(var(--large) * 0.64))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      align-items: start;
-    }
-    .nl-faq .titre-xl { grid-column: large-d / mi; position: sticky; top: 7rem; font-size: clamp(3rem, 1rem + 3.4vw, 4.6rem); }
-    .nl-faq .faq { grid-column: mi / large-f; }
-  }
-  .faq { display: grid; border-block-start: 1.5px solid var(--encre); }
-  .faq details { border-block-end: 1px solid color-mix(in oklab, var(--encre) 18%, transparent); }
-  .faq summary {
-    display: flex; align-items: baseline; gap: 1rem;
-    min-height: 44px; padding-block: 1.1rem;
-    cursor: pointer; list-style: none;
-    font-family: var(--f-titre);
-    font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.85rem); line-height: 1.15;
-  }
-  .faq summary::-webkit-details-marker { display: none; }
-  .faq summary::after {
-    content: '+'; margin-inline-start: auto; flex: none;
-    font-family: var(--f-mono); font-size: 1.2rem; color: var(--fil);
-    transition: transform 300ms var(--sortie);
-  }
-  .faq details[open] summary::after { transform: rotate(45deg); }
-  .faq summary:hover { color: var(--fil); }
-  .faq details p { padding-block-end: 1.3rem; max-width: 40rem; color: var(--encre-doux); }
-
-  /* ============================ APPEL FINAL ============================ */
-  .nl-fin { background: var(--fil); }
-  .nl-fin .titre-geant { max-width: 12ch; }
-  .nl-fin .chapo { max-width: 34rem; }
-  .nl-fin time { white-space: nowrap; }
-  .nl-fin .btn--wa { --texte: var(--fil-sombre); }
 </style>

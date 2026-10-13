@@ -19,6 +19,7 @@
 import { Image, getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import HautDePage from '../components/HautDePage.astro';
 import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
 
 import ogSource from '../assets/creations/og/atelier-mur-bobines-fil-broderie-vitre.webp';
@@ -80,6 +81,7 @@ const OCCASIONS_FORM = [
   'Pas d’occasion particulière',
 ];
 
+const fil = [{ nom: 'Contact', url: '/contact/' }];
 const titre = `Contact et devis · broderie personnalisée à ${SITE.ville} | ${SITE.nom}`;
 const description = `Décrivez votre projet de broderie personnalisée ou de couture sur mesure en quelques questions courtes : je vous réponds avec un prix et un délai. WhatsApp, e-mail ou téléphone. ${SITE.ville}, Rennes et toute la France.`;
 ---
@@ -88,7 +90,7 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
   titre={titre}
   description={description}
   imageOg={og.src}
-  fil={[{ nom: 'Contact', url: '/contact/' }]}
+  fil={fil}
 >
   {/* Données de pré-remplissage : lues par le script en bas de page. */}
   <script
@@ -116,32 +118,22 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
     }
   </template>
 
-  <section class="bande ct" id="devis">
-    <nav class="ariane ct-ariane" aria-label="Fil d'Ariane">
-      <a href="/">Accueil</a>
-      <span aria-hidden="true">/</span>
-      <span aria-current="page">Contact</span>
-    </nav>
+  <HautDePage
+    titre="Contact et demande de devis"
+    fil={fil}
+    faits={[ATELIER.delaiReponse, `Délai actuel : ${ATELIER.delaiActuel}`, 'Sans engagement']}
+  >
+    <p>
+      Décrivez-moi votre projet de broderie personnalisée ou de couture sur mesure en quelques
+      questions courtes. Je vous réponds avec un prix, un délai de réalisation et une
+      proposition. Atelier à {SITE.ville}&nbsp;(35), remise en main propre à {SITE.ville} et à
+      Rennes, envoi dans toute la France.
+    </p>
+    <a slot="actions" class="lien-fleche" href={lienWhatsApp()}>Je préfère écrire sur WhatsApp</a>
+  </HautDePage>
 
-    <!-- ===================== OUVERTURE ===================== -->
-    <div class="ct-tete">
-      <h1>Contact et demande de devis</h1>
-      <p class="chapo">
-        Décrivez-moi votre projet de broderie personnalisée ou de couture sur mesure en quelques
-        questions courtes. Je vous réponds avec un prix, un délai de réalisation et une
-        proposition. Atelier à {SITE.ville}&nbsp;(35), remise en main propre à {SITE.ville} et à
-        Rennes, envoi dans toute la France.
-      </p>
-      <ul class="rassure">
-        <li><b>{ATELIER.delaiReponse}</b></li>
-        <li>Délai actuel&nbsp;: <b>{ATELIER.delaiActuel}</b></li>
-        <li>Sans engagement</li>
-      </ul>
-      <p class="ct-tete__wa">
-        <a class="lien-fleche" href={lienWhatsApp()}>Je préfère écrire sur WhatsApp</a>
-      </p>
-    </div>
-
+  <section class="bande ct" id="devis" aria-label="Formulaire de demande de devis">
+    <div class="grille">
     <!-- ===================== LE FORMULAIRE ===================== -->
     <div class="ct-form__hote">
       {
@@ -180,7 +172,7 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
         <input type="hidden" name="creation_url" value="" />
         <input type="hidden" name="creation_image" value="" />
 
-        <!-- Vignette de la pièce concernée, cadrée dans un tambour -->
+        <!-- Vignette de la pièce concernée -->
         <div class="ct-piece" id="ct-piece" hidden>
           <div class="ct-piece__img" id="ct-piece-img"></div>
           <div class="ct-piece__txt">
@@ -428,26 +420,17 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
     </div>
 
     <!-- ===================== AUTRES MOYENS ===================== -->
-    <aside class="ct-aside tapis" aria-labelledby="ct-aside-titre">
-      <h2 class="ct-aside__h2" id="ct-aside-titre">Autres moyens de me contacter</h2>
+    <aside class="ct-aside" aria-labelledby="ct-aside-titre">
+      <h2 id="ct-aside-titre">Autres moyens</h2>
       <p class="ct-aside__p">
         Le formulaire n'est pas obligatoire&nbsp;: un simple message suffit pour commencer.
       </p>
 
-      <ul class="ct-canaux">
-        <li>
-          <a class="btn btn--wa" href={lienWhatsApp()}>
-            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"
-              ><path
-                d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"
-              /></svg
-            >
-            Écrire sur WhatsApp
-          </a>
-        </li>
-        <li><a class="btn btn--creux" href={`tel:${CONTACT.telephone}`}>Appeler le {CONTACT.telephone}</a></li>
-        <li><a class="btn btn--creux" href={`mailto:${CONTACT.email}`}>Envoyer un e-mail</a></li>
-      </ul>
+      <p class="ct-canaux">
+        <a class="btn btn--wa" href={lienWhatsApp()}>Écrire sur WhatsApp</a>
+        <a class="btn btn--creux" href={`tel:${CONTACT.telephone}`}>Appeler le {CONTACT.telephone}</a>
+        <a class="btn btn--creux" href={`mailto:${CONTACT.email}`}>Envoyer un e-mail</a>
+      </p>
 
       <dl class="ct-infos">
         <div>
@@ -475,9 +458,10 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
       </dl>
 
       <p>
-        <a class="lien-fleche lien-fleche--clair" href="/sur-mesure/#questions">Questions fréquentes</a>
+        <a class="lien-fleche" href="/sur-mesure/#faq-titre">Questions fréquentes</a>
       </p>
     </aside>
+    </div>
   </section>
 </Base>
 
@@ -701,475 +685,162 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
   }
 </script>
 <style>
-  /* ==========================================================================
-     /contact/ — styles propres à la page. Préfixe `ct-`.
-
-     ⚠️ Piège connu du projet : une classe qui pose `display: grid` écrase le
-     `display: none` de l'attribut [hidden]. Chaque bloc masquable a donc sa
-     règle [hidden] explicite.
-     ========================================================================== */
-
-  /* --- Mise en page : une seule section ---------------------------------
-     Téléphone : titre → formulaire → autres moyens (ordre du DOM).
-     Ordinateur : titre et autres moyens à gauche, formulaire à droite,
-     visible dès l'arrivée sans défiler. */
-  .ct {
-    padding-block: clamp(0.5rem, 2vw, 1.5rem) var(--respire);
-    row-gap: clamp(1.5rem, 4vw, 2.5rem);
-    align-items: start;
-  }
+  /* /contact/ — préfixe `ct-`. Chaque bloc masquable a sa règle [hidden]
+     explicite (un `display` l'écraserait sinon). */
+  .ct { padding-block: 0 var(--respire); }
+  .ct .grille { row-gap: var(--serre); align-items: start; }
   @media (min-width: 64rem) {
-    .ct {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.4)) [mi] minmax(0, calc(var(--large) * 0.6))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      grid-template-rows: auto auto 1fr;
-    }
-    .ct-ariane { grid-column: large-d / large-f; grid-row: 1; }
-    .ct-tete { grid-column: large-d / mi; grid-row: 2; padding-inline-end: clamp(2rem, 4vw, 4rem); }
-    .ct-aside { grid-column: large-d / mi; grid-row: 3; margin-inline-end: clamp(2rem, 4vw, 4rem); }
-    .ct-form__hote { grid-column: mi / large-f; grid-row: 2 / span 2; }
+    .ct-aside { grid-column: 1 / span 4; grid-row: 1; }
+    .ct-form__hote { grid-column: 6 / -1; grid-row: 1; }
   }
 
-  /* --- Ouverture -------------------------------------------------------- */
-  .ct-tete {
-    display: grid;
-    gap: clamp(1rem, 2vw, 1.4rem);
-    justify-items: start;
-  }
-  .ct-tete h1 {
-    font-size: clamp(2.9rem, 1.6rem + 4.4vw, 5.6rem);
-    max-width: 11ch;
-  }
-  .ct-tete .chapo { font-size: clamp(1.1rem, 1rem + 0.4vw, 1.3rem); }
-  @media (min-width: 64rem) { .ct-tete__wa { display: none; } }
-
-  /* --- Le formulaire : une fiche de commande ---------------------------- */
+  /* --- Le formulaire ---------------------------------------------------- */
   .ct-alerte {
     font-size: var(--t-petit);
-    background: color-mix(in oklab, var(--dore) 35%, var(--lin-haut));
-    border-inline-start: 3px solid var(--coquelicot);
-    padding: 0.85rem 1.05rem;
-    border-radius: 0 var(--r-s) var(--r-s) 0;
-    margin-block-end: 1.2rem;
+    padding: 0.85rem 1rem;
+    border-inline-start: 2px solid var(--coquelicot);
+    background: var(--papier);
+    margin-block-end: 1rem;
   }
-
   .ct-form {
     position: relative;
     display: grid;
     gap: clamp(1.3rem, 3vw, 1.9rem);
+    padding: clamp(1.25rem, 4vw, 2.5rem);
     background: var(--papier);
-    border-radius: var(--r-l);
-    padding: clamp(1.25rem, 4vw, 2.75rem);
-    min-width: 0;
-    box-shadow:
-      0 1px 0 color-mix(in oklab, var(--encre) 6%, transparent),
-      0 40px 70px -45px color-mix(in oklab, var(--encre) 55%, transparent);
-    /* L'en-tête est collant : sans cette marge, le haut du formulaire
-       passerait dessous à chaque changement d'étape. */
+    border-radius: var(--r-m);
+    /* L'en-tête est collant : le haut du formulaire ne doit pas passer dessous. */
     scroll-margin-block-start: 5.5rem;
   }
-  /* une couture en point avant tout autour de la fiche */
-  .ct-form::before {
-    content: '';
-    position: absolute;
-    inset: 9px;
-    border: 1.5px dashed color-mix(in oklab, var(--coquelicot) 32%, transparent);
-    border-radius: calc(var(--r-l) - 7px);
-    pointer-events: none;
-  }
-  @media (max-width: 26rem) {
-    .ct-form { margin-inline: calc(var(--marge) * -0.5); }
-  }
+  .ct-leurre { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-  /* Le leurre anti-spam : hors écran, jamais dans le parcours clavier. */
-  .ct-leurre {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  /* --- Vignette de la création rattachée, dans un tambour --------------- */
+  /* Vignette de la création rattachée */
   .ct-piece {
-    --bois: #C9A97E;
-    --bois-fonce: #8A6A46;
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.5rem 1.2rem;
-    align-items: center;
-    padding: 1rem 1.1rem 1rem 1.3rem;
-    background: var(--rose);
-    border-radius: var(--r-m);
+    display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 1rem; align-items: center;
+    padding-block-end: 1.25rem;
+    border-block-end: 1px solid color-mix(in oklab, currentColor 18%, transparent);
   }
   .ct-piece[hidden] { display: none; }
-  .ct-piece__img {
-    width: clamp(4.75rem, 18vw, 6rem);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    overflow: hidden;
-    background: var(--lin-bas);
-    box-shadow:
-      0 0 0 5px var(--bois),
-      0 0 0 6.5px var(--bois-fonce),
-      0 0 0 9px var(--bois),
-      0 14px 24px -12px color-mix(in oklab, var(--encre) 60%, transparent);
-    margin: 9px;
-  }
-  .ct-piece__img :global(img) {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .ct-piece:not([hidden]) .ct-piece__img { animation: ct-tend 900ms var(--sortie) both; }
-  }
-  @keyframes ct-tend { from { transform: scale(0.8) rotate(-12deg); opacity: 0.001; } }
+  .ct-piece__img { aspect-ratio: 1; border-radius: var(--r-m); overflow: hidden; background: var(--lin-bas); }
+  .ct-piece__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
   .ct-piece__txt { display: grid; gap: 0.2rem; min-width: 0; }
   .ct-piece__quoi { font-size: var(--t-petit); color: var(--encre-doux); }
-  .ct-piece__titre {
-    font-family: var(--f-titre);
-    font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem);
-    line-height: 1.05;
-    color: var(--encre);
+  .ct-piece__titre { font-family: var(--f-titre); font-size: var(--t-h3); line-height: 1.1; }
+  .ct-piece__liens { display: flex; flex-wrap: wrap; gap: 0 1.2rem; font-size: var(--t-petit); }
+  .ct-piece__liens a, .ct-piece__non {
+    min-height: 2.75rem; display: inline-flex; align-items: center;
+    font: inherit; color: var(--encre); background: none; border: 0; padding: 0; cursor: pointer;
+    text-decoration: underline; text-underline-offset: 4px;
   }
-  .ct-piece__liens {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0 1.2rem;
-    font-size: var(--t-petit);
-  }
-  .ct-piece__liens a,
-  .ct-piece__non {
-    min-height: 2.75rem;
-    display: inline-flex;
-    align-items: center;
-    font: inherit;
-    color: var(--encre);
-    background: none;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    text-decoration-color: color-mix(in oklab, var(--coquelicot-fonce) 60%, transparent);
-  }
-  .ct-piece__liens a:hover,
-  .ct-piece__non:hover { color: var(--coquelicot-fonce); }
+  .ct-piece__liens a:hover, .ct-piece__non:hover { color: var(--coquelicot-fonce); }
 
-  /* --- Jauge : un fil en point avant qui se brode d'étape en étape ------ */
-  .ct-jauge {
-    --part: 0.125;
-    display: grid;
-    gap: 0.6rem;
-    font-size: var(--t-petit);
-    color: var(--encre-doux);
-    position: relative;
-  }
+  /* Jauge : barre pleine et fine */
+  .ct-jauge { --part: 0.125; display: grid; gap: 0.6rem; font-size: var(--t-petit); color: var(--encre-doux); }
   .ct-jauge[hidden] { display: none; }
-  .ct-jauge::before,
+  .ct-jauge::before, .ct-jauge::after { content: ''; grid-area: 2 / 1; height: 2px; }
+  .ct-jauge::before { background: color-mix(in oklab, var(--encre) 15%, transparent); }
   .ct-jauge::after {
-    content: '';
-    grid-row: 2;
-    grid-column: 1;
-    height: 3px;
-    border-radius: 2px;
-    background: repeating-linear-gradient(90deg, currentColor 0 10px, transparent 10px 16px);
-  }
-  .ct-jauge::before { color: color-mix(in oklab, var(--encre) 16%, transparent); }
-  .ct-jauge::after {
-    color: var(--coquelicot);
-    transform: scaleX(var(--part));
-    transform-origin: left;
-    transition: transform 520ms var(--sortie);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .ct-jauge::after { transition: none; }
+    background: var(--coquelicot);
+    transform: scaleX(var(--part)); transform-origin: left;
+    transition: transform 400ms var(--sortie);
   }
 
-  /* --- Une étape -------------------------------------------------------- */
+  /* Une étape */
   .ct-pas { display: grid; min-width: 0; }
   .ct-pas[hidden] { display: none; }
-  @media (prefers-reduced-motion: no-preference) {
-    .ct-form--etapes .ct-pas:not([hidden]) { animation: ct-pas 500ms var(--sortie) both; }
-  }
-  @keyframes ct-pas { from { opacity: 0.001; transform: translateX(18px); } }
-
-  .ct-champ {
-    border: 0;
-    margin: 0;
-    padding: 0;
-    min-width: 0;
-    display: grid;
-    gap: 0.9rem;
-  }
+  .ct-champ { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 0.9rem; }
   .ct-champ:focus { outline: none; }
   .ct-champ > legend {
-    padding: 0;
-    font-family: var(--f-titre);
-    font-size: clamp(1.8rem, 1.3rem + 1.8vw, 2.7rem);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-    color: var(--encre);
-    margin-block-end: 0.3rem;
+    padding: 0; margin-block-end: 0.3rem;
+    font-family: var(--f-titre); font-size: var(--t-h3); line-height: 1.1;
     text-wrap: balance;
   }
-  .ct-facultatif {
-    font-family: var(--f-texte);
-    font-size: var(--t-petit);
-    font-weight: 400;
-    letter-spacing: 0;
-    color: var(--gris);
-    margin-inline-start: 0.35rem;
-    vertical-align: 0.2em;
-  }
-  .ct-aide {
-    font-size: var(--t-corps);
-    line-height: 1.55;
-    color: var(--encre-doux);
-    max-width: 36rem;
-  }
+  .ct-facultatif, .ct-oblig { font-family: var(--f-texte); font-size: var(--t-petit); color: var(--gris); margin-inline-start: 0.35rem; }
+  .ct-oblig { color: var(--coquelicot-fonce); }
+  .ct-aide { color: var(--encre-doux); max-width: 36rem; }
 
-  /* Les groupes de choix : cartes cliquables, bouton radio natif conservé. */
-  .ct-options {
-    display: grid;
-    gap: 0.55rem;
-    grid-template-columns: minmax(0, 1fr);
-  }
+  /* Choix : rangées cliquables, bouton radio natif conservé */
+  .ct-options { display: grid; gap: 0.5rem; }
   @media (min-width: 34rem) {
-    .ct-options--serre {
-      grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr));
-    }
+    .ct-options--serre { grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); }
   }
   .ct-opt {
-    position: relative;
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.1rem 0.85rem;
-    align-items: start;
-    min-height: 3.25rem;
-    padding: 0.85rem 1rem;
-    border: 1.5px solid color-mix(in oklab, var(--encre) 16%, transparent);
-    border-radius: var(--r-m);
+    display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.1rem 0.85rem; align-items: start;
+    min-height: 3.25rem; padding: 0.85rem 1rem;
+    border: 1px solid color-mix(in oklab, var(--encre) 18%, transparent);
+    border-radius: var(--r-s);
     background: var(--lin-haut);
     cursor: pointer;
-    transition: border-color 200ms ease, background 200ms ease, transform 250ms var(--sortie);
   }
-  .ct-opt:hover {
-    border-color: color-mix(in oklab, var(--coquelicot) 55%, transparent);
-    transform: translateY(-1px);
-  }
-  .ct-opt:has(input:checked) {
-    border-color: var(--coquelicot);
-    background: color-mix(in oklab, var(--rose) 55%, var(--lin-haut));
-  }
-  .ct-opt:has(input:focus-visible) {
-    outline: 2.5px solid var(--coquelicot);
-    outline-offset: 2px;
-  }
-  .ct-opt input {
-    accent-color: var(--coquelicot-fonce);
-    width: 1.25rem;
-    height: 1.25rem;
-    margin: 0.15rem 0 0;
-    grid-row: 1 / span 2;
-  }
+  .ct-opt:hover { border-color: var(--encre); }
+  .ct-opt:has(input:checked) { border-color: var(--coquelicot); background: color-mix(in oklab, var(--rose) 45%, var(--lin-haut)); }
+  .ct-opt:has(input:focus-visible) { outline: 2px solid var(--coquelicot); outline-offset: 2px; }
+  .ct-opt input, .ct-case input { accent-color: var(--coquelicot-fonce); width: 1.25rem; height: 1.25rem; margin: 0.15rem 0 0; }
+  .ct-opt input { grid-row: 1 / span 2; }
   .ct-opt--court { align-items: center; }
-  .ct-opt--court input { grid-row: 1; align-self: center; margin-block-start: 0; }
-  .ct-opt__nom { font-size: 1rem; line-height: 1.35; font-weight: 500; }
-  .ct-opt__d {
-    grid-column: 2;
-    font-size: var(--t-petit);
-    line-height: 1.45;
-    color: var(--gris);
-  }
+  .ct-opt--court input { grid-row: 1; margin-block-start: 0; }
+  .ct-opt__nom { font-weight: 500; line-height: 1.35; }
+  .ct-opt__d { grid-column: 2; font-size: var(--t-petit); color: var(--gris); }
 
-  /* Champs texte ------------------------------------------------------- */
-  .ct-duo {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: minmax(0, 1fr);
-  }
+  /* Champs texte */
+  .ct-duo { display: grid; gap: 1rem; }
   @media (min-width: 34rem) {
     .ct-duo { grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); }
   }
   .ct-ligne { display: grid; gap: 0.35rem; min-width: 0; }
-  .ct-ligne label { font-size: 1rem; font-weight: 500; color: var(--encre); }
-  .ct-oblig {
-    font-size: var(--t-petit);
-    font-weight: 400;
-    color: var(--coquelicot-fonce);
-    margin-inline-start: 0.3rem;
-  }
-  .ct-note { font-size: var(--t-petit); line-height: 1.5; color: var(--gris); }
-
-  .ct-ligne input,
-  .ct-ligne textarea {
-    font-family: inherit;
-    /* 16 px minimum : en dessous, iOS zoome tout seul au focus. */
-    font-size: 1rem;
-    line-height: 1.5;
-    color: var(--encre);
-    background: #fff;
-    border: 1.5px solid color-mix(in oklab, var(--encre) 22%, transparent);
+  .ct-ligne label { font-weight: 500; }
+  .ct-note { font-size: var(--t-petit); color: var(--gris); }
+  .ct-ligne input, .ct-ligne textarea {
+    font: inherit; font-size: 1rem; /* 16 px : pas de zoom iOS */
+    color: var(--encre); background: #fff;
+    border: 1px solid color-mix(in oklab, var(--encre) 25%, transparent);
     border-radius: var(--r-s);
-    padding: 0.75rem 0.9rem;
-    min-height: 3.1rem;
-    width: 100%;
-    max-width: 100%;
-    transition: border-color 200ms ease, box-shadow 200ms ease;
+    padding: 0.75rem 0.9rem; min-height: 3.1rem; width: 100%;
   }
   .ct-ligne textarea { resize: vertical; min-height: 8rem; }
-  .ct-ligne input:hover,
-  .ct-ligne textarea:hover { border-color: color-mix(in oklab, var(--encre) 45%, transparent); }
-  .ct-ligne input:focus-visible,
-  .ct-ligne textarea:focus-visible {
-    outline: 2.5px solid var(--coquelicot);
-    outline-offset: 1px;
-    border-color: var(--coquelicot);
-  }
-  .ct-ligne input::placeholder,
-  .ct-ligne textarea::placeholder { color: color-mix(in oklab, var(--gris) 75%, #fff); }
-  .ct-ligne input[aria-invalid='true'],
-  .ct-ligne textarea[aria-invalid='true'] {
-    border-color: var(--coquelicot-fonce);
-    background: color-mix(in oklab, var(--rose) 25%, #fff);
-  }
-  .ct-ligne input[type='file'] {
-    padding: 0.6rem 0.7rem;
-    background: var(--lin-haut);
-    border-style: dashed;
-    cursor: pointer;
-  }
+  .ct-ligne input:focus-visible, .ct-ligne textarea:focus-visible { outline: 2px solid var(--coquelicot); outline-offset: 1px; }
+  .ct-ligne [aria-invalid='true'] { border-color: var(--coquelicot-fonce); }
+  .ct-ligne input[type='file'] { background: var(--lin-haut); cursor: pointer; }
   .ct-ligne input[type='file']::file-selector-button {
-    font: inherit;
-    font-size: var(--t-petit);
-    min-height: 2.75rem;
-    margin-inline-end: 0.8rem;
-    padding: 0.4rem 1rem;
-    border: 0;
-    border-radius: 999px;
-    background: var(--encre);
-    color: var(--lin-haut);
-    cursor: pointer;
+    font: inherit; font-size: var(--t-petit); min-height: 2.75rem; margin-inline-end: 0.8rem;
+    padding: 0.4rem 1rem; border: 0; border-radius: 999px; background: var(--encre); color: var(--lin-haut); cursor: pointer;
   }
   .ct-ligne input[type='date'] { max-width: 17rem; }
 
-  /* Cases à cocher ------------------------------------------------------ */
   .ct-case {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.75rem;
-    align-items: start;
-    min-height: 2.9rem;
-    padding-block: 0.55rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: var(--encre-doux);
-    cursor: pointer;
+    display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.75rem; align-items: start;
+    min-height: 2.9rem; padding-block: 0.55rem; color: var(--encre-doux); cursor: pointer;
   }
-  .ct-case input {
-    accent-color: var(--coquelicot-fonce);
-    width: 1.25rem;
-    height: 1.25rem;
-    margin: 0.15rem 0 0;
-  }
-  .ct-case--large {
-    margin-block-start: 0.6rem;
-    padding: 0.95rem 1.05rem;
-    font-size: var(--t-petit);
-    background: var(--lin-haut);
-    border-radius: var(--r-m);
-  }
-  .ct-case a {
-    display: inline-block;
-    color: var(--encre);
-    text-decoration-color: color-mix(in oklab, var(--coquelicot-fonce) 60%, transparent);
-    text-underline-offset: 3px;
-  }
+  .ct-case--large { font-size: var(--t-petit); }
+  .ct-case a, .ct-rgpd a { color: var(--encre); text-underline-offset: 3px; }
 
-  /* Message d'erreur (créé par le script) ------------------------------- */
   .ct-form :global(.ct-err) {
-    font-size: var(--t-petit);
-    font-weight: 500;
-    color: #8C2A1C;
-    background: color-mix(in oklab, var(--rose) 55%, #fff);
-    border-inline-start: 3px solid var(--coquelicot-fonce);
-    padding: 0.65rem 0.9rem;
-    border-radius: 0 var(--r-s) var(--r-s) 0;
+    font-size: var(--t-petit); font-weight: 500; color: #8C2A1C;
+    padding: 0.65rem 0.9rem; border-inline-start: 2px solid var(--coquelicot-fonce);
+    background: color-mix(in oklab, var(--rose) 45%, #fff);
   }
 
-  /* Navigation et envoi ------------------------------------------------- */
-  .ct-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.7rem 0.9rem;
-    align-items: center;
-    padding-block-start: 0.4rem;
-  }
-  .ct-nav[hidden] { display: none; }
-  .ct-nav button[hidden] { display: none; }
+  /* Navigation et envoi */
+  .ct-nav { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: center; }
+  .ct-nav[hidden], .ct-nav button[hidden] { display: none; }
   .ct-nav .btn { font-size: 1rem; }
   .ct-nav #ct-suiv { margin-inline-start: auto; min-width: 9rem; }
-
   .ct-envoi { display: grid; gap: 0.9rem; justify-items: start; }
-  .ct-rgpd { font-size: var(--t-petit); line-height: 1.55; color: var(--gris); max-width: 40rem; }
-  .ct-rgpd a {
-    color: var(--encre-doux);
-    text-decoration-color: color-mix(in oklab, var(--coquelicot-fonce) 55%, transparent);
-    text-underline-offset: 3px;
-  }
-
-  /* En mode étapes, le bouton d'envoi n'apparaît qu'à la dernière étape.
-     Sans JavaScript, la classe .ct-form--etapes n'est jamais posée : le
-     bouton reste visible et le formulaire est envoyable d'un bloc. */
+  .ct-rgpd { font-size: var(--t-petit); color: var(--gris); max-width: 40rem; }
+  /* Sans JS, .ct-form--etapes n'est jamais posée : le bouton reste visible. */
   .ct-form--etapes .ct-envoi__btn { display: none; }
   .ct-form--etapes .ct-envoi--pret .ct-envoi__btn { display: inline-flex; }
 
-  /* --- Autres moyens : un coin de tapis de coupe ----------------------- */
-  .ct-aside.tapis {
-    display: grid;
-    gap: 1.1rem;
-    justify-items: start;
-    padding: clamp(1.4rem, 4vw, 2.4rem);
-    border-radius: var(--r-l);
-    overflow: hidden;
-  }
-  @media (min-width: 48rem) and (max-width: 63.99rem) {
-    .ct-aside.tapis { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 2.5rem; align-items: start; }
-    .ct-aside__h2, .ct-aside__p { grid-column: 1 / -1; }
-    .ct-infos { grid-column: 2; grid-row: 3 / span 2; margin-block-start: -0.85rem; }
-  }
-  .ct-aside__h2 {
-    font-size: clamp(1.8rem, 1.3rem + 1.6vw, 2.5rem);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-  }
-  .ct-aside__p { color: color-mix(in oklab, var(--lin-haut) 84%, transparent); max-width: 28rem; }
+  /* --- Autres moyens ---------------------------------------------------- */
+  .ct-aside { display: grid; gap: 1.1rem; justify-items: start; }
+  .ct-aside__p { color: var(--encre-doux); }
   .ct-canaux { display: grid; gap: 0.6rem; width: 100%; }
-  .ct-canaux li { min-width: 0; }
-  .ct-canaux .btn { width: 100%; }
-
-  .ct-infos { display: grid; width: 100%; margin-block-start: 0.4rem; }
+  .ct-infos { width: 100%; }
   .ct-infos > div {
-    display: grid;
-    gap: 0.15rem;
-    padding-block: 0.85rem;
-    border-block-start: 1px dashed color-mix(in oklab, var(--tapis-trait) 45%, transparent);
+    display: grid; gap: 0.15rem; padding-block: 0.85rem;
+    border-block-start: 1px solid color-mix(in oklab, currentColor 18%, transparent);
   }
-  .ct-infos dt { font-size: var(--t-petit); font-weight: 500; color: var(--dore); }
-  .ct-infos dd {
-    margin: 0;
-    font-size: var(--t-petit);
-    line-height: 1.55;
-    color: color-mix(in oklab, var(--lin-haut) 84%, transparent);
-  }
-  .ct-infos dd a {
-    color: var(--lin-haut);
-    text-decoration-color: color-mix(in oklab, var(--dore) 70%, transparent);
-    text-underline-offset: 3px;
-  }
+  .ct-infos dt { font-family: var(--f-mono); font-size: var(--t-micro); color: var(--gris); }
+  .ct-infos dd { margin: 0; font-size: var(--t-petit); color: var(--encre-doux); }
+  .ct-infos dd a { color: var(--encre); text-underline-offset: 3px; }
 </style>

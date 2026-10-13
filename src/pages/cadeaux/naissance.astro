@@ -6,6 +6,9 @@
  * Angle : les informations de naissance (prénom, date, poids, taille) et le
  * calendrier du terme.
  *
+ * Gabarit commun aux quatre pages occasions : HautDePage (fond de l'occasion)
+ * → section propre à l'occasion → photos → Etapes → créations → FAQ → AppelFinal.
+ *
  * ⚠️ MAQUETTE. Prix et délais viennent de src/config.ts et du contenu des
  * créations : provisoires tant qu'Emma ne les a pas confirmés.
  * Vocabulaire : broderie MACHINE. Jamais « brodé à la main ».
@@ -13,38 +16,43 @@
 import { Image, getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+import HautDePage from '../../components/HautDePage.astro';
+import TeteSection from '../../components/TeteSection.astro';
+import Etapes from '../../components/Etapes.astro';
 import CarteCreation from '../../components/CarteCreation.astro';
-import { SITE, ATELIER, lienWhatsApp } from '../../config';
+import FAQ from '../../components/FAQ.astro';
+import AppelFinal from '../../components/AppelFinal.astro';
+import { SITE, ATELIER, OCCASIONS, lienWhatsApp } from '../../config';
 
-import photoHero from '../../assets/creations/hero-mobile/doudou-lapin-brode-prenom-naissance-vitre.webp';
+import photoHero from '../../assets/creations/galerie/doudou-plat-brode-prenom-keanu-naissance.webp';
 import photoCadre from '../../assets/creations/detail/cadre-naissance-brode-prenom-chambre-bebe.webp';
-import photoKeanu from '../../assets/creations/galerie/doudou-plat-brode-prenom-keanu-naissance.webp';
 import photoSac from '../../assets/creations/galerie/sac-a-dos-enfant-brode-prenom-malo.webp';
-import photoFinal from '../../assets/creations/plein-ecran/machine-a-broder-en-cours-atelier-vitre.webp';
+import photoMachine from '../../assets/creations/detail/machine-a-broder-en-cours-atelier-vitre.webp';
+import photoOg from '../../assets/creations/galerie/cadre-naissance-brode-prenom-chambre-bebe.webp';
+
+const occasion = OCCASIONS.find((o) => o.slug === 'naissance')!;
 
 const toutes = (await getCollection('creations', ({ data }) => !data.masquee)).sort(
   (a, b) => a.data.ordre - b.data.ordre,
 );
 const pour = toutes.filter((c) => c.data.occasions.includes('naissance'));
-/* Si l'occasion est peu fournie, on complète avec des pièces voisines — et on
-   le dit. Jamais de carte inventée pour combler une grille. */
-const voisines = pour.length >= 3 ? [] : toutes.filter((c) => !pour.includes(c)).slice(0, 2);
 
 const prix = pour.map((c) => c.data.prixDepart).filter((n): n is number => typeof n === 'number');
 const prixMini = prix.length ? Math.min(...prix) : null;
-const delais = pour.map((c) => c.data.delaiJours).filter((n): n is number => typeof n === 'number');
-const delaiMax = delais.length ? Math.max(...delais) : null;
 
-const wa = lienWhatsApp(
-  `Bonjour ${SITE.nom}, c'est pour une naissance. J'aimerais une pièce brodée au prénom.`,
-);
+const messageWa = `Bonjour ${SITE.nom}, c'est pour une naissance. J'aimerais une pièce brodée au prénom.`;
+const wa = lienWhatsApp(messageWa);
+const lienDevis = '/contact/?occasion=naissance#devis';
 
-const og = await getImage({ src: photoCadre, width: 1200, height: 630, format: 'jpeg' });
+const og = await getImage({ src: photoOg, width: 1200, height: 630, format: 'jpeg' });
 
 const titre = `Cadeau de naissance personnalisé brodé au prénom — ${SITE.ville} & Rennes | ${SITE.nom}`;
 const description = `Cadeau de naissance personnalisé, brodé à ${SITE.ville} (35) : doudou, cadre de naissance, bavoir, cape de bain. Prénom, date, poids et taille${prixMini ? `, à partir de ${prixMini} €` : ''}. Envoi partout en France.`;
 
-/* Questions réellement posées avant une commande de naissance. */
+const fil = [{ nom: 'Cadeau de naissance', url: '/cadeaux/naissance/' }];
+
+/* Questions réellement posées avant une commande de naissance.
+   ⚠️ « 30 °C, fil polyester » : à faire confirmer par Emma. */
 const faq = [
   {
     q: 'Puis-je commander avant la naissance ?',
@@ -52,9 +60,7 @@ const faq = [
   },
   {
     q: 'Quel est le délai de réalisation ?',
-    r: delaiMax
-      ? `Le délai de l'atelier est actuellement de ${ATELIER.delaiActuel}. Une fois le motif validé, comptez jusqu'à ${delaiMax} jours ouvrés pour une pièce de naissance, expédition comprise.`
-      : `Le délai de l'atelier est actuellement de ${ATELIER.delaiActuel}. Je vous confirme une date dès la validation du motif.`,
+    r: `Le délai actuel de l'atelier est de ${ATELIER.delaiActuel}, validation du motif comprise. Je vous confirme une date précise dès que le motif est validé.`,
   },
   {
     q: 'Quelles informations peuvent être brodées ?',
@@ -62,23 +68,13 @@ const faq = [
   },
   {
     q: 'Le doudou brodé est-il lavable en machine ?',
-    r: `Oui, à 30 degrés. Le fil polyester ne rétrécit pas et ne déteint pas : c'est l'une des raisons pour lesquelles la broderie convient particulièrement aux objets de bébé.`,
+    r: `Oui, à 30 degrés. Le fil polyester ne rétrécit pas et ne déteint pas sur les tissus clairs : un doudou brodé s'entretient comme n'importe quel doudou.`,
   },
   {
     q: 'Livrez-vous, ou faut-il venir chercher la pièce ?',
     r: `${ATELIER.zones}. L'emballage cadeau est compris, et je peux expédier directement chez les parents.`,
   },
 ];
-
-const faqLd = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faq.map((f) => ({
-    '@type': 'Question',
-    name: f.q,
-    acceptedAnswer: { '@type': 'Answer', text: f.r },
-  })),
-};
 
 /* Valeurs reprises du cadre « Ambre » photographié plus bas (cohérence
    photo / texte). ⚠️ Accord de la cliente à confirmer avant mise en ligne. */
@@ -89,77 +85,65 @@ const fiche = [
   { l: 'Poids', v: '3,135 kg', n: '' },
   { l: 'Taille', v: '50 cm', n: '' },
 ];
+
+const planche = [
+  {
+    src: photoCadre,
+    alt: 'Cadre de naissance brodé au prénom, avec la date, la taille et le poids, accroché dans une chambre de bébé',
+    legende: 'Le cadre de naissance, pour la chambre',
+  },
+  {
+    src: photoSac,
+    alt: "Sac à dos d'enfant bleu marine, rabat brodé d'étoiles et du prénom Malo",
+    legende: "Le sac à dos, pour l'entrée à la crèche",
+  },
+  {
+    src: photoMachine,
+    alt: 'Broderie en cours sous la tête de la machine à broder, à l’atelier de Vitré',
+    legende: 'La broderie en cours, à l’atelier',
+  },
+];
 ---
 
-<Base
-  titre={titre}
-  description={description}
-  imageOg={og.src}
-  fil={[{ nom: 'Cadeau de naissance', url: '/cadeaux/naissance/' }]}
->
-  <script type="application/ld+json" set:html={JSON.stringify(faqLd)} is:inline />
+<Base titre={titre} description={description} imageOg={og.src} fil={fil}>
+  <HautDePage
+    titre="Cadeaux de naissance brodés au prénom"
+    fil={fil}
+    image={photoHero}
+    alt="Doudou plat blanc à pois avec une tête d'ourson, prénom brodé au centre en fil vert"
+    fond={occasion.fil}
+    faits={[
+      ...(prixMini ? [`À partir de ${prixMini} €`] : []),
+      `Délai actuel : ${ATELIER.delaiActuel}`,
+      'Lavable à 30 °C',
+    ]}
+  >
+    <p>
+      Doudou, cadre de naissance, bavoir, cape de bain&nbsp;: je brode à la machine, dans mon
+      atelier de {SITE.ville}&nbsp;(35), le prénom, la date, le poids et la taille de l'enfant.
+      Le motif vous est soumis avant toute réalisation.
+    </p>
+    <a slot="actions" class="btn btn--wa btn--grand" href={wa}>Me contacter sur WhatsApp</a>
+    <a slot="actions" class="btn btn--creux btn--grand" href={lienDevis}>Demander un devis</a>
+  </HautDePage>
 
-  <div class="pg">
-    <!-- ===================== HAUT DE PAGE ===================== -->
-    <section class="bande na-ouv">
-      <div class="na-ouv__mot">
-        <nav class="ariane" aria-label="Fil d'Ariane">
-          <a href="/">Accueil</a><span aria-hidden="true">/</span>
-          <span aria-current="page">Cadeau de naissance</span>
-        </nav>
-        <h1>Cadeaux de naissance brodés au prénom</h1>
-        <p class="chapo">
-          Doudou, cadre de naissance, bavoir, cape de bain&nbsp;: je brode à la machine, dans mon
-          atelier de {SITE.ville}&nbsp;(35), le prénom, la date, le poids et la taille de l'enfant.
-          Le motif vous est soumis avant toute réalisation.
-        </p>
-        <p class="actions">
-          <a class="btn btn--wa btn--grand" href={wa}>Écrire sur WhatsApp</a>
-          <a class="btn btn--creux btn--grand" href="/contact/?occasion=naissance#devis">Demander un devis</a>
-        </p>
-        <ul class="rassure">
-          {prixMini && <li>À partir de&nbsp;<b>{prixMini}&nbsp;€</b></li>}
-          <li>Délai actuel&nbsp;: <b>{ATELIER.delaiActuel}</b></li>
-          <li>Lavable à&nbsp;<b>30&nbsp;°C</b></li>
-        </ul>
-      </div>
-
-      <div class="na-ouv__panneau">
-        <figure class="na-tambour">
-          <Image
-            src={photoHero}
-            alt="Doudou lapin beige brodé au prénom et à la date de naissance sur les oreilles, posé devant des roses blanches"
-            widths={[360, 560, 760, 1000]}
-            sizes="(max-width: 56rem) 80vw, 30rem"
-            loading="eager"
-            fetchpriority="high"
-            decoding="async"
-          />
-        </figure>
-        {/* ⚠️ Données d'exemple : format d'une fiche, pas une vraie cliente. */}
-        <dl class="na-carte" aria-label="Exemple d'informations brodées">
-          <div><dt>Prénom</dt><dd>Ambre</dd></div>
-          <div><dt>Née le</dt><dd>16.01.2024</dd></div>
-          <div><dt>Poids</dt><dd>3,135 kg</dd></div>
-        </dl>
-      </div>
-    </section>
-
-    <!-- ===================== LA FICHE ===================== -->
-    <section class="bande na-fiche">
-      <div class="na-fiche__tete">
-        <h2 class="titre-xl">Les informations brodées</h2>
+  <!-- ===================== LES INFORMATIONS BRODÉES ===================== -->
+  <section class="bande oc-a" aria-labelledby="fiche-titre">
+    <div class="grille">
+      <div class="oc-a__dire">
+        <h2 id="fiche-titre">Les informations brodées</h2>
         <p class="mesure">
           Ces informations me permettent de préparer le motif. Vous me les transmettez par message,
-          je vous renvoie le motif pour validation&nbsp;: tant que la broderie n'est pas lancée, tout peut être modifié.
+          je vous renvoie le motif pour validation&nbsp;: tant que la broderie n'est pas lancée,
+          tout peut être modifié.
         </p>
       </div>
-
+      {/* ⚠️ Données d'exemple : format d'une fiche, à confirmer avec la cliente. */}
       <dl class="fiche">
         {
           fiche.map((f) => (
-            <div class="fiche__l">
-              <dt>{f.l}</dt>
+            <div>
+              <dt class="mono">{f.l}</dt>
               <dd>
                 <span class="fiche__v">{f.v}</span>
                 {f.n && <span class="fiche__n">{f.n}</span>}
@@ -168,423 +152,116 @@ const fiche = [
           ))
         }
       </dl>
-    </section>
+    </div>
+  </section>
 
-    <!-- ===================== LA PLANCHE ===================== -->
-    <section class="bande na-planche" aria-label="Pièces de naissance brodées">
-      <ul class="planche" tabindex="0" role="region" aria-label="Pièces de naissance, rangée défilante">
-        <li class="planche__a">
-          <Image
-            src={photoCadre}
-            alt="Cadre de naissance brodé au prénom, avec la date, la taille et le poids, accroché dans une chambre de bébé"
-            widths={[320, 480, 700]}
-            sizes="(max-width: 48rem) 76vw, 34vw"
-            loading="lazy"
-            decoding="async"
-          />
-          <p>Le cadre de naissance, pour la chambre</p>
-        </li>
-        <li class="planche__b">
-          <Image
-            src={photoKeanu}
-            alt="Doudou plat blanc à pois avec une tête d'ourson, prénom brodé au centre en fil vert"
-            widths={[320, 480, 700]}
-            sizes="(max-width: 48rem) 76vw, 28vw"
-            loading="lazy"
-            decoding="async"
-          />
-          <p>Le doudou plat, brodé au centre</p>
-        </li>
-        <li class="planche__c">
-          <Image
-            src={photoSac}
-            alt="Sac à dos d'enfant bleu marine, rabat brodé d'étoiles et du prénom Malo"
-            widths={[320, 480, 700]}
-            sizes="(max-width: 48rem) 76vw, 26vw"
-            loading="lazy"
-            decoding="async"
-          />
-          <p>Le sac à dos, pour l'entrée à la crèche</p>
-        </li>
-      </ul>
-    </section>
+  <!-- ===================== PHOTOS ===================== -->
+  <section class="bande oc-b" aria-label="Pièces de naissance brodées">
+    <ul class="grille planche">
+      {
+        planche.map((p) => (
+          <li>
+            <Image
+              src={p.src}
+              alt={p.alt}
+              widths={[320, 480, 700]}
+              sizes="(max-width: 48rem) 92vw, 28vw"
+              loading="lazy"
+              decoding="async"
+            />
+            <p class="mono">{p.legende}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
 
-    <!-- ===================== LE TERME ===================== -->
-    <section class="bande na-terme">
-      <h2 class="titre-xl">Avant ou après la naissance</h2>
-
-      <div class="terme">
-        <article>
-          <h3>Pendant la grossesse</h3>
-          <p>
-            C'est le moment idéal. À partir de la date du terme, nous choisissons le support,
-            l'écriture et la couleur du fil, et je prépare le motif. Après la naissance, vous
-            m'envoyez le prénom et les mesures par WhatsApp{delaiMax
-              ? `, et la pièce est réalisée dans les ${delaiMax} jours ouvrés`
-              : ''}.
-          </p>
-        </article>
-        <article>
-          <h3>Après la naissance</h3>
-          <p>
-            Toutes les informations sont connues&nbsp;: la commande peut être lancée immédiatement.
-            Le délai de l'atelier est actuellement de <b>{ATELIER.delaiActuel}</b>, validation du
-            motif comprise.
-          </p>
-        </article>
-        <article>
-          <h3>Pour une visite très proche</h3>
-          <p>
-            Contactez-moi directement par WhatsApp plutôt que par le formulaire. Je vous indique
-            sans attendre ce qu'il est possible de réaliser dans le temps disponible.
-          </p>
-        </article>
-      </div>
-
-      <p class="actions">
-        <a class="btn btn--or" href={wa}>Indiquer ma date sur WhatsApp</a>
-        <a class="lien-fleche lien-fleche--clair" href="/sur-mesure/">Le déroulement d'une commande</a>
-      </p>
-    </section>
-
-    <!-- ===================== CRÉATIONS ===================== -->
-    <section class="bande na-creations loin">
-      <div class="tete tete--duo">
-        <h2 class="titre-xl">Créations pour une naissance</h2>
-        <div class="na-creations__dire">
-          <p class="mesure">
-            Chacune peut servir de point de départ&nbsp;: le support, le fil ou l'écriture se
-            modifient selon vos souhaits.
-          </p>
-          <a class="lien-fleche" href="/creations/naissance/">Toutes les créations naissance</a>
-        </div>
-      </div>
-
-      <div class="rangee" tabindex="0" role="region" aria-label="Créations pour une naissance, rangée défilante">
-        {pour.map((c, i) => <CarteCreation creation={c} prioritaire={i === 0} />)}
-        {voisines.map((c) => <CarteCreation creation={c} />)}
-        <div class="rangee__fin">
-          <p>Bavoir, cape de bain, gigoteuse</p>
-          <p class="rangee__note">
-            Je les brode également. Je vous adresse sur demande des photographies des pièces
-            réalisées.
-          </p>
-          <a class="lien-fleche" href="/creations/">Toutes les créations</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================== ENTRETIEN ===================== -->
-    {/* ⚠️ « 30 °C, fil polyester » : à faire confirmer par Emma. */}
-    <section class="bande na-lavage loin">
-      <p class="na-lavage__chiffre" aria-hidden="true">30&nbsp;°</p>
-      <div class="na-lavage__dire">
-        <h2>Entretien</h2>
-        <p>
-          La broderie se lave en machine à 30&nbsp;°C. Le fil polyester ne rétrécit pas et ne
-          déteint pas sur les tissus clairs&nbsp;: un doudou brodé s'entretient comme n'importe
-          quel doudou.
-        </p>
-      </div>
-    </section>
-
-    <!-- ===================== FAQ ===================== -->
-    <section class="bande na-faq loin" id="questions">
-      <h2 class="titre-xl">Questions fréquentes</h2>
-      <div class="faq">
+  <!-- ===================== AVANT OU APRÈS LA NAISSANCE ===================== -->
+  <section class="bande oc-etapes">
+    <TeteSection titre="Avant ou après la naissance">
+      <p>Les deux sont possibles. Seul le moment de la validation du motif change.</p>
+    </TeteSection>
+    <Etapes
+      etapes={[
         {
-          faq.map((f, i) => (
-            <details open={i === 0}>
-              <summary>{f.q}</summary>
-              <p>{f.r}</p>
-            </details>
-          ))
-        }
-      </div>
-    </section>
+          titre: 'Pendant la grossesse',
+          texte:
+            "C'est le moment idéal. À partir de la date du terme, nous choisissons le support, l'écriture et la couleur du fil, et je prépare le motif. Après la naissance, vous m'envoyez le prénom et les mesures par WhatsApp.",
+        },
+        {
+          titre: 'Après la naissance',
+          texte: `Toutes les informations sont connues : la commande peut être lancée immédiatement. Le délai actuel de l'atelier est de ${ATELIER.delaiActuel}, validation du motif comprise.`,
+        },
+        {
+          titre: 'Pour une visite très proche',
+          texte:
+            "Contactez-moi directement par WhatsApp plutôt que par le formulaire. Je vous indique sans attendre ce qu'il est possible de réaliser dans le temps disponible.",
+        },
+      ]}
+    />
+    <p class="actions oc-etapes__suite">
+      <a class="lien-fleche" href="/sur-mesure/">Le déroulement d'une commande</a>
+    </p>
+  </section>
 
-    <!-- ===================== APPEL FINAL ===================== -->
-    <section class="final bande na-fin" id="devis">
-      <Image
-        class="final__fond"
-        src={photoFinal}
-        alt=""
-        aria-hidden="true"
-        widths={[800, 1400]}
-        sizes="100vw"
-        loading="lazy"
-        decoding="async"
-      />
-      <div class="final__in">
-        <h2 class="titre-geant">Votre demande</h2>
-        <p class="chapo">
-          Le prénom, ou simplement la date du terme s'il n'est pas encore choisi. Je vous réponds
-          avec un prix, un délai et une proposition de motif, sans engagement de votre part.
-        </p>
-        <p class="actions">
-          <a class="btn btn--wa btn--grand" href={wa}>Écrire sur WhatsApp</a>
-          <a class="btn btn--or btn--grand" href="/contact/?occasion=naissance#devis">Remplir le formulaire</a>
-        </p>
-        <p class="final__note">{ATELIER.delaiReponse} · {ATELIER.zones} · emballage cadeau compris.</p>
-      </div>
-    </section>
-  </div>
+  <!-- ===================== CRÉATIONS ===================== -->
+  <section class="bande oc-creations loin">
+    <TeteSection titre="Créations pour une naissance" variante="duo">
+      <p>
+        Chacune peut servir de point de départ&nbsp;: le support, le fil ou l'écriture se modifient
+        selon vos souhaits. Je brode également bavoirs, capes de bain et gigoteuses, dont je vous
+        adresse des photographies sur demande.
+      </p>
+      <a slot="lien" class="lien-fleche" href="/creations/naissance/">Toutes les créations naissance</a>
+    </TeteSection>
+    <div class="rangee" tabindex="0" role="region" aria-label="Créations pour une naissance, rangée défilante">
+      {pour.map((c) => <CarteCreation creation={c} />)}
+    </div>
+  </section>
+
+  <FAQ questions={faq} />
+
+  <AppelFinal titre="Votre demande" messageWa={messageWa} lienDevis={lienDevis}>
+    <p>
+      Le prénom, ou simplement la date du terme s'il n'est pas encore choisi. Je vous réponds avec
+      un prix, un délai et une proposition de motif, sans engagement de votre part. Emballage
+      cadeau compris.
+    </p>
+  </AppelFinal>
 </Base>
 
 <style>
-  /* Le fil de la page : vert olive #4A6047.
-     Contrastes : blanc / lin-haut dessus ≈ 6,9:1 ; ce vert sur le lin ≈ 5,7:1
-     (AA texte courant dans les deux sens). */
-  .pg { --fil: #4A6047; --fil-clair: #DCE5D6; }
+  /* Gabarit commun aux pages occasions (mêmes classes oc-* sur les quatre). */
+  .oc-a { padding-block: var(--respire) var(--serre); }
+  .oc-a .grille { row-gap: 2rem; }
+  .oc-a__dire { display: grid; gap: 1rem; align-content: start; }
+  .oc-b { padding-block: var(--serre); }
+  .oc-etapes { padding-block: var(--serre); }
+  .oc-etapes__suite { margin-block-start: 1.5rem; }
+  .oc-creations { padding-block: var(--serre); }
 
-  /* ============================ HAUT DE PAGE ============================
-     Texte sur le lin à gauche ; un panneau olive qui sort par le bord droit,
-     avec la photo dans un tambour et une fiche de naissance posée devant. */
-  .na-ouv {
-    padding-block: clamp(1rem, 3vw, 2rem) 0;
-    row-gap: clamp(2rem, 5vw, 3rem);
+  /* La fiche : grandes valeurs, filets pleins. */
+  .fiche { border-block-start: 1px solid color-mix(in oklab, var(--encre) 20%, transparent); }
+  .fiche > div {
+    display: grid; gap: 0.2rem 1.5rem; align-items: baseline;
+    padding-block: 1rem;
+    border-block-end: 1px solid color-mix(in oklab, var(--encre) 15%, transparent);
   }
-  .na-ouv__mot { display: grid; gap: clamp(1rem, 2.2vw, 1.6rem); justify-items: start; }
-  .na-ouv h1 { max-width: 11ch; }
-  .na-ouv h1 { color: var(--encre); }
-
-  .na-ouv__panneau {
-    grid-column: bord-d / bord-f;
-    position: relative;
-    display: grid;
-    justify-items: center;
-    padding: clamp(2.5rem, 7vw, 4rem) var(--marge) clamp(5.5rem, 12vw, 7rem);
-    background-color: var(--fil);
-    /* Le tapis, en version claire et discrète */
-    background-image:
-      linear-gradient(color-mix(in oklab, #fff 9%, transparent) 1px, transparent 1px),
-      linear-gradient(90deg, color-mix(in oklab, #fff 9%, transparent) 1px, transparent 1px);
-    background-size: var(--cm) var(--cm);
-  }
-  .na-tambour {
-    --bois: #C9A97E; --bois-fonce: #8A6A46;
-    width: min(calc(100% - 2.5rem), 26rem);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    overflow: hidden;
-    box-shadow:
-      0 0 0 10px var(--bois),
-      0 0 0 12px var(--bois-fonce),
-      0 0 0 17px var(--bois),
-      0 40px 60px -30px color-mix(in oklab, #000 70%, transparent);
-  }
-  .na-tambour :global(img) { width: 100%; height: 100%; object-fit: cover; }
-
-  .na-carte {
-    position: absolute;
-    inset-block-end: clamp(1.2rem, 3vw, 2rem);
-    inset-inline-start: var(--marge);
-    display: grid;
-    min-width: min(17rem, calc(100% - 2 * var(--marge)));
-    padding: 0.9rem 1.2rem;
-    background: var(--lin-haut);
-    border-radius: var(--r-s);
-    box-shadow: 0 20px 40px -24px color-mix(in oklab, #000 70%, transparent);
-    font-family: var(--f-mono); font-size: var(--t-micro);
-  }
-  .na-carte div {
-    display: flex; justify-content: space-between; gap: 1.5rem;
-    padding-block: 0.35rem;
-    border-block-end: 1px dashed color-mix(in oklab, var(--fil) 40%, transparent);
-  }
-  .na-carte div:last-child { border: 0; }
-  .na-carte dt { color: var(--gris); }
-  .na-carte dd { color: var(--fil); font-weight: 500; }
-
-  @media (prefers-reduced-motion: no-preference) {
-    .na-tambour { animation: tend 1100ms var(--sortie) 100ms both; }
-    .na-carte { animation: glisse 900ms var(--sortie) 500ms both; }
-  }
-  @keyframes tend { from { transform: scale(0.88) rotate(-6deg); } to { transform: none; } }
-  @keyframes glisse { from { transform: translateY(1.5rem) rotate(-3deg); opacity: 0.001; } to { transform: none; opacity: 1; } }
-
-  @media (min-width: 56rem) {
-    .na-ouv {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.54)) [mi] minmax(0, calc(var(--large) * 0.46))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      padding-block-end: 0;
-      align-items: stretch;
-    }
-    .na-ouv__mot {
-      grid-column: large-d / mi; grid-row: 1;
-      align-content: center;
-      padding-block: clamp(2rem, 5vw, 5rem);
-      padding-inline-end: clamp(1.5rem, 4vw, 4rem);
-    }
-    .na-ouv__panneau {
-      grid-column: mi / bord-f; grid-row: 1;
-      align-content: center;
-      border-radius: var(--r-l) 0 0 var(--r-l);
-      padding-block: clamp(3rem, 6vw, 5rem) clamp(6rem, 9vw, 8rem);
-    }
-    .na-carte { inset-inline-start: auto; inset-inline-end: calc(var(--marge) + 1rem); transform: rotate(2deg); }
-  }
-  @media (min-width: 64rem) {
-    .na-ouv { min-height: calc(100svh - 5rem); }
-    .na-ouv h1 { font-size: clamp(4rem, 1rem + 5vw, 7rem); }
-  }
-
-  /* ============================ LA FICHE ============================ */
-  .na-fiche { padding-block: var(--respire) var(--serre); row-gap: clamp(2rem, 4vw, 3rem); }
-  .na-fiche__tete { display: grid; gap: 1.1rem; }
-  .fiche { display: grid; border-block-start: 1.5px solid var(--encre); }
-  .fiche__l {
-    display: grid; gap: 0.2rem 2rem;
-    padding-block: clamp(0.9rem, 2vw, 1.4rem);
-    border-block-end: 1px dashed color-mix(in oklab, var(--encre) 22%, transparent);
-  }
-  .fiche dt { font-family: var(--f-mono); font-size: var(--t-micro); color: var(--gris); }
+  .fiche dt { font-size: var(--t-micro); color: var(--gris); }
   .fiche dd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 1.2rem; }
-  .fiche__v {
-    font-family: var(--f-titre);
-    font-size: clamp(2.2rem, 1.4rem + 3.4vw, 4.6rem);
-    line-height: 1; letter-spacing: -0.03em;
-    color: var(--fil);
-  }
+  .fiche__v { font-family: var(--f-titre); font-size: var(--t-h2); line-height: 1; }
   .fiche__n { font-size: var(--t-petit); color: var(--encre-doux); }
+
+  /* Trois photos 4:5, mêmes forme et hauteur. */
+  .planche { row-gap: 2rem; }
+  .planche li { display: grid; gap: 0.6rem; align-content: start; }
+  .planche :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--r-m); }
+  .planche p { font-size: var(--t-micro); color: var(--gris); }
+
   @media (min-width: 48rem) {
-    .fiche__l { grid-template-columns: minmax(0, 9rem) minmax(0, 1fr); align-items: baseline; }
+    .oc-a__dire { grid-column: 1 / span 4; }
+    .fiche { grid-column: 5 / -1; }
+    .fiche > div { grid-template-columns: minmax(0, 7rem) minmax(0, 1fr); }
+    .planche li { grid-column: span 4; }
   }
-  @media (min-width: 64rem) {
-    .na-fiche {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.36)) [mi] minmax(0, calc(var(--large) * 0.64))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      align-items: start;
-    }
-    .na-fiche__tete { grid-column: large-d / mi; position: sticky; top: 7rem; padding-inline-end: 3rem; }
-    .fiche { grid-column: mi / large-f; }
-  }
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .fiche__v { animation: pique linear both; animation-timeline: view(); animation-range: entry 10% cover 35%; }
-    }
-  }
-  /* La valeur se « pique » de gauche à droite, comme une ligne brodée */
-  @keyframes pique { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
-
-  /* ============================ LA PLANCHE ============================ */
-  .na-planche { padding-block: var(--serre); }
-  .planche {
-    grid-column: large-d / bord-f;
-    display: grid; grid-auto-flow: column;
-    grid-auto-columns: minmax(15rem, 76vw);
-    gap: clamp(1rem, 2.5vw, 2rem);
-    overflow-x: auto; overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory;
-    padding-block-end: 1rem; padding-inline-end: var(--marge);
-    scrollbar-width: thin; scrollbar-color: var(--fil) transparent;
-    align-items: end;
-  }
-  .planche > li { scroll-snap-align: start; display: grid; gap: 0.7rem; }
-  .planche :global(img) { width: 100%; object-fit: cover; }
-  /* Trois formes, trois objets : un cadre, un tambour, une arche */
-  .planche__a :global(img) { aspect-ratio: 4 / 5; border-radius: var(--r-s); }
-  .planche__b :global(img) { aspect-ratio: 1; border-radius: 50%; }
-  .planche__c :global(img) { aspect-ratio: 3 / 4; border-radius: 999px 999px var(--r-m) var(--r-m); }
-  .planche p { font-family: var(--f-mono); font-size: var(--t-micro); color: var(--encre-doux); }
-  @media (min-width: 48rem) {
-    .planche {
-      grid-column: large-d / large-f;
-      grid-auto-flow: row; overflow: visible; padding: 0;
-      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 0.9fr);
-    }
-    .planche__b { margin-block-end: 4rem; }
-  }
-
-  /* ============================ LE TERME ============================ */
-  .na-terme {
-    background: var(--fil);
-    color: var(--lin-haut);
-    padding-block: var(--respire);
-    row-gap: clamp(2.5rem, 5vw, 4rem);
-  }
-  .na-terme .titre-xl { color: var(--lin-haut); max-width: 14ch; }
-  .na-terme :focus-visible { outline-color: var(--lin-haut); }
-  .terme { display: grid; gap: clamp(2rem, 4vw, 3rem); }
-  .terme article {
-    display: grid; gap: 0.8rem; align-content: start;
-    padding-block-start: 1.2rem;
-    border-block-start: 2px dashed color-mix(in oklab, var(--lin-haut) 45%, transparent);
-  }
-  .terme h3 { color: var(--lin-haut); font-size: clamp(1.7rem, 1.3rem + 1.4vw, 2.5rem); }
-  .terme p { color: color-mix(in oklab, var(--lin-haut) 90%, transparent); max-width: 30rem; }
-  .terme b { font-weight: 500; color: #fff; }
-  .na-terme .btn--or { --survol: var(--encre); }
-  .na-terme .btn--or:hover, .na-terme .btn--or:focus-visible { color: var(--lin-haut); }
-  @media (min-width: 56rem) {
-    .terme { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    /* Ruptures d'aplomb : les cas s'échelonnent, du plus serein au plus pressé */
-    .terme article:nth-child(2) { margin-block-start: 3rem; }
-    .terme article:nth-child(3) { margin-block-start: 6rem; }
-  }
-
-  /* ============================ CRÉATIONS ============================ */
-  .na-creations { padding-block: var(--respire) var(--serre); row-gap: clamp(2rem, 4vw, 3rem); }
-  .na-creations__dire { display: grid; gap: 0.8rem; justify-items: start; }
-  .rangee__fin {
-    display: grid; align-content: center; gap: 0.9rem;
-    padding: clamp(1.4rem, 3vw, 2rem);
-    border-radius: var(--r-l);
-    border: 1.5px dashed color-mix(in oklab, var(--fil) 50%, transparent);
-    scroll-snap-align: start;
-  }
-  .rangee__fin p:first-child { font-family: var(--f-titre); font-size: clamp(1.6rem, 1.3rem + 1vw, 2.2rem); line-height: 1.05; }
-  .rangee__note { font-size: var(--t-petit); color: var(--encre-doux); }
-
-  /* ============================ ENTRETIEN ============================ */
-  .na-lavage { padding-block: var(--serre); row-gap: 1rem; align-items: center; }
-  .na-lavage__chiffre {
-    font-family: var(--f-titre);
-    font-size: var(--t-geant);
-    line-height: 0.8; letter-spacing: -0.05em;
-    color: var(--fil);
-  }
-  .na-lavage__dire { display: grid; gap: 0.8rem; max-width: 34rem; }
-  .na-lavage h2 { font-size: var(--t-h3); }
-  .na-lavage p { color: var(--encre-doux); }
-  @media (min-width: 48rem) {
-    .na-lavage { grid-template-columns: [bord-d] minmax(var(--marge), 1fr) [large-d] minmax(0, calc(var(--large) * 0.4)) [mi] minmax(0, calc(var(--large) * 0.6)) [large-f] minmax(var(--marge), 1fr) [bord-f]; }
-    .na-lavage__chiffre { grid-column: large-d / mi; text-align: end; padding-inline-end: 3rem; }
-    .na-lavage__dire { grid-column: mi / large-f; }
-  }
-
-  /* ============================ FAQ ============================ */
-  .na-faq { padding-block: var(--serre) var(--respire); row-gap: 2rem; }
-  .faq { display: grid; max-width: 52rem; border-block-start: 1.5px solid var(--encre); }
-  .faq details { border-block-end: 1px solid color-mix(in oklab, var(--encre) 18%, transparent); }
-  .faq summary {
-    display: flex; align-items: baseline; gap: 1rem;
-    min-height: 44px; padding-block: 1.1rem;
-    cursor: pointer; list-style: none;
-    font-family: var(--f-titre);
-    font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.85rem); line-height: 1.15;
-  }
-  .faq summary::-webkit-details-marker { display: none; }
-  .faq summary::after {
-    content: '+'; margin-inline-start: auto; flex: none;
-    font-family: var(--f-mono); font-size: 1.2rem; color: var(--fil);
-    transition: transform 300ms var(--sortie);
-  }
-  .faq details[open] summary::after { transform: rotate(45deg); }
-  .faq summary:hover { color: var(--fil); }
-  .faq details p { padding-block-end: 1.3rem; max-width: 40rem; color: var(--encre-doux); }
-  @media (min-width: 64rem) {
-    .na-faq { justify-items: end; }
-    .na-faq .titre-xl { justify-self: start; }
-    .na-faq .faq { width: 100%; }
-  }
-
-  /* ============================ APPEL FINAL ============================ */
-  .na-fin { background: var(--fil); }
-  .na-fin .chapo { max-width: 34rem; }
-  .na-fin .btn--wa { --texte: var(--fil); }
 </style>

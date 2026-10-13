@@ -3,74 +3,64 @@
  * /merci/ — page d'arrivée après l'envoi du formulaire de demande.
  * C'est la valeur de `action` du formulaire de /contact/.
  * ⚠️ noindex : cette page ne doit jamais apparaître dans les résultats.
+ * Pas d'AppelFinal : la demande vient d'être envoyée.
  */
-import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import HautDePage from '../components/HautDePage.astro';
+import TeteSection from '../components/TeteSection.astro';
+import Etapes from '../components/Etapes.astro';
+import ListeLignes from '../components/ListeLignes.astro';
 import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
-
-import bobines from '../assets/creations/bandeau/atelier-mur-bobines-fil-broderie-vitre.webp';
 
 const titre = `Demande reçue · ${SITE.nom}`;
 const description =
   'Votre demande est bien arrivée. Je vous réponds avec un prix, un délai de réalisation et une proposition.';
+const fil = [{ nom: 'Demande reçue', url: '/merci/' }];
+
+const suite = [
+  { titre: 'Demande reçue', texte: "Étape terminée : votre demande vient d'arriver dans ma boîte de réception." },
+  { titre: 'Ma réponse', texte: `${ATELIER.delaiReponse}, avec un prix, un délai et une proposition de motif.` },
+  { titre: 'Validation du motif', texte: 'Vous validez le motif avant toute réalisation.', cle: true },
+  { titre: 'Réalisation et remise', texte: `Délai actuel : ${ATELIER.delaiActuel}. Emballage cadeau compris.` },
+];
+
+const liens = [
+  { titre: 'Les créations', texte: "Les pièces réalisées récemment à l'atelier.", href: '/creations/' },
+  { titre: "Le déroulement d'une commande", texte: 'Étapes, délais, entretien et questions fréquentes.', href: '/sur-mesure/' },
+  { titre: `@${CONTACT.instagram}`, texte: 'Les pièces récentes y sont publiées en premier.', href: CONTACT.instagramUrl },
+  { titre: "Retour à l'accueil", texte: SITE.baseline, href: '/' },
+];
 ---
 
-<Base titre={titre} description={description} noindex={true}>
+<Base titre={titre} description={description} noindex={true} fil={fil}>
   {/* ⚠️ MAQUETTE — délai de réponse provisoire (src/config.ts) ; le délai
       de 48 heures avant relance est un EXEMPLE à faire valider par Emma. */}
 
-  <!-- ===================== CONFIRMATION ===================== -->
-  <section class="bande mr-ouv">
-    <div class="mr-ouv__dire">
-      <h1>Votre demande a bien été reçue</h1>
-      <p class="chapo">
-        Merci. {ATELIER.delaiReponse}, avec un prix, un délai de réalisation et une proposition de
-        motif. Cette demande ne vous engage à rien.
-      </p>
-      <p class="actions">
-        <a
-          class="btn btn--wa btn--grand"
-          href={lienWhatsApp('Bonjour Emma, je viens de vous envoyer une demande depuis votre site.')}
-        >
-          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"
-            ><path
-              d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"
-            /></svg
-          >
-          Compléter sur WhatsApp
-        </a>
-        <a class="btn btn--creux btn--grand" href={`tel:${CONTACT.telephone}`}>Appeler</a>
-      </p>
-    </div>
+  <HautDePage titre="Votre demande a bien été reçue" fil={fil}>
+    <p>
+      Merci. {ATELIER.delaiReponse}, avec un prix, un délai de réalisation et une proposition de
+      motif. Cette demande ne vous engage à rien.
+    </p>
+    <a
+      slot="actions"
+      class="btn btn--wa btn--grand"
+      href={lienWhatsApp('Bonjour Emma, je viens de vous envoyer une demande depuis votre site.')}
+    >
+      Compléter sur WhatsApp
+    </a>
+    <a slot="actions" class="btn btn--creux btn--grand" href={`tel:${CONTACT.telephone}`}>Appeler</a>
+  </HautDePage>
 
-    <!-- Où en est la commande : une vraie séquence, la première étape est faite -->
-    <div class="mr-ouv__suite">
-      <h2 class="mr-suite__titre">La suite de votre commande</h2>
-      <ol class="mr-fil">
-        <li class="mr-fil__fait">
-          <b>Demande reçue</b>
-          <span>Votre demande vient d'arriver dans ma boîte de réception.</span>
-        </li>
-        <li class="mr-fil__prochain">
-          <b>Ma réponse</b>
-          <span>{ATELIER.delaiReponse}&nbsp;: prix, délai et proposition de motif.</span>
-        </li>
-        <li>
-          <b>Validation du motif</b>
-          <span>Vous validez le motif avant toute réalisation.</span>
-        </li>
-        <li>
-          <b>Réalisation et remise</b>
-          <span>Délai de réalisation actuel&nbsp;: {ATELIER.delaiActuel}, emballage cadeau compris.</span>
-        </li>
-      </ol>
-    </div>
+  <!-- ===================== LA SUITE ===================== -->
+  <section class="bande mr-section">
+    <TeteSection titre="La suite de votre commande" />
+    <Etapes etapes={suite} />
   </section>
 
-  <!-- ===================== PRÉCISIONS PRATIQUES ===================== -->
-  <section class="bande tapis mr-infos">
-    <h2 class="mr-infos__titre">Quelques précisions</h2>
-    <ul class="mr-infos__liste">
+  <!-- ===================== PRÉCISIONS (le seul tapis de la page) ===================== -->
+  <section class="bande tapis mr-section" aria-labelledby="mr-infos">
+    <TeteSection titre="Quelques précisions" id="mr-infos" />
+    <ul class="grille mr-infos">
       <li>
         <h3>Votre boîte de réception</h3>
         <p>
@@ -81,8 +71,8 @@ const description =
       <li>
         <h3>Sans réponse sous 48&nbsp;heures</h3>
         <p>
-          Un e-mail peut se perdre. Écrivez-moi alors sur WhatsApp, c'est le moyen le plus rapide
-          de me joindre.
+          Un e-mail peut se perdre. Écrivez-moi alors sur WhatsApp&nbsp;: c'est le moyen le plus
+          rapide de me joindre.
         </p>
       </li>
       <li>
@@ -95,228 +85,24 @@ const description =
     </ul>
   </section>
 
-  <!-- ===================== BANDEAU ===================== -->
-  <div class="bandeau mr-bandeau">
-    <Image
-      src={bobines}
-      alt="Mur de l'atelier couvert de bobines de fil à broder de toutes les couleurs"
-      widths={[800, 1400, 2000]}
-      sizes="100vw"
-      loading="lazy"
-      decoding="async"
-    />
-  </div>
-
   <!-- ===================== POUR CONTINUER ===================== -->
-  <section class="bande mr-suivant">
-    <h2 class="titre-xl">Pour continuer la visite</h2>
-    <ul class="mr-liens">
-      <li>
-        <a href="/creations/">
-          <b>Les créations</b>
-          <span>Les pièces réalisées récemment à l'atelier.</span>
-        </a>
-      </li>
-      <li>
-        <a href="/sur-mesure/">
-          <b>Le déroulement d'une commande</b>
-          <span>Étapes, délais, entretien et questions fréquentes.</span>
-        </a>
-      </li>
-      <li>
-        <a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">
-          <b>@{CONTACT.instagram}</b>
-          <span>Les pièces récentes y sont publiées en premier.</span>
-        </a>
-      </li>
-      <li>
-        <a href="/">
-          <b>Retour à l'accueil</b>
-          <span>{SITE.baseline}</span>
-        </a>
-      </li>
-    </ul>
+  <section class="bande mr-section">
+    <TeteSection titre="Pour continuer la visite" />
+    <ListeLignes lignes={liens} />
   </section>
 </Base>
 
 <style>
-  /* ==========================================================================
-     /merci/ — styles propres à la page. Préfixe `mr-`.
-     ========================================================================== */
-
-  /* ============================ CONFIRMATION ============================ */
-  .mr-ouv {
-    padding-block: clamp(2rem, 6vw, 5rem) var(--serre);
-    row-gap: clamp(2.5rem, 6vw, 4rem);
+  .mr-section { padding-block: var(--serre); }
+  .mr-section.tapis { padding-block: var(--respire); }
+  .mr-infos { row-gap: 0; }
+  .mr-infos li {
+    display: grid; gap: 0.5rem; align-content: start;
+    padding-block: 1.1rem 1.8rem;
+    border-block-start: 1px solid color-mix(in oklab, currentColor 20%, transparent);
   }
-  .mr-ouv__dire { display: grid; gap: clamp(1.1rem, 2.2vw, 1.7rem); justify-items: start; align-content: start; }
-  .mr-ouv h1 { max-width: 12ch; }
-
-  .mr-ouv__suite {
-    display: grid;
-    gap: 1.2rem;
-    align-content: start;
-    padding: clamp(1.4rem, 4vw, 2.4rem);
-    background: var(--papier);
-    border-radius: var(--r-l);
-    box-shadow: 0 30px 60px -40px color-mix(in oklab, var(--encre) 55%, transparent);
-  }
-  .mr-suite__titre { font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem); line-height: 1.05; }
-
-  /* Le fil : un point avant vertical qui relie les étapes. La première est
-     brodée (pleine), la suivante est en cours, les autres sont à venir. */
-  .mr-fil { position: relative; display: grid; gap: 0; }
-  .mr-fil li {
-    position: relative;
-    display: grid;
-    gap: 0.15rem;
-    padding: 0 0 1.4rem 2.6rem;
-  }
-  .mr-fil li:last-child { padding-block-end: 0; }
-  .mr-fil li::before {
-    content: '';
-    position: absolute;
-    inset-block-start: 0.2rem;
-    inset-inline-start: 0;
-    width: 1.25rem;
-    height: 1.25rem;
-    border-radius: 50%;
-    border: 2px solid color-mix(in oklab, var(--encre) 30%, transparent);
-    background: var(--papier);
-    z-index: 1;
-  }
-  .mr-fil li:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    inset-block: 1.6rem 0.1rem;
-    inset-inline-start: calc(0.625rem - 1px);
-    width: 2px;
-    background: repeating-linear-gradient(180deg, color-mix(in oklab, var(--encre) 28%, transparent) 0 7px, transparent 7px 12px);
-  }
-  .mr-fil__fait::before {
-    border-color: var(--coquelicot) !important;
-    background:
-      linear-gradient(45deg, transparent 42%, #fff 42% 58%, transparent 58%),
-      linear-gradient(-45deg, transparent 42%, #fff 42% 58%, transparent 58%),
-      var(--coquelicot) !important;
-  }
-  .mr-fil__fait::after {
-    background: repeating-linear-gradient(180deg, var(--coquelicot) 0 7px, transparent 7px 12px) !important;
-  }
-  .mr-fil__prochain::before { border-color: var(--coquelicot) !important; }
-  .mr-fil b { font-weight: 500; font-size: 1.05rem; }
-  .mr-fil__fait b { color: var(--coquelicot-fonce); }
-  .mr-fil span { font-size: var(--t-petit); line-height: 1.5; color: var(--encre-doux); }
-
-  /* Le fil se brode à l'arrivée : la première pastille, puis le premier
-     segment. Transform et opacité seulement. */
-  @media (prefers-reduced-motion: no-preference) {
-    .mr-fil__fait::before { animation: mr-pique 700ms var(--sortie) 300ms both; }
-    .mr-fil__fait::after { transform-origin: top; animation: mr-fil 900ms var(--sortie) 700ms both; }
-    .mr-ouv__dire > * { animation: mr-arrive 800ms var(--sortie) both; }
-    .mr-ouv__dire > :nth-child(2) { animation-delay: 80ms; }
-    .mr-ouv__dire > :nth-child(3) { animation-delay: 160ms; }
-  }
-  @keyframes mr-pique { from { transform: scale(0.3); opacity: 0.001; } }
-  @keyframes mr-fil { from { transform: scaleY(0); } }
-  @keyframes mr-arrive { from { transform: translateY(20px); opacity: 0.001; } }
-
-  @media (min-width: 64rem) {
-    .mr-ouv {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.58)) [mi] minmax(0, calc(var(--large) * 0.42))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      min-height: calc(80svh - 4.5rem);
-      align-content: center;
-    }
-    .mr-ouv__dire { grid-column: large-d / mi; padding-inline-end: clamp(2rem, 4vw, 4rem); }
-    .mr-ouv__suite { grid-column: mi / large-f; }
-    .mr-ouv h1 { font-size: clamp(4rem, 1rem + 5vw, 7rem); }
-  }
-
-  /* ============================ PRÉCISIONS (tapis) ============================ */
-  .mr-infos {
-    padding-block: var(--serre);
-    row-gap: clamp(1.6rem, 3vw, 2.4rem);
-  }
-  .mr-infos__titre { font-size: clamp(2rem, 1.4rem + 2.4vw, 3.4rem); line-height: 1; }
-  .mr-infos__liste { display: grid; gap: 0; }
-  .mr-infos__liste li {
-    display: grid;
-    gap: 0.5rem;
-    align-content: start;
-    padding-block: 1.3rem;
-    border-block-start: 1px dashed color-mix(in oklab, var(--tapis-trait) 50%, transparent);
-  }
-  .mr-infos__liste h3 { font-size: clamp(1.4rem, 1.2rem + 0.8vw, 1.8rem); }
-  .mr-infos__liste p { color: color-mix(in oklab, var(--lin-haut) 84%, transparent); max-width: 32rem; }
-  .mr-infos__liste a { color: var(--lin-haut); text-decoration-color: var(--dore); text-underline-offset: 3px; overflow-wrap: anywhere; }
-  @media (min-width: 56rem) {
-    .mr-infos__liste { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: clamp(1.5rem, 3vw, 3rem); }
-  }
-
-  /* ============================ BANDEAU ============================ */
-  .mr-bandeau { block-size: clamp(10rem, 28vw, 22rem); }
-
-  /* ============================ POUR CONTINUER ============================ */
-  .mr-suivant {
-    padding-block: var(--respire);
-    row-gap: clamp(1.8rem, 4vw, 3rem);
-  }
-  .mr-suivant .titre-xl { max-width: 14ch; }
-  .mr-liens { border-block-start: 1.5px solid var(--encre); }
-  .mr-liens li { border-block-end: 1px dashed color-mix(in oklab, var(--encre) 30%, transparent); }
-  .mr-liens a {
-    position: relative;
-    isolation: isolate;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 2rem;
-    gap: 0.2rem 1.5rem;
-    align-items: center;
-    min-height: 44px;
-    padding: 1.2rem 0.5rem;
-    text-decoration: none;
-    color: inherit;
-  }
-  .mr-liens a::after {
-    content: '→';
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    justify-self: end;
-    transition: transform 400ms var(--sortie);
-  }
-  .mr-liens a::before {
-    content: '';
-    position: absolute; inset: 0; z-index: -1;
-    background: color-mix(in oklab, var(--rose) 70%, transparent);
-    clip-path: inset(0 100% 0 0);
-    transition: clip-path 500ms var(--sortie);
-  }
-  .mr-liens a:hover::before, .mr-liens a:focus-visible::before { clip-path: inset(0); }
-  .mr-liens a:hover::after { transform: translateX(6px); }
-  .mr-liens b {
-    font-family: var(--f-titre);
-    font-weight: 400;
-    font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.6rem);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-  }
-  .mr-liens span { font-size: var(--t-petit); color: var(--encre-doux); }
+  .mr-infos a { color: inherit; text-underline-offset: 3px; overflow-wrap: anywhere; }
   @media (min-width: 48rem) {
-    .mr-liens a { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 2rem; }
-    .mr-liens a::after { grid-column: 3; grid-row: 1; }
-    .mr-liens b { grid-column: 1; }
-    .mr-liens span { grid-column: 2; grid-row: 1; }
-  }
-  @media (min-width: 64rem) {
-    .mr-suivant {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.34)) [mi] minmax(0, calc(var(--large) * 0.66))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-    }
-    .mr-suivant .titre-xl { grid-column: large-d / mi; padding-inline-end: 3rem; }
-    .mr-liens { grid-column: mi / large-f; }
+    .mr-infos li { grid-column: span 4; }
   }
 </style>

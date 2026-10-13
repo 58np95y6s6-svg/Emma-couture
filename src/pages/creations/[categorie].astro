@@ -6,18 +6,23 @@
  * des pages différentes, pas des variantes d'un gabarit. Une catégorie vide
  * ne génère aucune page (pas de cul-de-sac dans le sitemap).
  *
- * Mise en page selon le nombre de pièces :
- *  - une seule : « vedette », grande photo et fiche à côté ;
- *  - deux et plus : mosaïque, comme la galerie.
- * La dentelle libre (decoration-ajouree) est l'angle différenciant : son
- * entête est une section « tapis » avec la technique expliquée en trois
- * étapes réelles.
+ * Mise en page (grille à 12 colonnes, sans décalage) selon le nombre de pièces :
+ *  - une seule : « vedette », photo col. 1-6 et texte col. 8-12 ;
+ *  - deux et plus : cartes de largeur égale, comme la galerie.
+ * La dentelle libre (decoration-ajouree) est l'angle différenciant : photo
+ * dans le haut de page et technique expliquée en trois étapes réelles.
  */
 import type { GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
 import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import CarteCreation from '../../components/CarteCreation.astro';
+import HautDePage from '../../components/HautDePage.astro';
+import TeteSection from '../../components/TeteSection.astro';
+import Etapes from '../../components/Etapes.astro';
+import ListeLignes from '../../components/ListeLignes.astro';
+import LigneFaits from '../../components/LigneFaits.astro';
+import AppelFinal from '../../components/AppelFinal.astro';
 import { SITE, ATELIER, lienWhatsApp } from '../../config';
 
 import papillon from '../../assets/creations/plein-ecran/papillon-brode-dentelle-ajouree-coquelicots.webp';
@@ -131,21 +136,25 @@ const estDentelle = categorie === 'decoration-ajouree';
 const prix = pieces.map((c) => c.data.prixDepart).filter((p): p is number => typeof p === 'number');
 const prixMini = prix.length > 0 ? Math.min(...prix) : null;
 
+/* ⚠️ Prix et délai : exemples à valider par Emma. */
+const faits = [
+  ...(prixMini ? [`À partir de ${prixMini} €`] : []),
+  `Délai actuel : ${ATELIER.delaiActuel}`,
+  `Réalisé à ${SITE.ville}, ${SITE.departement}`,
+];
+
 /* Une seule pièce : elle est présentée en vedette, avec ses deux appels. */
 const vedette = pieces.length === 1 ? pieces[0] : null;
 const v = vedette
   ? (() => {
       const d = vedette.data;
-      const feminin = /^la\s/i.test(d.titre.trim());
-      const meme = feminin ? 'la même' : 'le même';
       const url = `/creations/${vedette.id}/`;
       return {
         d,
         id: vedette.id,
         url,
-        meme,
         wa: lienWhatsApp(
-          `Bonjour ${SITE.nom}, j'ai vu « ${d.titre} » sur votre site et j'aimerais ${meme}.`,
+          `Bonjour ${SITE.nom}, j'ai vu « ${d.titre} » sur votre site et j'aimerais un modèle similaire.`,
           new URL(url, SITE.url).href,
         ),
       };
@@ -166,458 +175,148 @@ const og = await getImage({
 });
 
 const titre = `${cat.titre} | ${SITE.nom}`;
+const fil = [
+  { nom: 'Créations', url: '/creations/' },
+  { nom: cat.court, url: `/creations/${categorie}/` },
+];
+
+/* Pour continuer : les autres catégories, puis l'occasion et le sur-mesure. */
+const suite = [
+  ...voisines.map((x) => ({ titre: x.court, href: `/creations/${x.slug}/` })),
+  { titre: 'Toutes les créations', href: '/creations/' },
+  ...(cat.occasion ? [{ titre: cat.occasion.nom, href: `/cadeaux/${cat.occasion.slug}/` }] : []),
+  { titre: 'Le déroulement d’une commande', href: '/sur-mesure/' },
+];
 ---
 
-<Base
-  titre={titre}
-  description={cat.description}
-  imageOg={og.src}
-  fil={[
-    { nom: 'Créations', url: '/creations/' },
-    { nom: cat.court, url: `/creations/${categorie}/` },
-  ]}
->
+<Base titre={titre} description={cat.description} imageOg={og.src} fil={fil}>
   {/*
     ⚠️ CONTENU D'EXEMPLE
     Prix et délais viennent du contenu et de src/config.ts : provisoires.
     Vocabulaire : broderie MACHINE.
   */}
 
-  {
-    estDentelle ? (
-      /* ===================== ENTÊTE DENTELLE : le tapis ===================== */
-      <section class="bande tapis dt">
-        <span class="regle plein dt__regle" aria-hidden="true" />
-        <nav class="ariane ariane--clair" aria-label="Fil d'Ariane">
-          <a href="/">Accueil</a>
-          <span aria-hidden="true">/</span>
-          <a href="/creations/">Créations</a>
-          <span aria-hidden="true">/</span>
-          <span aria-current="page">{cat.court}</span>
-        </nav>
-
-        <div class="dt__dire">
-          <h1 class="titre-geant">{cat.h1}</h1>
-          <p class="chapo">{cat.chapo}</p>
-          {/* ⚠️ À confirmer par Emma : réalise-t-elle la dentelle libre sur commande ? */}
-          <p class="mesure mesure--clair">
-            C’est le travail que je préfère, et une technique encore rare en Ille-et-Vilaine.
-          </p>
-        </div>
-
-        <figure class="dt__tambour">
-          <Image
-            src={papillon}
-            alt="Papillon brodé en dentelle libre, ailes rouges et noires, surmonté de coquelicots brodés"
-            widths={[480, 720, 1000, 1300]}
-            sizes="(max-width: 64rem) 86vw, 40vw"
-            loading="eager"
-            fetchpriority="high"
-            decoding="async"
-          />
-        </figure>
-
-        <div class="dt__technique">
-          <h2 class="dt__h2">La technique, en trois temps</h2>
-          <ol class="dt__etapes">
-            <li>
-              <span class="mono">1</span>
-              <p>Je tends dans le cadre un voile soluble, qui servira de support provisoire.</p>
-            </li>
-            <li>
-              <span class="mono">2</span>
-              <p>
-                La machine brode le motif sur ce voile, en croisant les fils pour qu’ils se
-                soutiennent entre eux.
-              </p>
-            </li>
-            <li>
-              <span class="mono">3</span>
-              <p>Au rinçage, le voile se dissout. Il ne reste que la dentelle, qui tient seule.</p>
-            </li>
-          </ol>
-        </div>
-      </section>
-    ) : (
-      /* ===================== ENTÊTE ===================== */
-      <section class="bande ct">
-        <nav class="ariane" aria-label="Fil d'Ariane">
-          <a href="/">Accueil</a>
-          <span aria-hidden="true">/</span>
-          <a href="/creations/">Créations</a>
-          <span aria-hidden="true">/</span>
-          <span aria-current="page">{cat.court}</span>
-        </nav>
-        <h1>{cat.h1}</h1>
-        <div class="ct__dire">
-          <p class="chapo">{cat.chapo}</p>
-        </div>
-      </section>
-    )
-  }
+  <HautDePage
+    titre={cat.h1}
+    fil={fil}
+    faits={faits}
+    image={estDentelle ? papillon : undefined}
+    alt="Papillon brodé en dentelle libre, ailes rouges et noires, surmonté de coquelicots brodés"
+  >
+    <p>{cat.chapo}</p>
+    {cat.note && <p>{cat.note}</p>}
+    {/* ⚠️ À confirmer par Emma : réalise-t-elle la dentelle libre sur commande ? */}
+    {estDentelle && <p>C’est le travail que je préfère, et une technique encore rare en Ille-et-Vilaine.</p>}
+  </HautDePage>
 
   <!-- ===================== LES PIÈCES ===================== -->
-  <section class:list={['bande', 'pieces', { 'pieces--dentelle': estDentelle }]} aria-label={`Créations : ${cat.court}`}>
-    {/* ⚠️ Prix et délai : exemples à valider par Emma. */}
-    <dl class="faits mono">
-      {
-        prixMini && (
-          <div>
-            <dt>à partir de</dt>
-            <dd>{prixMini}&nbsp;€</dd>
-          </div>
-        )
-      }
-      <div>
-        <dt>délai actuel</dt>
-        <dd>{ATELIER.delaiActuel}</dd>
-      </div>
-      <div>
-        <dt>réalisé à</dt>
-        <dd>{SITE.ville}, {SITE.departement}</dd>
-      </div>
-    </dl>
-
+  <section class="bande pieces" aria-label={`Créations : ${cat.court}`}>
     {
       v ? (
-        <article class="vedette">
+        <article class="grille vedette">
           <a class="vedette__photo" href={v.url} aria-hidden="true" tabindex="-1">
             <Image
               src={v.d.photo}
               alt={v.d.alt}
               widths={[390, 620, 800, 1000]}
-              sizes="(max-width: 56rem) 92vw, 46vw"
+              sizes="(max-width: 48rem) 92vw, 42vw"
               loading={estDentelle ? 'lazy' : 'eager'}
               decoding="async"
             />
           </a>
           <div class="vedette__dire">
-            <h2 class="vedette__titre">
-              <a href={v.url}>{v.d.titre}</a>
-            </h2>
-            <p class="vedette__accroche">{v.d.accroche}</p>
+            <h2><a href={v.url}>{v.d.titre}</a></h2>
+            <p class="chapo">{v.d.accroche}</p>
+            {/* ⚠️ Prix et délai : exemples à valider par Emma. */}
             {(v.d.prixDepart || v.d.delaiJours) && (
-              <p class="vedette__ligne mono" data-reglage-creation={v.id}>
-                {v.d.prixDepart && (
-                  <span>
-                    à partir de <b>{v.d.prixDepart}&nbsp;€</b>
-                  </span>
-                )}
-                {v.d.delaiJours && (
-                  <span>
-                    réalisation <b>{v.d.delaiJours}&nbsp;jours</b>
-                  </span>
-                )}
-              </p>
+              <LigneFaits
+                faits={[
+                  ...(v.d.prixDepart ? [`À partir de ${v.d.prixDepart} €`] : []),
+                  ...(v.d.delaiJours ? [`Réalisation : ${v.d.delaiJours} jours`] : []),
+                ]}
+              />
             )}
             <p class="actions">
-              <a class="btn btn--wa" href={v.wa}>Je veux {v.meme}</a>
+              <a class="btn btn--wa" href={v.wa}>Je veux la même</a>
               <a class="btn btn--creux" href={`/contact/?creation=${v.id}`}>Demander un devis</a>
             </p>
             <a class="lien-fleche" href={v.url}>Voir la fiche complète</a>
-            {cat.note && <p class="note">{cat.note}</p>}
           </div>
         </article>
       ) : (
-        <>
-          <ul class="mosaique">
-            {pieces.map((c, i) => (
-              <li>
-                <CarteCreation
-                  creation={c}
-                  prioritaire={i < 2}
-                  tailles="(max-width: 34rem) 92vw, (max-width: 64rem) 46vw, 36vw"
-                />
-              </li>
-            ))}
-          </ul>
-          {cat.note && <p class="note note--seule">{cat.note}</p>}
-        </>
+        <ul class="grille cartes">
+          {pieces.map((c, i) => (
+            <li>
+              <CarteCreation
+                creation={c}
+                prioritaire={i < 2}
+                tailles="(max-width: 48rem) 92vw, (max-width: 64rem) 46vw, 27rem"
+              />
+            </li>
+          ))}
+        </ul>
       )
     }
   </section>
 
-  <!-- ===================== SUITE : appel + maillage ===================== -->
-  <section class="bande suite loin">
-    <div class="suite__appel">
-      <h2 class="titre-xl">Une demande sur mesure</h2>
-      <p class="chapo">
-        Indiquez-moi le prénom, l’objet et la date souhaitée. Je vous réponds avec un prix et un
-        délai de réalisation, et je vous soumets le motif pour validation avant toute broderie.
-      </p>
-      <p class="actions">
-        <a
-          class="btn btn--wa"
-          href={lienWhatsApp(`Bonjour ${SITE.nom}, je souhaiterais une création dans la catégorie « ${cat.court} ».`)}
-        >
-          Écrire sur WhatsApp
-        </a>
-        <a class="btn btn--creux" href="/contact/#devis">Remplir le formulaire</a>
-      </p>
-      <p class="suite__liens">
-        <a class="lien-fleche" href="/sur-mesure/">Le déroulement d’une commande</a>
-        {cat.occasion && (
-          <a class="lien-fleche" href={`/cadeaux/${cat.occasion.slug}/`}>{cat.occasion.nom}</a>
-        )}
-      </p>
-    </div>
+  <!-- ===================== DENTELLE : la technique (seule section tapis) ===================== -->
+  {
+    estDentelle && (
+      <section class="bande tapis technique loin">
+        <TeteSection titre="La technique, en trois temps" />
+        <Etapes
+          etapes={[
+            { titre: 'Le support provisoire', texte: 'Je tends dans le cadre un voile soluble, qui sert de support le temps de la broderie.' },
+            { titre: 'La broderie', texte: 'La machine brode le motif sur ce voile, en croisant les fils pour qu’ils se soutiennent entre eux.' },
+            { titre: 'Le rinçage', texte: 'Au rinçage, le voile se dissout. Il ne reste que la dentelle, qui tient seule.' },
+          ]}
+        />
+      </section>
+    )
+  }
 
-    <nav class="suite__nav" aria-label="Autres catégories">
-      <h2 class="suite__h2">Les autres catégories</h2>
-      <ul>
-        {
-          voisines.map((x) => (
-            <li>
-              <a href={`/creations/${x.slug}/`}>{x.court}</a>
-            </li>
-          ))
-        }
-        <li><a href="/creations/">Toutes les créations</a></li>
-      </ul>
-    </nav>
-  </section>
+  <!-- ===================== POUR CONTINUER ===================== -->
+  <nav class="bande continuer loin" aria-labelledby="continuer-titre">
+    <TeteSection titre="Poursuivre la visite" id="continuer-titre" />
+    <div class="grille">
+      <div class="continuer__liste"><ListeLignes lignes={suite} /></div>
+    </div>
+  </nav>
+
+  <AppelFinal
+    titre="Une demande sur mesure"
+    messageWa={`Bonjour ${SITE.nom}, je souhaiterais une création dans la catégorie « ${cat.court} ».`}
+  >
+    <p>
+      Indiquez-moi le prénom, l’objet et la date souhaitée. Je vous réponds avec un prix et un délai
+      de réalisation, et je vous soumets le motif pour validation avant toute broderie.
+    </p>
+  </AppelFinal>
 </Base>
 
 <style>
-  /* ============================ ENTÊTE STANDARD ============================ */
-  .ct {
-    padding-block: clamp(0.5rem, 2vw, 1.5rem) clamp(1.5rem, 3vw, 2.5rem);
-    row-gap: clamp(1rem, 2.5vw, 1.8rem);
-  }
-  .ct h1 { max-width: 16ch; }
-  @media (min-width: 64rem) {
-    .ct {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.58))
-        [mi] minmax(0, calc(var(--large) * 0.42))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      align-items: end;
-    }
-    .ct .ariane { grid-column: large-d / large-f; }
-    .ct h1 { grid-column: large-d / mi; font-size: clamp(3.8rem, 1rem + 4.6vw, 7rem); }
-    .ct__dire { grid-column: mi / large-f; padding-inline-start: clamp(1.5rem, 3vw, 3rem); padding-block-end: 0.5rem; }
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .ct h1, .dt__dire { animation: arrive 800ms var(--sortie) both; }
-    .ct__dire { animation: arrive 800ms var(--sortie) 120ms both; }
-  }
-  @keyframes arrive { from { transform: translateY(20px); opacity: 0.001; } to { transform: none; opacity: 1; } }
+  .pieces { padding-block: var(--serre) var(--respire); }
 
-  /* ============================ ENTÊTE DENTELLE ============================
-     Le tapis de coupe, une règle graduée en tête, un tambour géant à droite
-     et la technique en trois temps — une vraie séquence, donc numérotée. */
-  .dt {
-    padding-block: 0 var(--respire);
-    row-gap: clamp(1.5rem, 4vw, 3rem);
-    overflow: hidden;
-  }
-  .dt__regle { margin-block-end: 0.5rem; }
-  .ariane--clair { color: var(--tapis-trait); }
-  .ariane--clair [aria-current] { color: var(--lin-haut); }
-  .ariane--clair a:hover { color: var(--rose); }
-  .dt__dire { display: grid; gap: clamp(1rem, 2vw, 1.5rem); align-content: start; }
-  .dt h1 { color: var(--lin-haut); max-width: 9ch; text-wrap: balance; font-size: clamp(3.6rem, 1rem + 11vw, 10.5rem); }
-  .dt__tambour {
-    --bois: #C9A97E; --bois-fonce: #8A6A46;
-    position: relative;
-    width: min(100% - 2.5rem, 34rem);
-    justify-self: center;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    container-type: inline-size;
-    box-shadow:
-      0 0 0 clamp(7px, 2cqi, 12px) var(--bois),
-      0 0 0 calc(clamp(7px, 2cqi, 12px) + 2px) var(--bois-fonce),
-      0 0 0 calc(clamp(7px, 2cqi, 12px) + 7px) var(--bois),
-      0 40px 70px -30px #000;
-    margin-block: 1rem;
-  }
-  .dt__tambour :global(img) {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-  }
-  .dt__technique { display: grid; gap: 1.2rem; }
-  .dt__h2 {
-    font-size: var(--t-h3);
-    color: var(--lin-haut);
-  }
-  .dt__etapes {
-    display: grid; gap: 0;
-    border-block-start: 1.5px dashed color-mix(in oklab, var(--tapis-trait) 55%, transparent);
-  }
-  .dt__etapes li {
-    display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: 0.8rem;
-    align-items: baseline;
-    padding-block: 1rem;
-    border-block-end: 1px dashed color-mix(in oklab, var(--tapis-trait) 35%, transparent);
-  }
-  .dt__etapes .mono { font-size: 1rem; color: var(--rose); }
-  .dt__etapes p { color: color-mix(in oklab, var(--lin-haut) 88%, transparent); max-width: 36rem; }
-
-  @media (min-width: 64rem) {
-    .dt {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.52))
-        [mi] minmax(0, calc(var(--large) * 0.48))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-    }
-    .dt__regle { grid-column: bord-d / bord-f; }
-    .dt .ariane { grid-column: large-d / large-f; }
-    .dt__dire { grid-column: large-d / mi; grid-row: 3; padding-inline-end: 3rem; align-self: center; }
-    .dt__tambour { grid-column: mi / large-f; grid-row: 3; width: min(100%, 36rem); justify-self: end; align-self: center; }
-    .dt__technique { grid-column: large-d / large-f; grid-row: 4; margin-block-start: clamp(1rem, 3vw, 3rem); }
-    .dt__etapes { grid-template-columns: repeat(3, minmax(0, 1fr)); border-block-end: 1px dashed color-mix(in oklab, var(--tapis-trait) 35%, transparent); }
-    .dt__etapes li { grid-template-columns: minmax(0, 1fr); align-content: start; align-items: start; gap: 0.5rem; border-block-end: 0; padding-inline-end: 1.6rem; padding-block: 1.4rem 1.6rem; }
-    .dt__etapes li + li { padding-inline-start: 1.2rem; border-inline-start: 1px dashed color-mix(in oklab, var(--tapis-trait) 35%, transparent); }
-    .dt__etapes p { font-size: var(--t-corps); }
-  }
-
-  /* Le tambour tourne d'un quart de tour pendant que la section défile,
-     comme un cadre qu'on repositionne. */
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .dt__tambour :global(img) {
-        animation: tambour linear both;
-        animation-timeline: view();
-        animation-range: cover 0% cover 100%;
-      }
-    }
-  }
-  @keyframes tambour { from { transform: rotate(-10deg) scale(1.08); } to { transform: rotate(14deg) scale(1.08); } }
-
-  /* ============================ FAITS ============================ */
-  .pieces { padding-block: clamp(1rem, 2vw, 1.5rem) var(--respire); row-gap: clamp(2rem, 5vw, 4rem); }
-  .pieces--dentelle { padding-block-start: clamp(2.5rem, 5vw, 4rem); }
-  .faits {
-    display: flex; flex-wrap: wrap;
-    border-block: 1.5px dashed color-mix(in oklab, var(--encre) 30%, transparent);
-    font-size: var(--t-micro);
-  }
-  .faits > div { display: grid; gap: 0.1rem; padding: 0.8rem 1.4rem 0.8rem 0; }
-  .faits > div + div { padding-inline-start: 1.2rem; border-inline-start: 1px dashed color-mix(in oklab, var(--encre) 18%, transparent); }
-  .faits dt { color: var(--gris); }
-  .faits dd { margin: 0; font-size: clamp(1rem, 0.9rem + 0.4vw, 1.2rem); color: var(--encre); }
-  .faits > div:first-child dd { color: var(--coquelicot-fonce); }
-  @media (max-width: 30rem) {
-    .faits > div + div:last-child { flex-basis: 100%; padding-inline-start: 0; border-inline-start: 0; border-block-start: 1px dashed color-mix(in oklab, var(--encre) 18%, transparent); }
-  }
-
-  /* ============================ VEDETTE ============================ */
-  .vedette { display: grid; gap: clamp(1.5rem, 4vw, 3rem); }
-  .vedette__photo {
-    display: block;
-    overflow: hidden;
-    border-radius: var(--r-l) var(--r-l) var(--r-l) var(--r-s);
-    background: var(--lin-bas);
-  }
-  .vedette__photo :global(img) {
-    width: 100%; aspect-ratio: 4 / 5; object-fit: cover;
-    transition: transform 900ms var(--sortie);
-  }
+  /* Une seule pièce : photo col. 1-6, texte col. 8-12, alignés en haut. */
+  .vedette { row-gap: 1.5rem; align-items: start; }
+  .vedette__photo { display: block; overflow: hidden; border-radius: var(--r-m); background: var(--lin-bas); }
+  .vedette__photo :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; transition: transform 900ms var(--sortie); }
   .vedette__photo:hover :global(img) { transform: scale(1.04); }
-  .vedette__dire { display: grid; gap: 1.1rem; justify-items: start; align-content: start; }
-  .vedette__titre { font-size: clamp(2.2rem, 1.4rem + 3vw, 4.2rem); line-height: 0.98; letter-spacing: -0.025em; }
-  .vedette__titre a { text-decoration: none; }
-  .vedette__titre a:hover { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 0.15em; }
-  .vedette__accroche { font-size: var(--t-chapo); line-height: 1.45; color: var(--encre-doux); max-width: 30rem; }
-  .vedette__ligne {
-    display: flex; flex-wrap: wrap; gap: 0.3rem 1.6rem;
-    font-size: var(--t-micro); color: var(--gris);
-  }
-  .vedette__ligne b { font-family: var(--f-titre); font-weight: 400; font-size: 1.9em; color: var(--encre); margin-inline-start: 0.3rem; letter-spacing: -0.01em; }
-
-  @media (min-width: 56rem) {
-    .vedette {
-      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
-      align-items: center;
-      column-gap: clamp(2rem, 5vw, 5rem);
-    }
-    .vedette__photo { max-width: 40rem; }
+  .vedette__dire { display: grid; gap: 1.1rem; justify-items: start; }
+  .vedette h2 a { text-decoration: none; }
+  .vedette h2 a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
+  @media (min-width: 48rem) {
+    .vedette__photo { grid-column: 1 / span 6; }
+    .vedette__dire { grid-column: 8 / -1; }
   }
 
-  /* La note d'Emma : un conseil pratique, posé comme une étiquette épinglée. */
-  .note {
-    position: relative;
-    max-width: 30rem;
-    margin-block-start: 0.8rem;
-    padding: 1.1rem 1.3rem 1.2rem;
-    border-radius: var(--r-s);
-    background: var(--papier);
-    border: 1px solid color-mix(in oklab, var(--encre) 10%, transparent);
-    box-shadow: 0 14px 30px -22px color-mix(in oklab, var(--encre) 60%, transparent);
-    font-size: var(--t-petit);
-    line-height: 1.55;
-    color: var(--encre-doux);
-    rotate: -0.6deg;
-  }
-  .note::before {
-    content: '';
-    position: absolute; inset-block-start: -7px; inset-inline-start: 1.4rem;
-    width: 14px; height: 14px; border-radius: 50%;
-    background: var(--coquelicot);
-    box-shadow: 0 2px 0 color-mix(in oklab, var(--encre) 30%, transparent);
-  }
-  .note--seule { justify-self: end; }
+  /* Plusieurs pièces : cartes de largeur égale. */
+  .cartes { row-gap: clamp(2.5rem, 5vw, 4rem); }
+  .cartes > li { display: grid; }
+  @media (min-width: 48rem) { .cartes > li { grid-column: span 6; } }
+  @media (min-width: 64rem) { .cartes > li { grid-column: span 4; } }
 
-  /* ============================ MOSAÏQUE (deux pièces et plus) ============================ */
-  .mosaique {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(2.5rem, 6vw, 4rem) clamp(1rem, 2.5vw, 2.5rem);
-    align-items: start;
-  }
-  .mosaique > li { min-width: 0; }
-  .mosaique :global(.carte__lien) { text-decoration: none; }
-  @media (min-width: 34rem) {
-    .mosaique { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .mosaique > li:nth-child(even) { margin-block-start: clamp(3rem, 8vw, 6rem); }
-  }
-  @media (min-width: 64rem) {
-    .mosaique { grid-template-columns: repeat(12, minmax(0, 1fr)); row-gap: clamp(4rem, 7vw, 7rem); }
-    .mosaique > li { grid-column: span 4; }
-    .mosaique > li:nth-child(even) { margin-block-start: 0; }
-    .mosaique > li:nth-child(6n + 1) { grid-column: 2 / span 5; }
-    .mosaique > li:nth-child(6n + 2) { grid-column: 8 / span 4; margin-block-start: 8rem; }
-    .mosaique > li:nth-child(6n + 3) { grid-column: span 3; margin-block-start: 3rem; }
-    .mosaique > li:nth-child(6n + 4) { grid-column: span 5; }
-    .mosaique > li:nth-child(6n + 5) { grid-column: span 4; margin-block-start: 6rem; }
-  }
-
-  /* ============================ SUITE ============================ */
-  .suite {
-    padding-block: var(--serre) var(--respire);
-    row-gap: clamp(3rem, 6vw, 4rem);
-    border-block-start: 1.5px dashed color-mix(in oklab, var(--encre) 22%, transparent);
-  }
-  .suite__appel { display: grid; gap: 1.2rem; justify-items: start; }
-  .suite__appel .titre-xl { max-width: 14ch; }
-  .suite__liens { display: flex; flex-wrap: wrap; gap: 0.2rem 1.8rem; }
-  .suite__h2 { font-size: var(--t-h3); margin-block-end: 0.6rem; }
-  .suite__nav ul { display: grid; border-block-start: 1px solid color-mix(in oklab, var(--encre) 18%, transparent); }
-  .suite__nav a {
-    display: flex; align-items: center; justify-content: space-between;
-    min-height: 3.6rem;
-    font-family: var(--f-titre);
-    font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.4rem);
-    line-height: 1;
-    text-decoration: none;
-    border-block-end: 1px solid color-mix(in oklab, var(--encre) 18%, transparent);
-    transition: color 200ms ease, padding 400ms var(--sortie);
-  }
-  .suite__nav a::after { content: '→'; font-family: var(--f-texte); font-size: 1rem; color: var(--coquelicot-fonce); }
-  .suite__nav a:hover { color: var(--coquelicot-fonce); padding-inline-start: 0.6rem; }
-  @media (min-width: 64rem) {
-    .suite {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.56))
-        [mi] minmax(0, calc(var(--large) * 0.44))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-    }
-    .suite__appel { grid-column: large-d / mi; padding-inline-end: 4rem; }
-    .suite__nav { grid-column: mi / large-f; align-self: start; }
-  }
+  .technique { padding-block: var(--serre); }
+  .continuer { padding-block: var(--respire); }
+  @media (min-width: 48rem) { .continuer__liste { grid-column: 1 / span 8; } }
 </style>

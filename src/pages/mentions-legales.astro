@@ -21,6 +21,7 @@
  * de style sont jumelles, à garder alignées.
  */
 import Base from '../layouts/Base.astro';
+import HautDePage from '../components/HautDePage.astro';
 import { SITE, CONTACT } from '../config';
 /* Le gabarit retombe sinon sur /og-defaut.jpg, qui n'existe pas encore
    dans public/ : l'aperçu de partage serait cassé. */
@@ -89,6 +90,7 @@ const sommaire = [
   { id: 'vente', nom: 'Vente en ligne' },
   { id: 'liens', nom: 'Liens et responsabilité' },
 ];
+const fil = [{ nom: 'Mentions légales', url: '/mentions-legales/' }];
 const tl = (id: string) => `--lg-${id}`;
 const portee = `timeline-scope: ${sommaire.map((s) => tl(s.id)).join(', ')}`;
 ---
@@ -97,30 +99,18 @@ const portee = `timeline-scope: ${sommaire.map((s) => tl(s.id)).join(', ')}`;
   titre={titre}
   description={description}
   imageOg={ogPage.src}
-  fil={[{ nom: 'Mentions légales', url: '/mentions-legales/' }]}
+  fil={fil}
 >
-  <header class="bande tete-lg">
-    <nav class="ariane" aria-label="Fil d'Ariane">
-      <a href="/">Accueil</a>
-      <span aria-hidden="true">/</span>
-      <span aria-current="page">Mentions légales</span>
-    </nav>
-
-    <div class="tete-lg__in">
-      <h1>Mentions légales</h1>
-      <div class="tete-lg__cote">
-        <p class="chapo">
-          Cette page présente mon entreprise, l’hébergeur du site et les conditions d’utilisation
-          de mes photographies. Pour le traitement de vos données personnelles, je vous invite à
-          consulter la <a href="/politique-de-confidentialite/">politique de confidentialité</a>.
-        </p>
-      </div>
-    </div>
-    <span class="tete-lg__regle" aria-hidden="true"></span>
-  </header>
+  <HautDePage titre="Mentions légales" fil={fil}>
+    <p>
+      Cette page présente mon entreprise, l’hébergeur du site et les conditions d’utilisation
+      de mes photographies. Pour le traitement de vos données personnelles, je vous invite à
+      consulter la <a href="/politique-de-confidentialite/">politique de confidentialité</a>.
+    </p>
+  </HautDePage>
 
   <div class="bande lecture">
-    <div class="lecture__grille" style={portee}>
+    <div class="grille lecture__grille" style={portee}>
       <nav class="som" aria-labelledby="som-titre">
         <p class="som__titre mono" id="som-titre">Sur cette page</p>
         <ol>
@@ -137,7 +127,7 @@ const portee = `timeline-scope: ${sommaire.map((s) => tl(s.id)).join(', ')}`;
       </nav>
 
       <div class="lecture__texte">
-        <!-- Encadré de chantier : à supprimer quand la liste est vide. -->
+        <!-- Encart à compléter : à supprimer quand la liste est vide. -->
         <aside
           class="sec chantier"
           id="a-completer"
@@ -295,369 +285,115 @@ const portee = `timeline-scope: ${sommaire.map((s) => tl(s.id)).join(', ')}`;
 </Base>
 
 <style>
-  /* ==========================================================================
-     Page de lecture longue — gabarit jumeau de politique-de-confidentialite.
-     Rien ne bouge ici sauf le sommaire qui suit la lecture.
-  ========================================================================== */
-
-  /* ---------- En-tête ---------- */
-  .tete-lg {
-    padding-block: clamp(0.5rem, 2vw, 1.5rem) 0;
-    row-gap: clamp(1.2rem, 3vw, 2.2rem);
-  }
-  .tete-lg__in {
-    display: grid;
-    gap: clamp(1rem, 2.5vw, 1.6rem);
-    align-items: end;
-  }
-  .tete-lg h1 {
-    font-size: clamp(2.6rem, 1.2rem + 6vw, 7rem);
-    line-height: 0.9;
-  }
-  .tete-lg__cote {
-    display: grid;
-    gap: 0.9rem;
-    justify-items: start;
-  }
-  .tete-lg .chapo a {
-    text-underline-offset: 3px;
-    text-decoration-thickness: 1px;
-    text-decoration-color: color-mix(in oklab, var(--coquelicot) 60%, transparent);
-  }
-  .tete-lg .chapo a:hover {
-    color: var(--coquelicot-fonce);
-  }
-  @media (min-width: 56rem) {
-    .tete-lg__in {
-      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-      column-gap: clamp(2rem, 5vw, 5rem);
-    }
-    .tete-lg__cote {
-      padding-block-end: 0.6rem;
-    }
-  }
-
-  /* Le mètre ruban du tapis de coupe, en encre sur le lin : graduations au
-     demi-centimètre, traits pleins tous les cinq. Il court d'un bord à l'autre
-     de la colonne et sépare l'en-tête du texte. */
-  .tete-lg__regle {
-    display: block;
-    block-size: 16px;
-    border-block-start: 1px solid color-mix(in oklab, var(--encre) 55%, transparent);
-    background-image:
-      linear-gradient(90deg, color-mix(in oklab, var(--encre) 55%, transparent) 1px, transparent 1px),
-      linear-gradient(90deg, color-mix(in oklab, var(--encre) 30%, transparent) 1px, transparent 1px);
-    background-size: calc(var(--cm) * 5) 16px, calc(var(--cm) / 2) 7px;
-    background-repeat: repeat-x;
-  }
-
-  /* ---------- Grille de lecture ---------- */
-  .lecture {
-    padding-block: clamp(1.6rem, 4vw, 3rem) var(--respire);
-  }
-  .lecture__grille {
-    display: grid;
-    gap: clamp(1.5rem, 4vw, 2.5rem);
-  }
-  .lecture__texte {
-    min-width: 0;
-    /* ~65 caractères en Jost à la taille du corps */
-    max-width: 40rem;
-  }
+  /* Page de lecture longue — gabarit jumeau de politique-de-confidentialite.
+     Sommaire en col. 1-4 (collant), texte en col. 5-12 (~65 caractères). */
+  .lecture { padding-block: var(--serre) var(--respire); }
+  .lecture__grille { row-gap: 2rem; align-items: start; }
+  .lecture__texte { max-width: 40rem; }
   @media (min-width: 64rem) {
-    .lecture__grille {
-      grid-template-columns: minmax(0, 15rem) minmax(0, 40rem);
-      column-gap: clamp(3rem, 7vw, 7rem);
-      align-items: start;
-    }
+    .som { grid-column: 1 / span 4; }
+    .lecture__texte { grid-column: 5 / -1; }
   }
 
   /* ---------- Sommaire ---------- */
-  .som {
-    min-width: 0;
-  }
-  .som__titre {
-    font-size: var(--t-micro);
-    color: var(--gris);
-    padding-block-end: 0.4rem;
-  }
-  /* Téléphone et tablette : une réglette d'onglets qui défile dans son propre
-     conteneur, jamais la page. */
+  .som__titre { font-size: var(--t-micro); color: var(--gris); padding-block-end: 0.4rem; }
+  /* Téléphone : une ligne de liens qui défile dans son propre conteneur. */
   .som ol {
-    display: flex;
-    gap: 0.4rem;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x proximity;
-    scrollbar-width: none;
-    padding-block: 0.2rem;
-    margin-inline: calc(var(--marge) * -1);
-    padding-inline: var(--marge);
-    scroll-padding-inline: var(--marge);
+    display: flex; gap: 1.25rem;
+    overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+    border-block: 1px solid color-mix(in oklab, currentColor 15%, transparent);
   }
-  .som ol::-webkit-scrollbar {
-    display: none;
-  }
-  .som li {
-    flex: none;
-    scroll-snap-align: start;
-  }
+  .som ol::-webkit-scrollbar { display: none; }
+  .som li { flex: none; }
   .som a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding-inline: 0.95rem;
-    border-radius: 999px;
-    border: 1px solid color-mix(in oklab, var(--encre) 22%, transparent);
-    font-family: var(--f-mono);
-    font-size: var(--t-micro);
-    letter-spacing: 0.01em;
-    color: var(--encre-doux);
-    text-decoration: none;
-    white-space: nowrap;
-    transition: color 200ms ease, border-color 200ms ease, background-color 200ms ease;
+    position: relative;
+    display: flex; align-items: center; min-height: 44px;
+    font-size: var(--t-petit); color: var(--encre-doux); text-decoration: none; white-space: nowrap;
   }
-  .som a:hover {
-    color: var(--coquelicot-fonce);
-    border-color: var(--coquelicot-fonce);
-  }
-
+  .som a:hover { color: var(--coquelicot-fonce); }
   @media (min-width: 64rem) {
-    .som {
-      position: sticky;
-      inset-block-start: 6.5rem;
-      max-block-size: calc(100dvh - 8rem);
-      overflow-y: auto;
-    }
+    .som { position: sticky; inset-block-start: 6.5rem; }
     .som ol {
-      display: grid;
-      gap: 0;
-      overflow: visible;
-      margin-inline: 0;
-      padding-inline: 0;
-      border-inline-start: 1px solid color-mix(in oklab, var(--encre) 18%, transparent);
+      display: grid; gap: 0; overflow: visible; border-block: 0;
+      border-inline-start: 1px solid color-mix(in oklab, currentColor 18%, transparent);
     }
-    .som a {
-      position: relative;
-      display: flex;
-      white-space: normal;
-      min-height: 44px;
-      padding: 0.35rem 0 0.35rem 1.1rem;
-      border: 0;
-      border-radius: 0;
-      line-height: 1.35;
-    }
-    /* Le repère de la section en cours : un point avant rouge sur le filet. */
+    .som a { white-space: normal; padding-inline-start: 1.1rem; line-height: 1.35; }
+    /* Repère de la section en cours : un trait plein sur le filet. */
     .som a::before {
-      content: '';
-      position: absolute;
-      inset-block: 0.55rem;
-      inset-inline-start: -1.5px;
-      inline-size: 2px;
-      background: repeating-linear-gradient(180deg, var(--coquelicot) 0 6px, transparent 6px 10px);
-      transform: scaleY(0);
-      transform-origin: 50% 0;
-      transition: transform 300ms var(--sortie);
+      content: ''; position: absolute; inset-block: 0.55rem; inset-inline-start: -1.5px; inline-size: 2px;
+      background: var(--coquelicot);
+      transform: scaleY(0); transform-origin: 50% 0;
     }
-    .som a:hover::before {
-      transform: none;
-    }
+    .som a:hover::before { transform: none; }
   }
-
-  /* La section en cours s'allume, sans script : chaque section publie une
-     timeline de vue (nommée dans l'attribut style), portée jusqu'au sommaire
-     par timeline-scope. La fenêtre d'observation est réduite à une fine bande
-     sous l'en-tête collant : une seule section la traverse à la fois. */
+  /* La section en cours s'allume sans script (timeline-scope + view-timeline). */
   @supports (timeline-scope: --a) and (animation-timeline: view()) {
-    .sec {
-      view-timeline-inset: 28% 71%;
-    }
+    .sec { view-timeline-inset: 28% 71%; }
     @media (min-width: 64rem) {
-      .som a {
-        animation: som-actif linear;
-        animation-range: cover 0% cover 100%;
-      }
+      .som a { animation: som-actif linear; animation-range: cover 0% cover 100%; }
       .som a::before {
-        animation: inherit;
-        animation-name: som-repere;
-        animation-timeline: inherit;
-        animation-range: inherit;
+        animation: inherit; animation-name: som-repere;
+        animation-timeline: inherit; animation-range: inherit;
       }
     }
   }
-  @keyframes som-actif {
-    from, to {
-      color: var(--coquelicot-fonce);
-    }
-  }
-  @keyframes som-repere {
-    from, to {
-      transform: none;
-    }
-  }
+  @keyframes som-actif { from, to { color: var(--coquelicot-fonce); } }
+  @keyframes som-repere { from, to { transform: none; } }
 
   /* ---------- Sections ---------- */
   .sec {
-    /* padding et non gap : les sections se touchent, la bande d'observation
-       du sommaire n'est jamais « entre deux ». */
-    padding-block: clamp(1.8rem, 4vw, 2.8rem);
-    border-block-start: 1px solid color-mix(in oklab, var(--encre) 14%, transparent);
+    padding-block: var(--serre);
+    border-block-start: 1px solid color-mix(in oklab, currentColor 15%, transparent);
   }
-  .sec:first-child:not(.chantier) {
-    padding-block-start: 0;
-    border: 0;
-  }
-  .chantier + .sec {
-    border: 0;
-  }
-  .sec h2 {
-    font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.6rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
-    text-wrap: balance;
-    margin-block-end: 1rem;
-  }
-  .sec p {
-    max-width: 38rem;
-    line-height: 1.7;
-    color: var(--encre-doux);
-    text-wrap: pretty;
-  }
-  .sec p + p {
-    margin-block-start: 1em;
-  }
-  .sec a {
-    text-underline-offset: 3px;
-    text-decoration-thickness: 1px;
-    text-decoration-color: color-mix(in oklab, var(--coquelicot) 60%, transparent);
-    overflow-wrap: anywhere;
-  }
-  .sec a:hover {
-    color: var(--coquelicot-fonce);
-  }
-  /* Du texte de loi reste du texte : la note descend d'un cran, pas plus. */
+  .sec:first-child { padding-block-start: 0; border: 0; }
+  .sec h2 { text-wrap: balance; margin-block-end: 1rem; }
+  .sec p { max-width: 38rem; line-height: 1.7; color: var(--encre-doux); }
+  .sec p + p { margin-block-start: 1em; }
+  .sec a { text-underline-offset: 3px; overflow-wrap: anywhere; }
+  .sec a:hover { color: var(--coquelicot-fonce); }
   .sec .note {
-    margin-block-start: 1em;
-    padding-inline-start: 1rem;
-    border-inline-start: 2px solid color-mix(in oklab, var(--encre) 14%, transparent);
-    font-size: var(--t-petit);
-    color: var(--gris);
+    margin-block-start: 1em; padding-inline-start: 1rem;
+    border-inline-start: 1px solid color-mix(in oklab, currentColor 20%, transparent);
+    font-size: var(--t-petit); color: var(--gris);
   }
 
-  /* ---------- La fiche d'identité : une fiche d'atelier ---------- */
+  /* ---------- Fiche d'identité ---------- */
   .fiche > div {
-    display: grid;
-    gap: 0.15rem;
-    padding-block: 0.75rem;
-    /* les séparations sont des points avant */
-    background: repeating-linear-gradient(90deg, color-mix(in oklab, var(--encre) 28%, transparent) 0 6px, transparent 6px 11px)
-      bottom / 100% 1px no-repeat;
+    display: grid; gap: 0.15rem; padding-block: 0.75rem;
+    border-block-end: 1px solid color-mix(in oklab, currentColor 15%, transparent);
   }
-  .fiche > div:last-child {
-    background: none;
-  }
-  .fiche dt {
-    font-family: var(--f-mono);
-    font-size: var(--t-micro);
-    color: var(--coquelicot-fonce);
-  }
-  .fiche dd {
-    min-width: 0;
-    line-height: 1.55;
-    color: var(--encre);
-  }
+  .fiche dt { font-family: var(--f-mono); font-size: var(--t-micro); color: var(--gris); }
+  .fiche dd { min-width: 0; line-height: 1.55; }
   @media (min-width: 40rem) {
-    .fiche > div {
-      grid-template-columns: minmax(0, 9rem) minmax(0, 1fr);
-      column-gap: 1.5rem;
-      align-items: baseline;
-    }
+    .fiche > div { grid-template-columns: minmax(0, 9rem) minmax(0, 1fr); column-gap: 1.5rem; align-items: baseline; }
   }
-  .drapeau {
-    display: block;
-    padding-block-start: 0.2rem;
-    font-size: var(--t-petit);
-    line-height: 1.5;
-    color: var(--gris);
-  }
-  .drapeau::before {
-    content: '↳ ';
-    color: var(--coquelicot-fonce);
-  }
-  .manque {
-    display: inline-block;
-    padding: 0.15rem 0.6rem;
-    border-radius: var(--r-s);
-    font-size: var(--t-petit);
-    font-weight: 400;
-    color: #fff;
-    background: var(--coquelicot-fonce);
-  }
-
-  .adresse {
-    display: grid;
-    justify-items: start;
-    font-style: normal;
-    line-height: 1.6;
-    color: var(--encre-doux);
-  }
-  .adresse b {
-    font-weight: 500;
-    color: var(--encre);
-  }
-  .adresse a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-  }
-
-  /* ---------- Encadré de chantier : un ticket d'atelier épinglé ---------- */
-  .chantier {
-    position: relative;
-    padding: clamp(1.2rem, 3vw, 1.9rem);
-    border-radius: var(--r-m);
-    background:
-      linear-gradient(color-mix(in oklab, var(--dore) 30%, var(--papier)), color-mix(in oklab, var(--dore) 30%, var(--papier))) padding-box,
-      repeating-linear-gradient(135deg, var(--encre) 0 8px, var(--dore) 8px 16px) border-box;
-    border: 3px solid transparent;
-  }
-  .chantier h2 {
-    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem);
-    margin-block-end: 0.6rem;
-  }
-  .chantier > p {
-    color: var(--encre-doux);
-  }
-  .chantier__liste {
-    display: grid;
-    gap: 0;
-    margin-block-start: 1rem;
-  }
-  .chantier__liste > div {
-    display: grid;
-    gap: 0.2rem;
-    padding-block: 0.8rem;
-    border-block-start: 1px solid color-mix(in oklab, var(--encre) 15%, transparent);
-  }
-  .chantier__liste dt {
-    font-weight: 500;
-    line-height: 1.4;
-    color: var(--encre);
-  }
-  .chantier__liste dd {
-    min-width: 0;
-    font-size: var(--t-petit);
-    line-height: 1.6;
-    color: var(--encre-doux);
-  }
-  .chantier__liste .chantier__etat {
-    font-size: var(--t-micro);
-    color: var(--coquelicot-fonce);
-    overflow-wrap: anywhere;
-  }
+  .drapeau { display: block; padding-block-start: 0.2rem; font-size: var(--t-petit); color: var(--gris); }
 
   .voir-aussi {
     padding-block-start: 1.5rem;
-    border-block-start: 1px solid color-mix(in oklab, var(--encre) 14%, transparent);
+    border-block-start: 1px solid color-mix(in oklab, currentColor 15%, transparent);
   }
+
+  .manque { padding: 0.1rem 0.5rem; border-radius: var(--r-s); font-size: var(--t-petit); font-weight: 400; color: #fff; background: var(--coquelicot-fonce); }
+  .adresse { display: grid; justify-items: start; font-style: normal; line-height: 1.6; color: var(--encre-doux); }
+  .adresse b { font-weight: 500; color: var(--encre); }
+  .adresse a { display: inline-flex; align-items: center; min-height: 44px; }
+
+  /* ---------- Encart « à compléter » : filet coquelicot ---------- */
+  .sec.chantier {
+    padding: clamp(1.2rem, 3vw, 1.75rem);
+    margin-block-end: var(--serre);
+    border: 0;
+    border-inline-start: 2px solid var(--coquelicot);
+    background: var(--papier);
+  }
+  .chantier__liste { margin-block-start: 1rem; }
+  .chantier__liste > div {
+    display: grid; gap: 0.2rem; padding-block: 0.8rem;
+    border-block-start: 1px solid color-mix(in oklab, currentColor 15%, transparent);
+  }
+  .chantier__liste dt { font-weight: 500; }
+  .chantier__liste dd { min-width: 0; font-size: var(--t-petit); color: var(--encre-doux); }
+  .chantier__liste .chantier__etat { font-size: var(--t-micro); color: var(--coquelicot-fonce); overflow-wrap: anywhere; }
+  .chantier + .sec { border: 0; padding-block-start: 0; }
 </style>

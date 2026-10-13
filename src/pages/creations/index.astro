@@ -5,17 +5,18 @@
  * Les filtres par catégorie sont des LIENS vers les pages catégorie : chaque
  * catégorie a sa propre URL indexable. Aucun JavaScript de filtrage.
  *
- * Mise en page : une mosaïque éditoriale sur ordinateur (colonnes de largeurs
- * inégales, décalées en hauteur), deux colonnes sur tablette, une seule sur
- * téléphone pour garder les photos grandes.
+ * Mise en page : grille à 12 colonnes, cartes de largeur égale
+ * (1 colonne sur téléphone, 2 sur tablette, 3 sur ordinateur), alignées en
+ * haut et en bas. Aucun décalage.
  */
 import { getCollection } from 'astro:content';
 import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
+import HautDePage from '../../components/HautDePage.astro';
 import CarteCreation from '../../components/CarteCreation.astro';
-import { SITE, ATELIER, lienWhatsApp } from '../../config';
+import AppelFinal from '../../components/AppelFinal.astro';
+import { SITE, ATELIER } from '../../config';
 
-import bobines from '../../assets/creations/bandeau/atelier-mur-bobines-fil-broderie-vitre.webp';
 import partage from '../../assets/creations/plein-ecran/machine-a-broder-en-cours-atelier-vitre.webp';
 import papillon from '../../assets/creations/galerie/papillon-brode-dentelle-ajouree-coquelicots.webp';
 
@@ -61,17 +62,20 @@ const prix = creations
 const prixMini = prix.length > 0 ? Math.min(...prix) : null;
 const aDentelle = filtres.some((f) => f.slug === 'decoration-ajouree');
 
+/* ⚠️ Prix et délai : exemples à valider par Emma. */
+const faits = [
+  ...(prixMini ? [`À partir de ${prixMini} €`] : []),
+  `Délai actuel : ${ATELIER.delaiActuel}`,
+  'Remise à Vitré ou Rennes, envoi en France',
+];
+
 const titre = `Créations brodées & cousues à Vitré (35) — toutes mes pièces | ${SITE.nom}`;
 const description =
   'Toutes mes créations brodées à Vitré : doudous et cadres de naissance, linge de bain au prénom, dentelle ajourée, sacs et trousses cousus. Prix à partir de, délai annoncé, devis dans la journée.';
+const fil = [{ nom: 'Créations', url: '/creations/' }];
 ---
 
-<Base
-  titre={titre}
-  description={description}
-  imageOg={og.src}
-  fil={[{ nom: 'Créations', url: '/creations/' }]}
->
+<Base titre={titre} description={description} imageOg={og.src} fil={fil}>
   {/*
     ⚠️ CONTENU D'EXEMPLE
     Prix et délais viennent de src/content/creations/ et de src/config.ts :
@@ -80,65 +84,30 @@ const description =
     « Cousu main » : seulement pour les sacs, trousses et tabliers.
   */}
 
-  <!-- ===================== ENTÊTE ===================== -->
-  <section class="bande g-tete">
-    <nav class="ariane" aria-label="Fil d'Ariane">
-      <a href="/">Accueil</a>
-      <span aria-hidden="true">/</span>
-      <span aria-current="page">Créations</span>
-    </nav>
-
-    <h1>Créations brodées et cousues à Vitré</h1>
-
-    <div class="g-tete__dire">
-      <p class="chapo">
-        Broderie personnalisée et couture sur mesure à {SITE.ville}&nbsp;(35)&nbsp;: doudous et
-        cadres de naissance, linge de bain au prénom, dentelle libre, sacs et trousses cousus
-        main. Chaque pièce présentée ici a été réalisée pour une cliente.
-      </p>
-      <p class="g-tete__mode">
-        Chacune peut être reproduite avec un autre prénom, une autre couleur de fil ou un autre
-        tissu&nbsp;: le bouton «&nbsp;Je veux la même&nbsp;» m'envoie directement la pièce
-        concernée.
-      </p>
-    </div>
-
-    <!-- La fiche d'atelier : des faits, en chasse fixe. -->
-    {/* ⚠️ Prix et délai : exemples à valider par Emma. */}
-    <dl class="g-fiche mono">
-      <div>
-        <dt>en vitrine</dt>
-        <dd>{creations.length} pièces</dd>
-      </div>
-      {
-        prixMini && (
-          <div>
-            <dt>prix</dt>
-            <dd>dès {prixMini}&nbsp;€</dd>
-          </div>
-        )
-      }
-      <div>
-        <dt>délai actuel</dt>
-        <dd>{ATELIER.delaiActuel}</dd>
-      </div>
-      <div>
-        <dt>remise</dt>
-        <dd>Vitré · Rennes · envoi</dd>
-      </div>
-    </dl>
-  </section>
+  <HautDePage titre="Créations brodées et cousues à Vitré" fil={fil} faits={faits}>
+    <p>
+      Broderie personnalisée et couture sur mesure à {SITE.ville}&nbsp;(35)&nbsp;: doudous et
+      cadres de naissance, linge de bain au prénom, dentelle libre, sacs et trousses cousus main.
+      Chaque pièce présentée ici a été réalisée pour une cliente.
+    </p>
+    <p>
+      Chacune peut être reproduite avec un autre prénom, une autre couleur de fil ou un autre
+      tissu. Le bouton «&nbsp;Je veux la même&nbsp;» m'envoie directement la pièce concernée.
+    </p>
+  </HautDePage>
 
   <!-- ===================== FILTRES = PAGES CATÉGORIE ===================== -->
   <nav class="bande filtres" aria-label="Catégories de créations">
-    <ul class="filtres__liste plein">
-      <li><span class="puce puce--ici" aria-current="page">Tout <sup>{creations.length}</sup></span></li>
+    <ul class="filtres__liste">
+      <li><span class="filtre filtre--ici" aria-current="page">Tout</span></li>
       {
         filtres.map((f) => (
           <li>
-            <a class={`puce${f.slug === 'decoration-ajouree' ? ' puce--dentelle' : ''}`} href={`/creations/${f.slug}/`}>
+            <a class="filtre" href={`/creations/${f.slug}/`}>
               {f.court}
-              <sup aria-label={`${f.nombre} pièce${f.nombre > 1 ? 's' : ''}`}>{f.nombre}</sup>
+              <span class="lu-seulement">
+                ({f.nombre} pièce{f.nombre > 1 ? 's' : ''})
+              </span>
             </a>
           </li>
         ))
@@ -146,16 +115,16 @@ const description =
     </ul>
   </nav>
 
-  <!-- ===================== LA MOSAÏQUE ===================== -->
+  <!-- ===================== LA GALERIE ===================== -->
   <section class="bande galerie" aria-label="Toutes les créations">
-    <ul class="mosaique">
+    <ul class="grille cartes">
       {
         creations.map((c, i) => (
           <li>
             <CarteCreation
               creation={c}
               prioritaire={i < 2}
-              tailles="(max-width: 34rem) 92vw, (max-width: 64rem) 46vw, (max-width: 90rem) 36vw, 34rem"
+              tailles="(max-width: 48rem) 92vw, (max-width: 64rem) 46vw, 27rem"
             />
           </li>
         ))
@@ -163,267 +132,84 @@ const description =
     </ul>
   </section>
 
-  <!-- ===================== RENVOI DENTELLE : l'angle qu'on ne voit pas ailleurs ===================== -->
+  <!-- ===================== RENVOI DENTELLE ===================== -->
   {
     aDentelle && (
-      <section class="bande tapis renvoi loin">
-        <figure class="renvoi__fig">
-          <Image
-            src={papillon}
-            alt="Papillon en dentelle libre aux ailes rouges et noires, brodé sans tissu"
-            widths={[240, 360, 520]}
-            sizes="(max-width: 48rem) 60vw, 16rem"
-            loading="lazy"
-            decoding="async"
-          />
-        </figure>
-        <div class="renvoi__dire">
-          <p class="renvoi__titre">La dentelle libre</p>
-          <p class="mesure mesure--clair">
-            Elle se brode sur un voile soluble qui disparaît au rinçage. Il ne reste que le fil, qui
-            tient seul, sans aucun tissu. C'est le travail que je préfère, et une technique
-            encore rare en Ille-et-Vilaine.
-          </p>
-          <a class="lien-fleche lien-fleche--clair" href="/creations/decoration-ajouree/">
-            Voir la dentelle libre
-          </a>
+      <section class="bande tapis renvoi loin" aria-labelledby="renvoi-titre">
+        <div class="grille">
+          <figure class="renvoi__fig">
+            <Image
+              src={papillon}
+              alt="Papillon en dentelle libre aux ailes rouges et noires, brodé sans tissu"
+              widths={[400, 640, 900]}
+              sizes="(max-width: 48rem) 92vw, 40vw"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+          <div class="renvoi__dire">
+            <h2 id="renvoi-titre">La dentelle libre</h2>
+            <p class="mesure mesure--clair">
+              Elle se brode sur un voile soluble qui disparaît au rinçage. Il ne reste que le fil,
+              qui tient seul, sans aucun tissu. C'est le travail que je préfère, et une technique
+              encore rare en Ille-et-Vilaine.
+            </p>
+            <a class="btn btn--or" href="/creations/decoration-ajouree/">Voir la dentelle libre</a>
+          </div>
         </div>
       </section>
     )
   }
 
-  <!-- ===================== RIEN NE CORRESPOND ===================== -->
-  <section class="final bande">
-    <Image
-      class="final__fond"
-      src={bobines}
-      alt=""
-      widths={[800, 1400, 2000]}
-      sizes="100vw"
-      loading="lazy"
-      decoding="async"
-    />
-    <div class="final__in">
-      <h2 class="titre-xl">Une pièce sur mesure</h2>
-      <p class="chapo">
-        Votre idée ne figure pas dans cette galerie&nbsp;? Indiquez-moi le prénom, l'objet et la
-        date souhaitée. Je vous réponds avec un prix et un délai de réalisation, et je vous
-        soumets le motif pour validation avant toute broderie.
-      </p>
-      <p class="actions">
-        <a class="btn btn--wa btn--grand" href={lienWhatsApp()}>Écrire sur WhatsApp</a>
-        <a class="btn btn--or btn--grand" href="/contact/#devis">Remplir le formulaire</a>
-      </p>
-      <p class="final__note">
-        <a href="/sur-mesure/">Prix, délais, entretien&nbsp;: comment se passe une commande</a>
-      </p>
-    </div>
-  </section>
+  <AppelFinal titre="Une pièce sur mesure">
+    <p>
+      Votre idée ne figure pas dans cette galerie&nbsp;? Indiquez-moi le prénom, l'objet et la date
+      souhaitée. Je vous réponds avec un prix et un délai de réalisation, et je vous soumets le
+      motif pour validation avant toute broderie.
+    </p>
+    <p><a href="/sur-mesure/">Prix, délais, entretien&nbsp;: le déroulement d'une commande</a></p>
+  </AppelFinal>
 </Base>
 
 <style>
-  /* ============================ ENTÊTE ============================
-     Le titre occupe la gauche, très grand ; le texte se pose à droite, en
-     bas. Pas de sourcil : la fiche d'atelier en dessous fait ce travail. */
-  .g-tete {
-    padding-block: clamp(0.5rem, 2vw, 1.5rem) clamp(2rem, 4vw, 3rem);
-    row-gap: clamp(1rem, 2.5vw, 2rem);
-  }
-  .g-tete h1 { max-width: 14ch; }
-  .g-tete__dire { display: grid; gap: 0.9rem; align-content: end; }
-  .g-tete__mode {
-    max-width: 30rem;
-    font-size: var(--t-petit);
-    color: var(--encre-doux);
-  }
-
-  /* La fiche : quatre étiquettes, séparées par un point avant. */
-  .g-fiche {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0;
-    margin-block-start: clamp(0.5rem, 2vw, 1.5rem);
-    border-block: 1.5px dashed color-mix(in oklab, var(--encre) 30%, transparent);
-    font-size: var(--t-micro);
-  }
-  .g-fiche > div {
-    display: grid; gap: 0.1rem;
-    padding: 0.8rem 0.9rem 0.8rem 0;
-  }
-  .g-fiche > div:nth-child(n + 3) {
-    border-block-start: 1px dashed color-mix(in oklab, var(--encre) 18%, transparent);
-  }
-  .g-fiche dt { color: var(--gris); }
-  .g-fiche dd {
-    margin: 0;
-    font-size: clamp(1rem, 0.9rem + 0.4vw, 1.2rem);
-    color: var(--encre);
-  }
-  .g-fiche > div:nth-child(2) dd { color: var(--coquelicot-fonce); }
-
-  @media (min-width: 48rem) {
-    .g-fiche { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-    .g-fiche > div:nth-child(n + 3) { border-block-start: 0; }
-    .g-fiche > div + div {
-      padding-inline-start: 1.2rem;
-      border-inline-start: 1px dashed color-mix(in oklab, var(--encre) 18%, transparent);
-    }
-  }
-
-  @media (min-width: 64rem) {
-    .g-tete {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, calc(var(--large) * 0.6))
-        [mi] minmax(0, calc(var(--large) * 0.4))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      align-items: end;
-    }
-    .g-tete .ariane, .g-fiche { grid-column: large-d / large-f; }
-    .g-tete h1 { grid-column: large-d / mi; font-size: clamp(4.4rem, 1rem + 6vw, 8.6rem); }
-    .g-tete__dire { grid-column: mi / large-f; padding-block-end: 0.6rem; }
-  }
-
-  /* Arrivée douce : CSS seul, le H1 n'est jamais masqué. */
-  @media (prefers-reduced-motion: no-preference) {
-    .g-tete h1 { animation: arrive 800ms var(--sortie) both; }
-    .g-tete__dire { animation: arrive 800ms var(--sortie) 120ms both; }
-  }
-  @keyframes arrive { from { transform: translateY(20px); opacity: 0.001; } to { transform: none; opacity: 1; } }
-
   /* ============================ FILTRES ============================
-     Une rangée d'étiquettes posée sur une règle graduée. C'est la liste qui
-     défile si elle est trop longue, jamais la page. */
-  .filtres { padding-block: 0 clamp(2.5rem, 5vw, 4.5rem); }
+     Des liens en pilule (forme réservée aux filtres). La liste défile si
+     elle est trop longue, jamais la page. */
+  .filtres { padding-block: 0 var(--serre); }
   .filtres__liste {
-    display: flex;
-    gap: 0.45rem;
-    padding: 0.2rem var(--marge) 1.1rem;
+    display: flex; gap: 0.5rem;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scrollbar-width: none;
-    /* les graduations : un trait tous les « centimètres » */
-    background-image:
-      linear-gradient(90deg, color-mix(in oklab, var(--encre) 35%, transparent) 1px, transparent 1px),
-      linear-gradient(90deg, color-mix(in oklab, var(--encre) 18%, transparent) 1px, transparent 1px);
-    background-size: calc(var(--cm) * 5) 12px, calc(var(--cm) / 2) 6px;
-    background-position: var(--marge) 100%;
-    background-repeat: repeat-x;
   }
   .filtres__liste::-webkit-scrollbar { display: none; }
-  .filtres__liste > li { flex: none; }
-  .puce {
-    display: inline-flex; align-items: center; gap: 0.35rem;
+  .filtres__liste > li { flex: none; position: relative; }
+  .filtre {
+    display: inline-flex; align-items: center;
     min-height: 44px;
-    padding: 0.45rem 1rem;
-    border-radius: var(--r-s);
-    border: 1px solid color-mix(in oklab, var(--encre) 22%, transparent);
-    background: color-mix(in oklab, var(--papier) 70%, transparent);
-    font-family: var(--f-mono);
-    font-size: 0.9rem;
+    padding: 0.45rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in oklab, var(--encre) 20%, transparent);
     color: var(--encre);
     text-decoration: none;
     white-space: nowrap;
-    transition: background 220ms ease, color 220ms ease, border-color 220ms ease;
+    transition: background 200ms ease, color 200ms ease;
   }
-  .puce sup { font-size: 0.7em; color: var(--coquelicot-fonce); vertical-align: super; line-height: 0; }
-  a.puce:hover { background: var(--encre); border-color: var(--encre); color: var(--lin-haut); }
-  a.puce:hover sup { color: var(--rose); }
-  .puce--ici { background: var(--encre); border-color: var(--encre); color: var(--lin-haut); }
-  .puce--ici sup { color: var(--rose); }
-  /* La dentelle : la seule étiquette sur fond de tapis, elle se repère. */
-  .puce--dentelle { background: var(--tapis); border-color: var(--tapis); color: var(--lin-haut); }
-  .puce--dentelle sup { color: var(--rose); }
-  a.puce--dentelle:hover { background: var(--coquelicot); border-color: var(--coquelicot); }
-  a.puce--dentelle:hover sup { color: #fff; }
+  a.filtre:hover, .filtre--ici { background: var(--encre); border-color: var(--encre); color: var(--lin-haut); }
 
-  /* ============================ MOSAÏQUE ============================ */
+  /* ============================ GALERIE ============================ */
   .galerie { padding-block: 0 var(--respire); }
-  .mosaique {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(2.5rem, 6vw, 4rem) clamp(1rem, 2.5vw, 2.5rem);
-    align-items: start;
-  }
-  .mosaique > li { min-width: 0; }
-  .mosaique :global(.carte__lien) { text-decoration: none; }
-
-  /* Tablette : deux colonnes, la seconde décalée vers le bas. */
-  @media (min-width: 34rem) {
-    .mosaique { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .mosaique > li:nth-child(even) { margin-block-start: clamp(3rem, 8vw, 6rem); }
-  }
-
-  /* Ordinateur : douze colonnes, trois cartes par rangée, de largeurs
-     inégales (5 · 4 · 3 puis 3 · 5 · 4) et décalées en escalier. */
-  @media (min-width: 64rem) {
-    .mosaique { grid-template-columns: repeat(12, minmax(0, 1fr)); row-gap: clamp(4rem, 7vw, 7rem); }
-    .mosaique > li { grid-column: span 4; margin-block-start: 0; }
-    .mosaique > li:nth-child(even) { margin-block-start: 0; }
-    .mosaique > li:nth-child(6n + 1) { grid-column: span 5; }
-    .mosaique > li:nth-child(6n + 2) { grid-column: span 4; margin-block-start: 7rem; }
-    .mosaique > li:nth-child(6n + 3) { grid-column: span 3; margin-block-start: 15rem; }
-    .mosaique > li:nth-child(6n + 4) { grid-column: span 3; margin-block-start: 3rem; }
-    .mosaique > li:nth-child(6n + 5) { grid-column: span 5; }
-    .mosaique > li:nth-child(6n + 6) { grid-column: span 4; margin-block-start: 9rem; }
-  }
-
-  /* Les cartes montent à l'entrée dans l'écran, en CSS seul. */
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .mosaique > li {
-        animation: monte-carte linear both;
-        animation-timeline: view();
-        animation-range: entry 0% entry 60%;
-      }
-    }
-  }
-  @keyframes monte-carte { from { opacity: 0.001; transform: translateY(48px); } to { opacity: 1; transform: none; } }
+  .cartes { row-gap: clamp(2.5rem, 5vw, 4rem); }
+  .cartes > li { display: grid; }
+  @media (min-width: 48rem) { .cartes > li { grid-column: span 6; } }
+  @media (min-width: 64rem) { .cartes > li { grid-column: span 4; } }
 
   /* ============================ RENVOI DENTELLE ============================ */
-  .renvoi {
-    padding-block: var(--serre);
-    row-gap: 2rem;
-    align-items: center;
-  }
-  .renvoi__fig { width: min(60vw, 16rem); justify-self: start; }
-  .renvoi__fig :global(img) {
-    width: 100%; aspect-ratio: 1; object-fit: cover;
-    border-radius: 50%;
-    /* l'anneau du tambour, en bois clair */
-    box-shadow: 0 0 0 8px #C9A97E, 0 0 0 10px #8A6A46, 0 0 0 14px #C9A97E;
-  }
-  .renvoi__dire { display: grid; gap: 1rem; justify-items: start; }
-  .renvoi__titre {
-    font-family: var(--f-titre);
-    font-size: var(--t-h2);
-    line-height: 0.94;
-    letter-spacing: -0.03em;
-    color: var(--lin-haut);
-  }
+  .renvoi .grille { row-gap: 2rem; align-items: center; }
+  .renvoi__fig :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-m); }
+  .renvoi__dire { display: grid; gap: 1.25rem; justify-items: start; }
   @media (min-width: 48rem) {
-    .renvoi {
-      grid-template-columns:
-        [bord-d] minmax(var(--marge), 1fr)
-        [large-d] minmax(0, 18rem)
-        [mi] minmax(0, calc(var(--large) - 18rem))
-        [large-f] minmax(var(--marge), 1fr) [bord-f];
-      column-gap: 0;
-    }
-    .renvoi__fig { grid-column: large-d / mi; grid-row: 1; }
-    .renvoi__dire { grid-column: mi / large-f; grid-row: 1; padding-inline-start: clamp(1.5rem, 4vw, 4rem); }
+    .renvoi__fig { grid-column: 1 / span 6; }
+    .renvoi__dire { grid-column: 8 / -1; }
   }
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .renvoi__fig :global(img) {
-        animation: tourne linear both;
-        animation-timeline: view();
-      }
-    }
-  }
-  @keyframes tourne { from { transform: rotate(-14deg) scale(0.9); } to { transform: rotate(8deg) scale(1); } }
-
-  /* ============================ APPEL FINAL ============================ */
-  .final .titre-xl { max-width: 16ch; }
-  .final__note a { display: inline-flex; align-items: center; min-height: 44px; }
 </style>

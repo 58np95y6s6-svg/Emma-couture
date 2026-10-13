@@ -20,6 +20,7 @@
  * sur grand écran, section en cours allumée en CSS pur (timeline-scope).
  */
 import Base from '../layouts/Base.astro';
+import HautDePage from '../components/HautDePage.astro';
 import { SITE, CONTACT } from '../config';
 /* Le gabarit retombe sinon sur /og-defaut.jpg, qui n'existe pas encore
    dans public/ : l'aperçu de partage serait cassé. */
@@ -119,6 +120,7 @@ const sommaire = [
   { id: 'securite', nom: 'Sécurité' },
   { id: 'modifications', nom: 'Modifications' },
 ];
+const fil = [{ nom: 'Politique de confidentialité', url: '/politique-de-confidentialite/' }];
 const tl = (id: string) => `--pc-${id}`;
 const portee = `timeline-scope: ${sommaire.map((s) => tl(s.id)).join(', ')}`;
 const vt = (id: string) => `view-timeline-name: ${tl(id)}`;
@@ -128,37 +130,18 @@ const vt = (id: string) => `view-timeline-name: ${tl(id)}`;
   titre={titre}
   description={description}
   imageOg={ogPage.src}
-  fil={[{ nom: 'Politique de confidentialité', url: '/politique-de-confidentialite/' }]}
+  fil={fil}
 >
-  <header class="bande tete-lg">
-    <nav class="ariane" aria-label="Fil d'Ariane">
-      <a href="/">Accueil</a>
-      <span aria-hidden="true">/</span>
-      <span aria-current="page">Politique de confidentialité</span>
-    </nav>
-
-    <div class="tete-lg__in">
-      <h1>Politique de confidentialité</h1>
-      <div class="tete-lg__cote">
-        <p class="chapo">
-          Cette page explique quelles informations je conserve lorsque vous me contactez, dans quel
-          but et pendant combien de temps. Je travaille seule&nbsp;: vos messages ne sont lus par
-          personne d’autre, et aucune donnée n’est revendue ni cédée.
-        </p>
-        <p class="mono tete-lg__date">Dernière mise à jour&nbsp;: {miseAJour}</p>
-      </div>
-    </div>
-
-    <ul class="resume">
-      <li><b>Aucun cookie de suivi</b>, donc aucun bandeau de consentement.</li>
-      <li><b>Aucune publicité</b>, aucun pixel de réseau social, aucune revente de données.</li>
-      <li><b>Vos coordonnées servent uniquement</b> à vous répondre et à réaliser votre commande.</li>
-    </ul>
-    <span class="tete-lg__regle" aria-hidden="true"></span>
-  </header>
+  <HautDePage titre="Politique de confidentialité" fil={fil} faits={[`Dernière mise à jour : ${miseAJour}`]}>
+    <p>
+      Cette page explique quelles informations je conserve lorsque vous me contactez, dans quel
+      but et pendant combien de temps. Je travaille seule&nbsp;: vos messages ne sont lus par
+      personne d’autre, et aucune donnée n’est revendue ni cédée.
+    </p>
+  </HautDePage>
 
   <div class="bande lecture">
-    <div class="lecture__grille" style={portee}>
+    <div class="grille lecture__grille" style={portee}>
       <nav class="som" aria-labelledby="som-titre">
         <p class="som__titre mono" id="som-titre">Sur cette page</p>
         <ol>
@@ -175,6 +158,11 @@ const vt = (id: string) => `view-timeline-name: ${tl(id)}`;
       </nav>
 
       <div class="lecture__texte">
+          <ul class="resume">
+            <li><b>Aucun cookie de suivi</b>, donc aucun bandeau de consentement.</li>
+            <li><b>Aucune publicité</b>, aucun pixel de réseau social, aucune revente de données.</li>
+            <li><b>Vos coordonnées servent uniquement</b> à vous répondre et à réaliser votre commande.</li>
+          </ul>
         <section class="sec" id="responsable" style={vt('responsable')}>
           <h2>Responsable du traitement</h2>
           <p>
@@ -371,447 +359,130 @@ const vt = (id: string) => `view-timeline-name: ${tl(id)}`;
 </Base>
 
 <style>
-  /* ==========================================================================
-     Page de lecture longue — gabarit jumeau de mentions-legales.
-     Rien ne bouge ici sauf le sommaire qui suit la lecture.
-  ========================================================================== */
-
-  /* ---------- En-tête ---------- */
-  .tete-lg {
-    padding-block: clamp(0.5rem, 2vw, 1.5rem) 0;
-    row-gap: clamp(1.2rem, 3vw, 2.2rem);
-  }
-  .tete-lg__in {
-    display: grid;
-    gap: clamp(1rem, 2.5vw, 1.6rem);
-    align-items: end;
-  }
-  .tete-lg h1 {
-    font-size: clamp(2.6rem, 1.2rem + 6vw, 7rem);
-    line-height: 0.9;
-  }
-  .tete-lg__cote {
-    display: grid;
-    gap: 0.9rem;
-    justify-items: start;
-  }
-  .tete-lg .chapo a {
-    text-underline-offset: 3px;
-    text-decoration-thickness: 1px;
-    text-decoration-color: color-mix(in oklab, var(--coquelicot) 60%, transparent);
-  }
-  .tete-lg .chapo a:hover {
-    color: var(--coquelicot-fonce);
-  }
-  @media (min-width: 56rem) {
-    .tete-lg__in {
-      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
-      column-gap: clamp(2rem, 5vw, 5rem);
-    }
-    .tete-lg__cote {
-      padding-block-end: 0.6rem;
-    }
-  }
-
-  /* Le mètre ruban du tapis de coupe, en encre sur le lin : graduations au
-     demi-centimètre, traits pleins tous les cinq. Il court d'un bord à l'autre
-     de la colonne et sépare l'en-tête du texte. */
-  .tete-lg__regle {
-    display: block;
-    block-size: 16px;
-    border-block-start: 1px solid color-mix(in oklab, var(--encre) 55%, transparent);
-    background-image:
-      linear-gradient(90deg, color-mix(in oklab, var(--encre) 55%, transparent) 1px, transparent 1px),
-      linear-gradient(90deg, color-mix(in oklab, var(--encre) 30%, transparent) 1px, transparent 1px);
-    background-size: calc(var(--cm) * 5) 16px, calc(var(--cm) / 2) 7px;
-    background-repeat: repeat-x;
-  }
-
-  /* ---------- Grille de lecture ---------- */
-  .lecture {
-    padding-block: clamp(1.6rem, 4vw, 3rem) var(--respire);
-  }
-  .lecture__grille {
-    display: grid;
-    gap: clamp(1.5rem, 4vw, 2.5rem);
-  }
-  .lecture__texte {
-    min-width: 0;
-    /* ~65 caractères en Jost à la taille du corps */
-    max-width: 40rem;
-  }
+  /* Page de lecture longue — gabarit jumeau de mentions-legales.
+     Sommaire en col. 1-4 (collant), texte en col. 5-12 (~65 caractères). */
+  .lecture { padding-block: var(--serre) var(--respire); }
+  .lecture__grille { row-gap: 2rem; align-items: start; }
+  .lecture__texte { max-width: 40rem; }
   @media (min-width: 64rem) {
-    .lecture__grille {
-      grid-template-columns: minmax(0, 15rem) minmax(0, 40rem);
-      column-gap: clamp(3rem, 7vw, 7rem);
-      align-items: start;
-    }
+    .som { grid-column: 1 / span 4; }
+    .lecture__texte { grid-column: 5 / -1; }
   }
 
   /* ---------- Sommaire ---------- */
-  .som {
-    min-width: 0;
-  }
-  .som__titre {
-    font-size: var(--t-micro);
-    color: var(--gris);
-    padding-block-end: 0.4rem;
-  }
-  /* Téléphone et tablette : une réglette d'onglets qui défile dans son propre
-     conteneur, jamais la page. */
+  .som__titre { font-size: var(--t-micro); color: var(--gris); padding-block-end: 0.4rem; }
+  /* Téléphone : une ligne de liens qui défile dans son propre conteneur. */
   .som ol {
-    display: flex;
-    gap: 0.4rem;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scroll-snap-type: x proximity;
-    scrollbar-width: none;
-    padding-block: 0.2rem;
-    margin-inline: calc(var(--marge) * -1);
-    padding-inline: var(--marge);
-    scroll-padding-inline: var(--marge);
+    display: flex; gap: 1.25rem;
+    overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+    border-block: 1px solid color-mix(in oklab, currentColor 15%, transparent);
   }
-  .som ol::-webkit-scrollbar {
-    display: none;
-  }
-  .som li {
-    flex: none;
-    scroll-snap-align: start;
-  }
+  .som ol::-webkit-scrollbar { display: none; }
+  .som li { flex: none; }
   .som a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    padding-inline: 0.95rem;
-    border-radius: 999px;
-    border: 1px solid color-mix(in oklab, var(--encre) 22%, transparent);
-    font-family: var(--f-mono);
-    font-size: var(--t-micro);
-    letter-spacing: 0.01em;
-    color: var(--encre-doux);
-    text-decoration: none;
-    white-space: nowrap;
-    transition: color 200ms ease, border-color 200ms ease, background-color 200ms ease;
+    position: relative;
+    display: flex; align-items: center; min-height: 44px;
+    font-size: var(--t-petit); color: var(--encre-doux); text-decoration: none; white-space: nowrap;
   }
-  .som a:hover {
-    color: var(--coquelicot-fonce);
-    border-color: var(--coquelicot-fonce);
-  }
-
+  .som a:hover { color: var(--coquelicot-fonce); }
   @media (min-width: 64rem) {
-    .som {
-      position: sticky;
-      inset-block-start: 6.5rem;
-      max-block-size: calc(100dvh - 8rem);
-      overflow-y: auto;
-    }
+    .som { position: sticky; inset-block-start: 6.5rem; }
     .som ol {
-      display: grid;
-      gap: 0;
-      overflow: visible;
-      margin-inline: 0;
-      padding-inline: 0;
-      border-inline-start: 1px solid color-mix(in oklab, var(--encre) 18%, transparent);
+      display: grid; gap: 0; overflow: visible; border-block: 0;
+      border-inline-start: 1px solid color-mix(in oklab, currentColor 18%, transparent);
     }
-    .som a {
-      position: relative;
-      display: flex;
-      white-space: normal;
-      min-height: 44px;
-      padding: 0.35rem 0 0.35rem 1.1rem;
-      border: 0;
-      border-radius: 0;
-      line-height: 1.35;
-    }
-    /* Le repère de la section en cours : un point avant rouge sur le filet. */
+    .som a { white-space: normal; padding-inline-start: 1.1rem; line-height: 1.35; }
+    /* Repère de la section en cours : un trait plein sur le filet. */
     .som a::before {
-      content: '';
-      position: absolute;
-      inset-block: 0.55rem;
-      inset-inline-start: -1.5px;
-      inline-size: 2px;
-      background: repeating-linear-gradient(180deg, var(--coquelicot) 0 6px, transparent 6px 10px);
-      transform: scaleY(0);
-      transform-origin: 50% 0;
-      transition: transform 300ms var(--sortie);
+      content: ''; position: absolute; inset-block: 0.55rem; inset-inline-start: -1.5px; inline-size: 2px;
+      background: var(--coquelicot);
+      transform: scaleY(0); transform-origin: 50% 0;
     }
-    .som a:hover::before {
-      transform: none;
-    }
+    .som a:hover::before { transform: none; }
   }
-
-  /* La section en cours s'allume, sans script : chaque section publie une
-     timeline de vue (nommée dans l'attribut style), portée jusqu'au sommaire
-     par timeline-scope. La fenêtre d'observation est réduite à une fine bande
-     sous l'en-tête collant : une seule section la traverse à la fois. */
+  /* La section en cours s'allume sans script (timeline-scope + view-timeline). */
   @supports (timeline-scope: --a) and (animation-timeline: view()) {
-    .sec {
-      view-timeline-inset: 28% 71%;
-    }
+    .sec { view-timeline-inset: 28% 71%; }
     @media (min-width: 64rem) {
-      .som a {
-        animation: som-actif linear;
-        animation-range: cover 0% cover 100%;
-      }
+      .som a { animation: som-actif linear; animation-range: cover 0% cover 100%; }
       .som a::before {
-        animation: inherit;
-        animation-name: som-repere;
-        animation-timeline: inherit;
-        animation-range: inherit;
+        animation: inherit; animation-name: som-repere;
+        animation-timeline: inherit; animation-range: inherit;
       }
     }
   }
-  @keyframes som-actif {
-    from, to {
-      color: var(--coquelicot-fonce);
-    }
-  }
-  @keyframes som-repere {
-    from, to {
-      transform: none;
-    }
-  }
+  @keyframes som-actif { from, to { color: var(--coquelicot-fonce); } }
+  @keyframes som-repere { from, to { transform: none; } }
 
   /* ---------- Sections ---------- */
   .sec {
-    /* padding et non gap : les sections se touchent, la bande d'observation
-       du sommaire n'est jamais « entre deux ». */
-    padding-block: clamp(1.8rem, 4vw, 2.8rem);
-    border-block-start: 1px solid color-mix(in oklab, var(--encre) 14%, transparent);
+    padding-block: var(--serre);
+    border-block-start: 1px solid color-mix(in oklab, currentColor 15%, transparent);
   }
-  .sec:first-child {
-    padding-block-start: 0;
-    border: 0;
-  }
-  .sec h2 {
-    font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.6rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
-    text-wrap: balance;
-    margin-block-end: 1rem;
-  }
-  .sec p {
-    max-width: 38rem;
-    line-height: 1.7;
-    color: var(--encre-doux);
-    text-wrap: pretty;
-  }
-  .sec p + p {
-    margin-block-start: 1em;
-  }
-  .sec a {
-    text-underline-offset: 3px;
-    text-decoration-thickness: 1px;
-    text-decoration-color: color-mix(in oklab, var(--coquelicot) 60%, transparent);
-    overflow-wrap: anywhere;
-  }
-  .sec a:hover {
-    color: var(--coquelicot-fonce);
-  }
-  /* Du texte de loi reste du texte : la note descend d'un cran, pas plus. */
+  .sec:first-child { padding-block-start: 0; border: 0; }
+  .sec h2 { text-wrap: balance; margin-block-end: 1rem; }
+  .sec p { max-width: 38rem; line-height: 1.7; color: var(--encre-doux); }
+  .sec p + p { margin-block-start: 1em; }
+  .sec a { text-underline-offset: 3px; overflow-wrap: anywhere; }
+  .sec a:hover { color: var(--coquelicot-fonce); }
   .sec .note {
-    margin-block-start: 1em;
-    padding-inline-start: 1rem;
-    border-inline-start: 2px solid color-mix(in oklab, var(--encre) 14%, transparent);
-    font-size: var(--t-petit);
-    color: var(--gris);
+    margin-block-start: 1em; padding-inline-start: 1rem;
+    border-inline-start: 1px solid color-mix(in oklab, currentColor 20%, transparent);
+    font-size: var(--t-petit); color: var(--gris);
   }
 
-  /* ---------- La fiche d'identité : une fiche d'atelier ---------- */
+  /* ---------- Fiche d'identité ---------- */
   .fiche > div {
-    display: grid;
-    gap: 0.15rem;
-    padding-block: 0.75rem;
-    /* les séparations sont des points avant */
-    background: repeating-linear-gradient(90deg, color-mix(in oklab, var(--encre) 28%, transparent) 0 6px, transparent 6px 11px)
-      bottom / 100% 1px no-repeat;
+    display: grid; gap: 0.15rem; padding-block: 0.75rem;
+    border-block-end: 1px solid color-mix(in oklab, currentColor 15%, transparent);
   }
-  .fiche > div:last-child {
-    background: none;
-  }
-  .fiche dt {
-    font-family: var(--f-mono);
-    font-size: var(--t-micro);
-    color: var(--coquelicot-fonce);
-  }
-  .fiche dd {
-    min-width: 0;
-    line-height: 1.55;
-    color: var(--encre);
-  }
+  .fiche dt { font-family: var(--f-mono); font-size: var(--t-micro); color: var(--gris); }
+  .fiche dd { min-width: 0; line-height: 1.55; }
   @media (min-width: 40rem) {
-    .fiche > div {
-      grid-template-columns: minmax(0, 9rem) minmax(0, 1fr);
-      column-gap: 1.5rem;
-      align-items: baseline;
-    }
+    .fiche > div { grid-template-columns: minmax(0, 9rem) minmax(0, 1fr); column-gap: 1.5rem; align-items: baseline; }
   }
-  .drapeau {
-    display: block;
-    padding-block-start: 0.2rem;
-    font-size: var(--t-petit);
-    line-height: 1.5;
-    color: var(--gris);
-  }
-  .drapeau::before {
-    content: '↳ ';
-    color: var(--coquelicot-fonce);
-  }
-
-
+  .drapeau { display: block; padding-block-start: 0.2rem; font-size: var(--t-petit); color: var(--gris); }
 
   .voir-aussi {
     padding-block-start: 1.5rem;
-    border-block-start: 1px solid color-mix(in oklab, var(--encre) 14%, transparent);
+    border-block-start: 1px solid color-mix(in oklab, currentColor 15%, transparent);
   }
 
-  /* ==========================================================================
-     Propre à la politique de confidentialité
-  ========================================================================== */
-  .tete-lg__date {
-    font-size: var(--t-micro);
-    color: var(--gris);
-  }
-
-  /* L'essentiel, pour la personne qui ne lira pas le reste : trois lignes
-     posées à plat sur une bande rose, en colonnes sur grand écran. */
+  /* ---------- Propre à la politique de confidentialité ---------- */
   .resume {
-    display: grid;
-    gap: 0.9rem 2rem;
-    padding: clamp(1.1rem, 2.5vw, 1.6rem) clamp(1.1rem, 2.5vw, 1.8rem);
-    border-radius: var(--r-m);
-    background: color-mix(in oklab, var(--rose) 55%, var(--lin-haut));
-    line-height: 1.55;
-    color: var(--encre-doux);
+    display: grid; margin-block-end: var(--serre);
+    border-block-start: 1px solid color-mix(in oklab, currentColor 15%, transparent);
   }
   .resume li {
-    min-width: 0;
-    padding-inline-start: 1.1rem;
-    position: relative;
+    padding-block: 0.85rem; color: var(--encre-doux);
+    border-block-end: 1px solid color-mix(in oklab, currentColor 15%, transparent);
   }
-  /* trois piqûres de point avant en guise de puce */
-  .resume li::before {
-    content: '';
-    position: absolute;
-    inset-inline-start: 0;
-    inset-block-start: 0.35em;
-    inline-size: 2px;
-    block-size: 1em;
-    background: repeating-linear-gradient(180deg, var(--coquelicot-fonce) 0 4px, transparent 4px 7px);
-  }
-  .resume b {
-    font-weight: 500;
-    color: var(--encre);
-  }
-  @media (min-width: 56rem) {
-    .resume {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
+  .resume + .sec { border: 0; padding-block-start: 0; }
+  .resume b, .prestataires b, .sec p b { font-weight: 500; color: var(--encre); }
 
-  /* ---------- Tableau récapitulatif : il défile dans son propre conteneur ---------- */
+  /* Tableau récapitulatif : il défile dans son propre conteneur. */
   .tableau {
     margin-block: 1.5rem 0.5rem;
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    border-radius: var(--r-s);
-    /* Ombres de défilement : une ombre apparaît au bord droit tant qu'il reste
-       des colonnes à voir (couvertures « local » qui suivent le contenu). */
-    background:
-      linear-gradient(90deg, var(--papier) 30%, transparent) left / 2.5rem 100% no-repeat local,
-      linear-gradient(270deg, var(--papier) 30%, transparent) right / 2.5rem 100% no-repeat local,
-      radial-gradient(farthest-side at 0 50%, color-mix(in oklab, var(--encre) 18%, transparent), transparent) left / 0.9rem 100% no-repeat scroll,
-      radial-gradient(farthest-side at 100% 50%, color-mix(in oklab, var(--encre) 18%, transparent), transparent) right / 0.9rem 100% no-repeat scroll,
-      var(--papier);
-    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--encre) 12%, transparent);
+    overflow-x: auto; overscroll-behavior-x: contain;
+    border-block: 1px solid color-mix(in oklab, currentColor 15%, transparent);
   }
-  .tableau:focus-visible {
-    outline-offset: 2px;
+  .tableau table { inline-size: 100%; min-inline-size: 34rem; border-collapse: collapse; font-size: var(--t-petit); line-height: 1.45; }
+  .tableau caption { caption-side: top; text-align: start; padding-block: 0.9rem 0.6rem; font-size: var(--t-micro); color: var(--gris); }
+  .tableau th, .tableau td {
+    padding: 0.7rem 1rem 0.7rem 0; text-align: start; vertical-align: top;
+    border-block-start: 1px solid color-mix(in oklab, currentColor 12%, transparent);
   }
-  .tableau table {
-    inline-size: 100%;
-    min-inline-size: 34rem;
-    border-collapse: collapse;
-    font-size: var(--t-petit);
-    line-height: 1.45;
-  }
-  .tableau caption {
-    caption-side: top;
-    text-align: start;
-    padding: 0.9rem 1rem 0.6rem;
-    font-size: var(--t-micro);
-    color: var(--gris);
-  }
-  .tableau th,
-  .tableau td {
-    padding: 0.7rem 1rem;
-    text-align: start;
-    vertical-align: top;
-    border-block-start: 1px solid color-mix(in oklab, var(--encre) 10%, transparent);
-  }
-  .tableau thead th {
-    font-family: var(--f-mono);
-    font-size: var(--t-micro);
-    font-weight: 400;
-    color: var(--coquelicot-fonce);
-  }
-  .tableau tbody th {
-    font-weight: 500;
-    color: var(--encre);
-  }
-  .tableau td {
-    color: var(--encre-doux);
-  }
-  .tableau td.mono {
-    font-size: var(--t-micro);
-    white-space: nowrap;
-  }
+  .tableau thead th { font-family: var(--f-mono); font-size: var(--t-micro); font-weight: 400; color: var(--gris); }
+  .tableau tbody th { font-weight: 500; }
+  .tableau td { color: var(--encre-doux); }
+  .tableau td.mono { font-size: var(--t-micro); white-space: nowrap; }
 
-  /* ---------- Les traitements ---------- */
-  .traitements {
-    display: grid;
-    gap: clamp(1.6rem, 3.5vw, 2.4rem);
-    margin-block: clamp(1.8rem, 4vw, 2.6rem) 0;
-  }
-  .trait {
-    min-width: 0;
-  }
-  .trait h3 {
-    font-size: clamp(1.35rem, 1.15rem + 0.8vw, 1.75rem);
-    padding-block-end: 0.35rem;
-    border-block-end: 1px solid color-mix(in oklab, var(--encre) 55%, transparent);
-  }
+  .traitements { display: grid; gap: var(--serre); margin-block-start: var(--serre); }
+  .trait h3 { padding-block-end: 0.35rem; }
 
-  /* ---------- Prestataires ---------- */
-  .prestataires {
-    display: grid;
-    gap: 1.2rem;
-    margin-block-start: 1.3rem;
-  }
-  .prestataires > div {
-    min-width: 0;
-    padding-inline-start: 1rem;
-    border-inline-start: 2px solid var(--coquelicot-fonce);
-  }
-  .prestataires dt {
-    font-weight: 500;
-    color: var(--encre);
-  }
-  .prestataires dd {
-    padding-block-start: 0.25rem;
-    line-height: 1.65;
-    color: var(--encre-doux);
-  }
-  .prestataires b,
-  .sec p b {
-    font-weight: 500;
-    color: var(--encre);
-  }
-
-  .droits {
-    margin-block: 0.8rem 1.2rem;
-  }
-  .droits dd {
-    color: var(--encre-doux);
-  }
+  .prestataires { display: grid; gap: 1.2rem; margin-block-start: 1.3rem; }
+  .prestataires > div { padding-inline-start: 1rem; border-inline-start: 2px solid var(--coquelicot); }
+  .prestataires dd { padding-block-start: 0.25rem; line-height: 1.65; color: var(--encre-doux); }
+  .droits { margin-block: 0.8rem 1.2rem; }
+  .droits dd { color: var(--encre-doux); }
 </style>
