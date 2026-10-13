@@ -83,6 +83,5 @@ Voir `CLAUDE.md` pour la grille tarifaire détaillée et le budget estimé.
 
 - Remplacer les valeurs d'exemple de `src/config.ts` par les vraies
 - Compléter les mentions légales (SIRET, et la question de l'adresse du siège)
-- Refaire la photo du haut de page : c'est actuellement un portrait en extérieur
-- Écrire l'enchaînement des prénoms brodés (spécifié dans le SKILL, pas implémenté)
+- Refaire la photo du haut de page : c'est actuellement un selfie en extérieur ; un portrait dans l'atelier renforcerait la confiance
 - L'espace d'administration (PWA) — spécifié dans `CLAUDE.md`, pas commencé
