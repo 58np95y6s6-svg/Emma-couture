@@ -560,6 +560,7 @@ const description =
   .dentelle__fig--b { width: 72%; justify-self: end; }
   .dentelle__fig--b :global(img) { border-radius: 50% 50% var(--r-l) var(--r-l); }
   .dentelle figcaption { font-size: var(--t-micro); color: var(--tapis-trait); }
+  .dentelle__fig:first-child figcaption { text-align: end; }
 
   @media (min-width: 64rem) {
     .dentelle { grid-template-columns: [bord-d] minmax(var(--marge), 1fr) [large-d] minmax(0, calc(var(--large) * 0.46)) [mi] minmax(0, calc(var(--large) * 0.54)) [large-f] minmax(var(--marge), 1fr) [bord-f]; }
@@ -570,7 +571,8 @@ const description =
       padding-inline-end: 3rem;
     }
     .dentelle__photos { grid-column: mi / large-f; }
-    .dentelle__fig--b { margin-block-start: -6rem; margin-inline-start: -30%; width: 58%; justify-self: start; }
+    .dentelle__fig--b { margin-block-start: -9rem; width: 52%; justify-self: start; position: relative; z-index: 1; }
+    .dentelle__fig--b :global(img) { box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.55); }
   }
 
   /* ============================ OCCASIONS ============================ */
