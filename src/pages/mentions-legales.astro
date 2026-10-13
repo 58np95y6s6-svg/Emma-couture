@@ -11,6 +11,14 @@
  *    valeur inventée.
  *  - Pas de vente en ligne pour l'instant → ni CGV ni médiateur de la
  *    consommation à ce stade (voir CLAUDE.md § Périmètre).
+ *  - Seule page (avec la politique de confidentialité) où le nom légal
+ *    apparaît : partout ailleurs, c'est « Emma Broderie ».
+ *
+ * Mise en page : page de lecture longue. Colonne de ~65 caractères, sommaire
+ * collant à gauche sur grand écran ; le lien de la section en cours s'allume,
+ * en CSS pur (timeline-scope + view-timeline), sans script.
+ * ⚠️ Même gabarit que politique-de-confidentialite.astro : les deux feuilles
+ * de style sont jumelles, à garder alignées.
  */
 import Base from '../layouts/Base.astro';
 import { SITE, CONTACT } from '../config';
@@ -69,6 +77,20 @@ const aFournir = [
     etat: `${SITE.codePostal} — à confirmer`,
   },
 ];
+
+/* Le sommaire : un identifiant par section, dans l'ordre de la page. Les
+   mêmes identifiants nomment les timelines de défilement (voir le style). */
+const sommaire = [
+  { id: 'a-completer', nom: 'À compléter' },
+  { id: 'editeur', nom: 'Éditeur du site' },
+  { id: 'publication', nom: 'Directrice de la publication' },
+  { id: 'hebergeur', nom: 'Hébergeur' },
+  { id: 'propriete', nom: 'Propriété intellectuelle' },
+  { id: 'vente', nom: 'Vente en ligne' },
+  { id: 'liens', nom: 'Liens et responsabilité' },
+];
+const tl = (id: string) => `--lg-${id}`;
+const portee = `timeline-scope: ${sommaire.map((s) => tl(s.id)).join(', ')}`;
 ---
 
 <Base
@@ -77,355 +99,565 @@ const aFournir = [
   imageOg={ogPage.src}
   fil={[{ nom: 'Mentions légales', url: '/mentions-legales/' }]}
 >
-  <section class="bande ml">
-    <div class="ml__tete">
-      <p class="sourcil">Informations légales</p>
+  <header class="bande tete-lg">
+    <nav class="ariane" aria-label="Fil d'Ariane">
+      <a href="/">Accueil</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Mentions légales</span>
+    </nav>
+
+    <div class="tete-lg__in">
       <h1>Mentions légales</h1>
-      <p class="ml__chapo">
-        Qui édite ce site, qui l’héberge, et à qui appartiennent les photos. Pour les données
-        personnelles, tout est détaillé dans
-        la <a href="/politique-de-confidentialite/">politique de confidentialité</a>.
-      </p>
+      <div class="tete-lg__cote">
+        <p class="chapo">
+          Cette page présente mon entreprise, l’hébergeur du site et les conditions d’utilisation
+          de mes photographies. Pour le traitement de vos données personnelles, je vous invite à
+          consulter la <a href="/politique-de-confidentialite/">politique de confidentialité</a>.
+        </p>
+      </div>
     </div>
+    <span class="tete-lg__regle" aria-hidden="true"></span>
+  </header>
 
-    <!-- Encadré de chantier : à supprimer quand la liste est vide. -->
-    <aside class="ml__chantier" aria-labelledby="ml-chantier-titre">
-      <h2 id="ml-chantier-titre">À compléter avant la mise en ligne</h2>
-      <p>
-        Ces informations sont obligatoires et ne sont pas encore renseignées. Elles sont affichées
-        ici telles quelles, plutôt qu’inventées.
-      </p>
-      <dl class="ml__chantier-liste">
-        {
-          aFournir.map((a) => (
+  <div class="bande lecture">
+    <div class="lecture__grille" style={portee}>
+      <nav class="som" aria-labelledby="som-titre">
+        <p class="som__titre mono" id="som-titre">Sur cette page</p>
+        <ol>
+          {
+            sommaire.map((s) => (
+              <li>
+                <a href={`#${s.id}`} style={`animation-timeline: ${tl(s.id)}`}>
+                  {s.nom}
+                </a>
+              </li>
+            ))
+          }
+        </ol>
+      </nav>
+
+      <div class="lecture__texte">
+        <!-- Encadré de chantier : à supprimer quand la liste est vide. -->
+        <aside
+          class="sec chantier"
+          id="a-completer"
+          aria-labelledby="chantier-titre"
+          style={`view-timeline-name: ${tl('a-completer')}`}
+        >
+          <h2 id="chantier-titre">À compléter avant la mise en ligne</h2>
+          <p>
+            Ces informations sont obligatoires et ne sont pas encore renseignées. Elles sont
+            affichées ici telles quelles, plutôt qu’inventées.
+          </p>
+          <dl class="chantier__liste">
+            {
+              aFournir.map((a) => (
+                <div>
+                  <dt>{a.quoi}</dt>
+                  <dd class="chantier__etat mono">{a.etat}</dd>
+                  <dd>{a.pourquoi}</dd>
+                </div>
+              ))
+            }
+          </dl>
+        </aside>
+
+        <section class="sec" id="editeur" style={`view-timeline-name: ${tl('editeur')}`}>
+          <h2>Éditeur du site</h2>
+          <dl class="fiche">
             <div>
-              <dt>
-                {a.quoi} <b>{a.etat}</b>
-              </dt>
-              <dd>{a.pourquoi}</dd>
+              <dt>Nom commercial</dt>
+              <dd>{SITE.nom}</dd>
             </div>
-          ))
-        }
-      </dl>
-    </aside>
+            <div>
+              <dt>Exploitante</dt>
+              <dd>
+                {SITE.nomLegal}
+                <span class="drapeau">nom légal à confirmer</span>
+              </dd>
+            </div>
+            <div>
+              <dt>Statut</dt>
+              <dd>Entrepreneure individuelle — micro-entreprise</dd>
+            </div>
+            <div>
+              <dt>Activité</dt>
+              <dd>Broderie machine sur textile et couture sur mesure</dd>
+            </div>
+            <div>
+              <dt>SIRET</dt>
+              <dd>
+                {manque(SITE.siret) ? <b class="manque mono">{SITE.siret}</b> : SITE.siret}
+              </dd>
+            </div>
+            <div>
+              <dt>Siège</dt>
+              <dd>
+                {SITE.ville} ({SITE.codePostal}), {SITE.departement}, France
+                <span class="drapeau">
+                  adresse précise non publiée — l’atelier est au domicile de l’exploitante
+                </span>
+              </dd>
+            </div>
+            <div>
+              <dt>Courriel</dt>
+              <dd><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></dd>
+            </div>
+            <div>
+              <dt>Téléphone</dt>
+              <dd><a href={`tel:${CONTACT.telephone}`}>{CONTACT.telephone}</a></dd>
+            </div>
+            <div>
+              <dt>TVA</dt>
+              <dd>
+                TVA non applicable, article 293 B du Code général des impôts
+                <span class="drapeau">à confirmer selon le régime réel d’Emma</span>
+              </dd>
+            </div>
+          </dl>
+        </section>
 
-    <div class="ml__corps">
-      <section class="ml__bloc">
-        <h2>Éditeur du site</h2>
-        <dl class="ml__fiche">
-          <div>
-            <dt>Nom commercial</dt>
-            <dd>{SITE.nom}</dd>
-          </div>
-          <div>
-            <dt>Exploitante</dt>
-            <dd>
-              {SITE.nomLegal}
-              <span class="ml__flag">nom légal à confirmer</span>
-            </dd>
-          </div>
-          <div>
-            <dt>Statut</dt>
-            <dd>Entrepreneure individuelle — micro-entreprise</dd>
-          </div>
-          <div>
-            <dt>Activité</dt>
-            <dd>Broderie machine sur textile et couture sur mesure</dd>
-          </div>
-          <div>
-            <dt>SIRET</dt>
-            <dd>
-              {manque(SITE.siret) ? <b class="ml__manque">{SITE.siret}</b> : SITE.siret}
-            </dd>
-          </div>
-          <div>
-            <dt>Siège</dt>
-            <dd>
-              {SITE.ville} ({SITE.codePostal}), {SITE.departement}, France
-              <span class="ml__flag">
-                adresse précise non publiée — l’atelier est au domicile de l’exploitante
-              </span>
-            </dd>
-          </div>
-          <div>
-            <dt>Courriel</dt>
-            <dd><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></dd>
-          </div>
-          <div>
-            <dt>Téléphone</dt>
-            <dd><a href={`tel:${CONTACT.telephone}`}>{CONTACT.telephone}</a></dd>
-          </div>
-          <div>
-            <dt>TVA</dt>
-            <dd>
-              TVA non applicable, article 293 B du Code général des impôts
-              <span class="ml__flag">à confirmer selon le régime réel d’Emma</span>
-            </dd>
-          </div>
-        </dl>
-      </section>
+        <section class="sec" id="publication" style={`view-timeline-name: ${tl('publication')}`}>
+          <h2>Directrice de la publication</h2>
+          <p>
+            {SITE.nomLegal}, exploitante de {SITE.nom}. C’est elle qui écrit et valide les contenus
+            publiés sur ce site.
+          </p>
+        </section>
 
-      <section class="ml__bloc">
-        <h2>Directrice de la publication</h2>
-        <p>
-          {SITE.nomLegal}, exploitante de {SITE.nom}. C’est elle qui écrit et valide les contenus
-          publiés sur ce site.
-        </p>
-      </section>
+        <section class="sec" id="hebergeur" style={`view-timeline-name: ${tl('hebergeur')}`}>
+          <h2>Hébergeur</h2>
+          <address class="adresse">
+            <b>Netlify, Inc.</b>
+            <span>512 2nd Street, Suite 200</span>
+            <span>San Francisco, CA 94107</span>
+            <span>États-Unis</span>
+            <a href="https://www.netlify.com/" rel="noopener nofollow" target="_blank">netlify.com</a>
+          </address>
+          <p class="note">
+            Netlify héberge les pages du site, reçoit les formulaires de contact et stocke les
+            données de l’espace d’administration. Les conséquences de cet hébergement hors Union
+            européenne sont détaillées dans
+            la <a href="/politique-de-confidentialite/">politique de confidentialité</a>.
+          </p>
+        </section>
 
-      <section class="ml__bloc">
-        <h2>Hébergeur</h2>
-        <p>
-          <b>Netlify, Inc.</b><br />
-          512 2nd Street, Suite 200<br />
-          San Francisco, CA 94107<br />
-          États-Unis<br />
-          <a href="https://www.netlify.com/" rel="noopener nofollow" target="_blank">netlify.com</a>
-        </p>
-        <p class="ml__petit">
-          Netlify héberge les pages du site, reçoit les formulaires de contact et stocke les données
-          de l’espace d’administration. Les conséquences de cet hébergement hors Union européenne
-          sont détaillées dans
-          la <a href="/politique-de-confidentialite/">politique de confidentialité</a>.
-        </p>
-      </section>
+        <section class="sec" id="propriete" style={`view-timeline-name: ${tl('propriete')}`}>
+          <h2>Propriété intellectuelle</h2>
+          <p>
+            Les photographies publiées sur ce site ont été prises dans l’atelier et montrent des
+            pièces réellement brodées ou cousues par {SITE.nom}. Elles lui appartiennent, ainsi que
+            les motifs de broderie, les textes et la mise en page du site.
+          </p>
+          <p>
+            Toute reproduction, même partielle, sur un autre site, une boutique en ligne, un
+            catalogue ou un support imprimé est interdite sans accord écrit préalable. Les motifs
+            brodés ne sont ni vendus ni cédés sous forme de fichiers.
+          </p>
+          <p class="note">
+            Certaines pièces photographiées portent le prénom de la personne à qui elles étaient
+            destinées. Si vous êtes concerné·e et souhaitez qu’une photo soit retirée, il suffit de
+            le demander par courriel&nbsp;: elle est retirée sans discussion.
+          </p>
+        </section>
 
-      <section class="ml__bloc">
-        <h2>Propriété intellectuelle</h2>
-        <p>
-          Les photographies publiées sur ce site ont été prises dans l’atelier et montrent des
-          pièces réellement brodées ou cousues par {SITE.nom}. Elles lui appartiennent, ainsi que
-          les motifs de broderie, les textes et la mise en page du site.
-        </p>
-        <p>
-          Toute reproduction, même partielle, sur un autre site, une boutique en ligne, un catalogue
-          ou un support imprimé est interdite sans accord écrit préalable. Les motifs brodés ne sont
-          ni vendus ni cédés sous forme de fichiers.
-        </p>
-        <p class="ml__petit">
-          Certaines pièces photographiées portent le prénom de la personne à qui elles étaient
-          destinées. Si vous êtes concerné·e et souhaitez qu’une photo soit retirée, il suffit de le
-          demander par courriel&nbsp;: elle est retirée sans discussion.
-        </p>
-      </section>
+        <section class="sec" id="vente" style={`view-timeline-name: ${tl('vente')}`}>
+          <h2>Vente en ligne</h2>
+          <p>
+            Ce site ne vend rien directement&nbsp;: il n’y a ni panier, ni paiement, ni prise de
+            commande automatique. Chaque projet passe par un échange, un devis, puis un accord. Il
+            n’y a donc pas de conditions générales de vente ni de médiateur de la consommation à ce
+            stade.
+          </p>
+          <p class="note">
+            <!-- ⚠️ Si un paiement en ligne est ajouté plus tard (liens Stripe), CGV et médiateur de
+                 la consommation deviennent obligatoires en B2C. Voir CLAUDE.md § Périmètre. -->
+            Si un paiement en ligne est ajouté un jour, cette page sera complétée avant.
+          </p>
+        </section>
 
-      <section class="ml__bloc">
-        <h2>Vente en ligne</h2>
-        <p>
-          Ce site ne vend rien directement&nbsp;: il n’y a ni panier, ni paiement, ni prise de
-          commande automatique. Chaque projet passe par un échange, un devis, puis un accord. Il n’y
-          a donc pas de conditions générales de vente ni de médiateur de la consommation à ce stade.
-        </p>
-        <p class="ml__petit">
-          <!-- ⚠️ Si un paiement en ligne est ajouté plus tard (liens Stripe), CGV et médiateur de
-               la consommation deviennent obligatoires en B2C. Voir CLAUDE.md § Périmètre. -->
-          Si un paiement en ligne est ajouté un jour, cette page sera complétée avant.
-        </p>
-      </section>
+        <section class="sec" id="liens" style={`view-timeline-name: ${tl('liens')}`}>
+          <h2>Liens et responsabilité</h2>
+          <p>
+            Les informations affichées (délais, exemples de prix, disponibilités) sont indicatives
+            et peuvent changer&nbsp;: seul le devis envoyé par écrit engage. Les liens sortants —
+            réseaux sociaux, WhatsApp — mènent vers des services qui ont leurs propres règles, sur
+            lesquelles {SITE.nom} n’a pas la main.
+          </p>
+        </section>
 
-      <section class="ml__bloc">
-        <h2>Liens et responsabilité</h2>
-        <p>
-          Les informations affichées (délais, exemples de prix, disponibilités) sont indicatives et
-          peuvent changer&nbsp;: seul le devis envoyé par écrit engage. Les liens sortants — réseaux
-          sociaux, WhatsApp — mènent vers des services qui ont leurs propres règles, sur lesquelles
-          {SITE.nom} n’a pas la main.
+        <p class="voir-aussi">
+          <a class="lien-fleche" href="/politique-de-confidentialite/">Politique de confidentialité</a>
         </p>
-      </section>
+      </div>
     </div>
-  </section>
+  </div>
 </Base>
 
-<style is:global>
-  /* --------------------------------------------------------------------------
-     Mentions légales. Page de texte : colonne de lecture étroite, hiérarchie
-     calme, aucun effet. Classes préfixées `ml-` / `ml__`.
-  -------------------------------------------------------------------------- */
-  .ml {
-    padding-block: clamp(2.2rem, 5vw, 4rem) clamp(3rem, 7vw, 6rem);
-    row-gap: clamp(1.8rem, 4vw, 2.8rem);
-  }
-  .ml__tete {
-    display: grid;
-    gap: clamp(0.7rem, 2vw, 1.1rem);
-    justify-items: start;
-    max-width: 44rem;
-  }
-  /* `.sourcil` est en nowrap dans la feuille globale : on l'autorise à passer
-     à la ligne pour qu'un libellé long ne déborde pas à 320 px. */
-  @media (max-width: 40rem) {
-    .ml .sourcil {
-      white-space: normal;
-      line-height: 1.5;
-    }
-    .ml .sourcil::after {
-      display: none;
-    }
-  }
-  .ml__tete h1 {
-    font-size: clamp(2rem, 1.4rem + 2.4vw, 3.4rem);
-  }
-  .ml__chapo {
-    font-size: var(--t-chapo);
-    line-height: 1.5;
-    color: var(--encre-doux);
-    max-width: 34rem;
-  }
-  .ml__chapo a,
-  .ml__corps a {
-    text-decoration-thickness: 1px;
-    text-underline-offset: 3px;
-    text-decoration-color: color-mix(in oklab, var(--brique) 55%, transparent);
-  }
-  .ml__chapo a:hover,
-  .ml__corps a:hover {
-    color: var(--rouille);
-  }
+<style>
+  /* ==========================================================================
+     Page de lecture longue — gabarit jumeau de politique-de-confidentialite.
+     Rien ne bouge ici sauf le sommaire qui suit la lecture.
+  ========================================================================== */
 
-  /* L'encadré de chantier : visible, mais pas une alerte rouge agressive. */
-  .ml__chantier {
-    max-width: 46rem;
-    padding: clamp(1.1rem, 2.5vw, 1.8rem);
-    background: color-mix(in oklab, var(--ocre) 22%, var(--sable-haut));
-    border-inline-start: 3px solid var(--ocre);
-    border-radius: 2px;
+  /* ---------- En-tête ---------- */
+  .tete-lg {
+    padding-block: clamp(0.5rem, 2vw, 1.5rem) 0;
+    row-gap: clamp(1.2rem, 3vw, 2.2rem);
   }
-  .ml__chantier h2 {
-    font-family: 'Jost', sans-serif;
-    font-size: var(--t-petit);
-    font-weight: 500;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: color-mix(in oklab, var(--brique) 85%, var(--encre));
+  .tete-lg__in {
+    display: grid;
+    gap: clamp(1rem, 2.5vw, 1.6rem);
+    align-items: end;
   }
-  .ml__chantier > p {
-    padding-block-start: 0.5rem;
-    font-size: var(--t-corps);
-    line-height: 1.6;
-    color: var(--encre-doux);
-    max-width: 38rem;
+  .tete-lg h1 {
+    font-size: clamp(2.6rem, 1.2rem + 6vw, 7rem);
+    line-height: 0.9;
   }
-  .ml__chantier-liste {
+  .tete-lg__cote {
     display: grid;
     gap: 0.9rem;
-    padding-block-start: 1.1rem;
+    justify-items: start;
   }
-  .ml__chantier-liste > div {
+  .tete-lg .chapo a {
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    text-decoration-color: color-mix(in oklab, var(--coquelicot) 60%, transparent);
+  }
+  .tete-lg .chapo a:hover {
+    color: var(--coquelicot-fonce);
+  }
+  @media (min-width: 56rem) {
+    .tete-lg__in {
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+      column-gap: clamp(2rem, 5vw, 5rem);
+    }
+    .tete-lg__cote {
+      padding-block-end: 0.6rem;
+    }
+  }
+
+  /* Le mètre ruban du tapis de coupe, en encre sur le lin : graduations au
+     demi-centimètre, traits pleins tous les cinq. Il court d'un bord à l'autre
+     de la colonne et sépare l'en-tête du texte. */
+  .tete-lg__regle {
+    display: block;
+    block-size: 16px;
+    border-block-start: 1px solid color-mix(in oklab, var(--encre) 55%, transparent);
+    background-image:
+      linear-gradient(90deg, color-mix(in oklab, var(--encre) 55%, transparent) 1px, transparent 1px),
+      linear-gradient(90deg, color-mix(in oklab, var(--encre) 30%, transparent) 1px, transparent 1px);
+    background-size: calc(var(--cm) * 5) 16px, calc(var(--cm) / 2) 7px;
+    background-repeat: repeat-x;
+  }
+
+  /* ---------- Grille de lecture ---------- */
+  .lecture {
+    padding-block: clamp(1.6rem, 4vw, 3rem) var(--respire);
+  }
+  .lecture__grille {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 2.5rem);
+  }
+  .lecture__texte {
     min-width: 0;
-  }
-  .ml__chantier-liste dt {
-    font-size: var(--t-corps);
-    font-weight: 500;
-    line-height: 1.45;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 0.4rem 0.6rem;
-  }
-  .ml__chantier-liste dt b {
-    font-weight: 500;
-    font-size: var(--t-micro);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 0.2rem 0.55rem;
-    border-radius: 999px;
-    color: var(--coquille);
-    background: var(--brique);
-  }
-  .ml__chantier-liste dd {
-    margin: 0;
-    padding-block-start: 0.15rem;
-    font-size: var(--t-petit);
-    line-height: 1.6;
-    color: var(--gris);
+    /* ~65 caractères en Jost à la taille du corps */
     max-width: 40rem;
   }
+  @media (min-width: 64rem) {
+    .lecture__grille {
+      grid-template-columns: minmax(0, 15rem) minmax(0, 40rem);
+      column-gap: clamp(3rem, 7vw, 7rem);
+      align-items: start;
+    }
+  }
 
-  /* Le corps : blocs séparés par un filet de fil. */
-  .ml__corps {
-    display: grid;
-    gap: clamp(1.6rem, 3.5vw, 2.6rem);
-    max-width: 46rem;
+  /* ---------- Sommaire ---------- */
+  .som {
+    min-width: 0;
   }
-  .ml__bloc {
-    display: grid;
-    gap: 0.65rem;
-    padding-block-start: clamp(1.2rem, 3vw, 2rem);
-    border-block-start: 1px solid color-mix(in oklab, var(--brique) 26%, transparent);
+  .som__titre {
+    font-size: var(--t-micro);
+    color: var(--gris);
+    padding-block-end: 0.4rem;
   }
-  .ml__bloc h2 {
-    font-family: 'Instrument Serif', Georgia, serif;
-    font-size: clamp(1.35rem, 1.1rem + 1vw, 2rem);
-    line-height: 1.1;
-    letter-spacing: -0.015em;
+  /* Téléphone et tablette : une réglette d'onglets qui défile dans son propre
+     conteneur, jamais la page. */
+  .som ol {
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    padding-block: 0.2rem;
+    margin-inline: calc(var(--marge) * -1);
+    padding-inline: var(--marge);
+    scroll-padding-inline: var(--marge);
   }
-  /* Page de texte : le corps reste à var(--t-corps), soit 16 px minimum. */
-  .ml__bloc p {
-    font-size: var(--t-corps);
+  .som ol::-webkit-scrollbar {
+    display: none;
+  }
+  .som li {
+    flex: none;
+    scroll-snap-align: start;
+  }
+  .som a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 0.95rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in oklab, var(--encre) 22%, transparent);
+    font-family: var(--f-mono);
+    font-size: var(--t-micro);
+    letter-spacing: 0.01em;
+    color: var(--encre-doux);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: color 200ms ease, border-color 200ms ease, background-color 200ms ease;
+  }
+  .som a:hover {
+    color: var(--coquelicot-fonce);
+    border-color: var(--coquelicot-fonce);
+  }
+
+  @media (min-width: 64rem) {
+    .som {
+      position: sticky;
+      inset-block-start: 6.5rem;
+      max-block-size: calc(100dvh - 8rem);
+      overflow-y: auto;
+    }
+    .som ol {
+      display: grid;
+      gap: 0;
+      overflow: visible;
+      margin-inline: 0;
+      padding-inline: 0;
+      border-inline-start: 1px solid color-mix(in oklab, var(--encre) 18%, transparent);
+    }
+    .som a {
+      position: relative;
+      display: flex;
+      white-space: normal;
+      min-height: 44px;
+      padding: 0.35rem 0 0.35rem 1.1rem;
+      border: 0;
+      border-radius: 0;
+      line-height: 1.35;
+    }
+    /* Le repère de la section en cours : un point avant rouge sur le filet. */
+    .som a::before {
+      content: '';
+      position: absolute;
+      inset-block: 0.55rem;
+      inset-inline-start: -1.5px;
+      inline-size: 2px;
+      background: repeating-linear-gradient(180deg, var(--coquelicot) 0 6px, transparent 6px 10px);
+      transform: scaleY(0);
+      transform-origin: 50% 0;
+      transition: transform 300ms var(--sortie);
+    }
+    .som a:hover::before {
+      transform: none;
+    }
+  }
+
+  /* La section en cours s'allume, sans script : chaque section publie une
+     timeline de vue (nommée dans l'attribut style), portée jusqu'au sommaire
+     par timeline-scope. La fenêtre d'observation est réduite à une fine bande
+     sous l'en-tête collant : une seule section la traverse à la fois. */
+  @supports (timeline-scope: --a) and (animation-timeline: view()) {
+    .sec {
+      view-timeline-inset: 28% 71%;
+    }
+    @media (min-width: 64rem) {
+      .som a {
+        animation: som-actif linear;
+        animation-range: cover 0% cover 100%;
+      }
+      .som a::before {
+        animation: inherit;
+        animation-name: som-repere;
+        animation-timeline: inherit;
+        animation-range: inherit;
+      }
+    }
+  }
+  @keyframes som-actif {
+    from, to {
+      color: var(--coquelicot-fonce);
+    }
+  }
+  @keyframes som-repere {
+    from, to {
+      transform: none;
+    }
+  }
+
+  /* ---------- Sections ---------- */
+  .sec {
+    /* padding et non gap : les sections se touchent, la bande d'observation
+       du sommaire n'est jamais « entre deux ». */
+    padding-block: clamp(1.8rem, 4vw, 2.8rem);
+    border-block-start: 1px solid color-mix(in oklab, var(--encre) 14%, transparent);
+  }
+  .sec:first-child:not(.chantier) {
+    padding-block-start: 0;
+    border: 0;
+  }
+  .chantier + .sec {
+    border: 0;
+  }
+  .sec h2 {
+    font-size: clamp(1.75rem, 1.3rem + 1.6vw, 2.6rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin-block-end: 1rem;
+  }
+  .sec p {
+    max-width: 38rem;
     line-height: 1.7;
     color: var(--encre-doux);
-    max-width: 38rem;
+    text-wrap: pretty;
   }
-  .ml__bloc p b {
-    font-weight: 500;
-    color: var(--encre);
+  .sec p + p {
+    margin-block-start: 1em;
   }
-  /* Du texte de loi reste du texte : `--t-micro` (≈ 12 px) est trop petit ici. */
-  .ml__petit {
-    font-size: var(--t-petit) !important;
-    color: var(--gris) !important;
+  .sec a {
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    text-decoration-color: color-mix(in oklab, var(--coquelicot) 60%, transparent);
+    overflow-wrap: anywhere;
   }
-
-  /* La fiche d'identité de l'entreprise. */
-  .ml__fiche {
-    display: grid;
-    gap: 0.75rem;
-    padding-block-start: 0.3rem;
+  .sec a:hover {
+    color: var(--coquelicot-fonce);
   }
-  .ml__fiche > div {
-    min-width: 0;
-    display: grid;
-    gap: 0.1rem;
-  }
-  .ml__fiche dt {
-    font-size: var(--t-micro);
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+  /* Du texte de loi reste du texte : la note descend d'un cran, pas plus. */
+  .sec .note {
+    margin-block-start: 1em;
+    padding-inline-start: 1rem;
+    border-inline-start: 2px solid color-mix(in oklab, var(--encre) 14%, transparent);
+    font-size: var(--t-petit);
     color: var(--gris);
   }
-  .ml__fiche dd {
-    margin: 0;
-    font-size: var(--t-corps);
-    line-height: 1.6;
+
+  /* ---------- La fiche d'identité : une fiche d'atelier ---------- */
+  .fiche > div {
+    display: grid;
+    gap: 0.15rem;
+    padding-block: 0.75rem;
+    /* les séparations sont des points avant */
+    background: repeating-linear-gradient(90deg, color-mix(in oklab, var(--encre) 28%, transparent) 0 6px, transparent 6px 11px)
+      bottom / 100% 1px no-repeat;
+  }
+  .fiche > div:last-child {
+    background: none;
+  }
+  .fiche dt {
+    font-family: var(--f-mono);
+    font-size: var(--t-micro);
+    color: var(--coquelicot-fonce);
+  }
+  .fiche dd {
+    min-width: 0;
+    line-height: 1.55;
     color: var(--encre);
   }
   @media (min-width: 40rem) {
-    .ml__fiche > div {
-      grid-template-columns: minmax(0, 10rem) minmax(0, 1fr);
-      gap: 0.2rem 1.5rem;
+    .fiche > div {
+      grid-template-columns: minmax(0, 9rem) minmax(0, 1fr);
+      column-gap: 1.5rem;
       align-items: baseline;
     }
-    .ml__fiche dt {
-      padding-block-start: 0.15rem;
-    }
+  }
+  .drapeau {
+    display: block;
+    padding-block-start: 0.2rem;
+    font-size: var(--t-petit);
+    line-height: 1.5;
+    color: var(--gris);
+  }
+  .drapeau::before {
+    content: '↳ ';
+    color: var(--coquelicot-fonce);
+  }
+  .manque {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: var(--r-s);
+    font-size: var(--t-petit);
+    font-weight: 400;
+    color: #fff;
+    background: var(--coquelicot-fonce);
   }
 
-  /* Une valeur encore absente : elle doit sauter aux yeux. */
-  .ml__manque {
-    display: inline-block;
-    font-weight: 500;
-    font-family: 'Jost', sans-serif;
-    letter-spacing: 0.06em;
-    padding: 0.15rem 0.6rem;
-    border-radius: 3px;
-    color: var(--coquille);
-    background: var(--rouille);
+  .adresse {
+    display: grid;
+    justify-items: start;
+    font-style: normal;
+    line-height: 1.6;
+    color: var(--encre-doux);
   }
-  .ml__flag {
-    display: block;
-    padding-block-start: 0.15rem;
+  .adresse b {
+    font-weight: 500;
+    color: var(--encre);
+  }
+  .adresse a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* ---------- Encadré de chantier : un ticket d'atelier épinglé ---------- */
+  .chantier {
+    position: relative;
+    padding: clamp(1.2rem, 3vw, 1.9rem);
+    border-radius: var(--r-m);
+    background:
+      linear-gradient(color-mix(in oklab, var(--dore) 30%, var(--papier)), color-mix(in oklab, var(--dore) 30%, var(--papier))) padding-box,
+      repeating-linear-gradient(135deg, var(--encre) 0 8px, var(--dore) 8px 16px) border-box;
+    border: 3px solid transparent;
+  }
+  .chantier h2 {
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem);
+    margin-block-end: 0.6rem;
+  }
+  .chantier > p {
+    color: var(--encre-doux);
+  }
+  .chantier__liste {
+    display: grid;
+    gap: 0;
+    margin-block-start: 1rem;
+  }
+  .chantier__liste > div {
+    display: grid;
+    gap: 0.2rem;
+    padding-block: 0.8rem;
+    border-block-start: 1px solid color-mix(in oklab, var(--encre) 15%, transparent);
+  }
+  .chantier__liste dt {
+    font-weight: 500;
+    line-height: 1.4;
+    color: var(--encre);
+  }
+  .chantier__liste dd {
+    min-width: 0;
+    font-size: var(--t-petit);
+    line-height: 1.6;
+    color: var(--encre-doux);
+  }
+  .chantier__liste .chantier__etat {
     font-size: var(--t-micro);
-    line-height: 1.5;
-    color: var(--brique);
+    color: var(--coquelicot-fonce);
+    overflow-wrap: anywhere;
+  }
+
+  .voir-aussi {
+    padding-block-start: 1.5rem;
+    border-block-start: 1px solid color-mix(in oklab, var(--encre) 14%, transparent);
   }
 </style>
