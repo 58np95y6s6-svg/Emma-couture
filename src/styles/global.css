@@ -858,6 +858,7 @@ main > .bande:has(+ .final, + .tapis, + .nuit, + .bandeau) {
 
 /* Menu mobile ouvert : la page ne défile plus dessous. */
 html.menu-ouvert { overflow: hidden; }
+html.menu-ouvert .flottant { display: none; }   /* le menu a déjà ses boutons */
 
 /* Le bouton WhatsApp flottant ne recouvre pas le bas du pied. */
 @media (max-width: 63.999rem) {
