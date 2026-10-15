@@ -7,13 +7,13 @@
  * calendrier du terme.
  *
  * Gabarit commun aux quatre pages occasions : HautDePage (fond de l'occasion)
- * → section propre à l'occasion → photos → Etapes → créations → FAQ → AppelFinal.
+ * → section propre à l'occasion → Etapes → créations → FAQ → AppelFinal.
  *
  * ⚠️ MAQUETTE. Prix et délais viennent de src/config.ts et du contenu des
  * créations : provisoires tant qu'Emma ne les a pas confirmés.
  * Vocabulaire : broderie MACHINE. Jamais « brodé à la main ».
  */
-import { Image, getImage } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import HautDePage from '../../components/HautDePage.astro';
@@ -22,12 +22,9 @@ import Etapes from '../../components/Etapes.astro';
 import CarteCreation from '../../components/CarteCreation.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppelFinal from '../../components/AppelFinal.astro';
-import { SITE, ATELIER, OCCASIONS, lienWhatsApp } from '../../config';
+import { SITE, ATELIER, OCCASIONS, LIBELLES, lienWhatsApp } from '../../config';
 
 import photoHero from '../../assets/creations/galerie/doudou-plat-brode-prenom-keanu-naissance.webp';
-import photoCadre from '../../assets/creations/detail/cadre-naissance-brode-prenom-chambre-bebe.webp';
-import photoSac from '../../assets/creations/galerie/sac-a-dos-enfant-brode-prenom-malo.webp';
-import photoMachine from '../../assets/creations/detail/machine-a-broder-en-cours-atelier-vitre.webp';
 import photoOg from '../../assets/creations/galerie/cadre-naissance-brode-prenom-chambre-bebe.webp';
 
 const occasion = OCCASIONS.find((o) => o.slug === 'naissance')!;
@@ -40,7 +37,7 @@ const pour = toutes.filter((c) => c.data.occasions.includes('naissance'));
 const prix = pour.map((c) => c.data.prixDepart).filter((n): n is number => typeof n === 'number');
 const prixMini = prix.length ? Math.min(...prix) : null;
 
-const messageWa = `Bonjour ${SITE.nom}, c'est pour une naissance. J'aimerais une pièce brodée au prénom.`;
+const messageWa = 'Bonjour Emma, c’est pour une naissance. J’aimerais une pièce brodée au prénom.';
 const wa = lienWhatsApp(messageWa);
 const lienDevis = '/contact/?occasion=naissance#devis';
 
@@ -55,76 +52,51 @@ const fil = [{ nom: 'Cadeau de naissance', url: '/cadeaux/naissance/' }];
    ⚠️ « 30 °C, fil polyester » : à faire confirmer par Emma. */
 const faq = [
   {
-    q: 'Puis-je commander avant la naissance ?',
-    r: `Oui, c'est même la solution la plus confortable. À partir de la date du terme, nous choisissons ensemble le support, l'écriture et la couleur du fil, et je prépare le motif. Il vous suffit ensuite de m'envoyer le prénom et les mesures après la naissance.`,
-  },
-  {
-    q: 'Quel est le délai de réalisation ?',
-    r: `Le délai actuel de l'atelier est de ${ATELIER.delaiActuel}, validation du motif comprise. Je vous confirme une date précise dès que le motif est validé.`,
-  },
-  {
     q: 'Quelles informations peuvent être brodées ?',
-    r: `Le prénom, la date et l'heure de naissance, le poids, la taille, ainsi qu'un petit motif si vous le souhaitez. En écriture cursive ou en capitales, dans la couleur de fil de votre choix. Je vous indique ce que chaque support permet d'accueillir.`,
+    r: `Le prénom, la date et l’heure de naissance, le poids, la taille, ainsi qu’un petit motif si vous le souhaitez. En écriture cursive ou en capitales, dans la couleur de fil de votre choix. Je vous indique ce que chaque support permet d’accueillir.`,
   },
   {
     q: 'Le doudou brodé est-il lavable en machine ?',
-    r: `Oui, à 30 degrés. Le fil polyester ne rétrécit pas et ne déteint pas sur les tissus clairs : un doudou brodé s'entretient comme n'importe quel doudou.`,
+    r: `Oui, à 30 degrés. Le fil polyester ne rétrécit pas et ne déteint pas sur les tissus clairs : un doudou brodé s’entretient comme n’importe quel doudou.`,
   },
   {
     q: 'Livrez-vous, ou faut-il venir chercher la pièce ?',
-    r: `${ATELIER.zones}. L'emballage cadeau est compris, et je peux expédier directement chez les parents.`,
+    r: `${ATELIER.zones}. L’emballage cadeau est compris, et je peux expédier directement chez les parents.`,
   },
 ];
 
 /* Valeurs reprises du cadre « Ambre » photographié plus bas (cohérence
    photo / texte). ⚠️ Accord de la cliente à confirmer avant mise en ligne. */
 const fiche = [
-  { l: 'Prénom', v: 'Ambre', n: "l'orthographe exacte, en cursive ou en capitales" },
+  { l: 'Prénom', v: 'Ambre', n: 'l’orthographe exacte, en cursive ou en capitales' },
   { l: 'Date', v: '16.01.2024', n: 'ou « 16 janvier 2024 »' },
   { l: 'Heure', v: '14 h 46', n: 'facultatif' },
   { l: 'Poids', v: '3,135 kg', n: '' },
   { l: 'Taille', v: '50 cm', n: '' },
 ];
 
-const planche = [
-  {
-    src: photoCadre,
-    alt: 'Cadre de naissance brodé au prénom, avec la date, la taille et le poids, accroché dans une chambre de bébé',
-    legende: 'Le cadre de naissance, pour la chambre',
-  },
-  {
-    src: photoSac,
-    alt: "Sac à dos d'enfant bleu marine, rabat brodé d'étoiles et du prénom Malo",
-    legende: "Le sac à dos, pour l'entrée à la crèche",
-  },
-  {
-    src: photoMachine,
-    alt: 'Broderie en cours sous la tête de la machine à broder, à l’atelier de Vitré',
-    legende: 'La broderie en cours, à l’atelier',
-  },
-];
 ---
 
-<Base titre={titre} description={description} imageOg={og.src} fil={fil}>
+<Base titre={titre} description={description} imageOg={og.src} fil={fil} messageWa={messageWa}>
   <HautDePage
     titre="Cadeaux de naissance brodés au prénom"
     fil={fil}
     image={photoHero}
-    alt="Doudou plat blanc à pois avec une tête d'ourson, prénom brodé au centre en fil vert"
+    alt="Doudou plat blanc à pois avec une tête d’ourson, prénom brodé au centre en fil vert"
     fond={occasion.fil}
     faits={[
-      ...(prixMini ? [`À partir de ${prixMini} €`] : []),
-      `Délai actuel : ${ATELIER.delaiActuel}`,
+      ...(prixMini ? [`Dès ${prixMini} €`] : []),
       'Lavable à 30 °C',
+      'Emballage cadeau compris',
     ]}
   >
     <p>
       Doudou, cadre de naissance, bavoir, cape de bain&nbsp;: je brode à la machine, dans mon
-      atelier de {SITE.ville}&nbsp;(35), le prénom, la date, le poids et la taille de l'enfant.
+      atelier de {SITE.ville}&nbsp;(35), le prénom, la date, le poids et la taille de l’enfant.
       Le motif vous est soumis avant toute réalisation.
     </p>
-    <a slot="actions" class="btn btn--wa btn--grand" href={wa}>Me contacter sur WhatsApp</a>
-    <a slot="actions" class="btn btn--creux btn--grand" href={lienDevis}>Demander un devis</a>
+    <a slot="actions" class="btn btn--wa btn--grand" href={wa}>{LIBELLES.whatsapp}</a>
+    <a slot="actions" class="btn btn--creux btn--grand" href={lienDevis}>{LIBELLES.devis}</a>
   </HautDePage>
 
   <!-- ===================== LES INFORMATIONS BRODÉES ===================== -->
@@ -134,7 +106,7 @@ const planche = [
         <h2 id="fiche-titre">Les informations brodées</h2>
         <p class="mesure">
           Ces informations me permettent de préparer le motif. Vous me les transmettez par message,
-          je vous renvoie le motif pour validation&nbsp;: tant que la broderie n'est pas lancée,
+          je vous renvoie le motif pour validation&nbsp;: tant que la broderie n’est pas lancée,
           tout peut être modifié.
         </p>
       </div>
@@ -155,26 +127,9 @@ const planche = [
     </div>
   </section>
 
-  <!-- ===================== PHOTOS ===================== -->
-  <section class="bande oc-b" aria-label="Pièces de naissance brodées">
-    <ul class="grille planche">
-      {
-        planche.map((p) => (
-          <li>
-            <Image
-              src={p.src}
-              alt={p.alt}
-              widths={[320, 480, 700]}
-              sizes="(max-width: 48rem) 92vw, 28vw"
-              loading="lazy"
-              decoding="async"
-            />
-            <p class="mono">{p.legende}</p>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
+  {/* [CONTENU EMMA : photos de naissance] La planche de photos a été retirée faute
+      de photos propres à la naissance (le cadre est déjà dans les créations, la
+      machine n'y avait pas sa place). À rétablir avec 2 ou 3 vraies photos 4:5. */}
 
   <!-- ===================== AVANT OU APRÈS LA NAISSANCE ===================== -->
   <section class="bande oc-etapes">
@@ -186,21 +141,21 @@ const planche = [
         {
           titre: 'Pendant la grossesse',
           texte:
-            "C'est le moment idéal. À partir de la date du terme, nous choisissons le support, l'écriture et la couleur du fil, et je prépare le motif. Après la naissance, vous m'envoyez le prénom et les mesures par WhatsApp.",
+            'C’est le moment idéal. À partir de la date du terme, nous choisissons le support, l’écriture et la couleur du fil, et je prépare le motif. Après la naissance, vous m’envoyez le prénom et les mesures par WhatsApp.',
         },
         {
           titre: 'Après la naissance',
-          texte: `Toutes les informations sont connues : la commande peut être lancée immédiatement. Le délai actuel de l'atelier est de ${ATELIER.delaiActuel}, validation du motif comprise.`,
+          texte: 'Toutes les informations sont connues : je vous soumets le motif sans attendre, et la broderie est lancée dès votre validation.',
         },
         {
           titre: 'Pour une visite très proche',
           texte:
-            "Contactez-moi directement par WhatsApp plutôt que par le formulaire. Je vous indique sans attendre ce qu'il est possible de réaliser dans le temps disponible.",
+            'Contactez-moi directement par WhatsApp plutôt que par le formulaire. Je vous indique sans attendre ce qu’il est possible de réaliser dans le temps disponible.',
         },
       ]}
     />
     <p class="actions oc-etapes__suite">
-      <a class="lien-fleche" href="/sur-mesure/">Le déroulement d'une commande</a>
+      <a class="lien-fleche" href="/sur-mesure/">Le déroulement d’une commande</a>
     </p>
   </section>
 
@@ -208,7 +163,7 @@ const planche = [
   <section class="bande oc-creations loin">
     <TeteSection titre="Créations pour une naissance" variante="duo">
       <p>
-        Chacune peut servir de point de départ&nbsp;: le support, le fil ou l'écriture se modifient
+        Chacune peut servir de point de départ&nbsp;: le support, le fil ou l’écriture se modifient
         selon vos souhaits. Je brode également bavoirs, capes de bain et gigoteuses, dont je vous
         adresse des photographies sur demande.
       </p>
@@ -221,9 +176,9 @@ const planche = [
 
   <FAQ questions={faq} />
 
-  <AppelFinal titre="Votre demande" messageWa={messageWa} lienDevis={lienDevis}>
+  <AppelFinal titre="Préparer votre cadeau de naissance" messageWa={messageWa} lienDevis={lienDevis}>
     <p>
-      Le prénom, ou simplement la date du terme s'il n'est pas encore choisi. Je vous réponds avec
+      Le prénom, ou simplement la date du terme s’il n’est pas encore choisi. Je vous réponds avec
       un prix, un délai et une proposition de motif, sans engagement de votre part. Emballage
       cadeau compris.
     </p>
@@ -235,7 +190,6 @@ const planche = [
   .oc-a { padding-block: var(--respire) var(--serre); }
   .oc-a .grille { row-gap: 2rem; }
   .oc-a__dire { display: grid; gap: 1rem; align-content: start; }
-  .oc-b { padding-block: var(--serre); }
   .oc-etapes { padding-block: var(--serre); }
   .oc-etapes__suite { margin-block-start: 1.5rem; }
   .oc-creations { padding-block: var(--serre); }
@@ -252,16 +206,9 @@ const planche = [
   .fiche__v { font-family: var(--f-titre); font-size: var(--t-h2); line-height: 1; }
   .fiche__n { font-size: var(--t-petit); color: var(--encre-doux); }
 
-  /* Trois photos 4:5, mêmes forme et hauteur. */
-  .planche { row-gap: 2rem; }
-  .planche li { display: grid; gap: 0.6rem; align-content: start; }
-  .planche :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--r-m); }
-  .planche p { font-size: var(--t-micro); color: var(--gris); }
-
   @media (min-width: 48rem) {
     .oc-a__dire { grid-column: 1 / span 4; }
     .fiche { grid-column: 5 / -1; }
     .fiche > div { grid-template-columns: minmax(0, 7rem) minmax(0, 1fr); }
-    .planche li { grid-column: span 4; }
   }
 </style>

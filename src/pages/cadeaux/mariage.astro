@@ -7,7 +7,9 @@
  * dentelle libre, pièce que l'on ne trouve presque nulle part ailleurs.
  *
  * Gabarit commun aux quatre pages occasions : HautDePage (fond de l'occasion)
- * → section propre à l'occasion → photos → Etapes → créations → FAQ → AppelFinal.
+ * → pièces → dentelle libre (tapis) → Etapes → FAQ → AppelFinal.
+ * Une seule création est rattachée au mariage (l'arbre de vie, déjà montré
+ * dans la section dentelle) : pas de rangée de cartes, un lien vers /creations/.
  *
  * ⚠️ MAQUETTE. Prix et délais viennent de src/config.ts et du contenu.
  * Vocabulaire : broderie MACHINE. Jamais « brodé à la main ».
@@ -20,10 +22,9 @@ import TeteSection from '../../components/TeteSection.astro';
 import ListeLignes from '../../components/ListeLignes.astro';
 import LigneFaits from '../../components/LigneFaits.astro';
 import Etapes from '../../components/Etapes.astro';
-import CarteCreation from '../../components/CarteCreation.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppelFinal from '../../components/AppelFinal.astro';
-import { SITE, ATELIER, OCCASIONS, lienWhatsApp } from '../../config';
+import { SITE, OCCASIONS, LIBELLES, lienWhatsApp } from '../../config';
 
 import photoPapillon from '../../assets/creations/galerie/papillon-brode-dentelle-ajouree-coquelicots.webp';
 import photoArbreDetail from '../../assets/creations/detail/arbre-de-vie-brode-dentelle-ajouree-fil-dore.webp';
@@ -35,15 +36,11 @@ const toutes = (await getCollection('creations', ({ data }) => !data.masquee)).s
   (a, b) => a.data.ordre - b.data.ordre,
 );
 const pour = toutes.filter((c) => c.data.occasions.includes('mariage'));
-/* Une seule création est rattachée au mariage pour l'instant. On complète
-   avec des pièces cousues et brodées au prénom, et on l'écrit clairement
-   plutôt que d'inventer des cartes. */
-const voisines = toutes.filter((c) => !pour.includes(c) && c.data.cousuMain).slice(0, 2);
 
 const dentelle = pour.find((c) => c.data.categorie === 'decoration-ajouree') ?? pour[0];
 const prixDentelle = dentelle?.data.prixDepart ?? null;
 
-const messageWa = `Bonjour ${SITE.nom}, c'est pour un mariage. J'aimerais parler d'une pièce brodée.`;
+const messageWa = 'Bonjour Emma, c’est pour un mariage. J’aimerais vous parler d’une pièce brodée.';
 const wa = lienWhatsApp(messageWa);
 const lienDevis = '/contact/?occasion=mariage#devis';
 
@@ -60,11 +57,11 @@ const fil = [{ nom: 'Cadeau de mariage', url: '/cadeaux/mariage/' }];
 const faq = [
   {
     q: 'Combien de temps avant le mariage faut-il commander ?',
-    r: `Plus tôt que pour un cadeau isolé. Une série de pochettes ou une pièce en dentelle se compose de plusieurs pièces identiques, validées une fois puis brodées l'une après l'autre. Le délai actuel de l'atelier est de ${ATELIER.delaiActuel} ; deux à trois mois avant la date vous assurent une préparation sereine.`,
+    r: `Plus tôt que pour un cadeau isolé. Une série de pochettes se compose de plusieurs pièces identiques, validées une fois puis brodées l’une après l’autre. Deux à trois mois avant la date vous assurent une préparation sereine.`,
   },
   {
     q: 'Brodez-vous directement sur la robe ?',
-    r: `Non : la dentelle est brodée séparément, sans support tissu. Elle vous est livrée terminée et se pose ensuite à l'endroit choisi, sur la robe, un voile, une ceinture ou un ruban. Précisez-moi le support dès le départ : il détermine la taille et la densité du motif.`,
+    r: `Non : la dentelle est brodée séparément, sans support tissu. Elle vous est livrée terminée et se pose ensuite à l’endroit choisi, sur la robe, un voile, une ceinture ou un ruban. Précisez-moi le support dès le départ : il détermine la taille et la densité du motif.`,
   },
   {
     q: 'Quel budget prévoir ?',
@@ -74,11 +71,11 @@ const faq = [
   },
   {
     q: 'Pouvez-vous broder le même motif pour tous les témoins ?',
-    r: `Oui, c'est la demande la plus fréquente : un même motif, un même fil, et un prénom différent sur chaque pièce. Merci de m'envoyer la liste complète en une fois, avec l'orthographe exacte de chaque prénom.`,
+    r: `Oui, c’est la demande la plus fréquente : un même motif, un même fil, et un prénom différent sur chaque pièce. Merci de m’envoyer la liste complète en une fois, avec l’orthographe exacte de chaque prénom.`,
   },
   {
     q: 'Que se passe-t-il si le motif ne me convient pas ?',
-    r: `Le motif vous est toujours soumis avant réalisation. Vous le validez ou demandez une modification : tant que la broderie n'est pas lancée, tout peut être ajusté. C'est précisément pour cette raison qu'un mariage demande de la marge dans le calendrier.`,
+    r: `Le motif vous est toujours soumis avant réalisation. Vous le validez ou demandez une modification : tant que la broderie n’est pas lancée, tout peut être ajusté. C’est précisément pour cette raison qu’un mariage demande de la marge dans le calendrier.`,
   },
 ];
 
@@ -102,7 +99,7 @@ const pieces = [
 ];
 ---
 
-<Base titre={titre} description={description} imageOg={og.src} fil={fil}>
+<Base titre={titre} description={description} imageOg={og.src} fil={fil} messageWa={messageWa}>
   <HautDePage
     titre="Cadeaux de mariage brodés et dentelle ajourée"
     fil={fil}
@@ -111,8 +108,8 @@ const pieces = [
     fond={occasion.fil}
     faits={[
       ...(prixDentelle ? [`Dentelle ajourée dès ${prixDentelle} €`] : []),
-      `Délai actuel : ${ATELIER.delaiActuel}`,
       'Un motif pour tout le cortège',
+      'Emballage cadeau compris',
     ]}
   >
     <p>
@@ -120,8 +117,8 @@ const pieces = [
       réalise en broderie machine, à {SITE.ville}&nbsp;(35), les pièces de votre mariage. Un motif
       validé une seule fois, puis brodé pour chaque personne du cortège.
     </p>
-    <a slot="actions" class="btn btn--wa btn--grand" href={wa}>Me contacter sur WhatsApp</a>
-    <a slot="actions" class="btn btn--creux btn--grand" href={lienDevis}>Demander un devis</a>
+    <a slot="actions" class="btn btn--wa btn--grand" href={wa}>{LIBELLES.whatsapp}</a>
+    <a slot="actions" class="btn btn--creux btn--grand" href={lienDevis}>{LIBELLES.devis}</a>
   </HautDePage>
 
   <!-- ===================== LES PIÈCES ===================== -->
@@ -129,9 +126,11 @@ const pieces = [
     <TeteSection titre="Les pièces du mariage" />
     <ListeLignes lignes={pieces} />
     <p class="mesure oc-a__note">
-      D'autres pièces sont possibles&nbsp;: ruban de bouquet, coussin d'alliances, étiquettes des
-      cadeaux d'invités. Décrivez-moi votre projet, même sans modèle précis.
+      D’autres pièces sont possibles&nbsp;: ruban de bouquet, coussin d’alliances, étiquettes des
+      cadeaux d’invités. Les pochettes et les mouchoirs ne sont pas encore photographiés sur le
+      site&nbsp;; je vous adresse sur demande des photographies des pièces déjà réalisées.
     </p>
+    <p class="oc-a__lien"><a class="lien-fleche" href="/creations/">Toutes les créations</a></p>
   </section>
 
   <!-- ===================== LA DENTELLE LIBRE (le seul tapis de la page) ===================== -->
@@ -141,13 +140,13 @@ const pieces = [
         <h2 id="dentelle-titre">La dentelle libre</h2>
         <p class="chapo">
           La machine brode sur un support qui disparaît au rinçage. Il ne reste que le fil&nbsp;: un
-          motif ajouré, autoportant, que l'on coud sur une robe ou que l'on glisse dans un cadre.
+          motif ajouré, autoportant, que l’on coud sur une robe ou que l’on glisse dans un cadre.
         </p>
         <p class="mesure mesure--clair">
-          Pour un mariage, elle permet d'ajouter une broderie à une robe déjà achetée, sans
+          Pour un mariage, elle permet d’ajouter une broderie à une robe déjà achetée, sans
           intervenir sur la robe avant les derniers essayages.
         </p>
-        {prixDentelle && <LigneFaits faits={[`À partir de ${prixDentelle} €`, `Délai actuel : ${ATELIER.delaiActuel}`]} clair />}
+        {prixDentelle && <LigneFaits faits={[`Dès ${prixDentelle} €`, 'Sans support tissu']} clair />}
         <p class="actions">
           <a class="btn btn--or" href="/creations/decoration-ajouree/">Voir les pièces en dentelle</a>
         </p>
@@ -170,7 +169,7 @@ const pieces = [
   <section class="bande oc-etapes loin">
     <TeteSection titre="Le calendrier recommandé">
       <p>
-        Une série se prépare à l'avance. Voici les étapes d'une commande de mariage, de la première
+        Une série se prépare à l’avance. Voici les étapes d’une commande de mariage, de la première
         prise de contact à la remise des pièces.
       </p>
     </TeteSection>
@@ -188,7 +187,7 @@ const pieces = [
         },
         {
           titre: 'Un mois avant',
-          texte: `Je brode la série. Le délai actuel de l'atelier est de ${ATELIER.delaiActuel}.`,
+          texte: 'Je brode la série, pièce après pièce, puis je prépare l’emballage de chacune.',
         },
         {
           titre: 'Deux semaines avant',
@@ -197,24 +196,8 @@ const pieces = [
       ]}
     />
     <p class="actions oc-etapes__suite">
-      <a class="lien-fleche" href="/sur-mesure/">Le déroulement d'une commande</a>
+      <a class="lien-fleche" href="/sur-mesure/">Le déroulement d’une commande</a>
     </p>
-  </section>
-
-  <!-- ===================== CRÉATIONS ===================== -->
-  <section class="bande oc-creations loin">
-    <TeteSection titre="Créations pour un mariage" variante="duo">
-      <p>
-        Les pochettes et les mouchoirs ne sont pas encore photographiés sur le site. Voici les
-        pièces que je peux vous présenter aujourd'hui, dentelle libre comprise. Je vous adresse sur
-        demande des photographies des pochettes déjà réalisées.
-      </p>
-      <a slot="lien" class="lien-fleche" href="/creations/">Toutes les créations</a>
-    </TeteSection>
-    <div class="rangee" tabindex="0" role="region" aria-label="Créations pour un mariage, rangée défilante">
-      {pour.map((c) => <CarteCreation creation={c} />)}
-      {voisines.map((c) => <CarteCreation creation={c} />)}
-    </div>
   </section>
 
   <FAQ questions={faq} />
@@ -222,7 +205,7 @@ const pieces = [
   <AppelFinal titre="Préparer votre commande" messageWa={messageWa} lienDevis={lienDevis}>
     <p>
       Indiquez-moi la date du mariage et le nombre de personnes concernées. Je vous réponds avec un
-      prix, un délai et ce qu'il est possible de réaliser dans le temps disponible.
+      prix, un délai et ce qu’il est possible de réaliser dans le temps disponible.
     </p>
   </AppelFinal>
 </Base>
@@ -231,16 +214,17 @@ const pieces = [
   /* Gabarit commun aux pages occasions (mêmes classes oc-* sur les quatre). */
   .oc-a { padding-block: var(--respire) var(--serre); }
   .oc-a__note { margin-block-start: 1.5rem; color: var(--encre-doux); }
+  .oc-a__lien { margin-block-start: 1rem; }
   .oc-b .grille { row-gap: 2.5rem; align-items: center; }
   .oc-b__dire { display: grid; gap: 1.25rem; justify-items: start; }
   .oc-b__fig { display: grid; gap: 0.6rem; }
-  .oc-b__fig :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--r-m); }
+  .oc-b__fig :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-m); }
   .oc-b figcaption { font-size: var(--t-micro); color: var(--tapis-trait); }
   .oc-etapes { padding-block: var(--respire) var(--serre); }
   .oc-etapes__suite { margin-block-start: 1.5rem; }
-  .oc-creations { padding-block: var(--serre); }
   @media (min-width: 48rem) {
     .oc-b__dire { grid-column: 1 / span 6; }
     .oc-b__fig { grid-column: 8 / -1; }
+    .oc-b__fig :global(img) { aspect-ratio: 4 / 5; }
   }
 </style>

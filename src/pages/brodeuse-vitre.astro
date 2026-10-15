@@ -18,9 +18,10 @@ import Base from '../layouts/Base.astro';
 import HautDePage from '../components/HautDePage.astro';
 import TeteSection from '../components/TeteSection.astro';
 import ListeLignes from '../components/ListeLignes.astro';
+import LigneFaits from '../components/LigneFaits.astro';
 import FAQ from '../components/FAQ.astro';
 import AppelFinal from '../components/AppelFinal.astro';
-import { SITE, ATELIER, lienWhatsApp } from '../config';
+import { SITE, ATELIER, LIBELLES, lienWhatsApp } from '../config';
 
 import sacAdos from '../assets/creations/galerie/sac-a-dos-enfant-brode-prenom-malo.webp';
 import ogPage from '../assets/creations/og/emma-brodeuse-vitre-portrait.webp';
@@ -36,7 +37,7 @@ const description =
 const fil = [{ nom: 'Brodeuse à Vitré', url: '/brodeuse-vitre/' }];
 
 const messageWa =
-  "Bonjour Emma, j'habite à Vitré ou dans les environs et j'aimerais vous confier un projet de broderie.";
+  'Bonjour Emma, j’habite à Vitré ou dans les environs et j’aimerais vous confier un projet de broderie.';
 
 /*
   ⚠️ À CONFIRMER AVEC EMMA — liste plausible, non validée.
@@ -98,31 +99,31 @@ const pieces = [
 const faq = [
   {
     q: 'Où récupérer ma commande à Vitré ?',
-    r: "Nous convenons ensemble d'un lieu et d'un horaire par message, dans Vitré. Mon atelier se trouve à mon domicile et n'est pas ouvert au public : la remise se fait sur rendez-vous, et l'adresse précise n'est communiquée qu'après accord.",
+    r: 'Nous convenons ensemble d’un lieu et d’un horaire par message, dans Vitré. Mon atelier se trouve à mon domicile et n’est pas ouvert au public : la remise se fait sur rendez-vous, et l’adresse précise n’est communiquée qu’après accord.',
   },
   {
     q: 'Quel est le délai de réalisation d’une broderie ?',
-    r: `Le délai de réalisation est actuellement de ${ATELIER.delaiActuel} à compter de la validation du motif. Si vous avez une date impérative (naissance, mariage, anniversaire), indiquez-la dès votre premier message : je vous confirme aussitôt si elle peut être tenue.`,
+    r: 'Le délai court à compter de la validation du motif, et je vous l’indique précisément dès ma première réponse. Si vous avez une date impérative (naissance, mariage, anniversaire), indiquez-la dès votre premier message : je vous confirme aussitôt si elle peut être tenue.',
   },
   {
     q: 'Est-il possible d’être livré dans une commune proche de Vitré ?',
-    r: "Indiquez-moi votre commune : selon le cas, nous convenons d'un point de rendez-vous à Vitré ou je vous adresse la pièce par envoi suivi, sous emballage cadeau.",
+    r: 'Indiquez-moi votre commune : selon le cas, nous convenons d’un point de rendez-vous à Vitré ou je vous adresse la pièce par envoi suivi, sous emballage cadeau.',
   },
   {
     q: 'Puis-je voir le motif avant la réalisation ?',
-    r: "Oui, c'est systématique. Je vous soumets le motif (écriture, taille, emplacement, couleurs de fil) et la broderie n'est lancée qu'après votre validation.",
+    r: 'Oui, c’est systématique. Je vous soumets le motif (écriture, taille, emplacement, couleurs de fil) et la broderie n’est lancée qu’après votre validation.',
   },
 ];
 
 ---
 
-<Base titre={titre} description={description} imageOg={ogPage.src} fil={fil}>
+<Base titre={titre} description={description} imageOg={ogPage.src} fil={fil} messageWa={messageWa}>
   <HautDePage
     titre="Brodeuse à Vitré"
     fil={fil}
     image={sacAdos}
-    alt="Sac à dos d'enfant brodé au prénom Malo"
-    faits={[ATELIER.delaiReponse, `Délai actuel : ${ATELIER.delaiActuel}`, 'Remise en main propre sur rendez-vous']}
+    alt="Sac à dos d’enfant brodé au prénom Malo"
+    faits={[ATELIER.delaiReponse, 'Remise en main propre sur rendez-vous', 'Envoi partout en France']}
   >
     <p>
       Je réalise à {SITE.ville} des broderies machine personnalisées&nbsp;: prénoms, motifs et
@@ -130,8 +131,8 @@ const faq = [
       sacs, les trousses et les tabliers que je brode. Pour un cadeau personnalisé à Vitré, la
       pièce vous est remise en main propre, sur rendez-vous, dans un lieu convenu par message.
     </p>
-    <a slot="actions" class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>Écrire sur WhatsApp</a>
-    <a slot="actions" class="btn btn--creux btn--grand" href="/contact/#devis">Demander un devis</a>
+    <a slot="actions" class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>{LIBELLES.whatsapp}</a>
+    <a slot="actions" class="btn btn--creux btn--grand" href="/contact/#devis">{LIBELLES.devis}</a>
   </HautDePage>
 
   <!-- ===================== RECEVOIR VOTRE PIÈCE ===================== -->
@@ -140,25 +141,20 @@ const faq = [
     <div class="grille">
       <div class="vi-col">
         <h3>En main propre, à Vitré</h3>
+        {/* ⚠️ À CONFIRMER : point de rendez-vous habituel à Vitré. */}
         <p class="mesure">
-          Nous fixons ensemble le lieu et l'horaire par message. Vous découvrez la pièce avant de
-          l'offrir, sans frais de port ni délai d'acheminement. Mon atelier se trouve à mon
-          domicile&nbsp;: l'adresse précise n'est communiquée qu'après accord.
-        </p>
-        <p class="vi-note">
-          {/* ⚠️ À CONFIRMER : point de rendez-vous habituel à Vitré. */}
-          Le point de rendez-vous est choisi selon vos disponibilités.
+          Nous fixons ensemble le lieu et l’horaire par message. Vous découvrez la pièce avant de
+          l’offrir, sans frais de port ni délai d’acheminement. Mon atelier se trouve à mon
+          domicile&nbsp;: l’adresse précise n’est communiquée qu’après accord.
         </p>
       </div>
       <div class="vi-col">
         <h3>Par envoi suivi</h3>
+        {/* ⚠️ À CONFIRMER : frais de port et transporteur. */}
         <p class="mesure">
-          Si vous le préférez, j'expédie la pièce en colis suivi, sous emballage cadeau, partout en
-          France. C'est la solution la plus simple pour offrir à une personne qui habite loin.
-        </p>
-        <p class="vi-note">
-          {/* ⚠️ À CONFIRMER : frais de port et transporteur. */}
-          Les frais d'envoi sont indiqués dans le devis, avant toute validation.
+          J’expédie la pièce en colis suivi, sous emballage cadeau, partout en France, y compris
+          directement à la personne à qui vous l’offrez. Les frais d’envoi sont indiqués dans le
+          devis.
         </p>
       </div>
     </div>
@@ -168,7 +164,7 @@ const faq = [
   <section class="bande vi-section" id="pieces">
     <TeteSection titre="Ce que je réalise" variante="duo">
       <p>
-        Chaque pièce est brodée à l'unité, au prénom ou au motif de votre choix. Ces quatre
+        Chaque pièce est brodée à l’unité, au prénom ou au motif de votre choix. Ces quatre
         familles donnent un aperçu&nbsp;; le reste se décide ensemble.
       </p>
     </TeteSection>
@@ -182,26 +178,20 @@ const faq = [
         <h2>Vitré et ses environs</h2>
         <p class="mesure mesure--clair">
           Je travaille pour les particuliers de {SITE.ville} et des communes voisines. Indiquez-moi
-          d'où vous êtes&nbsp;: nous choisissons ensemble le point de rendez-vous le plus pratique,
-          ou je vous adresse la pièce par envoi suivi.
-        </p>
-        {/* ⚠️ À CONFIRMER : périmètre réel de déplacement d'Emma (voir const communes). */}
-        <ul class="faits" aria-label="Communes proches de Vitré">
-          {communes.map((c) => <li>{c}</li>)}
-        </ul>
-      </div>
-      <div class="vi-marches">
-        <h3>Les marchés de créateurs</h3>
-        <p class="mesure mesure--clair">
-          Je participe à des marchés de créateurs dans le pays de Vitré. C'est l'occasion de voir
-          les pièces, d'apprécier la qualité du fil et de passer commande de vive voix. Les
-          prochaines dates sont annoncées sur cette page dès qu'elles sont fixées.
+          d’où vous êtes&nbsp;: nous choisissons ensemble le point de rendez-vous le plus pratique,
+          ou je vous adresse la pièce par envoi suivi. Je participe aussi à des marchés de
+          créateurs du pays de Vitré, où l’on peut voir les pièces et commander de vive voix.
         </p>
         {/*
           ⚠️ À CONFIRMER : marchés habituels (lesquels, quand, à quelle fréquence).
           Les dates viendront des réglages de l'admin (CLAUDE.md § 5 « Prochains marchés »),
           sans rebuild Netlify.
         */}
+      </div>
+      {/* ⚠️ À CONFIRMER : périmètre réel de déplacement d'Emma (voir const communes). */}
+      <div class="vi-communes">
+        <h3>Communes desservies</h3>
+        <LigneFaits faits={communes} clair label="Communes proches de Vitré" />
       </div>
     </div>
   </section>
@@ -210,7 +200,7 @@ const faq = [
 
   <AppelFinal messageWa={messageWa}>
     <p>
-      Indiquez-moi le prénom, l'occasion et la date souhaitée. Je vous réponds avec un prix, un
+      Indiquez-moi le prénom, l’occasion et la date souhaitée. Je vous réponds avec un prix, un
       délai et une proposition de motif, sans engagement de votre part. Vous habitez à
       Rennes&nbsp;? Consultez la page <a href="/broderie-personnalisee-rennes/">broderie personnalisée à Rennes</a>.
     </p>
@@ -219,18 +209,16 @@ const faq = [
 
 <style>
   .vi-section { padding-block: var(--serre); }
-  .tapis .grille, .vi-section .grille { row-gap: 2.5rem; }
-  .vi-col, .vi-autour, .vi-marches { display: grid; gap: 1rem; align-content: start; }
+  .tapis .grille, .vi-section .grille { row-gap: 2rem; }
+  .vi-col, .vi-autour, .vi-communes { display: grid; gap: 1rem; align-content: start; }
   .vi-col {
     padding-block-start: 1.25rem;
     border-block-start: 1px solid color-mix(in oklab, currentColor 18%, transparent);
   }
   .vi-col .mesure { color: var(--encre-doux); }
-  .vi-note { font-size: var(--t-petit); color: var(--gris); }
-  .vi-autour .faits { margin-block-start: 0.5rem; }
   @media (min-width: 48rem) {
     .vi-col { grid-column: span 6; }
     .vi-autour { grid-column: 1 / span 6; }
-    .vi-marches { grid-column: 8 / -1; }
+    .vi-communes { grid-column: 8 / -1; }
   }
 </style>

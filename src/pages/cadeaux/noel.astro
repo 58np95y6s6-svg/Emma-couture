@@ -9,8 +9,9 @@
  * ⚠️ MAQUETTE. Prix et délais viennent de src/config.ts et du contenu des
  * créations : provisoires tant qu'Emma ne les a pas confirmés.
  * Gabarit commun aux quatre pages occasions : HautDePage (fond de l'occasion)
- * → section propre à l'occasion (ici sur le tapis) → Etapes → créations → FAQ
- * → AppelFinal.
+ * → section propre à l'occasion (ici sur le tapis) → Etapes → FAQ → AppelFinal.
+ * Une seule création de Noël (la chaussette, déjà en haut de page) : pas de
+ * rangée de cartes complétée par des pièces hors sujet, un lien vers la catégorie.
  *
  * Vocabulaire : broderie MACHINE. Jamais « brodé à la main ».
  */
@@ -21,10 +22,9 @@ import HautDePage from '../../components/HautDePage.astro';
 import TeteSection from '../../components/TeteSection.astro';
 import ListeLignes from '../../components/ListeLignes.astro';
 import Etapes from '../../components/Etapes.astro';
-import CarteCreation from '../../components/CarteCreation.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppelFinal from '../../components/AppelFinal.astro';
-import { SITE, ATELIER, OCCASIONS, lienWhatsApp } from '../../config';
+import { SITE, OCCASIONS, LIBELLES, lienWhatsApp } from '../../config';
 
 import photoChaussette from '../../assets/creations/galerie/chaussette-de-noel-brodee-prenom.webp';
 
@@ -32,9 +32,6 @@ const toutes = (await getCollection('creations', ({ data }) => !data.masquee)).s
   (a, b) => a.data.ordre - b.data.ordre,
 );
 const pour = toutes.filter((c) => c.data.occasions.includes('noel'));
-/* Une seule création de Noël est photographiée. On complète avec des pièces
-   qui se brodent de la même façon — et on le dit. Jamais de carte inventée. */
-const voisines = toutes.filter((c) => !pour.includes(c)).slice(0, 3);
 
 const chaussette = pour[0];
 const prixChaussette = chaussette?.data.prixDepart ?? null;
@@ -59,7 +56,7 @@ const dateLimite = `${LIMITE_JOUR} ${LIMITE_MOIS}`;
 
 const occasion = OCCASIONS.find((o) => o.slug === 'noel')!;
 
-const messageWa = `Bonjour ${SITE.nom}, c'est pour Noël. J'aimerais des pièces brodées au prénom.`;
+const messageWa = 'Bonjour Emma, c’est pour Noël. J’aimerais des pièces brodées au prénom.';
 const wa = lienWhatsApp(messageWa);
 const lienDevis = '/contact/?occasion=noel#devis';
 
@@ -73,11 +70,11 @@ const fil = [{ nom: 'Cadeau de Noël', url: '/cadeaux/noel/' }];
 const faq = [
   {
     q: 'Quelle est la date limite pour recevoir ma commande avant Noël ?',
-    r: `Le ${dateLimite}. Au-delà, je ne peux plus garantir une livraison avant le 24 décembre. N'hésitez pas à me contacter malgré tout : je vous indiquerai ce qui reste réalisable.`,
+    r: `Le ${dateLimite}. Au-delà, je ne peux plus garantir une livraison avant le 24 décembre. N’hésitez pas à me contacter malgré tout : je vous indiquerai ce qui reste réalisable.`,
   },
   {
     q: 'Peut-on commander une chaussette par personne ?',
-    r: `Oui, c'est la demande la plus courante. Le motif est validé une seule fois, puis brodé pour chaque prénom. Merci de m'envoyer la liste complète en une fois, avec l'orthographe exacte de chaque prénom.`,
+    r: `Oui, c’est la demande la plus courante. Le motif est validé une seule fois, puis brodé pour chaque prénom. Merci de m’envoyer la liste complète en une fois, avec l’orthographe exacte de chaque prénom.`,
   },
   {
     q: 'Combien coûte une chaussette de Noël brodée au prénom ?',
@@ -87,11 +84,11 @@ const faq = [
   },
   {
     q: 'Le pyjama et le plaid passent-ils en machine ?',
-    r: `Oui, à 30 degrés. Le fil polyester ne rétrécit pas et ne déteint pas sur les tissus clairs : la broderie s'entretient comme le vêtement.`,
+    r: `Oui, à 30 degrés. Le fil polyester ne rétrécit pas et ne déteint pas sur les tissus clairs : la broderie s’entretient comme le vêtement.`,
   },
   {
     q: 'Puis-je vous confier le vêtement ou le plaid à broder ?',
-    r: `Oui. Vous pouvez me le remettre en main propre ou me l'envoyer : j'examine le tissu, je vous indique les possibilités de broderie et nous choisissons le fil ensemble. Prévoyez quelques jours supplémentaires pour l'acheminement.`,
+    r: `Oui. Vous pouvez me le remettre en main propre ou me l’envoyer : j’examine le tissu, je vous indique les possibilités de broderie et nous choisissons le fil ensemble. Prévoyez quelques jours supplémentaires pour l’acheminement.`,
   },
 ];
 
@@ -103,7 +100,7 @@ const menu = [
 ];
 ---
 
-<Base titre={titre} description={description} imageOg={og.src} fil={fil}>
+<Base titre={titre} description={description} imageOg={og.src} fil={fil} messageWa={messageWa}>
   {/* ⚠️ « Commandes avant le 15 novembre » : date [À CONFIRMER PAR EMMA] (voir LIMITE_JOUR). */}
   <HautDePage
     titre="Chaussettes et cadeaux de Noël brodés au prénom"
@@ -114,7 +111,7 @@ const menu = [
     faits={[
       `Commandes avant le ${dateLimite}`,
       ...(prixChaussette ? [`La chaussette dès ${prixChaussette} €`] : []),
-      `Délai actuel : ${ATELIER.delaiActuel}`,
+      'Emballage cadeau compris',
     ]}
   >
     <p>
@@ -123,8 +120,8 @@ const menu = [
       motif est validé une seule fois, puis brodé pour chaque membre de la famille. Remise en main
       propre à {SITE.ville} et à Rennes, envoi soigné partout en France.
     </p>
-    <a slot="actions" class="btn btn--wa btn--grand" href={wa}>Me contacter sur WhatsApp</a>
-    <a slot="actions" class="btn btn--creux btn--grand" href={lienDevis}>Demander un devis</a>
+    <a slot="actions" class="btn btn--wa btn--grand" href={wa}>{LIBELLES.whatsapp}</a>
+    <a slot="actions" class="btn btn--creux btn--grand" href={lienDevis}>{LIBELLES.devis}</a>
   </HautDePage>
 
   <!-- ===================== LA SÉRIE (le seul tapis de la page) ===================== -->
@@ -133,12 +130,12 @@ const menu = [
       <div class="oc-a__dire">
         <h2 id="serie-titre">Une série pour toute la famille</h2>
         <p class="chapo">
-          C'est la commande de Noël la plus fréquente&nbsp;: la même chaussette pour chaque membre
+          C’est la commande de Noël la plus fréquente&nbsp;: la même chaussette pour chaque membre
           de la famille, avec un prénom différent sur chacune.
         </p>
         <p class="mesure mesure--clair">
           Vous validez le motif une seule fois, je réalise ensuite toute la série. Merci de
-          m'envoyer la liste complète des prénoms en une fois, avec leur orthographe exacte.
+          m’envoyer la liste complète des prénoms en une fois, avec leur orthographe exacte.
         </p>
       </div>
       <div class="oc-a__liste">
@@ -146,8 +143,10 @@ const menu = [
         <ListeLignes lignes={menu} />
         <p class="oc-a__note">
           Je brode également les torchons, sacs à pain ou bonnets&nbsp;: tout textile qui peut être
-          tendu dans un cadre de broderie.
+          tendu dans un cadre de broderie. Seule la chaussette est photographiée sur le site&nbsp;;
+          je vous adresse sur demande des photographies des pyjamas, plaids et boules déjà réalisés.
         </p>
+        <p class="oc-a__lien"><a class="lien-fleche" href="/creations/noel/">Les créations de Noël</a></p>
       </div>
     </div>
   </section>
@@ -156,9 +155,8 @@ const menu = [
   <section class="bande oc-etapes">
     <TeteSection titre="Le calendrier des commandes de Noël">
       <p>
-        Les commandes de Noël se préparent en novembre&nbsp;: en décembre, l'atelier et les services
-        postaux sont saturés. Délai de réalisation actuel&nbsp;: {ATELIER.delaiActuel}, validation
-        du motif comprise.
+        Les commandes de Noël se préparent en novembre&nbsp;: en décembre, l’atelier et les services
+        postaux sont saturés.
       </p>
     </TeteSection>
     {/* ⚠️ EXEMPLE : découpage en trois périodes à faire valider par Emma.
@@ -166,48 +164,32 @@ const menu = [
     <Etapes
       etapes={[
         {
-          titre: `Jusqu'au ${dateLimite}`,
+          titre: `Jusqu’au ${dateLimite}`,
           texte:
-            "Tout est possible : une série de chaussettes, un plaid, un vêtement que vous me confiez. Nous avons le temps de valider le motif et d'y apporter des modifications.",
+            'Tout est possible : une série de chaussettes, un plaid, un vêtement que vous me confiez. Nous avons le temps de valider le motif et d’y apporter des modifications.',
         },
         {
           titre: 'Fin novembre',
           texte:
-            "J'étudie chaque demande selon les commandes en cours et je vous réponds clairement, en vous proposant au besoin un autre support plus rapide à réaliser.",
+            'J’étudie chaque demande selon les commandes en cours et je vous réponds clairement, en vous proposant au besoin un autre support plus rapide à réaliser.',
         },
         {
           titre: 'En décembre',
           texte:
-            "Je ne garantis plus la livraison avant le 24 décembre. Je reste disponible pour les cadeaux du Nouvel An et des fêtes de début d'année.",
+            'Je ne garantis plus la livraison avant le 24 décembre. Je reste disponible pour les cadeaux du Nouvel An et des fêtes de début d’année.',
         },
       ]}
     />
     <p class="actions oc-etapes__suite">
-      <a class="lien-fleche" href="/sur-mesure/">Le déroulement d'une commande</a>
+      <a class="lien-fleche" href="/sur-mesure/">Le déroulement d’une commande</a>
     </p>
-  </section>
-
-  <!-- ===================== CRÉATIONS ===================== -->
-  <section class="bande oc-creations loin">
-    <TeteSection titre="Créations de Noël" variante="duo">
-      <p>
-        Une seule pièce de Noël est photographiée pour le moment. Les créations suivantes relèvent
-        d'autres occasions, mais sont réalisées selon le même procédé. Je vous adresse sur demande
-        des photographies des pyjamas, plaids et boules déjà réalisés.
-      </p>
-      <a slot="lien" class="lien-fleche" href="/creations/noel/">Les créations de Noël</a>
-    </TeteSection>
-    <div class="rangee" tabindex="0" role="region" aria-label="Créations pour Noël, rangée défilante">
-      {pour.map((c) => <CarteCreation creation={c} />)}
-      {voisines.map((c) => <CarteCreation creation={c} />)}
-    </div>
   </section>
 
   <FAQ questions={faq} />
 
   <AppelFinal titre="Votre commande de Noël" messageWa={messageWa} lienDevis={lienDevis}>
     <p>
-      Indiquez-moi les prénoms, même si la liste n'est pas encore complète. Je vous réponds avec un
+      Indiquez-moi les prénoms, même si la liste n’est pas encore complète. Je vous réponds avec un
       prix, un délai et un motif à valider avant réalisation. Pour une livraison avant le
       24&nbsp;décembre, merci de commander avant le <time datetime={isoLimite}>{dateLimite}</time>.
     </p>
@@ -221,7 +203,7 @@ const menu = [
   .oc-a__note { margin-block-start: 1.25rem; font-size: var(--t-petit); opacity: 0.88; }
   .oc-etapes { padding-block: var(--respire) var(--serre); }
   .oc-etapes__suite { margin-block-start: 1.5rem; }
-  .oc-creations { padding-block: var(--serre); }
+  .oc-a__lien { margin-block-start: 1rem; }
   @media (min-width: 64rem) {
     .oc-a__dire { grid-column: 1 / span 5; }
     .oc-a__liste { grid-column: 6 / -1; }

@@ -8,7 +8,8 @@
  *
  * ⚠️ MAQUETTE. Prix et délais viennent de src/config.ts et du contenu.
  * Gabarit commun aux quatre pages occasions : HautDePage (fond de l'occasion)
- * → section propre à l'occasion → Etapes → créations → FAQ → AppelFinal.
+ * → idées selon la personne → Etapes → FAQ → AppelFinal.
+ * Pas de rangée de cartes : elle répétait les pièces des idées.
  *
  * Vocabulaire : broderie MACHINE. « Cousu main » ne vaut que pour les
  * trousses, sacs et tabliers qu'Emma confectionne.
@@ -19,15 +20,13 @@ import Base from '../../layouts/Base.astro';
 import HautDePage from '../../components/HautDePage.astro';
 import TeteSection from '../../components/TeteSection.astro';
 import Etapes from '../../components/Etapes.astro';
-import CarteCreation from '../../components/CarteCreation.astro';
 import FAQ from '../../components/FAQ.astro';
 import AppelFinal from '../../components/AppelFinal.astro';
-import { SITE, ATELIER, OCCASIONS, lienWhatsApp } from '../../config';
+import { SITE, ATELIER, OCCASIONS, LIBELLES, lienWhatsApp } from '../../config';
 
 import photoDrap from '../../assets/creations/galerie/serviette-brodee-prenom-alicia-rose.webp';
 import photoTrousse from '../../assets/creations/galerie/trousse-cousue-main-brodee-prenom-lisa.webp';
-import photoTambour from '../../assets/creations/detail/tambour-decoratif-brode-fee-rouge.webp';
-import photoBanane from '../../assets/creations/detail/sac-banane-cousu-main-broderie-chats.webp';
+import photoBanane from '../../assets/creations/galerie/sac-banane-cousu-main-broderie-chats.webp';
 import photoHero from '../../assets/creations/plein-ecran/tambour-decoratif-brode-fee-rouge.webp';
 
 /* ---------------------------------------------------------------------------
@@ -94,7 +93,8 @@ const prixMini = prix.length ? Math.min(...prix) : null;
 const trousse = toutes.find((c) => c.id === 'trousse-cousue-brodee');
 const drap = toutes.find((c) => c.id === 'drap-de-bain-brode-prenom');
 
-/* Quatre entrées d'après la personne, pas d'après un catalogue.
+/* Trois entrées d'après la personne, pas d'après un catalogue. Le tambour
+   décoratif est la photo du haut de page : il n'est pas répété ici.
    Prix seulement quand une création existe et porte un prix. */
 const idees = [
   {
@@ -111,18 +111,10 @@ const idees = [
     quoi: 'La trousse cousue main, brodée au prénom',
     dit: 'Je la couds avant de la broder. Le tissu se choisit parmi mes coupons, ou vous me confiez le vôtre.',
     photo: photoTrousse,
+    cadrage: '50% 72%',
     alt: 'Trousse matelassée en tissu blanc à motif de feuillage, cousue main, brodée au prénom en fil doré',
     prix: trousse?.data.prixDepart ?? null,
     lien: trousse ? `/creations/${trousse.id}/` : null,
-  },
-  {
-    pour: 'Pour la maison',
-    quoi: 'Le tambour décoratif',
-    dit: 'Un motif brodé, tendu dans son cadre et prêt à accrocher. Un prénom ou une date peuvent y figurer.',
-    photo: photoTambour,
-    alt: 'Tambour à broder décoratif avec une fée brodée en fil rouge, prêt à accrocher',
-    prix: null,
-    lien: null,
   },
   {
     pour: 'Pour les sorties',
@@ -137,7 +129,7 @@ const idees = [
 
 const occasion = OCCASIONS.find((o) => o.slug === 'fete-des-meres')!;
 
-const messageWa = `Bonjour ${SITE.nom}, c'est pour la fête des mères. J'aimerais une pièce brodée à son prénom.`;
+const messageWa = 'Bonjour Emma, c’est pour la fête des mères. J’aimerais une pièce brodée à son prénom.';
 const wa = lienWhatsApp(messageWa);
 const lienDevis = '/contact/?occasion=fete-des-meres#devis';
 
@@ -151,7 +143,7 @@ const fil = [{ nom: 'Cadeau fête des mères', url: '/cadeaux/fete-des-meres/' }
 const faq = [
   {
     q: 'Jusqu’à quelle date puis-je commander pour la fête des mères ?',
-    r: `La fête des mères a lieu le ${dateFete} ${anneeFete}. Je vous recommande de commander avant le ${dateLimiteTexte}, afin de disposer du temps nécessaire à la validation du motif, à la broderie et à l'expédition. Au-delà, contactez-moi sur WhatsApp : je vous indiquerai ce qui reste réalisable.`,
+    r: `La fête des mères a lieu le ${dateFete} ${anneeFete}. Je vous recommande de commander avant le ${dateLimiteTexte}, afin de disposer du temps nécessaire à la validation du motif, à la broderie et à l’expédition. Au-delà, contactez-moi sur WhatsApp : je vous indiquerai ce qui reste réalisable.`,
   },
   {
     q: 'Quels sont les prix ?',
@@ -167,20 +159,20 @@ const faq = [
   },
   {
     q: 'Je ne sais pas quel objet choisir.',
-    r: `Décrivez-moi plutôt la personne : ses occupations, ce qu'elle emporte au quotidien, les couleurs qu'elle porte. Je vous propose deux ou trois pistes chiffrées, parmi lesquelles vous choisissez.`,
+    r: `Décrivez-moi plutôt la personne : ses occupations, ce qu’elle emporte au quotidien, les couleurs qu’elle porte. Je vous propose deux ou trois pistes chiffrées, parmi lesquelles vous choisissez.`,
   },
   {
     q: 'Peut-on broder les prénoms des enfants plutôt que le sien ?',
-    r: `Oui, c'est une demande fréquente : les prénoms des enfants ou des petits-enfants, les uns sous les autres. Au-delà de quatre ou cinq prénoms, un support plus grand, comme un tablier ou un drap de bain, est préférable.`,
+    r: `Oui, c’est une demande fréquente : les prénoms des enfants ou des petits-enfants, les uns sous les autres. Au-delà de quatre ou cinq prénoms, un support plus grand, comme un tablier ou un drap de bain, est préférable.`,
   },
   {
     q: 'La pièce est-elle emballée, et pouvez-vous l’expédier ?',
-    r: `L'emballage cadeau est compris. ${ATELIER.zones}. Je peux également expédier directement à la destinataire.`,
+    r: `L’emballage cadeau est compris. ${ATELIER.zones}. Je peux également expédier directement à la destinataire.`,
   },
 ];
 ---
 
-<Base titre={titre} description={description} imageOg={og.src} fil={fil}>
+<Base titre={titre} description={description} imageOg={og.src} fil={fil} messageWa={messageWa}>
   {/* ⚠️ La date de la fête des mères est calculée. La MARGE de trois semaines
       est une hypothèse, à faire confirmer par Emma. [À CONFIRMER] */}
   <HautDePage
@@ -193,7 +185,7 @@ const faq = [
     faits={[
       `Fête des mères : ${dateFete} ${anneeFete}`,
       `Commande recommandée avant le ${fmtCourt.format(dateLimite)}`,
-      ...(prixMini ? [`À partir de ${prixMini} €`] : []),
+      ...(prixMini ? [`Dès ${prixMini} €`] : []),
     ]}
   >
     <p>
@@ -201,8 +193,8 @@ const faq = [
       dans mon atelier de {SITE.ville}&nbsp;(35), des cadeaux personnalisés à son prénom. Vous me
       donnez le prénom et la couleur, je vous soumets le motif avant réalisation.
     </p>
-    <a slot="actions" class="btn btn--wa btn--grand" href={wa}>Me contacter sur WhatsApp</a>
-    <a slot="actions" class="btn btn--creux btn--grand" href={lienDevis}>Demander un devis</a>
+    <a slot="actions" class="btn btn--wa btn--grand" href={wa}>{LIBELLES.whatsapp}</a>
+    <a slot="actions" class="btn btn--creux btn--grand" href={lienDevis}>{LIBELLES.devis}</a>
   </HautDePage>
 
   <!-- ===================== CHOISIR SELON LA PERSONNE ===================== -->
@@ -210,11 +202,13 @@ const faq = [
     <TeteSection titre="Choisir selon la personne">
       <p>
         Le plus sûr est de partir de ses habitudes&nbsp;: dites-moi comment elle occupe ses
-        journées, je vous indique ce qui se prête à la broderie. Quatre exemples.
+        journées, je vous indique ce qui se prête à la broderie. Le tambour décoratif présenté en
+        haut de page convient pour la maison&nbsp;; le tablier et les serviettes de plage sont
+        également très demandés en mai.
       </p>
     </TeteSection>
 
-    {/* Alternance stricte : photo en col. 1-6, texte en col. 8-12, à chaque rangée. */}
+    {/* Photo carrée en col. 1-4, texte en col. 5-12, au même x à chaque rangée. */}
     <ul class="idees">
       {
         idees.map((i) => (
@@ -223,19 +217,18 @@ const faq = [
               <Image
                 src={i.photo}
                 alt={i.alt}
-                widths={[400, 640, 900]}
-                sizes="(max-width: 48rem) 92vw, 46vw"
+                widths={[200, 400, 640]}
+                sizes="(max-width: 34rem) 26vw, 30vw"
                 loading="lazy"
                 decoding="async"
+                style={'cadrage' in i ? `object-position:${i.cadrage}` : undefined}
               />
             </figure>
             <div class="idee__txt">
               <p class="idee__pour mono">{i.pour}</p>
               <h3>{i.quoi}</h3>
               <p>{i.dit}</p>
-              <p class="prix">
-                {i.prix ? `À partir de ${i.prix} €` : 'Prix selon le support, communiqué avant réalisation'}
-              </p>
+              <p class="prix">{i.prix ? `dès ${i.prix} €` : 'sur devis'}</p>
               {i.lien && <a class="lien-fleche" href={i.lien}>Voir la création</a>}
             </div>
           </li>
@@ -248,7 +241,7 @@ const faq = [
   <section class="bande oc-etapes loin">
     <TeteSection titre="Le calendrier de la fête des mères">
       <p>
-        La date est fixe et connue d'avance&nbsp;: en commandant tôt, vous disposez du temps
+        La date est fixe et connue d’avance&nbsp;: en commandant tôt, vous disposez du temps
         nécessaire pour ajuster le motif.
       </p>
     </TeteSection>
@@ -256,16 +249,16 @@ const faq = [
       etapes={[
         {
           titre: `Avant le ${fmtCourt.format(dateLimite)}`,
-          texte: "Vous m'indiquez le prénom, l'objet et la couleur souhaitée. Je vous réponds avec un prix et un délai.",
+          texte: 'Vous m’indiquez le prénom, l’objet et la couleur souhaitée. Je vous réponds avec un prix et un délai.',
         },
         {
           titre: 'La validation du motif',
-          texte: "Je vous adresse le motif. Il peut être ajusté autant que nécessaire : tant qu'il n'est pas brodé, tout reste modifiable.",
+          texte: 'Je vous adresse le motif. Il peut être ajusté autant que nécessaire : tant qu’il n’est pas brodé, tout reste modifiable.',
           cle: true,
         },
         {
           titre: 'La réalisation',
-          texte: `Je brode et j'emballe la pièce, puis je l'expédie ou vous la remets en main propre. Délai actuel : ${ATELIER.delaiActuel}.`,
+          texte: 'Je brode et j’emballe la pièce, puis je l’expédie ou vous la remets en main propre.',
         },
         {
           titre: `Le ${dateFeteCourte}`,
@@ -274,30 +267,15 @@ const faq = [
       ]}
     />
     <p class="actions oc-etapes__suite">
-      <a class="lien-fleche" href="/sur-mesure/">Le déroulement d'une commande</a>
+      <a class="lien-fleche" href="/sur-mesure/">Le déroulement d’une commande</a>
     </p>
-  </section>
-
-  <!-- ===================== CRÉATIONS ===================== -->
-  <section class="bande oc-creations loin">
-    <TeteSection titre="Créations pour la fête des mères" variante="duo">
-      <p>
-        Le tablier cousu et brodé et les serviettes de plage sont également très demandés en mai.
-        Le tablier est la pièce la plus longue à réaliser&nbsp;: je vous conseille de le commander
-        en premier. Je vous en adresse des photographies sur demande.
-      </p>
-      <a slot="lien" class="lien-fleche" href="/creations/">Toutes les créations</a>
-    </TeteSection>
-    <div class="rangee" tabindex="0" role="region" aria-label="Créations pour la fête des mères, rangée défilante">
-      {pour.map((c) => <CarteCreation creation={c} />)}
-    </div>
   </section>
 
   <FAQ questions={faq} />
 
-  <AppelFinal titre="Votre demande" messageWa={messageWa} lienDevis={lienDevis}>
+  <AppelFinal titre="Préparer votre cadeau" messageWa={messageWa} lienDevis={lienDevis}>
     <p>
-      Indiquez-moi son prénom et la couleur qu'elle préfère. Je vous réponds avec un prix, un délai
+      Indiquez-moi son prénom et la couleur qu’elle préfère. Je vous réponds avec un prix, un délai
       et une proposition de motif, à valider avant réalisation. Commande recommandée avant le{' '}
       <time datetime={isoLimite}>{dateLimiteTexte}</time>.
     </p>
@@ -309,17 +287,18 @@ const faq = [
   .oc-a { padding-block: var(--respire) var(--serre); }
   .oc-etapes { padding-block: var(--serre); }
   .oc-etapes__suite { margin-block-start: 1.5rem; }
-  .oc-creations { padding-block: var(--serre); }
 
-  /* Idées : photo à gauche, texte à droite, toujours au même x. */
-  .idees { display: grid; gap: clamp(2.5rem, 5vw, 4rem); }
-  .idee { row-gap: 1.25rem; align-items: center; }
-  .idee__fig :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-m); }
-  .idee__txt { display: grid; gap: 0.8rem; justify-items: start; }
+  /* Idées : vignette carrée à gauche (col. 1-3, puis 1-4 dès 34rem), texte à droite. */
+  .idees { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); }
+  .idee { row-gap: 1rem; align-items: start; }
+  .idee__fig { grid-column: 1 / span 3; }
+  .idee__fig :global(img) { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--r-m); }
+  .idee__txt { grid-column: 4 / -1; display: grid; gap: 0.6rem; justify-items: start; }
   .idee__pour { font-size: var(--t-micro); color: var(--gris); }
   .idee__txt > p:not([class]) { color: var(--encre-doux); max-width: 34rem; }
-  @media (min-width: 48rem) {
-    .idee__fig { grid-column: 1 / span 6; }
-    .idee__txt { grid-column: 8 / -1; }
+  @media (min-width: 34rem) {
+    .idee__fig { grid-column: 1 / span 4; }
+    .idee__txt { grid-column: 5 / -1; }
   }
+  @media (min-width: 64rem) { .idee__txt { align-self: center; } }
 </style>

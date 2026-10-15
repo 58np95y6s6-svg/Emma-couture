@@ -21,34 +21,32 @@ import TeteSection from '../components/TeteSection.astro';
 import ListeLignes from '../components/ListeLignes.astro';
 import Etapes from '../components/Etapes.astro';
 import AppelFinal from '../components/AppelFinal.astro';
-import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
+import { SITE, CONTACT, LIBELLES, lienWhatsApp } from '../config';
 
 import portrait from '../assets/creations/galerie/emma-brodeuse-vitre-portrait.webp';
 import machine from '../assets/creations/galerie/machine-a-broder-en-cours-atelier-vitre.webp';
-import papillon from '../assets/creations/galerie/papillon-brode-dentelle-ajouree-coquelicots.webp';
 import arbre from '../assets/creations/galerie/arbre-de-vie-brode-dentelle-ajouree-fil-dore.webp';
-import sacBanane from '../assets/creations/galerie/sac-banane-cousu-main-broderie-chats.webp';
 import trousse from '../assets/creations/galerie/trousse-cousue-main-brodee-prenom-lisa.webp';
 import ogSource from '../assets/creations/og/emma-brodeuse-vitre-portrait.webp';
 
 const og = await getImage({ src: ogSource, format: 'webp', width: 1200 });
 
-const titre = `L'atelier · broderie machine et couture à ${SITE.ville} (35) | ${SITE.nom}`;
+const titre = `L’atelier · broderie machine et couture à ${SITE.ville} (35) | ${SITE.nom}`;
 const description = `Brodeuse et couturière à ${SITE.ville} (35), je réalise seule chaque pièce : broderie machine personnalisée, dentelle libre, sacs et trousses cousus main. Le motif vous est soumis avant toute réalisation.`;
-const fil = [{ nom: "L'atelier", url: '/l-atelier/' }];
+const fil = [{ nom: 'L’atelier', url: '/l-atelier/' }];
 
-const messageWa = "Bonjour Emma, j'ai lu la page de l'atelier et j'ai une question.";
+const messageWa = 'Bonjour Emma, j’ai lu la page de l’atelier et je souhaiterais un renseignement.';
 
 /* Le matériel. La méta dit l'unité ou la référence qui compte : une donnée. */
 const outils = [
   {
     titre: 'La machine à broder',
-    texte: "Elle suit un fichier que je prépare pour chaque motif. C'est dans ce fichier que se règle la densité des points, dont dépend la bonne tenue de la broderie au lavage.",
+    texte: 'Elle suit un fichier que je prépare pour chaque motif. C’est dans ce fichier que se règle la densité des points, dont dépend la bonne tenue de la broderie au lavage.',
     meta: 'fichier par motif',
   },
   {
     titre: 'Le fil',
-    texte: "Brillant et résistant, il ne déteint pas. Les pièces brodées se lavent en machine à 30° sans que la broderie ne s'altère.",
+    texte: 'Brillant et résistant, il ne déteint pas. Les pièces brodées se lavent en machine à 30° sans que la broderie ne s’altère.',
     meta: 'polyester 40',
   },
   {
@@ -58,29 +56,25 @@ const outils = [
   },
   {
     titre: 'Le tapis de coupe',
-    texte: "Celui qui sert de fond à cette section. J'y coupe les tissus des sacs, des trousses et des tabliers avant de les assembler.",
+    texte: 'Celui qui sert de fond à cette section. J’y coupe les tissus des sacs, des trousses et des tabliers avant de les assembler.',
     meta: 'quadrillé au centimètre',
   },
 ];
 
-/* La fabrication : une vraie séquence. */
+/* La fabrication : une vraie séquence, réduite à quatre temps. */
 const etapes = [
   {
     titre: 'Votre message',
-    texte: "Vous m'indiquez le prénom, l'occasion, la date souhaitée et le support, avec une photo d'inspiration si vous en avez une. Je vous pose ensuite les questions utiles.",
+    texte: 'Vous m’indiquez le prénom, l’occasion, la date souhaitée et le support, avec une photo d’inspiration si vous en avez une.',
   },
   {
     titre: 'La validation du motif',
-    texte: "Je prépare l'écriture, la taille, l'emplacement et les couleurs de fil, puis je vous soumets le motif. Tant que la broderie n'est pas lancée, tout peut encore être ajusté.",
+    texte: 'Je prépare l’écriture, la taille, l’emplacement et les couleurs de fil, puis je vous soumets le motif. Tant qu’il n’est pas brodé, tout reste modifiable.',
     cle: true,
   },
   {
-    titre: 'La préparation',
-    texte: 'Je tends le tissu dans le cadre et je choisis les fils. Le placement se règle au millimètre.',
-  },
-  {
     titre: 'La broderie',
-    texte: 'La machine brode le motif validé. Je reste à côté pendant toute la réalisation : un fil qui casse doit être repris immédiatement.',
+    texte: 'Je tends le tissu dans le cadre, je règle le placement au millimètre, puis je reste à côté de la machine pendant toute la réalisation.',
   },
   {
     titre: 'Les finitions',
@@ -89,7 +83,7 @@ const etapes = [
 ];
 ---
 
-<Base titre={titre} description={description} imageOg={og.src} fil={fil}>
+<Base titre={titre} description={description} imageOg={og.src} fil={fil} messageWa={messageWa}>
   {/*
     ⚠️ CONTENU D'EXEMPLE — numéro, e-mail et délais provisoires (src/config.ts).
     [À COMPLÉTER] depuis combien de temps Emma brode : à afficher en réassurance
@@ -97,44 +91,25 @@ const etapes = [
   */}
 
   <HautDePage
-    titre={`L'atelier de broderie et de couture, à ${SITE.ville}`}
+    titre={`L’atelier de broderie et de couture, à ${SITE.ville}`}
     fil={fil}
     image={portrait}
-    alt="Portrait d'Emma, brodeuse et couturière à Vitré, souriante, en plein air"
-    cadrage="50% 25%"
+    alt="Portrait d’Emma, brodeuse et couturière à Vitré, souriante, en plein air"
+    cadrage="54% 58%"
     faits={[`Atelier à ${SITE.ville} (35)`, 'Broderie machine et couture', 'Retrait sur rendez-vous']}
   >
     <p>
-      Je suis Emma, brodeuse et couturière à {SITE.ville}, en Ille-et-Vilaine. Je réalise seule
-      chaque pièce, en broderie machine personnalisée et en couture sur mesure&nbsp;: c'est moi qui
-      réponds à vos messages, qui brode et qui emballe.
+      Je suis Emma, brodeuse et couturière à {SITE.ville}, en Ille-et-Vilaine. Je travaille seule,
+      en broderie machine personnalisée et en couture sur mesure&nbsp;: c’est moi qui réponds à vos
+      messages, qui brode et qui emballe.
     </p>
-    <a slot="actions" class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>Me poser une question</a>
+    <p>
+      Vous n’avez qu’une interlocutrice, du premier message à l’envoi. L’atelier se trouve à mon
+      domicile&nbsp;: la remise en main propre se fait sur rendez-vous.
+    </p>
+    <a slot="actions" class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>{LIBELLES.whatsapp}</a>
     <a slot="actions" class="btn btn--creux btn--grand" href="/creations/">Voir les créations</a>
   </HautDePage>
-
-  <!-- ===================== UNE SEULE INTERLOCUTRICE ===================== -->
-  <section class="bande at-section" id="interlocutrice">
-    <TeteSection titre="Une seule interlocutrice, du premier message à l'envoi">
-      <p>
-        Je travaille seule. Je lis vos messages, je choisis la bobine dans le mur de fils, je lance
-        la machine et je prépare le paquet.
-      </p>
-    </TeteSection>
-    <div class="grille">
-      <p class="at-col mesure">
-        Lorsque vous souhaitez savoir où en est votre commande, je peux vous répondre
-        immédiatement. Si vous préférez une autre couleur de fil ou un prénom placé un peu plus
-        haut, je modifie le motif directement, sans intermédiaire.
-      </p>
-      <p class="at-col mesure">
-        Je réalise une pièce à la fois. Le délai de réalisation est actuellement de{' '}
-        {ATELIER.delaiActuel}&nbsp;; si votre date est plus proche, je vous indique dès ma première
-        réponse ce qu'il est possible de faire.
-        {/* ⚠️ délai = exemple, piloté par l'admin */}
-      </p>
-    </div>
-  </section>
 
   <!-- ===================== LE MATÉRIEL (le seul tapis de la page) ===================== -->
   <section class="bande tapis" id="materiel">
@@ -160,98 +135,61 @@ const etapes = [
 
   <!-- ===================== FABRICATION ===================== -->
   <section class="bande at-section" id="fabrication">
-    <TeteSection titre="Les étapes de fabrication">
-      <p>Chaque commande suit le même déroulement, de votre première demande à l'envoi de la pièce.</p>
-    </TeteSection>
+    <TeteSection titre="Les étapes de fabrication" />
     <Etapes etapes={etapes} />
   </section>
 
-  <!-- ===================== LA DENTELLE LIBRE ===================== -->
-  <section class="bande at-section loin" id="dentelle">
-    <TeteSection titre="La dentelle libre" variante="duo">
-      <p>
-        La machine brode sur un support soluble, qui disparaît au rinçage. Il ne reste que le
-        fil&nbsp;: une pièce ajourée, sans tissu, qui tient d'elle-même. Avec trop peu de points,
-        la pièce s'affaisse&nbsp;; avec trop de points, elle gondole. C'est la technique que je
-        préfère, et celle que l'on rencontre le moins souvent.
-      </p>
-      <a slot="lien" class="lien-fleche" href="/creations/decoration-ajouree/">Voir les pièces ajourées</a>
-    </TeteSection>
-    <div class="grille">
-      <figure class="at-fig at-fig--6">
-        <Image
-          src={papillon}
-          alt="Papillon brodé en dentelle libre, ailes rouges et noires entièrement faites de fil, surmonté de coquelicots"
-          widths={[400, 640, 900]}
-          sizes="(max-width: 48rem) 92vw, 46vw"
-          loading="lazy"
-          decoding="async"
-        />
-        <figcaption class="mono">Papillon en dentelle libre, à coudre sur une robe</figcaption>
-      </figure>
-      <figure class="at-fig at-fig--6">
-        <Image
-          src={arbre}
-          alt="Arbre de vie brodé en dentelle ajourée fil doré, pièce autoportante sans support tissu"
-          widths={[400, 640, 900]}
-          sizes="(max-width: 48rem) 92vw, 46vw"
-          loading="lazy"
-          decoding="async"
-        />
-        <figcaption class="mono">Arbre de vie en fil doré, sans support tissu</figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <!-- ===================== LA COUTURE ===================== -->
-  <section class="bande at-section loin" id="couture">
-    <div class="grille">
-      <div class="at-couture__dire">
-        <h2>La couture</h2>
-        <p class="mesure">
-          Les sacs, trousses, tabliers et bavoirs sont cousus main à l'atelier&nbsp;: je coupe le
-          tissu, j'assemble la pièce, puis je la brode. Vous pouvez choisir parmi mes tissus ou me
-          confier le vôtre, par exemple un drap de famille ou une chemise à transformer.
+  <!-- ===================== DENTELLE LIBRE + COUTURE : deux colonnes 6/6 ===================== -->
+  <section class="bande at-section loin" id="savoir-faire" aria-label="La dentelle libre et la couture">
+    <div class="grille at-duo">
+      <article class="at-duo__col">
+        <figure class="at-fig">
+          <Image
+            src={arbre}
+            alt="Arbre de vie brodé en dentelle ajourée fil doré, pièce autoportante sans support tissu"
+            widths={[400, 640, 900]}
+            sizes="(max-width: 48rem) 92vw, 46vw"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+        <h2>La dentelle libre</h2>
+        <p>
+          La machine brode sur un support soluble, qui disparaît au rinçage. Il ne reste que le
+          fil&nbsp;: une pièce ajourée, sans tissu, qui tient d’elle-même. C’est la technique que je
+          préfère, et celle que l’on rencontre le moins souvent.
         </p>
-        <p class="mesure">
-          Les dimensions, la doublure, la fermeture et les poches se décident ensemble, avant la
-          coupe.
+        <a class="lien-fleche" href="/creations/decoration-ajouree/">Voir les pièces ajourées</a>
+      </article>
+      <article class="at-duo__col">
+        <figure class="at-fig">
+          <Image
+            src={trousse}
+            style="object-position: 50% 70%"
+            alt="Trousse en tissu fleuri bleu et blanc, cousue main, brodée au prénom en fil doré"
+            widths={[400, 640, 900]}
+            sizes="(max-width: 48rem) 92vw, 46vw"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+        <h2>La couture</h2>
+        <p>
+          Les sacs, trousses, tabliers et bavoirs sont cousus main à l’atelier&nbsp;: je coupe le
+          tissu, j’assemble la pièce, puis je la brode. Vous pouvez choisir parmi mes tissus ou me
+          confier le vôtre.
         </p>
         <a class="lien-fleche" href="/creations/couture/">Voir les sacs et les trousses</a>
-      </div>
-      <figure class="at-fig at-fig--4">
-        <Image
-          src={sacBanane}
-          alt="Sac banane cousu main en tissu imprimé, brodé d'un motif de chats"
-          widths={[320, 520, 760]}
-          sizes="(max-width: 48rem) 92vw, (max-width: 64rem) 46vw, 30vw"
-          loading="lazy"
-          decoding="async"
-        />
-        <figcaption class="mono">Sac banane cousu, puis brodé</figcaption>
-      </figure>
-      <figure class="at-fig at-fig--4">
-        <Image
-          src={trousse}
-          alt="Trousse en tissu fleuri bleu et blanc, cousue main, brodée au prénom en fil doré"
-          widths={[320, 520, 760]}
-          sizes="(max-width: 48rem) 92vw, (max-width: 64rem) 46vw, 30vw"
-          loading="lazy"
-          decoding="async"
-        />
-        <figcaption class="mono">Trousse brodée au prénom en fil doré</figcaption>
-      </figure>
+      </article>
     </div>
   </section>
 
-  <AppelFinal titre="Retrait sur rendez-vous" messageWa={messageWa}>
+  <AppelFinal titre="Parlons de votre projet" messageWa={messageWa}>
     <p>
-      Mon atelier se trouve à mon domicile et n'est pas ouvert au public. Pour une remise en main
-      propre, nous convenons ensemble d'un lieu et d'un horaire, à{' '}
-      <a href="/brodeuse-vitre/">{SITE.ville}</a> ou à{' '}
-      <a href="/broderie-personnalisee-rennes/">Rennes</a>&nbsp;; l'adresse précise vous est
-      communiquée après accord. J'assure également un envoi soigné partout en France, sous
-      emballage cadeau. Les pièces en cours sont visibles sur Instagram&nbsp;:{' '}
+      Remise en main propre à <a href="/brodeuse-vitre/">{SITE.ville}</a> ou à{' '}
+      <a href="/broderie-personnalisee-rennes/">Rennes</a>, sur rendez-vous&nbsp;: l’adresse vous
+      est communiquée après accord. Envoi soigné partout en France. Les pièces en cours sont
+      visibles sur Instagram&nbsp;:{' '}
       <a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">@{CONTACT.instagram}</a>.
     </p>
   </AppelFinal>
@@ -259,24 +197,25 @@ const etapes = [
 
 <style>
   .at-section { padding-block: var(--serre); }
-  .at-section .mesure { color: var(--encre-doux); }
   .grille { row-gap: 2rem; }
 
   .at-materiel { align-items: start; }
-  .at-fig, .at-materiel__fig { display: grid; gap: 0.6rem; align-content: start; }
-  .at-fig :global(img), .at-materiel__fig :global(img) {
-    width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--r-m);
+  .at-materiel__fig :global(img) {
+    width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-m);
   }
-  .at-fig figcaption { font-size: var(--t-micro); color: var(--gris); }
-  .at-couture__dire { display: grid; gap: 1.25rem; align-content: start; justify-items: start; }
+
+  .at-duo { row-gap: var(--serre); }
+  .at-duo__col { grid-column: 1 / -1; display: grid; gap: 1rem; align-content: start; justify-items: start; }
+  .at-duo__col p { color: var(--encre-doux); max-width: 34rem; }
+  .at-fig { width: 100%; margin-block-end: 0.5rem; }
+  .at-fig :global(img) {
+    width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-m);
+  }
 
   @media (min-width: 48rem) {
-    .at-col, .at-fig--6, .at-fig--4 { grid-column: span 6; }
-    .at-couture__dire { grid-column: 1 / -1; }
     .at-materiel__fig { grid-column: 1 / span 5; }
+    .at-materiel__fig :global(img) { aspect-ratio: 4 / 5; }
     .at-materiel__liste { grid-column: 6 / -1; }
-  }
-  @media (min-width: 64rem) {
-    .at-couture__dire, .at-fig--4 { grid-column: span 4; }
+    .at-duo__col { grid-column: span 6; }
   }
 </style>

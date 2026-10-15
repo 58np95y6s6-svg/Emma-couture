@@ -9,7 +9,8 @@
  * Construite autrement que /brodeuse-vitre/ :
  *   Vitré  → la présence sur place, les communes autour, les marchés.
  *   Rennes → la distance (trois ordres de grandeur), les façons de recevoir la pièce,
- *            la pièce à l'unité face aux ateliers de marquage, offrir à distance.
+ *            la pièce à l'unité face aux ateliers de marquage (offrir à distance
+ *            est traité dans « Recevoir votre commande »).
  *
  * Positionnement : particuliers uniquement (CLAUDE.md). Pas de clubs, pas
  * d'associations, pas de logos d'entreprise sur cette page.
@@ -25,7 +26,7 @@ import HautDePage from '../components/HautDePage.astro';
 import TeteSection from '../components/TeteSection.astro';
 import FAQ from '../components/FAQ.astro';
 import AppelFinal from '../components/AppelFinal.astro';
-import { SITE, ATELIER, lienWhatsApp } from '../config';
+import { SITE, LIBELLES, lienWhatsApp } from '../config';
 
 import cadre from '../assets/creations/galerie/cadre-naissance-brode-prenom-chambre-bebe.webp';
 import machine from '../assets/creations/galerie/machine-a-broder-en-cours-atelier-vitre.webp';
@@ -36,7 +37,7 @@ const description =
   'Broderie personnalisée pour Rennes : prénoms et motifs brodés à la machine, à l’unité, avec validation du motif. Atelier à Vitré (35), remise en main propre sur rendez-vous ou envoi suivi.';
 const fil = [{ nom: 'Broderie personnalisée à Rennes', url: '/broderie-personnalisee-rennes/' }];
 
-const messageWa = "Bonjour Emma, j'habite à Rennes et j'aimerais vous confier un projet de broderie.";
+const messageWa = 'Bonjour Emma, j’habite à Rennes et j’aimerais vous confier un projet de broderie.';
 
 /*
   ⚠️ [À CONFIRMER] VALEURS À VÉRIFIER (ordres de grandeur, volontairement approximatifs),
@@ -58,15 +59,15 @@ const mesures = [
 const recevoir = [
   {
     nom: 'Par envoi suivi',
-    dire: "La pièce part de Vitré en colis suivi, sous emballage cadeau. Elle peut être adressée chez vous ou directement à la personne à qui vous l'offrez.",
+    dire: 'La pièce part de Vitré en colis suivi, sous emballage cadeau. Elle peut être adressée chez vous ou directement à la personne à qui vous l’offrez, sans passer par chez vous.',
   },
   {
     nom: 'En main propre à Rennes',
-    dire: "Lorsque j'ai un déplacement prévu à Rennes, nous convenons d'un lieu et d'un horaire. Indiquez-moi votre date limite dès le premier message.",
+    dire: 'Lorsque j’ai un déplacement prévu à Rennes, nous convenons d’un lieu et d’un horaire. Indiquez-moi votre date limite dès le premier message.',
   },
   {
     nom: 'En main propre à Vitré',
-    dire: "Si vous passez par Vitré, nous pouvons nous y retrouver sur rendez-vous. L'adresse précise vous est communiquée après accord.",
+    dire: 'Si vous passez par Vitré, nous pouvons nous y retrouver sur rendez-vous. L’adresse précise vous est communiquée après accord.',
   },
 ];
 
@@ -75,25 +76,25 @@ const recevoir = [
 const faq = [
   {
     q: 'Livrez-vous à Rennes ?',
-    r: "Oui, par envoi suivi, sous emballage cadeau. Vous pouvez également faire adresser la pièce directement à la personne à qui vous l'offrez.",
+    r: 'Oui, par envoi suivi, sous emballage cadeau. Vous pouvez également faire adresser la pièce directement à la personne à qui vous l’offrez.',
   },
   {
     q: 'Une remise en main propre à Rennes est-elle possible ?',
-    r: "Oui, lorsque j'ai un déplacement prévu à Rennes. Indiquez-moi votre date limite dès votre premier message : je vous dirai si une remise en main propre est envisageable, sinon la pièce vous est expédiée.",
+    r: 'Oui, lorsque j’ai un déplacement prévu à Rennes. Indiquez-moi votre date limite dès votre premier message : je vous dirai si une remise en main propre est envisageable, sinon la pièce vous est expédiée.',
   },
   {
     q: 'Quel délai prévoir entre ma demande et la réception ?',
-    r: `Le délai de réalisation est actuellement de ${ATELIER.delaiActuel} à compter de la validation du motif, auquel s'ajoute le délai d'acheminement en cas d'envoi.`,
+    r: 'Le délai de réalisation court à compter de la validation du motif, et je vous l’indique précisément dès ma première réponse. S’y ajoute le délai d’acheminement en cas d’envoi.',
   },
   {
     q: 'Puis-je commander une seule pièce ?',
-    r: "Oui. Je brode à l'unité : un doudou, une serviette, une trousse. Il n'y a aucune quantité minimum.",
+    r: 'Oui. Je brode à l’unité : un doudou, une serviette, une trousse. Il n’y a aucune quantité minimum.',
   },
 ];
 
 ---
 
-<Base titre={titre} description={description} imageOg={ogPage.src} fil={fil}>
+<Base titre={titre} description={description} imageOg={ogPage.src} fil={fil} messageWa={messageWa}>
   {/* ⚠️ Valeurs des faits à vérifier : voir const mesures. */}
   <HautDePage
     titre="Broderie personnalisée à Rennes"
@@ -103,20 +104,20 @@ const faq = [
     faits={mesures.map((m) => `${m.valeur} ${m.dire}`)}
   >
     <p>
-      Mon atelier se trouve à {SITE.ville}, à proximité de Rennes. J'y réalise des broderies
+      Mon atelier se trouve à {SITE.ville}, à proximité de Rennes. J’y réalise des broderies
       machine personnalisées pour les particuliers&nbsp;: prénoms et motifs sur le linge de bain,
       les vêtements, les cadeaux de naissance, ainsi que des sacs et trousses cousus main. Tout se
       règle par message, et vous choisissez la façon de recevoir votre pièce.
     </p>
-    <a slot="actions" class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>Écrire sur WhatsApp</a>
-    <a slot="actions" class="btn btn--creux btn--grand" href="/contact/#devis">Demander un devis</a>
+    <a slot="actions" class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>{LIBELLES.whatsapp}</a>
+    <a slot="actions" class="btn btn--creux btn--grand" href="/contact/#devis">{LIBELLES.devis}</a>
   </HautDePage>
 
   <!-- ===================== RECEVOIR ===================== -->
   <section class="bande re-section" id="recevoir">
     <TeteSection titre="Recevoir votre commande">
       <p>
-        Vous choisissez au moment du devis. Les frais d'envoi éventuels y sont indiqués, avant
+        Vous choisissez au moment du devis. Les frais d’envoi éventuels y sont indiqués, avant
         toute validation.
         {/* ⚠️ À CONFIRMER : frais de port et transporteur. */}
       </p>
@@ -147,7 +148,7 @@ const faq = [
         />
       </figure>
       <div class="re-unite__dire">
-        <h2>Une pièce à l'unité, un motif validé avant la réalisation</h2>
+        <h2>Une pièce à l’unité, un motif validé avant la réalisation</h2>
         <p class="mesure">
           À Rennes, la broderie est surtout proposée par des ateliers de marquage, qui travaillent
           sur des vêtements professionnels, par lots et avec un minimum de commande.
@@ -157,33 +158,23 @@ const faq = [
         <p class="mesure">
           Je travaille différemment&nbsp;: je brode une seule pièce, pour une personne. Avant de
           lancer la machine, je vous soumets le motif (écriture du prénom, taille, emplacement,
-          couleurs de fil). Tant que la broderie n'est pas lancée, tout peut encore être ajusté.
+          couleurs de fil). Tant que la broderie n’est pas lancée, tout peut encore être ajusté.
         </p>
         <p class="actions">
-          <a class="lien-fleche" href="/sur-mesure/">Le déroulement d'une commande</a>
-          <a class="lien-fleche" href="/l-atelier/">L'atelier</a>
+          <a class="lien-fleche" href="/sur-mesure/">Le déroulement d’une commande</a>
+          <a class="lien-fleche" href="/l-atelier/">L’atelier</a>
         </p>
       </div>
     </div>
   </section>
 
-  <!-- ===================== OFFRIR À DISTANCE (le seul tapis de la page) ===================== -->
-  <section class="bande tapis loin" id="offrir">
-    <TeteSection titre="Offrir sans se déplacer" variante="duo">
-      <p>
-        Lorsque la personne à qui vous offrez n'habite pas à Rennes, la pièce peut lui être
-        adressée directement, sous emballage cadeau, sans passer par chez vous. Vous validez le
-        motif par message, vous m'indiquez l'adresse de livraison, et je me charge du reste.
-        {/* ⚠️ À CONFIRMER avec Emma : envoi direct au destinataire, mot d'accompagnement. */}
-      </p>
-    </TeteSection>
-  </section>
+  {/* ⚠️ À CONFIRMER avec Emma : envoi direct au destinataire, mot d'accompagnement. */}
 
   <FAQ titre="Questions fréquentes depuis Rennes" questions={faq} />
 
   <AppelFinal titre="Votre projet de broderie" messageWa={messageWa}>
     <p>
-      Indiquez-moi le prénom, l'occasion et la date souhaitée. Je vous réponds avec un prix, un
+      Indiquez-moi le prénom, l’occasion et la date souhaitée. Je vous réponds avec un prix, un
       délai et une proposition de motif, sans engagement. Vous habitez près de {SITE.ville}&nbsp;?
       Consultez la page <a href="/brodeuse-vitre/">brodeuse à Vitré</a>.
     </p>
@@ -200,14 +191,13 @@ const faq = [
   }
   .re-voies p { color: var(--encre-doux); max-width: var(--mesure); }
   .re-unite { row-gap: 2rem; align-items: center; }
-  .re-unite__fig :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--r-m); }
+  .re-unite__fig :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-m); }
   .re-unite__dire { display: grid; gap: 1.25rem; justify-items: start; }
   .re-unite__dire .mesure { color: var(--encre-doux); }
-  /* Le tapis ne porte qu'une tête de section : on retire sa marge basse. */
-  .tapis :global(.ts) { margin-block-end: 0; }
   @media (min-width: 48rem) {
     .re-voies > li { grid-column: span 4; }
     .re-unite__fig { grid-column: 1 / span 6; }
+    .re-unite__fig :global(img) { aspect-ratio: 4 / 5; }
     .re-unite__dire { grid-column: 8 / -1; }
   }
 </style>
