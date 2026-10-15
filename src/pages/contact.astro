@@ -372,7 +372,7 @@ const autresMoyens = [
                 </span>
               </p>
               <p class="ct-ligne">
-                <label for="email">Adresse e-mail <span class="ct-oblig">obligatoire</span></label>
+                <label for="email">Adresse e-mail <span class="ct-oblig" id="email-oblig">obligatoire</span><span class="ct-facultatif" id="email-facultatif" hidden>facultatif</span></label>
                 <input type="email" id="email" name="email" required autocomplete="email" />
               </p>
               <p class="ct-ligne">
@@ -534,15 +534,24 @@ const autresMoyens = [
     }
 
     /* ----------------------------------------------------------------------
-       Téléphone obligatoire pour WhatsApp et le téléphone
+       Coordonnées selon le canal choisi :
+       WhatsApp ou téléphone → téléphone obligatoire, e-mail facultatif ;
+       e-mail (ou rien de choisi) → e-mail obligatoire.
+       Sans JavaScript, l'e-mail reste obligatoire (attribut dans le HTML).
     ---------------------------------------------------------------------- */
     const tel = $<HTMLInputElement>('telephone');
     const telOblig = $('tel-oblig');
+    const email = $<HTMLInputElement>('email');
+    const emailOblig = $('email-oblig');
+    const emailFacultatif = $('email-facultatif');
     function regleTelephone() {
       const canal = form.querySelector<HTMLInputElement>('input[name="canal"]:checked')?.value;
       const requis = canal === 'WhatsApp' || canal === 'Téléphone';
       if (tel) tel.required = requis;
       if (telOblig) telOblig.hidden = !requis;
+      if (email) email.required = !requis;
+      if (emailOblig) emailOblig.hidden = requis;
+      if (emailFacultatif) emailFacultatif.hidden = !requis;
     }
     form.addEventListener('change', (e) => {
       if ((e.target as HTMLInputElement).name === 'canal') regleTelephone();
