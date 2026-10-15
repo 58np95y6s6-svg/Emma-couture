@@ -56,19 +56,6 @@ const filtres = ETIQUETTES.map((e) => ({
   nombre: creations.filter((c) => c.data.categorie === e.slug).length,
 })).filter((e) => e.nombre > 0);
 
-/* Prix d'appel : le plus bas réellement présent dans le contenu. */
-const prix = creations
-  .map((c) => c.data.prixDepart)
-  .filter((p): p is number => typeof p === 'number');
-const prixMini = prix.length > 0 ? Math.min(...prix) : null;
-
-/* ⚠️ Prix : exemple à valider par Emma. Le délai actuel de l'atelier n'est
-   affiché que dans l'appel final (règle : un seul délai par page). */
-const faits = [
-  ...(prixMini ? [`Dès ${prixMini} €`] : []),
-  'Vitré, Rennes, envoi en France',
-];
-
 const titre = `Créations brodées & cousues à Vitré (35) — toutes mes pièces | ${SITE.nom}`;
 const description =
   'Toutes mes créations brodées à Vitré : doudous et cadres de naissance, linge de bain au prénom, dentelle ajourée, sacs et trousses cousus. Prix à partir de, délai annoncé, devis dans la journée.';
@@ -84,11 +71,11 @@ const fil = [{ nom: 'Créations', url: '/creations/' }];
     « Cousu main » : seulement pour les sacs, trousses et tabliers.
   */}
 
-  <HautDePage titre="Créations brodées et cousues à Vitré" fil={fil} faits={faits}>
+  <HautDePage titre="Créations brodées et cousues à Vitré" fil={fil}>
     <p>
       Broderie personnalisée et couture sur mesure, réalisées à {SITE.ville}&nbsp;(35). Chaque
-      modèle est réalisé sur commande, à votre prénom, dans la couleur de fil ou le tissu de votre
-      choix&nbsp;: vous le commandez sur WhatsApp ou par une demande de devis.
+      modèle est réalisé sur commande, à votre prénom&nbsp;: vous le commandez sur WhatsApp ou par
+      une demande de devis.
     </p>
   </HautDePage>
 

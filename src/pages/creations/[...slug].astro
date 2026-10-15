@@ -32,8 +32,6 @@ import LigneFaits from '../../components/LigneFaits.astro';
 import AppelFinal from '../../components/AppelFinal.astro';
 import { SITE, ATELIER, OCCASIONS, LIBELLES, lienWhatsApp } from '../../config';
 
-/* TODO config : LIBELLES.commander = 'Commander sur WhatsApp' (en dur en attendant). */
-const COMMANDER = 'Commander sur WhatsApp';
 
 /** Libellés d'affichage. Les slugs viennent de src/content.config.ts. */
 const NOM_CATEGORIE: Record<string, string> = {
@@ -273,7 +271,7 @@ const faits = ['Motif validé avant broderie', 'Emballage cadeau compris', 'Remi
         <p class="fiche__actions">
           <a class="btn btn--wa btn--grand" href={wa}>
             <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d={icoWa} /></svg>
-            {COMMANDER}
+            {LIBELLES.commander}
           </a>
           <a class="btn btn--creux btn--grand" href={devis}>{LIBELLES.devis}</a>
         </p>
@@ -358,7 +356,7 @@ const faits = ['Motif validé avant broderie', 'Emballage cadeau compris', 'Remi
     </p>
     <a class="btn btn--wa" href={wa} tabindex="-1">
       <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d={icoWa} /></svg>
-      <span class="barre-action__long">{COMMANDER}</span><span class="barre-action__court">Commander</span>
+      <span class="barre-action__long">{LIBELLES.commander}</span><span class="barre-action__court">Commander</span>
     </a>
     <a class="btn btn--creux" href={devis} tabindex="-1">{LIBELLES.devis}</a>
   </div>
