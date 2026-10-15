@@ -74,6 +74,7 @@ export const LIBELLES = {
   whatsapp: 'Écrire sur WhatsApp',
   devis: 'Demander un devis',
   laMeme: 'Je veux la même',
+  commander: 'Commander sur WhatsApp',
 } as const;
 
 /**
