@@ -63,6 +63,42 @@ export function lienWhatsApp(message?: string, urlCreation?: string): string {
   return `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(texte)}`;
 }
 
+/** Téléphone lisible : « 06 00 00 00 00 ». Le lien tel: garde le format international. */
+export function telephoneLisible(tel: string = CONTACT.telephone): string {
+  const n = tel.replace(/\D/g, '').replace(/^33/, '0');
+  return n.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
+}
+
+/** Libellés uniques des appels à l'action, sur tout le site. */
+export const LIBELLES = {
+  whatsapp: 'Écrire sur WhatsApp',
+  devis: 'Demander un devis',
+  laMeme: 'Je veux la même',
+} as const;
+
+/**
+ * Le déroulement d'une commande, version canonique (3 étapes).
+ * Seule la page Sur-mesure le détaille davantage.
+ */
+export const ETAPES_COMMANDE = [
+  {
+    titre: 'Votre demande',
+    texte:
+      'Précisez-moi le prénom, l’occasion et la date souhaitée, avec une photo d’inspiration si vous en avez une. Je reviens vers vous avec une proposition, un prix et un délai.',
+  },
+  {
+    titre: 'La validation du motif',
+    texte:
+      'Avant toute réalisation, je vous adresse le motif. Il peut être ajusté autant que nécessaire : tant qu’il n’est pas brodé, tout reste modifiable.',
+    cle: true,
+  },
+  {
+    titre: 'La remise',
+    texte:
+      'Votre pièce est emballée, prête à offrir. Remise en main propre à Vitré ou à Rennes, ou envoi soigné partout en France.',
+  },
+];
+
 /** Les quatre occasions mises en avant, dans l'ordre d'affichage. */
 export const OCCASIONS = [
   { slug: 'naissance', nom: 'Une naissance', liste: 'Doudou, cadre de naissance, bavoir, cape de bain', fil: '#4A6047' },

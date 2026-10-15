@@ -18,9 +18,16 @@ interface Props {
   noindex?: boolean;
   /** Fil d'Ariane : [{ nom, url }], sans l'accueil qui est ajouté seul. */
   fil?: { nom: string; url: string }[];
+  /** Message pré-rempli du bouton WhatsApp flottant, propre à la page. */
+  messageWa?: string;
+  /** false sur les pages qui ont déjà leur barre d'action (contact, fiche). */
+  flottant?: boolean;
 }
 
-const { titre, description, imageOg = '/og-defaut.jpg', noindex = false, fil = [] } = Astro.props;
+const {
+  titre, description, imageOg = '/og-defaut.jpg', noindex = false, fil = [],
+  messageWa, flottant = true,
+} = Astro.props;
 
 const url = new URL(Astro.url.pathname, Astro.site ?? SITE.url).href;
 const urlImage = new URL(imageOg, Astro.site ?? SITE.url).href;
@@ -115,31 +122,39 @@ const donneesFil =
 
     <Pied />
 
-    <a class="flottant" href={lienWhatsApp()}>
+    {flottant && <a class="flottant" href={lienWhatsApp(messageWa)}>
       <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"
         ><path
           d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"
         /></svg
       >
       <span>WhatsApp</span>
-    </a>
+    </a>}
 
     <script>
-      /* Menu mobile — le strict minimum, sans dépendance. */
+      /* Menu mobile : ouverture, fermeture par Échap, par clic extérieur ou sur
+         un lien ; le focus revient au bouton ; la page ne défile plus dessous. */
       const bouton = document.querySelector<HTMLButtonElement>('.burger');
       const menu = document.getElementById('menu-mobile');
+      const mot = bouton?.querySelector('.burger__mot');
       if (bouton && menu) {
-        bouton.addEventListener('click', () => {
-          const ouvert = bouton.getAttribute('aria-expanded') === 'true';
-          bouton.setAttribute('aria-expanded', String(!ouvert));
-          menu.hidden = ouvert;
-          document.documentElement.classList.toggle('menu-ouvert', !ouvert);
-        });
+        const regle = (ouvert: boolean, rendreFocus = false) => {
+          bouton.setAttribute('aria-expanded', String(ouvert));
+          menu.hidden = !ouvert;
+          if (mot) mot.textContent = ouvert ? 'Fermer' : 'Menu';
+          document.documentElement.classList.toggle('menu-ouvert', ouvert);
+          if (!ouvert && rendreFocus) bouton.focus();
+        };
+        bouton.addEventListener('click', () => regle(bouton.getAttribute('aria-expanded') !== 'true'));
         menu.addEventListener('click', (e) => {
-          if ((e.target as HTMLElement).tagName !== 'A') return;
-          bouton.setAttribute('aria-expanded', 'false');
-          menu.hidden = true;
-          document.documentElement.classList.remove('menu-ouvert');
+          if ((e.target as HTMLElement).closest('a')) regle(false);
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && !menu.hidden) regle(false, true);
+        });
+        document.addEventListener('click', (e) => {
+          const cible = e.target as Node;
+          if (!menu.hidden && !menu.contains(cible) && !bouton.contains(cible)) regle(false);
         });
       }
     </script>

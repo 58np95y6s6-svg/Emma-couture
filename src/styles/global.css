@@ -74,11 +74,13 @@
 
   /* Rythmes verticaux : volontairement inégaux d'une section à l'autre */
   --serre:   clamp(3rem, 6vw, 5rem);
-  --respire: clamp(5rem, 11vw, 10rem);
+  --respire: clamp(4rem, 7vw, 6.5rem);
 
   /* Échelle fluide, ruptures franches */
   --t-micro: clamp(0.75rem, 0.72rem + 0.15vw, 0.82rem);
-  --t-petit: clamp(0.9rem, 0.86rem + 0.2vw, 0.98rem);
+  /* Texte courant secondaire : jamais sous 16 px. --t-micro est réservé
+     aux étiquettes en chasse fixe. */
+  --t-petit: clamp(1rem, 0.97rem + 0.12vw, 1.05rem);
   --t-corps: clamp(1rem, 0.96rem + 0.25vw, 1.125rem);
   --t-chapo: clamp(1.15rem, 1.02rem + 0.65vw, 1.5rem);
   /* Échelle FERMÉE : les pages n'écrivent pas de font-size sur les titres.
@@ -361,7 +363,7 @@ h3 {
   transition: background-size 350ms var(--sortie), color 200ms ease;
 }
 .lien-fleche::after { content: '→'; transition: transform 300ms var(--sortie); }
-.lien-fleche:hover { color: var(--coquelicot-fonce); background-size: 0% 1.5px; background-position: 100% calc(50% + 0.8em); }
+.lien-fleche:hover { color: var(--coquelicot-fonce); }
 .lien-fleche:hover::after { transform: translateX(5px); }
 .lien-fleche--clair { color: var(--lin-haut); }
 .lien-fleche--clair:hover { color: var(--rose); }
@@ -495,7 +497,7 @@ h3 {
   overflow-y: auto;
 }
 .menu[hidden] { display: none; }
-.menu a {
+.menu > a, .menu__occasions a {
   display: flex; align-items: center; justify-content: space-between;
   min-height: 3.4rem;
   text-decoration: none;
@@ -503,14 +505,19 @@ h3 {
   font-size: 2rem; line-height: 1;
   border-bottom: 1px solid color-mix(in oklab, var(--tapis-trait) 40%, transparent);
 }
-.menu a::after { content: '→'; font-family: var(--f-texte); font-size: 1rem; color: var(--tapis-trait); }
-.menu a:last-child { border: 0; color: var(--rose); }
+.menu > a::after, .menu__occasions a::after { content: '→'; font-family: var(--f-texte); font-size: 1rem; color: var(--tapis-trait); }
+.menu__titre { margin-block: 1.4rem 0.2rem; font-family: var(--f-mono); font-size: var(--t-micro); color: var(--tapis-trait); }
+.menu__occasions a { font-size: 1.35rem; min-height: 3rem; }
+.menu__actions { display: grid; gap: 0.6rem; margin-block-start: 1.4rem; }
+.menu__actions .btn { width: 100%; }
+.statut--menu { display: inline-flex; margin-block-start: 1rem; color: var(--tapis-trait); padding: 0; }
 
 @media (min-width: 64rem) {
   .nav, .entete__cta { display: inline-flex; }
   .burger, .menu { display: none !important; }
 }
-@media (min-width: 80rem) { .statut { display: inline-flex; } }
+.entete__wa { display: none !important; }
+@media (min-width: 80rem) { .statut, .entete__wa { display: inline-flex !important; } .statut--menu { display: none !important; } }
 
 /* -----------------------------------------------------------------------------
    8. EN-TÊTES DE SECTION — volontairement variés d'une section à l'autre
@@ -581,8 +588,7 @@ h3 {
   padding-block-start: 0.55rem;
   border-block-start: 1px solid color-mix(in oklab, var(--encre) 15%, transparent);
 }
-.carte__cta { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.carte__cta .lien-fleche { font-size: var(--t-micro); }
+.carte__cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.9rem; }
 
 /* -----------------------------------------------------------------------------
    10. LE TAPIS — section sombre quadrillée au centimètre
@@ -698,7 +704,8 @@ h3 {
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: var(--coquelicot);
+  /* Coquelicot foncé : texte blanc à 6:1, même à 90 % d'opacité. */
+  background: var(--coquelicot-fonce);
   color: #fff;
   padding-block: var(--respire);
 }
@@ -833,4 +840,31 @@ h3 {
   .entete, .flottant, .progression { display: none; }
   body { background: #fff; color: #000; }
   body::before { display: none; }
+}
+
+/* -----------------------------------------------------------------------------
+   21. RYTHME ENTRE SECTIONS — les marges ne s'additionnent pas
+   Deux sections sur le même fond lin se suivent : la seconde ne rajoute pas
+   sa marge haute (sinon 300 px de vide). Avant une section à fond (tapis,
+   appel final), la marge basse est ramenée à --serre. Les !important
+   l'emportent sur les marges propres des composants et des pages.
+----------------------------------------------------------------------------- */
+main > .bande:not(.tapis, .nuit, .final, .hdp--fond, .metier) + .bande:not(.tapis, .nuit, .final) {
+  padding-block-start: 0 !important;
+}
+main > .bande:has(+ .final, + .tapis, + .nuit, + .bandeau) {
+  padding-block-end: var(--serre) !important;
+}
+
+/* Menu mobile ouvert : la page ne défile plus dessous. */
+html.menu-ouvert { overflow: hidden; }
+
+/* Le bouton WhatsApp flottant ne recouvre pas le bas du pied. */
+@media (max-width: 63.999rem) {
+  .pied__bas { padding-block-end: calc(5.5rem + env(safe-area-inset-bottom)); }
+}
+
+/* Pied compact sur téléphone : les catégories sont déjà dans le menu. */
+@media (max-width: 39.999rem) {
+  .pied__nav--large { display: none; }
 }

@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import { lienWhatsApp, SITE } from '../config';
+import { lienWhatsApp, SITE, LIBELLES } from '../config';
 
 interface Props {
   creation: CollectionEntry<'creations'>;
@@ -49,7 +49,7 @@ const wa = lienWhatsApp(
                 dès <b>{data.prixDepart}&nbsp;€</b>
               </span>
             )}
-            {data.delaiJours && <span>{data.delaiJours}&nbsp;jours</span>}
+            {data.delaiJours && <span>réalisation {data.delaiJours}&nbsp;j</span>}
           </p>
         )
       }
@@ -57,7 +57,7 @@ const wa = lienWhatsApp(
   </a>
 
   <p class="carte__cta">
-    <a class="lien-wa" href={wa}>Je veux la même</a>
-    <a class="lien-fleche" href={`/contact/?creation=${id}`}>Devis</a>
+    <a class="btn btn--wa btn--petit" href={wa}>{LIBELLES.laMeme}</a>
+    <a class="lien-fleche" href={`/contact/?creation=${id}#devis`}>{LIBELLES.devis}</a>
   </p>
 </article>

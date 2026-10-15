@@ -5,7 +5,7 @@
  *   gauche : H2, chapô (slot), deux boutons ;
  *   droite : les coordonnées directes, en liste à filets.
  */
-import { CONTACT, ATELIER, lienWhatsApp } from '../config';
+import { CONTACT, ATELIER, LIBELLES, lienWhatsApp, telephoneLisible } from '../config';
 
 interface Props {
   titre?: string;
@@ -34,17 +34,17 @@ const {
         </slot>
       </div>
       <p class="actions">
-        <a class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>Me contacter sur WhatsApp</a>
-        <a class="btn btn--creux btn--grand" href={lienDevis}>Demander un devis</a>
+        <a class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>{LIBELLES.whatsapp}</a>
+        <a class="btn btn--creux btn--grand" href={lienDevis}>{LIBELLES.devis}</a>
       </p>
     </div>
 
     <dl class="af__coord">
-      <div><dt>Téléphone</dt><dd><a href={`tel:${CONTACT.telephone}`}>{CONTACT.telephone}</a></dd></div>
-      <div><dt>E-mail</dt><dd><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></dd></div>
-      <div><dt>Réponse</dt><dd>{ATELIER.delaiReponse}</dd></div>
-      <div><dt>Délai actuel</dt><dd>{ATELIER.delaiActuel}</dd></div>
-      <div><dt>Remise</dt><dd>Vitré, Rennes, envoi en France</dd></div>
+      <div><dt>Téléphone</dt><dd><a href={`tel:${CONTACT.telephone}`}>{telephoneLisible()}</a></dd></div>
+      <div class="af__large"><dt>E-mail</dt><dd><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></dd></div>
+      <div class="af__large"><dt>Réponse</dt><dd>{ATELIER.delaiReponse}</dd></div>
+      <div class="af__large"><dt>Délai actuel</dt><dd>{ATELIER.delaiActuel}</dd></div>
+      <div class="af__large"><dt>Remise</dt><dd>Vitré, Rennes, envoi en France</dd></div>
     </dl>
   </div>
 </section>
@@ -66,6 +66,12 @@ const {
   }
   .af__coord dt { font-family: var(--f-mono); font-size: var(--t-micro); opacity: 0.85; }
   .af__coord dd { margin: 0; overflow-wrap: anywhere; }
+  .af__coord dt { opacity: 1; }
+  /* Sur téléphone, seul le téléphone : le reste est déjà dit plus haut. */
+  @media (max-width: 63.999rem) {
+    .af__large { display: none !important; }
+    .af__coord { margin-block-start: 1.5rem; }
+  }
   .af__coord a { color: #fff; }
   @media (min-width: 64rem) {
     .af__dire { grid-column: 1 / span 7; }

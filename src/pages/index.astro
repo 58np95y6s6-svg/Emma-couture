@@ -7,7 +7,7 @@ import TeteSection from '../components/TeteSection.astro';
 import Etapes from '../components/Etapes.astro';
 import AppelFinal from '../components/AppelFinal.astro';
 import LigneFaits from '../components/LigneFaits.astro';
-import { SITE, ATELIER, OCCASIONS, lienWhatsApp } from '../config';
+import { SITE, ATELIER, OCCASIONS, LIBELLES, ETAPES_COMMANDE, lienWhatsApp } from '../config';
 
 import portrait from '../assets/creations/hero-mobile/emma-brodeuse-vitre-portrait.webp';
 import bobines from '../assets/creations/bandeau/atelier-mur-bobines-fil-broderie-vitre.webp';
@@ -78,8 +78,8 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
           réalisation.
         </p>
         <p class="actions">
-          <a class="btn btn--wa btn--grand" href={lienWhatsApp()}>Me contacter sur WhatsApp</a>
-          <a class="btn btn--creux btn--grand" href="/contact/#devis">Demander un devis</a>
+          <a class="btn btn--wa btn--grand" href={lienWhatsApp()}>{LIBELLES.whatsapp}</a>
+          <a class="btn btn--creux btn--grand" href="/contact/#devis">{LIBELLES.devis}</a>
         </p>
         <LigneFaits
           faits={[
@@ -130,7 +130,6 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
           broderie, je vous envoie le motif : l'écriture, la taille et la couleur du fil restent
           modifiables jusqu'à votre accord.
         </p>
-        <a class="lien-fleche" href="/sur-mesure/">Le déroulement d'une commande</a>
       </div>
     </div>
   </section>
@@ -236,26 +235,7 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
     <TeteSection titre="Le déroulement d'une commande">
       <p>Aucune réalisation n'est lancée sans votre accord sur le motif.</p>
     </TeteSection>
-    <Etapes
-      etapes={[
-        {
-          titre: 'Votre demande',
-          texte:
-            "Précisez-moi le prénom, l'occasion et la date souhaitée, avec une photo d'inspiration si vous en avez une. Je reviens vers vous avec une proposition, un prix et un délai.",
-        },
-        {
-          titre: 'La validation du motif',
-          texte:
-            "Avant toute réalisation, je vous adresse le motif. Il peut être ajusté autant que nécessaire : tant qu'il n'est pas brodé, tout reste modifiable.",
-          cle: true,
-        },
-        {
-          titre: 'La remise',
-          texte:
-            'Votre pièce est emballée, prête à offrir. Remise en main propre à Vitré ou à Rennes, ou envoi soigné partout en France.',
-        },
-      ]}
-    />
+    <Etapes etapes={ETAPES_COMMANDE} />
   </section>
 
   <!-- ===================== ATELIER ===================== -->
@@ -297,19 +277,20 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
   .ouv__lieu { font-size: var(--t-petit); color: var(--coquelicot-fonce); }
   .ouv h1 { font-size: var(--t-h1-accueil); max-width: 13ch; }
 
-  .ouv__portrait { display: grid; gap: 0.6rem; }
+  /* Sur téléphone, le visage d'abord : c'est le gage de confiance. */
+  .ouv__portrait { display: grid; gap: 0.6rem; order: -1; }
   .ouv__portrait :global(img) {
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
-    object-position: 50% 22%;
+    object-position: 50% 38%;
     border-radius: var(--r-m);
   }
   .ouv__portrait figcaption { font-size: var(--t-micro); color: var(--gris); }
 
   @media (min-width: 48rem) {
     .ouv__texte { grid-column: 1 / span 7; }
-    .ouv__portrait { grid-column: 8 / -1; }
+    .ouv__portrait { grid-column: 8 / -1; order: 0; }
     .ouv__portrait :global(img) { aspect-ratio: 4 / 5; }
   }
   @media (min-width: 64rem) {
@@ -328,7 +309,7 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
     --bois: #C9A97E;
     --bois-fonce: #8A6A46;
     /* l'anneau de bois (17 px de chaque côté) compte dans la largeur */
-    width: min(calc(100% - 34px), 26rem);
+    width: min(calc(100% - 34px), 15rem);
     aspect-ratio: 1;
     border-radius: 50%;
     display: grid; place-items: center;
@@ -362,12 +343,12 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
   .metier__legende { font-size: var(--t-micro); color: var(--coquelicot-fonce); min-height: 1.5em; }
 
   @media (min-width: 48rem) {
-    .tambour { grid-column: 1 / span 5; justify-self: center; }
+    .tambour { grid-column: 1 / span 5; justify-self: center; width: min(calc(100% - 34px), 26rem); }
     .metier__dire { grid-column: 7 / -1; }
   }
 
   /* ============================ CRÉATIONS ============================ */
-  .creations { padding-block: var(--respire) var(--serre); timeline-scope: --rangee; }
+  .creations { padding-block: var(--serre); timeline-scope: --rangee; }
   .creations__barre {
     height: 2px;
     background: color-mix(in oklab, var(--encre) 12%, transparent);
@@ -426,7 +407,7 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
   .occ__lien:focus-visible { outline-color: var(--encre); }
 
   /* ============================ DÉROULEMENT ============================ */
-  .methode { padding-block: var(--serre) var(--respire); }
+  .methode { padding-block: var(--serre); }
 
   /* ============================ ATELIER ============================ */
   .atelier { padding-block: 0 var(--respire); }

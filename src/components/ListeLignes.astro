@@ -48,7 +48,8 @@ const avecImages = lignes.some((l) => l.image);
 </ul>
 
 <style>
-  .ll { border-block-start: 1px solid color-mix(in oklab, currentColor 18%, transparent); }
+  /* Requête de conteneur : la liste s'adapte à sa colonne, pas à l'écran. */
+  .ll { container-type: inline-size; border-block-start: 1px solid color-mix(in oklab, currentColor 18%, transparent); }
   .ll > li { border-block-end: 1px solid color-mix(in oklab, currentColor 18%, transparent); }
   .ll__ligne {
     display: grid;
@@ -74,7 +75,7 @@ const avecImages = lignes.some((l) => l.image);
   :global(.tapis) a.ll__ligne:hover .ll__titre { color: var(--rose); }
   a.ll__ligne:hover .ll__fleche { transform: translateX(4px); }
 
-  @media (min-width: 48rem) {
+  @container (min-width: 36rem) {
     .ll__ligne {
       grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 2fr) 1.5rem;
       grid-template-areas: 'titre texte meta fleche';

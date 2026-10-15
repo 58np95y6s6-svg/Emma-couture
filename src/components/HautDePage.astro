@@ -28,10 +28,13 @@ interface Props {
 
 const { titre, fil, image, alt = '', cadrage = '50% 40%', faits = [], fond } = Astro.props;
 const aActions = Astro.slots.has('actions');
+/* Sans photo, la colonne de droite peut recevoir un contenu utile
+   (filtres, formulaire, coordonnées) plutôt que rester vide. */
+const aAside = !image && Astro.slots.has('aside');
 ---
 
 <header
-  class:list={['hdp bande', { 'hdp--fond': fond, 'hdp--seul': !image }]}
+  class:list={['hdp bande', { 'hdp--fond': fond, 'hdp--seul': !image, 'hdp--aside': aAside }]}
   style={fond ? `--hdp-fond:${fond}` : undefined}
 >
   <div class="grille">
@@ -43,6 +46,8 @@ const aActions = Astro.slots.has('actions');
       {aActions && <p class="actions"><slot name="actions" /></p>}
       {faits.length > 0 && <LigneFaits faits={faits} clair={!!fond} />}
     </div>
+
+    {aAside && <div class="hdp__aside"><slot name="aside" /></div>}
 
     {
       image && (
@@ -91,6 +96,7 @@ const aActions = Astro.slots.has('actions');
   .hdp__chapo { max-width: 34rem; }
   .hdp__chapo :global(p + p) { margin-block-start: 0.8em; }
 
+  .hdp__aside { grid-column: 1 / -1; margin-block-start: 1.5rem; }
   .hdp__photo {
     grid-column: 1 / -1;
     margin-block-start: 1rem;
@@ -104,6 +110,8 @@ const aActions = Astro.slots.has('actions');
   @media (min-width: 48rem) {
     .hdp__texte { grid-column: 1 / span 7; }
     .hdp--seul .hdp__texte { grid-column: 1 / span 9; }
+    .hdp--aside .hdp__texte { grid-column: 1 / span 5; }
+    .hdp__aside { grid-column: 7 / -1; padding-block-start: clamp(1rem, 3vw, 2.5rem); }
     .hdp__photo {
       grid-column: 8 / -1;
       margin-block-start: clamp(1rem, 3vw, 2.5rem);
