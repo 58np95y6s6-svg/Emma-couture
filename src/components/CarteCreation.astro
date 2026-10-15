@@ -1,7 +1,17 @@
 ---
+/**
+ * CARTE PRODUIT d'une création — codes d'une boutique en ligne, sans panier.
+ *
+ * La carte entière est un seul lien vers la fiche : photo 4:5, titre, prix
+ * « dès N € » bien lisible, délai « réalisation N j » discret. La commande
+ * (WhatsApp ou devis) se fait depuis la fiche. Pas d'étoiles, pas de stock,
+ * pas de quantité : rien qui n'existe pas.
+ *
+ * Utilisée dans les grilles du catalogue (/creations/, catégories) et dans
+ * les rangées défilantes (accueil, occasions, « Vous aimerez aussi »).
+ */
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import { lienWhatsApp, SITE, LIBELLES } from '../config';
 
 interface Props {
   creation: CollectionEntry<'creations'>;
@@ -15,14 +25,8 @@ const { creation, tailles = '(max-width: 40rem) 74vw, (max-width: 64rem) 42vw, 2
 const { data, id } = creation;
 
 const urlFiche = `/creations/${id}/`;
-const urlAbsolue = new URL(urlFiche, SITE.url).href;
-
-/* L'URL de la fiche est jointe au message : WhatsApp en affiche l'aperçu
-   Open Graph, seule façon d'y faire apparaître la photo. */
-const wa = lienWhatsApp(
-  `Bonjour Emma, j'ai vu « ${data.titre} » sur votre site et j'aimerais un modèle similaire.`,
-  urlAbsolue,
-);
+/* Apostrophe typographique à l'affichage. */
+const titre = data.titre.replace(/'/g, '’');
 ---
 
 <article class="carte">
@@ -38,26 +42,34 @@ const wa = lienWhatsApp(
       />
     </figure>
     <div class="carte__txt">
-      <h3>{data.titre}</h3>
-      <p>{data.accroche}</p>
+      <h3 class="carte__titre">{titre}</h3>
       {/* ⚠️ Prix et délais d'exemple, à valider par Emma (repli de l'admin). */}
-      {
-        (data.prixDepart || data.delaiJours) && (
-          <p class="carte__ligne prix" data-reglage-creation={id}>
-            {data.prixDepart && (
-              <span>
-                dès <b>{data.prixDepart}&nbsp;€</b>
-              </span>
-            )}
-            {data.delaiJours && <span>réalisation {data.delaiJours}&nbsp;j</span>}
-          </p>
-        )
-      }
+      <p class="carte__ligne" data-reglage-creation={id}>
+        <span class="prix carte__prix">
+          {data.prixDepart ? <>dès <b>{data.prixDepart}&nbsp;€</b></> : <b>sur devis</b>}
+        </span>
+        {data.delaiJours && <span class="carte__delai mono">réalisation {data.delaiJours}&nbsp;j</span>}
+      </p>
     </div>
   </a>
-
-  <p class="carte__cta">
-    <a class="btn btn--wa btn--petit" href={wa}>{LIBELLES.laMeme}</a>
-    <a class="lien-fleche" href={`/contact/?creation=${id}#devis`}>{LIBELLES.devis}</a>
-  </p>
 </article>
+
+<style>
+  /* Les règles de base (.carte, .carte__img, survol de la photo) sont dans
+     global.css § 9 ; ici, ce qui fait la carte produit. */
+  .carte__lien { gap: 0.8rem; }
+  .carte__txt { gap: 0.35rem; }
+  .carte__titre { line-height: 1.1; text-wrap: balance; }
+  .carte__lien:hover .carte__titre,
+  .carte__lien:focus-visible .carte__titre {
+    text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em;
+  }
+  .carte__ligne {
+    border-block-start: 0; padding-block-start: 0;
+    margin-block-start: auto;
+    flex-wrap: wrap;
+  }
+  .carte__prix { color: var(--encre-doux); }
+  .carte__prix b { color: var(--encre); }
+  .carte__delai { font-size: var(--t-micro); color: var(--gris); }
+</style>

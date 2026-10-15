@@ -7,24 +7,33 @@
  * pré-rempli. Maillage vers les occasions, la catégorie (fil d'Ariane) et le
  * sur-mesure (appel final).
  *
- * Mise en page : HautDePage (texte col. 1-7 : accroche, texte de la pièce,
- * occasions, prix, boutons, faits ; photo col. 8-12), puis les autres pièces
- * en rangée et l'appel final. Le déroulement détaillé vit sur /sur-mesure/.
+ * Présentation « fiche produit » (demande client : les codes d'une boutique,
+ * sans panier, sans quantité, sans stock, sans avis inventés) :
+ *   fil d'Ariane ;
+ *   photo principale col. 1-6 (+ vignettes cliquables si data.photos) ;
+ *   col. 8-12, collante sur grand écran : catégorie, H1, prix, accroche,
+ *   personnalisation, délai, « Commander sur WhatsApp », « Demander un
+ *   devis », réassurance, mention « sur commande » ;
+ *   puis Description + Livraison et délais (6/6), « Vous aimerez aussi »
+ *   (rangée) et l'appel final.
  *
  * Sur téléphone, une barre d'action fixe en bas d'écran reprend les deux
- * appels, uniquement quand ni les boutons du haut ni l'appel final ne sont à
- * l'écran ; elle remplace le bouton WhatsApp flottant du gabarit.
+ * appels, uniquement quand ni les boutons de la fiche ni l'appel final ne
+ * sont à l'écran ; elle remplace le bouton WhatsApp flottant du gabarit.
  */
 import type { GetStaticPaths } from 'astro';
 import { getCollection, render } from 'astro:content';
 import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import CarteCreation from '../../components/CarteCreation.astro';
-import HautDePage from '../../components/HautDePage.astro';
+import FilAriane from '../../components/FilAriane.astro';
 import TeteSection from '../../components/TeteSection.astro';
 import LigneFaits from '../../components/LigneFaits.astro';
 import AppelFinal from '../../components/AppelFinal.astro';
 import { SITE, ATELIER, OCCASIONS, LIBELLES, lienWhatsApp } from '../../config';
+
+/* TODO config : LIBELLES.commander = 'Commander sur WhatsApp' (en dur en attendant). */
+const COMMANDER = 'Commander sur WhatsApp';
 
 /** Libellés d'affichage. Les slugs viennent de src/content.config.ts. */
 const NOM_CATEGORIE: Record<string, string> = {
@@ -65,8 +74,8 @@ const { Content } = await render(creation);
 /* Apostrophe typographique à l'affichage (le contenu garde l'apostrophe droite). */
 const typo = (t: string) => t.replace(/'/g, '’');
 
-/* Les autres pièces : d'abord la même catégorie, puis le reste. La rangée
-   s'intitule « Autres créations » : toutes y sont à leur place. */
+/* « Vous aimerez aussi » : d'abord la même catégorie, puis le reste, jamais
+   la pièce courante. */
 const toutes = (await getCollection('creations', ({ data: d }) => !d.masquee)).sort(
   (a, b) => a.data.ordre - b.data.ordre,
 );
@@ -153,16 +162,35 @@ const fil = [
   { nom: typo(data.titre), url: urlFiche },
 ];
 
-/* Prix et durée de réalisation de la pièce, juste au-dessus des boutons.
-   Le délai actuel de l'atelier figure dans l'appel final.
-   ⚠️ Prix et délais : exemples à valider par Emma (repli de l'admin). */
-const prixPiece = [
-  data.prixDepart ? `dès ${data.prixDepart} €` : 'prix sur devis',
-  ...(data.delaiJours ? [`réalisation ${data.delaiJours} j`] : []),
-  ...(data.cousuMain ? ['cousu main'] : []),
-];
+/* Ce que la cliente choisit. Uniquement des options réellement proposées
+   (d'après les textes du site) : rien d'inventé.
+   ⚠️ [À CONFIRMER PAR EMMA] la liste par catégorie. */
+const PERSO: Record<string, string[]> = {
+  naissance: [
+    'Le prénom',
+    'Les informations de naissance : date, heure, poids et taille',
+    'La couleur du fil',
+    'Le style d’écriture',
+  ],
+  'linge-de-bain': ['Le prénom', 'La couleur du linge', 'La couleur du fil', 'Le style d’écriture'],
+  vetements: ['Le prénom, l’initiale ou le motif', 'L’emplacement de la broderie', 'La couleur du fil'],
+  couture: [
+    'Le tissu : parmi mes coupons, ou le vôtre',
+    'Le prénom ou le texte brodé',
+    'La couleur du fil',
+    'Le style d’écriture',
+  ],
+  'decoration-ajouree': [
+    'Le motif ou l’initiale',
+    'La couleur du fil',
+    'La présentation : sous cadre, à suspendre ou à coudre',
+  ],
+  noel: ['Le prénom de chacun', 'La couleur du fil', 'Le style d’écriture'],
+};
+const personnalisation = PERSO[data.categorie] ?? ['Le prénom ou le texte brodé', 'La couleur du fil'];
+
 /* Réassurance, sous les boutons. */
-const faits = ['Motif soumis avant broderie', 'Emballage compris', 'Vitré, Rennes, France'];
+const faits = ['Motif validé avant broderie', 'Emballage cadeau compris', 'Remise à Vitré ou Rennes, ou envoi'];
 ---
 
 <Base titre={titre} description={description} imageOg={og.src} fil={fil} flottant={false} messageWa={messageWa}>
@@ -174,61 +202,137 @@ const faits = ['Motif soumis avant broderie', 'Emballage compris', 'Vitré, Renn
 
   <script type="application/ld+json" set:html={JSON.stringify(produit)} />
 
-  <HautDePage titre={typo(data.titre)} fil={fil} image={data.photo} alt={data.alt} faits={faits}>
-    <p class="fiche__accroche">{data.accroche}</p>
-    <div class="fiche__texte"><Content /></div>
-    {
-      occasions.length > 0 && (
-        <p class="fiche__occ">
-          Cette pièce convient pour{' '}
-          {occasions.map((o, i) => (
-            <>
-              {i > 0 && (i === occasions.length - 1 ? ' et ' : ', ')}
-              {o.lien ? <a href={o.lien}>{o.nom}</a> : o.nom}
-            </>
-          ))}
-          .
+  <!-- ===================== FICHE PRODUIT ===================== -->
+  <div class="bande fiche">
+    <div class="grille">
+      <div class="fiche__fil"><FilAriane fil={fil} /></div>
+
+      <div class="fiche__galerie">
+        <figure class="fiche__photo" data-vue="0">
+          <Image
+            src={data.photo}
+            alt={data.alt}
+            widths={[400, 640, 880, 1000]}
+            sizes="(max-width: 48rem) 92vw, 45vw"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </figure>
+        {data.photos.map((p, i) => (
+          <figure class="fiche__photo" data-vue={i + 1} hidden>
+            <Image
+              src={p}
+              alt={`${typo(data.titre)}, vue ${i + 2}`}
+              widths={[400, 640, 880, 1000]}
+              sizes="(max-width: 48rem) 92vw, 45vw"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+        ))}
+        {
+          data.photos.length > 0 && (
+            <ul class="fiche__vignettes" aria-label="Choisir une vue">
+              {[data.photo, ...data.photos].map((p, i) => (
+                <li>
+                  <button type="button" class="fiche__vignette" data-vue={i} aria-pressed={i === 0 ? 'true' : 'false'} aria-label={`Vue ${i + 1}`}>
+                    <Image src={p} alt="" widths={[120, 240]} sizes="5rem" loading="lazy" decoding="async" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+
+      <div class="fiche__infos">
+        <p class="fiche__cat mono"><a href={`/creations/${data.categorie}/`}>{categorieNom}</a></p>
+        <h1>{typo(data.titre)}</h1>
+        {/* ⚠️ Prix d'exemple, à valider par Emma (repli de l'admin). */}
+        <p class="prix fiche__prix" data-reglage-creation={id}>
+          {data.prixDepart ? <>dès <b>{data.prixDepart}&nbsp;€</b></> : <b>Prix sur devis</b>}
         </p>
-      )
-    }
-    <div class="fiche__prix"><LigneFaits faits={prixPiece} label="Prix et réalisation" /></div>
+        <p class="fiche__accroche">{data.accroche}</p>
 
-    <a slot="actions" class="btn btn--wa btn--grand" href={wa}>
-      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d={icoWa} /></svg>
-      {LIBELLES.laMeme}
-    </a>
-    <a slot="actions" class="btn btn--creux btn--grand" href={devis}>{LIBELLES.devis}</a>
-  </HautDePage>
+        <div class="fiche__perso">
+          <h2 class="fiche__h">Personnalisation</h2>
+          <p class="fiche__note">Vous choisissez&nbsp;:</p>
+          <ul class="fiche__liste">
+            {personnalisation.map((x) => <li>{x}</li>)}
+          </ul>
+        </div>
 
-  {
-    data.photos.length > 0 && (
-      <section class="bande vues" aria-label="Autres vues">
-        <ul class="grille">
-          {data.photos.map((p, i) => (
-            <li>
-              <Image
-                src={p}
-                alt={`${typo(data.titre)}, vue ${i + 2}`}
-                widths={[320, 480, 620]}
-                sizes="(max-width: 48rem) 46vw, 22vw"
-                loading="lazy"
-                decoding="async"
-              />
-            </li>
-          ))}
-        </ul>
-      </section>
-    )
-  }
+        {/* ⚠️ Délai d'exemple, à valider par Emma. */}
+        {data.delaiJours && (
+          <p class="fiche__delai">
+            <span class="mono">Réalisation</span> {data.delaiJours}&nbsp;jours ouvrés après validation du motif
+          </p>
+        )}
 
-  <!-- ===================== AUTRES PIÈCES ===================== -->
+        <p class="fiche__actions">
+          <a class="btn btn--wa btn--grand" href={wa}>
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d={icoWa} /></svg>
+            {COMMANDER}
+          </a>
+          <a class="btn btn--creux btn--grand" href={devis}>{LIBELLES.devis}</a>
+        </p>
+
+        <LigneFaits faits={faits} />
+        {/* [À CONFIRMER PAR EMMA] modalités de paiement. */}
+        <p class="fiche__mention">Pièce réalisée sur commande. Le paiement se fait après validation du motif.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== DESCRIPTION + LIVRAISON ===================== -->
+  <section class="bande infos loin" aria-label="Description, livraison et délais">
+    <div class="grille">
+      <div class="infos__bloc">
+        <h2 class="fiche__h">Description</h2>
+        <div class="infos__texte">
+          <Content />
+          {
+            occasions.length > 0 && (
+              <p>
+                Cette pièce convient pour{' '}
+                {occasions.map((o, i) => (
+                  <>
+                    {i > 0 && (i === occasions.length - 1 ? ' et ' : ', ')}
+                    {o.lien ? <a href={o.lien}>{o.nom}</a> : o.nom}
+                  </>
+                ))}
+                .
+              </p>
+            )
+          }
+        </div>
+      </div>
+      <div class="infos__bloc">
+        <h2 class="fiche__h">Livraison et délais</h2>
+        <div class="infos__texte">
+          <p>
+            Je vous soumets le motif avant toute broderie. Une fois validé, la pièce est réalisée
+            {data.delaiJours ? <> en {data.delaiJours}&nbsp;jours ouvrés environ</> : ' dans le délai convenu ensemble'}.
+          </p>
+          <p>
+            Elle vous est remise en main propre à {SITE.ville} ou à Rennes, sur rendez-vous, ou envoyée
+            partout en France, emballée et prête à offrir.
+          </p>
+          <p><a href="/sur-mesure/">Le déroulement d’une commande</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== VOUS AIMEREZ AUSSI ===================== -->
   {
     autres.length > 0 && (
       <section class="bande suite loin">
-        <TeteSection titre="Autres créations" variante="duo">
+        <TeteSection titre="Vous aimerez aussi" variante="duo">
           <a slot="lien" class="lien-fleche" href="/creations/">Toutes les créations</a>
         </TeteSection>
-        <div class="rangee" tabindex="0" role="region" aria-label="Autres créations, rangée défilante">
+        <div class="rangee" tabindex="0" role="region" aria-label="Vous aimerez aussi, rangée défilante">
           {autres.map((c) => (
             <CarteCreation creation={c} tailles="(max-width: 40rem) 74vw, (max-width: 64rem) 42vw, 24rem" />
           ))}
@@ -242,35 +346,46 @@ const faits = ['Motif soumis avant broderie', 'Emballage compris', 'Vitré, Renn
       Indiquez-moi le prénom, la couleur et la date souhaitée. Je vous réponds avec une proposition,
       un prix et un délai, sans engagement de votre part.
     </p>
-    <p><a href="/sur-mesure/">Prix, délais, entretien&nbsp;: le déroulement d’une commande</a></p>
   </AppelFinal>
 
   <!-- ===================== BARRE D'ACTION (téléphone) =====================
-       Fixe en bas d'écran, affichée seulement quand ni les boutons du haut
-       de page ni l'appel final ne sont visibles. Sans JavaScript, elle reste
-       masquée : les boutons du haut et l'appel final suffisent. -->
+       Fixe en bas d'écran, affichée seulement quand ni les boutons de la
+       fiche ni l'appel final ne sont visibles. Sans JavaScript, elle reste
+       masquée : les boutons de la fiche et l'appel final suffisent. -->
   <div class="barre-action" data-visible="false">
     <p class="barre-action__prix mono" aria-hidden="true">
       {data.prixDepart ? <>dès <b>{data.prixDepart}&nbsp;€</b></> : <b>sur devis</b>}
     </p>
     <a class="btn btn--wa" href={wa} tabindex="-1">
       <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d={icoWa} /></svg>
-      {LIBELLES.laMeme}
+      <span class="barre-action__long">{COMMANDER}</span><span class="barre-action__court">Commander</span>
     </a>
     <a class="btn btn--creux" href={devis} tabindex="-1">{LIBELLES.devis}</a>
   </div>
 </Base>
 
 <script>
-  /* La barre n'apparaît qu'entre le haut de page et l'appel final. */
+  /* Vignettes : affichent la vue choisie dans le grand cadre. */
+  const vignettes = document.querySelectorAll<HTMLButtonElement>('.fiche__vignette');
+  const vues = document.querySelectorAll<HTMLElement>('.fiche__photo');
+  vignettes.forEach((b) =>
+    b.addEventListener('click', () => {
+      const n = b.dataset.vue;
+      vues.forEach((v) => (v.hidden = v.dataset.vue !== n));
+      vignettes.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    }),
+  );
+
+  /* La barre n'apparaît qu'entre les boutons de la fiche et l'appel final. */
   const barre = document.querySelector<HTMLElement>('.barre-action');
-  const haut = document.querySelector('.hdp .actions');
+  const haut = document.querySelector('.fiche__actions');
   const fin = document.querySelector('.final');
   if (barre && haut && fin && 'IntersectionObserver' in window) {
     let hautVisible = true;
     let finAtteinte = false;
     const liens = barre.querySelectorAll('a');
     const maj = () => {
+      /* Boutons de la fiche encore en dessous (pas encore atteints) : la barre peut s'afficher. */
       const visible = !hautVisible && !finAtteinte;
       barre.dataset.visible = String(visible);
       /* Masquée = hors de l'ordre de tabulation. */
@@ -289,18 +404,62 @@ const faits = ['Motif soumis avant broderie', 'Emballage compris', 'Vitré, Renn
 </script>
 
 <style>
-  .vues { padding-block: 0 var(--serre); }
-  .vues li { grid-column: span 6; }
-  .vues li :global(img) { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--r-m); }
-  @media (min-width: 48rem) { .vues li { grid-column: span 3; } }
+  /* ============================ FICHE PRODUIT ============================ */
+  .fiche { padding-block: clamp(1rem, 2vw, 1.5rem) var(--serre); }
+  .fiche .grille { row-gap: 1.5rem; align-items: start; }
+  .fiche__fil { grid-column: 1 / -1; }
 
-  /* ============================ HAUT DE PAGE : texte de la pièce ============================ */
-  .fiche__texte { font-size: var(--t-petit); color: var(--encre-doux); }
-  .fiche__texte, .fiche__occ, .fiche__prix { margin-block-start: 0.8em; }
-  .fiche__texte :global(p + p) { margin-block-start: 0.6em; }
-  .fiche__occ { font-size: var(--t-petit); color: var(--encre-doux); }
-  .fiche__occ a { color: var(--encre); }
-  .fiche__prix :global(.faits) { font-family: var(--f-mono); font-size: var(--t-petit); color: var(--encre); }
+  .fiche__galerie { display: grid; gap: 0.75rem; }
+  .fiche__photo { border-radius: var(--r-m); overflow: hidden; aspect-ratio: 4 / 5; background: var(--lin-bas); }
+  .fiche__photo[hidden] { display: none; }
+  .fiche__photo :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .fiche__vignettes { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .fiche__vignette {
+    width: 4.5rem; aspect-ratio: 1; padding: 0;
+    border: 1px solid transparent; border-radius: var(--r-s); overflow: hidden;
+    background: var(--lin-bas); cursor: pointer;
+  }
+  .fiche__vignette[aria-pressed='true'] { border-color: var(--encre); }
+  .fiche__vignette :global(img) { width: 100%; height: 100%; object-fit: cover; }
+
+  .fiche__infos { display: grid; gap: 1.1rem; align-content: start; justify-items: start; }
+  .fiche__cat { font-size: var(--t-micro); }
+  .fiche__cat a { color: var(--gris); }
+  .fiche__infos h1 { text-wrap: balance; }
+  .fiche__prix { font-size: var(--t-petit); }
+  .fiche__prix b { font-size: 2.4em; line-height: 1; }
+  .fiche__accroche { font-size: var(--t-corps); color: var(--encre-doux); max-width: 34rem; }
+
+  .fiche__perso { width: 100%; display: grid; gap: 0.4rem; padding-block-start: 1rem; border-block-start: 1px solid color-mix(in oklab, var(--encre) 16%, transparent); }
+  .fiche__h { font-size: var(--t-h3); }
+  .fiche__note { font-size: var(--t-petit); color: var(--encre-doux); }
+  .fiche__liste { display: grid; gap: 0.25rem; padding-inline-start: 1.2rem; list-style: disc; font-size: var(--t-petit); }
+  .fiche__delai { font-size: var(--t-petit); }
+  .fiche__delai .mono { font-size: var(--t-micro); color: var(--gris); margin-inline-end: 0.4em; }
+
+  .fiche__actions { width: 100%; display: grid; gap: 0.6rem; }
+  .fiche__actions .btn { width: 100%; justify-content: center; }
+  .fiche__mention { font-size: var(--t-petit); color: var(--gris); }
+
+  @media (min-width: 48rem) {
+    .fiche__galerie { grid-column: 1 / span 6; }
+    .fiche__infos { grid-column: 8 / -1; }
+  }
+  @media (min-width: 64rem) {
+    .fiche__infos { position: sticky; top: 6.5rem; }
+  }
+
+  /* ============================ DESCRIPTION + LIVRAISON (6/6) ============================ */
+  .infos { padding-block: var(--serre); }
+  .infos .grille { row-gap: 2.5rem; }
+  .infos__bloc { display: grid; gap: 1rem; align-content: start; padding-block-start: 1rem; border-block-start: 1px solid color-mix(in oklab, var(--encre) 16%, transparent); }
+  .infos__texte { color: var(--encre-doux); max-width: var(--mesure); }
+  .infos__texte :global(p + p) { margin-block-start: 0.8em; }
+  .infos__texte a { color: var(--encre); }
+  @media (min-width: 48rem) {
+    .infos__bloc:first-child { grid-column: 1 / span 6; }
+    .infos__bloc:last-child { grid-column: 8 / -1; }
+  }
 
   .suite { padding-block: var(--serre) var(--respire); }
 
@@ -308,7 +467,7 @@ const faits = ['Motif soumis avant broderie', 'Emballage compris', 'Vitré, Renn
   .barre-action {
     position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 80;
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1.2fr) minmax(0, 1fr);
     align-items: center; gap: 0.5rem;
     padding: 0.6rem max(var(--marge), env(safe-area-inset-right)) calc(0.6rem + env(safe-area-inset-bottom)) max(var(--marge), env(safe-area-inset-left));
     background: color-mix(in oklab, var(--lin-haut) 92%, transparent);
@@ -320,12 +479,14 @@ const faits = ['Motif soumis avant broderie', 'Emballage compris', 'Vitré, Renn
   .barre-action[data-visible='false'] { transform: translateY(110%); visibility: hidden; }
   .barre-action .btn { min-height: 3rem; padding: 0.5rem 0.7rem; font-size: var(--t-petit); white-space: nowrap; }
   .barre-action .ico { width: 1.1rem; height: 1.1rem; }
+  .barre-action__court { display: none; }
   .barre-action__prix { font-size: var(--t-micro); color: var(--gris); line-height: 1.1; }
   .barre-action__prix b { display: block; font-weight: 400; font-size: 1.15rem; color: var(--encre); }
-  /* Téléphone courant : le prix laisse la place aux deux boutons. */
-  @media (max-width: 29.999rem) {
+  /* Téléphone courant : le prix laisse la place aux deux boutons, libellé court. */
+  @media (max-width: 36rem) {
     .barre-action { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-    .barre-action__prix { display: none; }
+    .barre-action__prix, .barre-action__long { display: none; }
+    .barre-action__court { display: inline; }
   }
   /* Petit téléphone : sans icône, libellé sur deux lignes au besoin. */
   @media (max-width: 23.999rem) {

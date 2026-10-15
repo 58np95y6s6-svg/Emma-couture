@@ -6,28 +6,23 @@
  * des pages différentes, pas des variantes d'un gabarit. Une catégorie vide
  * ne génère aucune page (pas de cul-de-sac dans le sitemap).
  *
- * Filtres : la même barre que la galerie, catégorie active en aria-current
- * (colonne de droite du haut de page ; sous le haut de page quand celui-ci
- * porte une photo, comme la dentelle libre).
- *
- * Mise en page (grille à 12 colonnes, sans décalage) selon le nombre de pièces :
- *  - une seule : « vedette », photo col. 1-6 et texte col. 8-12 ;
- *  - deux et plus : cartes de largeur égale, comme la galerie.
+ * Présentation « catalogue », comme /creations/ : barre en tête (nombre de
+ * pièces + filtres, catégorie active en aria-current), puis grille régulière
+ * de cartes produit, quel que soit le nombre de pièces.
  * La dentelle libre (decoration-ajouree) est l'angle différenciant : photo
  * dans le haut de page et technique expliquée en trois étapes réelles.
  */
 import type { GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
-import { Image, getImage } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import CarteCreation from '../../components/CarteCreation.astro';
 import HautDePage from '../../components/HautDePage.astro';
 import TeteSection from '../../components/TeteSection.astro';
 import Etapes from '../../components/Etapes.astro';
 import ListeLignes from '../../components/ListeLignes.astro';
-import LigneFaits from '../../components/LigneFaits.astro';
 import AppelFinal from '../../components/AppelFinal.astro';
-import { SITE, LIBELLES, lienWhatsApp } from '../../config';
+import { SITE } from '../../config';
 
 import papillon from '../../assets/creations/plein-ecran/papillon-brode-dentelle-ajouree-coquelicots.webp';
 
@@ -158,24 +153,6 @@ const faits = [
   `Réalisé à ${SITE.ville}, ${SITE.departement}`,
 ];
 
-/* Une seule pièce : elle est présentée en vedette, avec ses deux appels. */
-const vedette = pieces.length === 1 ? pieces[0] : null;
-const v = vedette
-  ? (() => {
-      const d = vedette.data;
-      const url = `/creations/${vedette.id}/`;
-      return {
-        d,
-        id: vedette.id,
-        url,
-        wa: lienWhatsApp(
-          `Bonjour Emma, j'ai vu « ${d.titre} » sur votre site et j'aimerais un modèle similaire.`,
-          new URL(url, SITE.url).href,
-        ),
-      };
-    })()
-  : null;
-
 /* Image de partage : la première pièce, recadrée en 1200×630, sans
    agrandissement. */
 const ogLargeur = Math.min(1200, pieces[0].data.photo.width);
@@ -221,96 +198,39 @@ const messageWa = `Bonjour Emma, je souhaiterais une création dans la catégori
   >
     <p>{cat.chapo}</p>
     {cat.note && <p>{cat.note}</p>}
-
-    {/* Sans photo, les filtres prennent la colonne de droite du haut de page. */}
-    {
-      !estDentelle && (
-        <nav slot="aside" class="filtres" aria-labelledby="filtres-titre">
-          <p class="filtres__titre mono" id="filtres-titre">Par catégorie</p>
-          <ul class="filtres__liste">
-            <li><a class="filtre" href="/creations/">Tout</a></li>
-            {filtres.map((f) => (
-              <li>
-                <a class="filtre" href={`/creations/${f.slug}/`} aria-current={f.slug === categorie ? 'page' : undefined}>
-                  {f.court}
-                  <span class="lu-seulement">({f.nombre} pièce{f.nombre > 1 ? 's' : ''})</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      )
-    }
   </HautDePage>
 
-  {/* Avec photo dans le haut de page : la même barre, juste dessous. */}
-  {
-    estDentelle && (
-      <nav class="bande filtres filtres--bande" aria-labelledby="filtres-titre">
-        <p class="filtres__titre mono" id="filtres-titre">Par catégorie</p>
-        <ul class="filtres__liste">
-          <li><a class="filtre" href="/creations/">Tout</a></li>
-          {filtres.map((f) => (
-            <li>
-              <a class="filtre" href={`/creations/${f.slug}/`} aria-current={f.slug === categorie ? 'page' : undefined}>
-                {f.court}
-                <span class="lu-seulement">({f.nombre} pièce{f.nombre > 1 ? 's' : ''})</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    )
-  }
+  <!-- ===================== LE CATALOGUE =====================
+       Même barre que /creations/ (catégorie active en aria-current), puis la
+       grille régulière de cartes produit, quel que soit le nombre de pièces. -->
+  <section class="bande catalogue" aria-labelledby="catalogue-titre">
+    <h2 class="lu-seulement" id="catalogue-titre">{`Créations : ${cat.court}`}</h2>
+    <nav class="cat-barre" aria-label="Catégories de créations">
+      <p class="cat-barre__nombre mono">{pieces.length} pièce{pieces.length > 1 ? 's' : ''}</p>
+      <ul class="cat-barre__filtres">
+        <li><a class="filtre" href="/creations/">Tout</a></li>
+        {filtres.map((f) => (
+          <li>
+            <a class="filtre" href={`/creations/${f.slug}/`} aria-current={f.slug === categorie ? 'page' : undefined}>
+              {f.court}
+              <span class="lu-seulement">({f.nombre} pièce{f.nombre > 1 ? 's' : ''})</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
 
-  <!-- ===================== LES PIÈCES ===================== -->
-  <section class="bande pieces" aria-label={`Créations : ${cat.court}`}>
-    {
-      v ? (
-        <article class="grille vedette">
-          <a class="vedette__photo" href={v.url} aria-hidden="true" tabindex="-1">
-            <Image
-              src={v.d.photo}
-              alt={v.d.alt}
-              widths={[390, 620, 800, 1000]}
-              sizes="(max-width: 48rem) 92vw, 42vw"
-              loading={estDentelle ? 'lazy' : 'eager'}
-              decoding="async"
-            />
-          </a>
-          <div class="vedette__dire">
-            <h2><a href={v.url}>{typo(v.d.titre)}</a></h2>
-            <p class="chapo">{v.d.accroche}</p>
-            {/* ⚠️ Prix et délai : exemples à valider par Emma. */}
-            {(v.d.prixDepart || v.d.delaiJours) && (
-              <LigneFaits
-                faits={[
-                  ...(v.d.prixDepart ? [`dès ${v.d.prixDepart} €`] : []),
-                  ...(v.d.delaiJours ? [`réalisation ${v.d.delaiJours} j`] : []),
-                ]}
-              />
-            )}
-            <p class="actions">
-              <a class="btn btn--wa" href={v.wa}>{LIBELLES.laMeme}</a>
-              <a class="btn btn--creux" href={`/contact/?creation=${v.id}#devis`}>{LIBELLES.devis}</a>
-            </p>
-            <a class="lien-fleche" href={v.url}>Voir la fiche complète</a>
-          </div>
-        </article>
-      ) : (
-        <ul class="grille cartes">
-          {pieces.map((c, i) => (
-            <li>
-              <CarteCreation
-                creation={c}
-                prioritaire={i < 2}
-                tailles="(max-width: 34rem) 92vw, (max-width: 64rem) 46vw, 27rem"
-              />
-            </li>
-          ))}
-        </ul>
-      )
-    }
+    <ul class="grille cartes">
+      {pieces.map((c, i) => (
+        <li>
+          <CarteCreation
+            creation={c}
+            prioritaire={!estDentelle && i < 2}
+            tailles="(max-width: 34rem) 92vw, (max-width: 64rem) 46vw, (max-width: 80rem) 30vw, 20rem"
+          />
+        </li>
+      ))}
+    </ul>
   </section>
 
   <!-- ===================== DENTELLE : la technique (seule section tapis) ===================== -->
@@ -349,18 +269,23 @@ const messageWa = `Bonjour Emma, je souhaiterais une création dans la catégori
 </Base>
 
 <style>
-  /* ============================ FILTRES (mêmes que la galerie) ============================ */
-  .filtres { display: grid; gap: 0.7rem; }
-  .filtres--bande { padding-block: 0 var(--serre); }
-  .filtres__titre { font-size: var(--t-micro); color: var(--gris); }
-  .filtres__liste {
+  /* ============================ BARRE DU CATALOGUE (même que /creations/) ============================ */
+  .catalogue { padding-block: 0 var(--respire); }
+  .cat-barre {
+    display: grid; gap: 0.6rem;
+    padding-block: 0.9rem;
+    margin-block-end: clamp(1.5rem, 3vw, 2.5rem);
+    border-block: 1px solid color-mix(in oklab, var(--encre) 16%, transparent);
+  }
+  .cat-barre__nombre { font-size: var(--t-micro); color: var(--gris); }
+  .cat-barre__filtres {
     display: flex; gap: 0.5rem;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scrollbar-width: none;
   }
-  .filtres__liste::-webkit-scrollbar { display: none; }
-  .filtres__liste > li { flex: none; }
+  .cat-barre__filtres::-webkit-scrollbar { display: none; }
+  .cat-barre__filtres > li { flex: none; }
   .filtre {
     display: inline-flex; align-items: center;
     min-height: 44px;
@@ -374,29 +299,16 @@ const messageWa = `Bonjour Emma, je souhaiterais une création dans la catégori
   }
   .filtre:hover, .filtre[aria-current] { background: var(--encre); border-color: var(--encre); color: var(--lin-haut); }
   @media (min-width: 48rem) {
-    .filtres__liste { flex-wrap: wrap; overflow: visible; }
+    .cat-barre { grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 1.5rem; }
+    .cat-barre__filtres { flex-wrap: wrap; overflow: visible; }
   }
 
-  .pieces { padding-block: 0 var(--respire); }
-
-  /* Une seule pièce : photo col. 1-6, texte col. 8-12, alignés en haut. */
-  .vedette { row-gap: 1.5rem; align-items: start; }
-  .vedette__photo { display: block; overflow: hidden; border-radius: var(--r-m); background: var(--lin-bas); }
-  .vedette__photo :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; transition: transform 900ms var(--sortie); }
-  .vedette__photo:hover :global(img) { transform: scale(1.04); }
-  .vedette__dire { display: grid; gap: 1.1rem; justify-items: start; }
-  .vedette h2 a { text-decoration: none; }
-  .vedette h2 a:hover { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
-  @media (min-width: 48rem) {
-    .vedette__photo { grid-column: 1 / span 6; }
-    .vedette__dire { grid-column: 8 / -1; }
-  }
-
-  /* Plusieurs pièces : cartes de largeur égale, comme la galerie. */
-  .cartes { row-gap: clamp(2.5rem, 5vw, 4rem); }
+  /* ============================ GRILLE PRODUITS ============================ */
+  .cartes { row-gap: clamp(2rem, 4vw, 3rem); }
   .cartes > li { display: grid; }
   @media (min-width: 34rem) { .cartes > li { grid-column: span 6; } }
   @media (min-width: 64rem) { .cartes > li { grid-column: span 4; } }
+  @media (min-width: 80rem) { .cartes > li { grid-column: span 3; } }
 
   .technique { padding-block: var(--serre); }
   .continuer { padding-block: var(--serre); }

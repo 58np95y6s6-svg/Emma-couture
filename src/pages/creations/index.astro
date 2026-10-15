@@ -6,12 +6,10 @@
  * catégorie a sa propre URL. Aucun JavaScript de filtrage. La même barre de
  * filtres figure sur les pages catégorie (catégorie active en aria-current).
  *
- * Premier écran : le haut de page porte les filtres dans sa colonne de droite
- * (slot `aside`) et la grille remonte juste dessous, pour que des créations
- * soient visibles dès l'arrivée, sur téléphone comme sur ordinateur.
- *
- * Grille : cartes de largeur égale (1 colonne sur petit téléphone, 2 dès
- * 34rem, 3 dès 64rem), alignées en haut et en bas. Aucun décalage.
+ * Présentation « catalogue » (demande client : les codes d'une boutique, sans
+ * panier ni paiement — la commande passe par WhatsApp ou le devis) : barre en
+ * tête avec le nombre de pièces et les filtres, puis grille régulière de
+ * cartes produit (1 colonne, 2 dès 34rem, 3 dès 64rem, 4 dès 80rem).
  */
 import { getCollection } from 'astro:content';
 import { getImage } from 'astro:assets';
@@ -89,33 +87,33 @@ const fil = [{ nom: 'Créations', url: '/creations/' }];
   <HautDePage titre="Créations brodées et cousues à Vitré" fil={fil} faits={faits}>
     <p>
       Broderie personnalisée et couture sur mesure, réalisées à {SITE.ville}&nbsp;(35). Chaque
-      pièce a été faite pour une cliente et peut être reproduite avec un autre prénom, une autre
-      couleur de fil ou un autre tissu.
+      modèle est réalisé sur commande, à votre prénom, dans la couleur de fil ou le tissu de votre
+      choix&nbsp;: vous le commandez sur WhatsApp ou par une demande de devis.
     </p>
+  </HautDePage>
 
-    <!-- FILTRES = PAGES CATÉGORIE -->
-    <nav slot="aside" class="filtres" aria-labelledby="filtres-titre">
-      <p class="filtres__titre mono" id="filtres-titre">Par catégorie</p>
-      <ul class="filtres__liste">
+  <!-- ===================== LE CATALOGUE =====================
+       Barre en tête (nombre de pièces + filtres = pages catégorie), puis
+       grille régulière de cartes produit. -->
+  <section class="bande catalogue" aria-labelledby="catalogue-titre">
+    <h2 class="lu-seulement" id="catalogue-titre">Toutes les créations</h2>
+    <nav class="cat-barre" aria-label="Catégories de créations">
+      <p class="cat-barre__nombre mono">{creations.length} pièce{creations.length > 1 ? 's' : ''}</p>
+      <ul class="cat-barre__filtres">
         <li><a class="filtre" href="/creations/" aria-current="page">Tout</a></li>
         {
           filtres.map((f) => (
             <li>
               <a class="filtre" href={`/creations/${f.slug}/`}>
                 {f.court}
-                <span class="lu-seulement">
-                  ({f.nombre} pièce{f.nombre > 1 ? 's' : ''})
-                </span>
+                <span class="lu-seulement">({f.nombre} pièce{f.nombre > 1 ? 's' : ''})</span>
               </a>
             </li>
           ))
         }
       </ul>
     </nav>
-  </HautDePage>
 
-  <!-- ===================== LA GALERIE ===================== -->
-  <section class="bande galerie" aria-label="Toutes les créations">
     <ul class="grille cartes">
       {
         creations.map((c, i) => (
@@ -123,7 +121,7 @@ const fil = [{ nom: 'Créations', url: '/creations/' }];
             <CarteCreation
               creation={c}
               prioritaire={i < 2}
-              tailles="(max-width: 34rem) 92vw, (max-width: 64rem) 46vw, 27rem"
+              tailles="(max-width: 34rem) 92vw, (max-width: 64rem) 46vw, (max-width: 80rem) 30vw, 20rem"
             />
           </li>
         ))
@@ -142,20 +140,25 @@ const fil = [{ nom: 'Créations', url: '/creations/' }];
 </Base>
 
 <style>
-  /* ============================ FILTRES ============================
-     Des liens en pilule (forme réservée aux filtres). Sur téléphone, la
-     liste défile dans son conteneur, jamais la page ; dès 48rem, dans la
-     colonne de droite du haut de page, elle passe à la ligne. */
-  .filtres { display: grid; gap: 0.7rem; }
-  .filtres__titre { font-size: var(--t-micro); color: var(--gris); }
-  .filtres__liste {
+  /* ============================ BARRE DU CATALOGUE ============================
+     Nombre de pièces + filtres en pilule (forme réservée aux filtres). Sur
+     téléphone, les filtres défilent dans leur conteneur, jamais la page. */
+  .catalogue { padding-block: 0 var(--respire); }
+  .cat-barre {
+    display: grid; gap: 0.6rem;
+    padding-block: 0.9rem;
+    margin-block-end: clamp(1.5rem, 3vw, 2.5rem);
+    border-block: 1px solid color-mix(in oklab, var(--encre) 16%, transparent);
+  }
+  .cat-barre__nombre { font-size: var(--t-micro); color: var(--gris); }
+  .cat-barre__filtres {
     display: flex; gap: 0.5rem;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scrollbar-width: none;
   }
-  .filtres__liste::-webkit-scrollbar { display: none; }
-  .filtres__liste > li { flex: none; }
+  .cat-barre__filtres::-webkit-scrollbar { display: none; }
+  .cat-barre__filtres > li { flex: none; }
   .filtre {
     display: inline-flex; align-items: center;
     min-height: 44px;
@@ -169,13 +172,14 @@ const fil = [{ nom: 'Créations', url: '/creations/' }];
   }
   .filtre:hover, .filtre[aria-current] { background: var(--encre); border-color: var(--encre); color: var(--lin-haut); }
   @media (min-width: 48rem) {
-    .filtres__liste { flex-wrap: wrap; overflow: visible; }
+    .cat-barre { grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 1.5rem; }
+    .cat-barre__filtres { flex-wrap: wrap; overflow: visible; }
   }
 
-  /* ============================ GALERIE ============================ */
-  .galerie { padding-block: 0 var(--respire); }
-  .cartes { row-gap: clamp(2.5rem, 5vw, 4rem); }
+  /* ============================ GRILLE PRODUITS ============================ */
+  .cartes { row-gap: clamp(2rem, 4vw, 3rem); }
   .cartes > li { display: grid; }
   @media (min-width: 34rem) { .cartes > li { grid-column: span 6; } }
   @media (min-width: 64rem) { .cartes > li { grid-column: span 4; } }
+  @media (min-width: 80rem) { .cartes > li { grid-column: span 3; } }
 </style>
