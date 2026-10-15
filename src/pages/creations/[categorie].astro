@@ -6,6 +6,10 @@
  * des pages différentes, pas des variantes d'un gabarit. Une catégorie vide
  * ne génère aucune page (pas de cul-de-sac dans le sitemap).
  *
+ * Filtres : la même barre que la galerie, catégorie active en aria-current
+ * (colonne de droite du haut de page ; sous le haut de page quand celui-ci
+ * porte une photo, comme la dentelle libre).
+ *
  * Mise en page (grille à 12 colonnes, sans décalage) selon le nombre de pièces :
  *  - une seule : « vedette », photo col. 1-6 et texte col. 8-12 ;
  *  - deux et plus : cartes de largeur égale, comme la galerie.
@@ -23,7 +27,7 @@ import Etapes from '../../components/Etapes.astro';
 import ListeLignes from '../../components/ListeLignes.astro';
 import LigneFaits from '../../components/LigneFaits.astro';
 import AppelFinal from '../../components/AppelFinal.astro';
-import { SITE, ATELIER, lienWhatsApp } from '../../config';
+import { SITE, LIBELLES, lienWhatsApp } from '../../config';
 
 import papillon from '../../assets/creations/plein-ecran/papillon-brode-dentelle-ajouree-coquelicots.webp';
 
@@ -121,25 +125,36 @@ export const getStaticPaths: GetStaticPaths = async () => {
     props: {
       cat: CATEGORIES[slug],
       pieces: creations.filter((c) => c.data.categorie === slug),
-      voisines: remplies
-        .filter((s) => s !== slug)
-        .map((s) => ({ slug: s, court: CATEGORIES[s].court })),
+      /* Toutes les catégories remplies, pour la barre de filtres. */
+      filtres: remplies.map((s) => ({
+        slug: s,
+        court: CATEGORIES[s].court,
+        nombre: creations.filter((c) => c.data.categorie === s).length,
+      })),
     },
   }));
 };
 
 const { categorie } = Astro.params;
-const { cat, pieces, voisines } = Astro.props;
+const { cat, pieces, filtres } = Astro.props;
 const estDentelle = categorie === 'decoration-ajouree';
+
+/* Apostrophe typographique à l'affichage (les titres du contenu gardent l'apostrophe droite). */
+const typo = (t: string) => t.replace(/'/g, '’');
+
+/* [CONTENU EMMA] Une catégorie de moins de 3 pièces reste hors de l'index
+   (page trop mince pour Google). Elle s'indexera d'elle-même dès qu'Emma
+   aura ajouté des pièces. */
+const tropMince = pieces.length < 3;
 
 /* Prix d'appel de la catégorie : le plus bas réellement présent. */
 const prix = pieces.map((c) => c.data.prixDepart).filter((p): p is number => typeof p === 'number');
 const prixMini = prix.length > 0 ? Math.min(...prix) : null;
 
-/* ⚠️ Prix et délai : exemples à valider par Emma. */
+/* ⚠️ Prix : exemple à valider par Emma. Le délai actuel de l'atelier n'est
+   affiché que dans l'appel final. */
 const faits = [
-  ...(prixMini ? [`À partir de ${prixMini} €`] : []),
-  `Délai actuel : ${ATELIER.delaiActuel}`,
+  ...(prixMini ? [`Dès ${prixMini} €`] : []),
   `Réalisé à ${SITE.ville}, ${SITE.departement}`,
 ];
 
@@ -154,7 +169,7 @@ const v = vedette
         id: vedette.id,
         url,
         wa: lienWhatsApp(
-          `Bonjour ${SITE.nom}, j'ai vu « ${d.titre} » sur votre site et j'aimerais un modèle similaire.`,
+          `Bonjour Emma, j'ai vu « ${d.titre} » sur votre site et j'aimerais un modèle similaire.`,
           new URL(url, SITE.url).href,
         ),
       };
@@ -180,16 +195,17 @@ const fil = [
   { nom: cat.court, url: `/creations/${categorie}/` },
 ];
 
-/* Pour continuer : les autres catégories, puis l'occasion et le sur-mesure. */
+/* Pour continuer : trois liens au plus (l'occasion liée, la galerie, le sur-mesure). */
 const suite = [
-  ...voisines.map((x) => ({ titre: x.court, href: `/creations/${x.slug}/` })),
-  { titre: 'Toutes les créations', href: '/creations/' },
   ...(cat.occasion ? [{ titre: cat.occasion.nom, href: `/cadeaux/${cat.occasion.slug}/` }] : []),
+  { titre: 'Toutes les créations', href: '/creations/' },
   { titre: 'Le déroulement d’une commande', href: '/sur-mesure/' },
 ];
+
+const messageWa = `Bonjour Emma, je souhaiterais une création dans la catégorie « ${cat.court} ».`;
 ---
 
-<Base titre={titre} description={cat.description} imageOg={og.src} fil={fil}>
+<Base titre={titre} description={cat.description} imageOg={og.src} fil={fil} noindex={tropMince} messageWa={messageWa}>
   {/*
     ⚠️ CONTENU D'EXEMPLE
     Prix et délais viennent du contenu et de src/config.ts : provisoires.
@@ -205,9 +221,47 @@ const suite = [
   >
     <p>{cat.chapo}</p>
     {cat.note && <p>{cat.note}</p>}
-    {/* ⚠️ À confirmer par Emma : réalise-t-elle la dentelle libre sur commande ? */}
-    {estDentelle && <p>C’est le travail que je préfère, et une technique encore rare en Ille-et-Vilaine.</p>}
+
+    {/* Sans photo, les filtres prennent la colonne de droite du haut de page. */}
+    {
+      !estDentelle && (
+        <nav slot="aside" class="filtres" aria-labelledby="filtres-titre">
+          <p class="filtres__titre mono" id="filtres-titre">Par catégorie</p>
+          <ul class="filtres__liste">
+            <li><a class="filtre" href="/creations/">Tout</a></li>
+            {filtres.map((f) => (
+              <li>
+                <a class="filtre" href={`/creations/${f.slug}/`} aria-current={f.slug === categorie ? 'page' : undefined}>
+                  {f.court}
+                  <span class="lu-seulement">({f.nombre} pièce{f.nombre > 1 ? 's' : ''})</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
   </HautDePage>
+
+  {/* Avec photo dans le haut de page : la même barre, juste dessous. */}
+  {
+    estDentelle && (
+      <nav class="bande filtres filtres--bande" aria-labelledby="filtres-titre">
+        <p class="filtres__titre mono" id="filtres-titre">Par catégorie</p>
+        <ul class="filtres__liste">
+          <li><a class="filtre" href="/creations/">Tout</a></li>
+          {filtres.map((f) => (
+            <li>
+              <a class="filtre" href={`/creations/${f.slug}/`} aria-current={f.slug === categorie ? 'page' : undefined}>
+                {f.court}
+                <span class="lu-seulement">({f.nombre} pièce{f.nombre > 1 ? 's' : ''})</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )
+  }
 
   <!-- ===================== LES PIÈCES ===================== -->
   <section class="bande pieces" aria-label={`Créations : ${cat.court}`}>
@@ -225,20 +279,20 @@ const suite = [
             />
           </a>
           <div class="vedette__dire">
-            <h2><a href={v.url}>{v.d.titre}</a></h2>
+            <h2><a href={v.url}>{typo(v.d.titre)}</a></h2>
             <p class="chapo">{v.d.accroche}</p>
             {/* ⚠️ Prix et délai : exemples à valider par Emma. */}
             {(v.d.prixDepart || v.d.delaiJours) && (
               <LigneFaits
                 faits={[
-                  ...(v.d.prixDepart ? [`À partir de ${v.d.prixDepart} €`] : []),
-                  ...(v.d.delaiJours ? [`Réalisation : ${v.d.delaiJours} jours`] : []),
+                  ...(v.d.prixDepart ? [`dès ${v.d.prixDepart} €`] : []),
+                  ...(v.d.delaiJours ? [`réalisation ${v.d.delaiJours} j`] : []),
                 ]}
               />
             )}
             <p class="actions">
-              <a class="btn btn--wa" href={v.wa}>Je veux la même</a>
-              <a class="btn btn--creux" href={`/contact/?creation=${v.id}`}>Demander un devis</a>
+              <a class="btn btn--wa" href={v.wa}>{LIBELLES.laMeme}</a>
+              <a class="btn btn--creux" href={`/contact/?creation=${v.id}#devis`}>{LIBELLES.devis}</a>
             </p>
             <a class="lien-fleche" href={v.url}>Voir la fiche complète</a>
           </div>
@@ -250,7 +304,7 @@ const suite = [
               <CarteCreation
                 creation={c}
                 prioritaire={i < 2}
-                tailles="(max-width: 48rem) 92vw, (max-width: 64rem) 46vw, 27rem"
+                tailles="(max-width: 34rem) 92vw, (max-width: 64rem) 46vw, 27rem"
               />
             </li>
           ))}
@@ -263,7 +317,10 @@ const suite = [
   {
     estDentelle && (
       <section class="bande tapis technique loin">
-        <TeteSection titre="La technique, en trois temps" />
+        <TeteSection titre="La technique, en trois temps">
+          {/* ⚠️ À confirmer par Emma : réalise-t-elle la dentelle libre sur commande ? */}
+          <p>C’est le travail que je préfère, et une technique encore rare en Ille-et-Vilaine.</p>
+        </TeteSection>
         <Etapes
           etapes={[
             { titre: 'Le support provisoire', texte: 'Je tends dans le cadre un voile soluble, qui sert de support le temps de la broderie.' },
@@ -283,10 +340,7 @@ const suite = [
     </div>
   </nav>
 
-  <AppelFinal
-    titre="Une demande sur mesure"
-    messageWa={`Bonjour ${SITE.nom}, je souhaiterais une création dans la catégorie « ${cat.court} ».`}
-  >
+  <AppelFinal titre="Une demande sur mesure" messageWa={messageWa}>
     <p>
       Indiquez-moi le prénom, l’objet et la date souhaitée. Je vous réponds avec un prix et un délai
       de réalisation, et je vous soumets le motif pour validation avant toute broderie.
@@ -295,7 +349,35 @@ const suite = [
 </Base>
 
 <style>
-  .pieces { padding-block: var(--serre) var(--respire); }
+  /* ============================ FILTRES (mêmes que la galerie) ============================ */
+  .filtres { display: grid; gap: 0.7rem; }
+  .filtres--bande { padding-block: 0 var(--serre); }
+  .filtres__titre { font-size: var(--t-micro); color: var(--gris); }
+  .filtres__liste {
+    display: flex; gap: 0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+  .filtres__liste::-webkit-scrollbar { display: none; }
+  .filtres__liste > li { flex: none; }
+  .filtre {
+    display: inline-flex; align-items: center;
+    min-height: 44px;
+    padding: 0.45rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in oklab, var(--encre) 20%, transparent);
+    color: var(--encre);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 200ms ease, color 200ms ease;
+  }
+  .filtre:hover, .filtre[aria-current] { background: var(--encre); border-color: var(--encre); color: var(--lin-haut); }
+  @media (min-width: 48rem) {
+    .filtres__liste { flex-wrap: wrap; overflow: visible; }
+  }
+
+  .pieces { padding-block: 0 var(--respire); }
 
   /* Une seule pièce : photo col. 1-6, texte col. 8-12, alignés en haut. */
   .vedette { row-gap: 1.5rem; align-items: start; }
@@ -310,13 +392,13 @@ const suite = [
     .vedette__dire { grid-column: 8 / -1; }
   }
 
-  /* Plusieurs pièces : cartes de largeur égale. */
+  /* Plusieurs pièces : cartes de largeur égale, comme la galerie. */
   .cartes { row-gap: clamp(2.5rem, 5vw, 4rem); }
   .cartes > li { display: grid; }
-  @media (min-width: 48rem) { .cartes > li { grid-column: span 6; } }
+  @media (min-width: 34rem) { .cartes > li { grid-column: span 6; } }
   @media (min-width: 64rem) { .cartes > li { grid-column: span 4; } }
 
   .technique { padding-block: var(--serre); }
-  .continuer { padding-block: var(--respire); }
+  .continuer { padding-block: var(--serre); }
   @media (min-width: 48rem) { .continuer__liste { grid-column: 1 / span 8; } }
 </style>

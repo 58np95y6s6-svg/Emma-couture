@@ -4,105 +4,78 @@
  * C'est la valeur de `action` du formulaire de /contact/.
  * ⚠️ noindex : cette page ne doit jamais apparaître dans les résultats.
  * Pas d'AppelFinal : la demande vient d'être envoyée.
+ * Le déroulement est ETAPES_COMMANDE (canonique), jamais réécrit ici.
  */
 import Base from '../layouts/Base.astro';
 import HautDePage from '../components/HautDePage.astro';
 import TeteSection from '../components/TeteSection.astro';
 import Etapes from '../components/Etapes.astro';
 import ListeLignes from '../components/ListeLignes.astro';
-import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
+import { SITE, CONTACT, ATELIER, LIBELLES, ETAPES_COMMANDE, lienWhatsApp, telephoneLisible } from '../config';
 
 const titre = `Demande reçue · ${SITE.nom}`;
 const description =
   'Votre demande est bien arrivée. Je vous réponds avec un prix, un délai de réalisation et une proposition.';
 const fil = [{ nom: 'Demande reçue', url: '/merci/' }];
 
-const suite = [
-  { titre: 'Demande reçue', texte: "Étape terminée : votre demande vient d'arriver dans ma boîte de réception." },
-  { titre: 'Ma réponse', texte: `${ATELIER.delaiReponse}, avec un prix, un délai et une proposition de motif.` },
-  { titre: 'Validation du motif', texte: 'Vous validez le motif avant toute réalisation.', cle: true },
-  { titre: 'Réalisation et remise', texte: `Délai actuel : ${ATELIER.delaiActuel}. Emballage cadeau compris.` },
+const messageWa = 'Bonjour Emma, je viens de vous envoyer une demande depuis votre site.';
+
+/* ⚠️ Le délai de 48 heures avant relance est un EXEMPLE à faire valider par Emma. */
+const precisions = [
+  {
+    titre: 'Votre boîte de réception',
+    texte: `Ma réponse part de ${CONTACT.email}. Si elle n’apparaît pas, pensez à vérifier le dossier des courriers indésirables.`,
+  },
+  {
+    titre: 'Sans réponse sous 48 heures',
+    texte: 'Un e-mail peut se perdre. Écrivez-moi alors sur WhatsApp : c’est le moyen le plus rapide de me joindre.',
+  },
+  {
+    titre: 'Un élément à ajouter',
+    texte: 'Une photo, une date ou une couleur : envoyez-la sur WhatsApp, je la joindrai à votre demande.',
+  },
 ];
 
 const liens = [
-  { titre: 'Les créations', texte: "Les pièces réalisées récemment à l'atelier.", href: '/creations/' },
-  { titre: "Le déroulement d'une commande", texte: 'Étapes, délais, entretien et questions fréquentes.', href: '/sur-mesure/' },
+  { titre: 'Les créations', texte: 'Les pièces réalisées récemment à l’atelier.', href: '/creations/' },
+  { titre: 'Le déroulement d’une commande', texte: 'Étapes, prix, délais et questions fréquentes.', href: '/sur-mesure/' },
   { titre: `@${CONTACT.instagram}`, texte: 'Les pièces récentes y sont publiées en premier.', href: CONTACT.instagramUrl },
-  { titre: "Retour à l'accueil", texte: SITE.baseline, href: '/' },
+  { titre: 'Retour à l’accueil', texte: SITE.baseline, href: '/' },
 ];
 ---
 
-<Base titre={titre} description={description} noindex={true} fil={fil}>
-  {/* ⚠️ MAQUETTE — délai de réponse provisoire (src/config.ts) ; le délai
-      de 48 heures avant relance est un EXEMPLE à faire valider par Emma. */}
+<Base titre={titre} description={description} noindex={true} fil={fil} messageWa={messageWa}>
+  {/* ⚠️ MAQUETTE — délai de réponse provisoire (src/config.ts). */}
 
   <HautDePage titre="Votre demande a bien été reçue" fil={fil}>
     <p>
       Merci. {ATELIER.delaiReponse}, avec un prix, un délai de réalisation et une proposition de
       motif. Cette demande ne vous engage à rien.
     </p>
-    <a
-      slot="actions"
-      class="btn btn--wa btn--grand"
-      href={lienWhatsApp('Bonjour Emma, je viens de vous envoyer une demande depuis votre site.')}
-    >
-      Compléter sur WhatsApp
+    <a slot="actions" class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>{LIBELLES.whatsapp}</a>
+    <a slot="actions" class="btn btn--creux btn--grand" href={`tel:${CONTACT.telephone}`}>
+      Appeler le {telephoneLisible()}
     </a>
-    <a slot="actions" class="btn btn--creux btn--grand" href={`tel:${CONTACT.telephone}`}>Appeler</a>
+    <div slot="aside" class="mr-aside">
+      <ListeLignes lignes={precisions} />
+    </div>
   </HautDePage>
 
   <!-- ===================== LA SUITE ===================== -->
-  <section class="bande mr-section">
-    <TeteSection titre="La suite de votre commande" />
-    <Etapes etapes={suite} />
-  </section>
-
-  <!-- ===================== PRÉCISIONS (le seul tapis de la page) ===================== -->
-  <section class="bande tapis mr-section" aria-labelledby="mr-infos">
-    <TeteSection titre="Quelques précisions" id="mr-infos" />
-    <ul class="grille mr-infos">
-      <li>
-        <h3>Votre boîte de réception</h3>
-        <p>
-          Ma réponse part de <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>. Si elle
-          n'apparaît pas, pensez à vérifier le dossier des courriers indésirables.
-        </p>
-      </li>
-      <li>
-        <h3>Sans réponse sous 48&nbsp;heures</h3>
-        <p>
-          Un e-mail peut se perdre. Écrivez-moi alors sur WhatsApp&nbsp;: c'est le moyen le plus
-          rapide de me joindre.
-        </p>
-      </li>
-      <li>
-        <h3>Un élément à ajouter</h3>
-        <p>
-          Une photo, une date ou une couleur&nbsp;: envoyez-la sur WhatsApp, je la joindrai à votre
-          demande.
-        </p>
-      </li>
-    </ul>
+  <section class="bande mr-section" aria-labelledby="mr-suite">
+    <TeteSection titre="La suite de votre commande" id="mr-suite">
+      <p>Votre demande est la première étape&nbsp;; voici les deux suivantes.</p>
+    </TeteSection>
+    <Etapes etapes={ETAPES_COMMANDE} />
   </section>
 
   <!-- ===================== POUR CONTINUER ===================== -->
-  <section class="bande mr-section">
-    <TeteSection titre="Pour continuer la visite" />
+  <section class="bande mr-section" aria-labelledby="mr-visite">
+    <TeteSection titre="Pour continuer la visite" id="mr-visite" />
     <ListeLignes lignes={liens} />
   </section>
 </Base>
 
 <style>
   .mr-section { padding-block: var(--serre); }
-  .mr-section.tapis { padding-block: var(--respire); }
-  .mr-infos { row-gap: 0; }
-  .mr-infos li {
-    display: grid; gap: 0.5rem; align-content: start;
-    padding-block: 1.1rem 1.8rem;
-    border-block-start: 1px solid color-mix(in oklab, currentColor 20%, transparent);
-  }
-  .mr-infos a { color: inherit; text-underline-offset: 3px; overflow-wrap: anywhere; }
-  @media (min-width: 48rem) {
-    .mr-infos li { grid-column: span 4; }
-  }
 </style>

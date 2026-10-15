@@ -3,22 +3,25 @@
  * /creations/ — la galerie complète.
  *
  * Les filtres par catégorie sont des LIENS vers les pages catégorie : chaque
- * catégorie a sa propre URL indexable. Aucun JavaScript de filtrage.
+ * catégorie a sa propre URL. Aucun JavaScript de filtrage. La même barre de
+ * filtres figure sur les pages catégorie (catégorie active en aria-current).
  *
- * Mise en page : grille à 12 colonnes, cartes de largeur égale
- * (1 colonne sur téléphone, 2 sur tablette, 3 sur ordinateur), alignées en
- * haut et en bas. Aucun décalage.
+ * Premier écran : le haut de page porte les filtres dans sa colonne de droite
+ * (slot `aside`) et la grille remonte juste dessous, pour que des créations
+ * soient visibles dès l'arrivée, sur téléphone comme sur ordinateur.
+ *
+ * Grille : cartes de largeur égale (1 colonne sur petit téléphone, 2 dès
+ * 34rem, 3 dès 64rem), alignées en haut et en bas. Aucun décalage.
  */
 import { getCollection } from 'astro:content';
-import { Image, getImage } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import HautDePage from '../../components/HautDePage.astro';
 import CarteCreation from '../../components/CarteCreation.astro';
 import AppelFinal from '../../components/AppelFinal.astro';
-import { SITE, ATELIER } from '../../config';
+import { SITE } from '../../config';
 
 import partage from '../../assets/creations/plein-ecran/machine-a-broder-en-cours-atelier-vitre.webp';
-import papillon from '../../assets/creations/galerie/papillon-brode-dentelle-ajouree-coquelicots.webp';
 
 /* Image de partage 1200×630 : sans elle, la page repartirait sur l'image par
    défaut du gabarit. En JPEG, le format que tous les aperçus savent lire. */
@@ -34,7 +37,7 @@ const og = await getImage({
 
 /* Libellés courts des catégories, pour les filtres. L'ordre est éditorial :
    on ouvre sur la naissance (la demande la plus fréquente) et on garde Noël
-   à la fin. */
+   à la fin. ⚠️ Même liste que dans [categorie].astro. */
 const ETIQUETTES = [
   { slug: 'naissance', court: 'Naissance' },
   { slug: 'linge-de-bain', court: 'Linge de bain' },
@@ -60,13 +63,12 @@ const prix = creations
   .map((c) => c.data.prixDepart)
   .filter((p): p is number => typeof p === 'number');
 const prixMini = prix.length > 0 ? Math.min(...prix) : null;
-const aDentelle = filtres.some((f) => f.slug === 'decoration-ajouree');
 
-/* ⚠️ Prix et délai : exemples à valider par Emma. */
+/* ⚠️ Prix : exemple à valider par Emma. Le délai actuel de l'atelier n'est
+   affiché que dans l'appel final (règle : un seul délai par page). */
 const faits = [
-  ...(prixMini ? [`À partir de ${prixMini} €`] : []),
-  `Délai actuel : ${ATELIER.delaiActuel}`,
-  'Remise à Vitré ou Rennes, envoi en France',
+  ...(prixMini ? [`Dès ${prixMini} €`] : []),
+  'Vitré, Rennes, envoi en France',
 ];
 
 const titre = `Créations brodées & cousues à Vitré (35) — toutes mes pièces | ${SITE.nom}`;
@@ -86,34 +88,31 @@ const fil = [{ nom: 'Créations', url: '/creations/' }];
 
   <HautDePage titre="Créations brodées et cousues à Vitré" fil={fil} faits={faits}>
     <p>
-      Broderie personnalisée et couture sur mesure à {SITE.ville}&nbsp;(35)&nbsp;: doudous et
-      cadres de naissance, linge de bain au prénom, dentelle libre, sacs et trousses cousus main.
-      Chaque pièce présentée ici a été réalisée pour une cliente.
+      Broderie personnalisée et couture sur mesure, réalisées à {SITE.ville}&nbsp;(35). Chaque
+      pièce a été faite pour une cliente et peut être reproduite avec un autre prénom, une autre
+      couleur de fil ou un autre tissu.
     </p>
-    <p>
-      Chacune peut être reproduite avec un autre prénom, une autre couleur de fil ou un autre
-      tissu. Le bouton «&nbsp;Je veux la même&nbsp;» m'envoie directement la pièce concernée.
-    </p>
-  </HautDePage>
 
-  <!-- ===================== FILTRES = PAGES CATÉGORIE ===================== -->
-  <nav class="bande filtres" aria-label="Catégories de créations">
-    <ul class="filtres__liste">
-      <li><span class="filtre filtre--ici" aria-current="page">Tout</span></li>
-      {
-        filtres.map((f) => (
-          <li>
-            <a class="filtre" href={`/creations/${f.slug}/`}>
-              {f.court}
-              <span class="lu-seulement">
-                ({f.nombre} pièce{f.nombre > 1 ? 's' : ''})
-              </span>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </nav>
+    <!-- FILTRES = PAGES CATÉGORIE -->
+    <nav slot="aside" class="filtres" aria-labelledby="filtres-titre">
+      <p class="filtres__titre mono" id="filtres-titre">Par catégorie</p>
+      <ul class="filtres__liste">
+        <li><a class="filtre" href="/creations/" aria-current="page">Tout</a></li>
+        {
+          filtres.map((f) => (
+            <li>
+              <a class="filtre" href={`/creations/${f.slug}/`}>
+                {f.court}
+                <span class="lu-seulement">
+                  ({f.nombre} pièce{f.nombre > 1 ? 's' : ''})
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </HautDePage>
 
   <!-- ===================== LA GALERIE ===================== -->
   <section class="bande galerie" aria-label="Toutes les créations">
@@ -124,7 +123,7 @@ const fil = [{ nom: 'Créations', url: '/creations/' }];
             <CarteCreation
               creation={c}
               prioritaire={i < 2}
-              tailles="(max-width: 48rem) 92vw, (max-width: 64rem) 46vw, 27rem"
+              tailles="(max-width: 34rem) 92vw, (max-width: 64rem) 46vw, 27rem"
             />
           </li>
         ))
@@ -132,50 +131,23 @@ const fil = [{ nom: 'Créations', url: '/creations/' }];
     </ul>
   </section>
 
-  <!-- ===================== RENVOI DENTELLE ===================== -->
-  {
-    aDentelle && (
-      <section class="bande tapis renvoi loin" aria-labelledby="renvoi-titre">
-        <div class="grille">
-          <figure class="renvoi__fig">
-            <Image
-              src={papillon}
-              alt="Papillon en dentelle libre aux ailes rouges et noires, brodé sans tissu"
-              widths={[400, 640, 900]}
-              sizes="(max-width: 48rem) 92vw, 40vw"
-              loading="lazy"
-              decoding="async"
-            />
-          </figure>
-          <div class="renvoi__dire">
-            <h2 id="renvoi-titre">La dentelle libre</h2>
-            <p class="mesure mesure--clair">
-              Elle se brode sur un voile soluble qui disparaît au rinçage. Il ne reste que le fil,
-              qui tient seul, sans aucun tissu. C'est le travail que je préfère, et une technique
-              encore rare en Ille-et-Vilaine.
-            </p>
-            <a class="btn btn--or" href="/creations/decoration-ajouree/">Voir la dentelle libre</a>
-          </div>
-        </div>
-      </section>
-    )
-  }
-
   <AppelFinal titre="Une pièce sur mesure">
     <p>
-      Votre idée ne figure pas dans cette galerie&nbsp;? Indiquez-moi le prénom, l'objet et la date
+      Votre idée ne figure pas dans cette galerie&nbsp;? Indiquez-moi le prénom, l’objet et la date
       souhaitée. Je vous réponds avec un prix et un délai de réalisation, et je vous soumets le
       motif pour validation avant toute broderie.
     </p>
-    <p><a href="/sur-mesure/">Prix, délais, entretien&nbsp;: le déroulement d'une commande</a></p>
+    <p><a href="/sur-mesure/">Prix, délais, entretien&nbsp;: le déroulement d’une commande</a></p>
   </AppelFinal>
 </Base>
 
 <style>
   /* ============================ FILTRES ============================
-     Des liens en pilule (forme réservée aux filtres). La liste défile si
-     elle est trop longue, jamais la page. */
-  .filtres { padding-block: 0 var(--serre); }
+     Des liens en pilule (forme réservée aux filtres). Sur téléphone, la
+     liste défile dans son conteneur, jamais la page ; dès 48rem, dans la
+     colonne de droite du haut de page, elle passe à la ligne. */
+  .filtres { display: grid; gap: 0.7rem; }
+  .filtres__titre { font-size: var(--t-micro); color: var(--gris); }
   .filtres__liste {
     display: flex; gap: 0.5rem;
     overflow-x: auto;
@@ -183,7 +155,7 @@ const fil = [{ nom: 'Créations', url: '/creations/' }];
     scrollbar-width: none;
   }
   .filtres__liste::-webkit-scrollbar { display: none; }
-  .filtres__liste > li { flex: none; position: relative; }
+  .filtres__liste > li { flex: none; }
   .filtre {
     display: inline-flex; align-items: center;
     min-height: 44px;
@@ -195,21 +167,15 @@ const fil = [{ nom: 'Créations', url: '/creations/' }];
     white-space: nowrap;
     transition: background 200ms ease, color 200ms ease;
   }
-  a.filtre:hover, .filtre--ici { background: var(--encre); border-color: var(--encre); color: var(--lin-haut); }
+  .filtre:hover, .filtre[aria-current] { background: var(--encre); border-color: var(--encre); color: var(--lin-haut); }
+  @media (min-width: 48rem) {
+    .filtres__liste { flex-wrap: wrap; overflow: visible; }
+  }
 
   /* ============================ GALERIE ============================ */
   .galerie { padding-block: 0 var(--respire); }
   .cartes { row-gap: clamp(2.5rem, 5vw, 4rem); }
   .cartes > li { display: grid; }
-  @media (min-width: 48rem) { .cartes > li { grid-column: span 6; } }
+  @media (min-width: 34rem) { .cartes > li { grid-column: span 6; } }
   @media (min-width: 64rem) { .cartes > li { grid-column: span 4; } }
-
-  /* ============================ RENVOI DENTELLE ============================ */
-  .renvoi .grille { row-gap: 2rem; align-items: center; }
-  .renvoi__fig :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-m); }
-  .renvoi__dire { display: grid; gap: 1.25rem; justify-items: start; }
-  @media (min-width: 48rem) {
-    .renvoi__fig { grid-column: 1 / span 6; }
-    .renvoi__dire { grid-column: 8 / -1; }
-  }
 </style>

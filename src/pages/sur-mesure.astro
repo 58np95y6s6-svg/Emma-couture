@@ -18,7 +18,7 @@ import Etapes from '../components/Etapes.astro';
 import ListeLignes from '../components/ListeLignes.astro';
 import FAQ from '../components/FAQ.astro';
 import AppelFinal from '../components/AppelFinal.astro';
-import { SITE, ATELIER, lienWhatsApp } from '../config';
+import { SITE, ATELIER, LIBELLES, ETAPES_COMMANDE, lienWhatsApp } from '../config';
 
 import machine from '../assets/creations/galerie/machine-a-broder-en-cours-atelier-vitre.webp';
 import ogSource from '../assets/creations/og/atelier-mur-bobines-fil-broderie-vitre.webp';
@@ -57,28 +57,22 @@ const tousPrix = creations.map((c) => c.data.prixDepart).filter((n): n is number
 const prixMin = Math.min(...tousPrix);
 const prixMax = Math.max(...tousPrix);
 
-/* Les cinq étapes : une vraie séquence. Seule la validation du motif est `cle`. */
+/* Le déroulement détaillé (4 étapes). La validation du motif est reprise
+   telle quelle de ETAPES_COMMANDE : même libellé, même texte partout. */
+const validation = ETAPES_COMMANDE.find((e) => e.cle)!;
 const etapes = [
   {
     titre: 'Votre demande',
-    texte: "Par WhatsApp, par le formulaire ou par téléphone, indiquez-moi le prénom ou le texte, l'occasion et la date souhaitée. Une photo d'inspiration est la bienvenue. Une idée encore imprécise suffit pour commencer.",
+    texte: 'Par WhatsApp, par le formulaire ou par téléphone, indiquez-moi le prénom ou le texte, l’occasion et la date souhaitée. Une photo d’inspiration est la bienvenue.',
   },
   {
     titre: 'Ma proposition',
-    texte: `Je vous réponds avec un prix, un délai de réalisation et une proposition de motif. ${ATELIER.delaiReponse}. Cette demande ne vous engage à rien.`,
+    texte: `${ATELIER.delaiReponse}, avec un prix, un délai et une proposition de motif. Nous choisissons ensemble le support, l’écriture, la couleur du fil et l’emplacement.`,
   },
-  {
-    titre: 'Le choix des matières',
-    texte: "Nous choisissons ensemble le support, l'écriture, la couleur du fil et l'emplacement du motif, parmi mes tissus et mes fils ou sur la pièce que vous m'apportez.",
-  },
-  {
-    titre: 'La validation du motif',
-    texte: "Avant de lancer la machine, je vous envoie le motif. Tant que la broderie n'est pas réalisée, tout peut encore être modifié.",
-    cle: true,
-  },
+  validation,
   {
     titre: 'Réalisation et remise',
-    texte: `Je brode la pièce, puis je l'emballe pour qu'elle soit prête à offrir. Remise en main propre à ${SITE.ville} ou à Rennes sur rendez-vous, ou envoi soigné partout en France.`,
+    texte: `Je brode la pièce et l’emballe, prête à offrir. Remise en main propre à ${SITE.ville} ou à Rennes sur rendez-vous, ou envoi soigné partout en France.`,
   },
 ];
 
@@ -92,65 +86,47 @@ const faq = [
     r: `Non, je travaille en broderie machine. Elle garantit un tracé net et régulier, qui résiste au lavage. La couture, en revanche, est faite par mes soins : les sacs, les trousses et les tabliers sont cousus main, puis brodés.`,
   },
   {
-    q: 'Quel délai faut-il prévoir ?',
-    r: `Le délai de réalisation est actuellement de ${ATELIER.delaiActuel} à compter de la validation du motif. Pour Noël, je vous conseille de me contacter avant la mi-novembre afin de garantir une livraison avant le 24 décembre.`,
-  },
-  {
-    q: 'Combien coûte une broderie personnalisée ?',
-    r: `Les pièces du catalogue débutent entre ${prixMin} et ${prixMax} €. Le prix dépend de la taille du motif, du nombre de points et du support : un prénom court demande moins de temps de broderie qu'un motif large et dense. Le prix exact vous est communiqué avant toute réalisation, sans engagement.`,
-  },
-  {
     q: 'Que pouvez-vous broder ?',
     r: `Un prénom, une date, des mesures de naissance, une phrase ou un motif, sur du linge de bain, des vêtements, des doudous, des bavoirs, des sacs ou des tabliers. Je réalise également de la dentelle libre : une broderie sans tissu de support, qui tient seule.`,
   },
   {
     q: 'Puis-je fournir mon propre tissu ou vêtement ?',
-    r: `Oui, c'est une demande fréquente. Je brode alors directement sur votre pièce, et seule la broderie est facturée. Précisez-moi la matière à l'avance : un tissu très fin ou extensible nécessite un renfort adapté.`,
+    r: `Oui, c’est une demande fréquente. Je brode alors directement sur votre pièce, et seule la broderie est facturée. Précisez-moi la matière à l’avance : un tissu très fin ou extensible nécessite un renfort adapté.`,
   },
   {
     q: 'Que se passe-t-il si le motif ne me convient pas ?',
-    r: `Je vous soumets le motif avant de lancer la machine : écriture, taille, couleur du fil et emplacement. Tant que la broderie n'est pas réalisée, tout peut être modifié. Une fois piqué, le fil ne peut plus être retiré proprement : c'est la raison d'être de cette étape de validation.`,
+    r: `Je vous soumets le motif avant de lancer la machine : écriture, taille, couleur du fil et emplacement. Tant qu’il n’est pas brodé, tout reste modifiable. Une fois piqué, le fil ne peut plus être retiré proprement : c’est la raison d’être de cette étape de validation.`,
   },
   {
     q: 'Comment récupérer ma commande ?',
-    r: `${ATELIER.zones}. La remise en main propre se fait sur rendez-vous, dans un lieu public convenu ensemble. Les frais d'envoi dépendent du poids et du format ; ils figurent sur le devis. L'emballage cadeau est compris.`,
-  },
-  {
-    q: 'Acceptez-vous les commandes urgentes ?',
-    r: `Cela dépend de la pièce et du planning en cours. Indiquez-moi la date souhaitée sur WhatsApp : je vérifie et je vous réponds honnêtement. Je préfère décliner une commande plutôt que de la livrer en retard.`,
+    r: `${ATELIER.zones}. La remise en main propre se fait sur rendez-vous, dans un lieu public convenu ensemble : je travaille à domicile et ne reçois pas de public. Les frais d’envoi dépendent du poids et du format ; ils figurent sur le devis. L’emballage cadeau est compris ; s’il s’agit d’une surprise, rien n’est inscrit sur le colis.`,
   },
   {
     q: 'Comment entretenir une broderie ?',
-    r: `Lavage en machine à 30°, pièce retournée. Repassage sur l'envers. Évitez l'eau de Javel, qui décolore le fil.`,
+    r: `Une broderie machine se lave comme la pièce qui la porte : lavage en machine à 30°, pièce retournée, repassage sur l’envers ou avec un linge entre le fer et la broderie. Évitez l’eau de Javel, qui décolore le fil.`,
   },
 ];
 
 
 const titre = `Sur-mesure : commander une broderie personnalisée à ${SITE.ville} · ${SITE.nom}`;
-const description = `Étapes, délais, prix à partir de ${prixMin} €, entretien, livraison et emballage cadeau : tout ce qu'il faut savoir avant de commander une broderie personnalisée ou une pièce cousue sur mesure à ${SITE.ville} (35).`;
+const description = `Étapes, délais, prix à partir de ${prixMin} €, entretien, livraison et emballage cadeau : tout ce qu’il faut savoir avant de commander une broderie personnalisée ou une pièce cousue sur mesure à ${SITE.ville} (35).`;
 const fil = [{ nom: 'Sur-mesure', url: '/sur-mesure/' }];
 
 /* ⚠️ EXEMPLES : prix calculés depuis les créations provisoires. */
 const lignesTarif = fourchettes.map((f) => ({
   titre: f.nom,
   texte: f.quoi,
-  meta: `À partir de ${f.prix} €`,
+  meta: `dès ${f.prix} €`,
   href: `/creations/${f.cat}/`,
 }));
 
 /* ⚠️ « mi-novembre » : EXEMPLE de date limite, à faire confirmer par Emma. */
 const lignesDates = [
   { titre: 'Noël', texte: 'Pour une livraison avant le 24 décembre, merci de me contacter avant la mi-novembre.' },
-  { titre: 'Naissance', texte: "La date du terme suffit : je prépare le motif à l'avance et je brode le prénom dès la naissance." },
+  { titre: 'Naissance', texte: 'La date du terme suffit : je prépare le motif à l’avance et je brode le prénom dès la naissance.' },
   { titre: 'Demande urgente', texte: 'Indiquez-moi la date sur WhatsApp : je vérifie le planning et je vous réponds honnêtement.' },
 ];
 
-/* ⚠️ Le 30° vient du contenu des créations ; le reste est [À CONFIRMER] par Emma. */
-const lignesEntretien = [
-  { titre: 'Lavage', texte: '30°, cycle normal, pièce retournée' },
-  { titre: 'Repassage', texte: "Sur l'envers, ou avec un linge entre le fer et la broderie" },
-  { titre: 'À éviter', texte: "L'eau de Javel, qui décolore le fil" },
-];
 ---
 
 <Base titre={titre} description={description} imageOg={og.src} fil={fil}>
@@ -167,7 +143,7 @@ const lignesEntretien = [
     alt="Broderie en cours sous la tête de la machine : motif de cerisier en fleurs en fil de couleur"
     cadrage="50% 50%"
     faits={[
-      `À partir de ${prixMin} €`,
+      `Dès ${prixMin} €`,
       `Délai actuel : ${ATELIER.delaiActuel}`,
       ATELIER.delaiReponse,
       'Emballage cadeau compris',
@@ -175,20 +151,19 @@ const lignesEntretien = [
   >
     <p>
       Broderie personnalisée et couture sur mesure à {SITE.ville}&nbsp;(35), avec remise en main
-      propre à {SITE.ville} et à Rennes, ou envoi dans toute la France. Vous trouverez ici le
-      déroulement d'une commande, les prix de départ, les délais de réalisation et les conseils
-      d'entretien.
+      propre à {SITE.ville} et à Rennes, ou envoi dans toute la France. Le déroulement d’une
+      commande, les prix de départ et les délais de réalisation.
     </p>
-    <a slot="actions" class="btn btn--wa btn--grand" href={lienWhatsApp()}>Écrire sur WhatsApp</a>
-    <a slot="actions" class="btn btn--creux btn--grand" href="/contact/#devis">Demander un devis</a>
+    <a slot="actions" class="btn btn--wa btn--grand" href={lienWhatsApp()}>{LIBELLES.whatsapp}</a>
+    <a slot="actions" class="btn btn--creux btn--grand" href="/contact/#devis">{LIBELLES.devis}</a>
   </HautDePage>
 
   <!-- ===================== DÉROULEMENT ===================== -->
   <section class="bande sm-section" id="etapes">
-    <TeteSection titre="Le déroulement d'une commande">
+    <TeteSection titre="Le déroulement d’une commande">
       <p>
         Une seule étape vous demande une décision&nbsp;: la validation du motif. Je me charge de
-        tout le reste, de la préparation à l'emballage.
+        tout le reste, de la préparation à l’emballage.
       </p>
     </TeteSection>
     <Etapes etapes={etapes} />
@@ -199,7 +174,7 @@ const lignesEntretien = [
     <TeteSection titre="Les prix de départ" variante="duo">
       <p>
         Le prix dépend de la taille du motif, du nombre de points et du support. Un prénom court
-        demande moins de temps de broderie qu'un motif large et dense. Les pièces du catalogue
+        demande moins de temps de broderie qu’un motif large et dense. Les pièces du catalogue
         débutent entre {prixMin} et {prixMax}&nbsp;€.
       </p>
     </TeteSection>
@@ -208,7 +183,6 @@ const lignesEntretien = [
       Si vous fournissez le vêtement, seule la broderie est facturée. Chaque devis est établi à
       partir du motif préparé&nbsp;: le prix correspond au nombre de points réel.
     </p>
-    <p class="sm-lien"><a class="lien-fleche" href="/contact/#devis">Décrire mon projet</a></p>
   </section>
 
   <!-- ===================== DÉLAIS (le seul tapis de la page) ===================== -->
@@ -216,7 +190,7 @@ const lignesEntretien = [
     <TeteSection titre="Les délais de réalisation" variante="duo">
       <p>
         Délai actuel&nbsp;: {ATELIER.delaiActuel}, à compter de la validation du motif. Je réalise
-        les commandes l'une après l'autre et je peux vous indiquer à tout moment où en est la
+        les commandes l’une après l’autre et je peux vous indiquer à tout moment où en est la
         vôtre.
       </p>
     </TeteSection>
@@ -224,46 +198,19 @@ const lignesEntretien = [
     <p class="actions sm-note">
       <a
         class="btn btn--or"
-        href={lienWhatsApp('Bonjour Emma, est-ce que vous pourriez broder une pièce pour une date précise ?')}
+        href={lienWhatsApp('Bonjour Emma, pourriez-vous réaliser une pièce pour une date précise ?')}
       >
-        Vérifier une date
+        {LIBELLES.whatsapp}
       </a>
     </p>
   </section>
 
-  <!-- ===================== ENTRETIEN ET REMISE ===================== -->
-  <section class="bande sm-section loin" id="entretien">
-    <TeteSection titre="Entretien et remise" />
-    <div class="grille">
-      <div class="sm-col">
-        <h3>Entretien d'une broderie</h3>
-        <p class="mesure">
-          Une broderie machine se lave comme la pièce qui la porte&nbsp;: un doudou brodé comme un
-          doudou, une serviette brodée comme une serviette. Le fil conserve sa tenue et sa couleur.
-        </p>
-        <ListeLignes lignes={lignesEntretien} />
-      </div>
-      <div class="sm-col">
-        <h3>Remise et envoi</h3>
-        <p class="mesure">
-          {ATELIER.zones}. La remise en main propre se fait sur rendez-vous, dans un lieu public
-          convenu ensemble&nbsp;: je travaille à domicile et ne reçois pas de public. Les frais
-          d'envoi dépendent du poids et du format&nbsp;; ils figurent sur le devis.
-        </p>
-        <p class="mesure">
-          L'emballage cadeau est compris. S'il s'agit d'une surprise, précisez-le&nbsp;: rien ne
-          sera inscrit sur le colis.
-        </p>
-      </div>
-    </div>
-  </section>
-
   <FAQ questions={faq} />
 
-  <AppelFinal titre="Demander un devis">
+  <AppelFinal>
     <p>
-      Le formulaire vous guide en quelques questions courtes. Vous pouvez aussi m'écrire
-      directement sur WhatsApp&nbsp;: je lis et je réponds personnellement à chaque message.
+      Le formulaire vous guide en quatre étapes courtes. Vous pouvez aussi m’écrire directement
+      sur WhatsApp&nbsp;: je lis et je réponds personnellement à chaque message.
     </p>
   </AppelFinal>
 </Base>
@@ -272,15 +219,4 @@ const lignesEntretien = [
   .sm-section { padding-block: var(--serre); }
   .sm-section.tapis { padding-block: var(--respire); }
   .sm-note { margin-block-start: 1.5rem; }
-  .sm-lien { margin-block-start: 0.75rem; }
-  .sm-col {
-    display: grid; gap: 1rem; align-content: start;
-    padding-block-start: 1.25rem;
-    border-block-start: 1px solid color-mix(in oklab, currentColor 18%, transparent);
-  }
-  .sm-col + .sm-col { margin-block-start: 2.5rem; }
-  @media (min-width: 48rem) {
-    .sm-col { grid-column: span 6; }
-    .sm-col + .sm-col { margin-block-start: 0; }
-  }
 </style>

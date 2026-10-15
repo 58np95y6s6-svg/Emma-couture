@@ -4,15 +4,16 @@
  *
  * Deux appels à l'action : WhatsApp (avec l'URL absolue de la fiche dans le
  * message, pour que l'aperçu affiche la photo) et le formulaire de devis
- * pré-rempli. Maillage vers la catégorie, les occasions et le sur-mesure.
+ * pré-rempli. Maillage vers les occasions, la catégorie (fil d'Ariane) et le
+ * sur-mesure (appel final).
  *
- * Mise en page : HautDePage (texte col. 1-7, photo col. 8-12), puis le texte
- * de la pièce (col. 1-6) et ses liens (col. 8-12), le déroulement (Etapes),
- * les autres pièces en rangée et l'appel final.
+ * Mise en page : HautDePage (texte col. 1-7 : accroche, texte de la pièce,
+ * occasions, prix, boutons, faits ; photo col. 8-12), puis les autres pièces
+ * en rangée et l'appel final. Le déroulement détaillé vit sur /sur-mesure/.
  *
- * Sur téléphone, une barre d'action collante en bas d'écran reprend les deux
- * appels dès que ceux du haut de page sortent de l'écran ; elle remplace le
- * bouton WhatsApp flottant du gabarit, masqué sur cette page.
+ * Sur téléphone, une barre d'action fixe en bas d'écran reprend les deux
+ * appels, uniquement quand ni les boutons du haut ni l'appel final ne sont à
+ * l'écran ; elle remplace le bouton WhatsApp flottant du gabarit.
  */
 import type { GetStaticPaths } from 'astro';
 import { getCollection, render } from 'astro:content';
@@ -21,10 +22,9 @@ import Base from '../../layouts/Base.astro';
 import CarteCreation from '../../components/CarteCreation.astro';
 import HautDePage from '../../components/HautDePage.astro';
 import TeteSection from '../../components/TeteSection.astro';
-import Etapes from '../../components/Etapes.astro';
-import ListeLignes from '../../components/ListeLignes.astro';
+import LigneFaits from '../../components/LigneFaits.astro';
 import AppelFinal from '../../components/AppelFinal.astro';
-import { SITE, ATELIER, OCCASIONS, lienWhatsApp } from '../../config';
+import { SITE, ATELIER, OCCASIONS, LIBELLES, lienWhatsApp } from '../../config';
 
 /** Libellés d'affichage. Les slugs viennent de src/content.config.ts. */
 const NOM_CATEGORIE: Record<string, string> = {
@@ -36,18 +36,19 @@ const NOM_CATEGORIE: Record<string, string> = {
   noel: 'Noël',
 };
 
+/** Forme utilisée dans une phrase : « Cette pièce convient pour une naissance… ». */
 const NOM_OCCASION: Record<string, string> = {
-  naissance: 'Une naissance',
-  mariage: 'Un mariage',
-  'fete-des-meres': 'La fête des mères',
+  naissance: 'une naissance',
+  mariage: 'un mariage',
+  'fete-des-meres': 'la fête des mères',
   noel: 'Noël',
-  anniversaire: 'Un anniversaire',
-  bapteme: 'Un baptême',
-  retraite: 'Un départ en retraite',
+  anniversaire: 'un anniversaire',
+  bapteme: 'un baptême',
+  retraite: 'un départ en retraite',
 };
 
 /** Seules ces occasions ont une page : ne jamais lier vers une URL absente. */
-const OCCASIONS_AVEC_PAGE = new Set(OCCASIONS.map((o) => o.slug));
+const OCCASIONS_AVEC_PAGE = new Set<string>(OCCASIONS.map((o) => o.slug));
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const creations = await getCollection('creations', ({ data }) => !data.masquee);
@@ -61,7 +62,11 @@ const { creation } = Astro.props;
 const { data, id } = creation;
 const { Content } = await render(creation);
 
-/* Les autres pièces : d'abord la même catégorie, complétée par le reste. */
+/* Apostrophe typographique à l'affichage (le contenu garde l'apostrophe droite). */
+const typo = (t: string) => t.replace(/'/g, '’');
+
+/* Les autres pièces : d'abord la même catégorie, puis le reste. La rangée
+   s'intitule « Autres créations » : toutes y sont à leur place. */
 const toutes = (await getCollection('creations', ({ data: d }) => !d.masquee)).sort(
   (a, b) => a.data.ordre - b.data.ordre,
 );
@@ -79,11 +84,9 @@ const brode = feminin ? 'brodée' : 'brodé';
 
 /* WhatsApp : l'URL de la fiche est jointe au message. C'est l'aperçu Open
    Graph du lien qui porte la photo — wa.me n'accepte aucune pièce jointe. */
-const wa = lienWhatsApp(
-  `Bonjour ${SITE.nom}, j'ai vu « ${data.titre} » sur votre site et j'aimerais un modèle similaire.`,
-  urlAbsolue,
-);
-const devis = `/contact/?creation=${id}`;
+const messageWa = `Bonjour Emma, j'ai vu « ${data.titre} » sur votre site et j'aimerais un modèle similaire.`;
+const wa = lienWhatsApp(messageWa, urlAbsolue);
+const devis = `/contact/?creation=${id}#devis`;
 
 /* Image de partage 1200×630 dérivée de la photo de la création : c'est elle
    qui s'affiche dans l'aperçu WhatsApp. Largeur plafonnée à celle du
@@ -101,9 +104,8 @@ const og = await getImage({
 
 const categorieNom = NOM_CATEGORIE[data.categorie] ?? data.categorie;
 const occasions = data.occasions.map((o) => ({
-  slug: o,
   nom: NOM_OCCASION[o] ?? o,
-  lien: OCCASIONS_AVEC_PAGE.has(o as (typeof OCCASIONS)[number]['slug']) ? `/cadeaux/${o}/` : null,
+  lien: OCCASIONS_AVEC_PAGE.has(o) ? `/cadeaux/${o}/` : null,
 }));
 
 /* Données structurées. Aucune note, aucun avis : rien d'inventé. */
@@ -148,30 +150,22 @@ const icoWa =
 const fil = [
   { nom: 'Créations', url: '/creations/' },
   { nom: categorieNom, url: `/creations/${data.categorie}/` },
-  { nom: data.titre, url: urlFiche },
+  { nom: typo(data.titre), url: urlFiche },
 ];
 
-/* Un seul délai sur la fiche : la durée de réalisation de la pièce. Le délai
-   actuel de l'atelier figure dans l'appel final.
+/* Prix et durée de réalisation de la pièce, juste au-dessus des boutons.
+   Le délai actuel de l'atelier figure dans l'appel final.
    ⚠️ Prix et délais : exemples à valider par Emma (repli de l'admin). */
-const faits = [
-  ...(data.prixDepart ? [`À partir de ${data.prixDepart} €`] : ['Prix sur devis']),
-  ...(data.delaiJours ? [`Réalisation : ${data.delaiJours} jours`] : []),
-  data.cousuMain ? `Cousu main et brodé à ${SITE.ville}` : `Brodé à ${SITE.ville}`,
+const prixPiece = [
+  data.prixDepart ? `dès ${data.prixDepart} €` : 'prix sur devis',
+  ...(data.delaiJours ? [`réalisation ${data.delaiJours} j`] : []),
+  ...(data.cousuMain ? ['cousu main'] : []),
 ];
-
-/* Liens utiles : les occasions qui ont une page, la catégorie, le sur-mesure. */
-const liens = [
-  ...occasions
-    .filter((o) => o.lien)
-    .map((o) => ({ titre: o.nom, href: o.lien as string })),
-  { titre: `Toutes les pièces « ${categorieNom} »`, href: `/creations/${data.categorie}/` },
-  { titre: "Le déroulement d'une commande", href: '/sur-mesure/' },
-];
-const occasionsSansPage = occasions.filter((o) => !o.lien).map((o) => o.nom.toLowerCase());
+/* Réassurance, sous les boutons. */
+const faits = ['Motif soumis avant broderie', 'Emballage compris', 'Vitré, Rennes, France'];
 ---
 
-<Base titre={titre} description={description} imageOg={og.src} fil={fil}>
+<Base titre={titre} description={description} imageOg={og.src} fil={fil} flottant={false} messageWa={messageWa}>
   {/*
     ⚠️ CONTENU D'EXEMPLE
     Prix, délais, numéro WhatsApp et e-mail sont provisoires (src/config.ts
@@ -180,13 +174,30 @@ const occasionsSansPage = occasions.filter((o) => !o.lien).map((o) => o.nom.toLo
 
   <script type="application/ld+json" set:html={JSON.stringify(produit)} />
 
-  <HautDePage titre={data.titre} fil={fil} image={data.photo} alt={data.alt} faits={faits}>
-    <p>{data.accroche}</p>
-    <a slot="actions" class="btn btn--wa btn--grand fiche__cta" href={wa}>
+  <HautDePage titre={typo(data.titre)} fil={fil} image={data.photo} alt={data.alt} faits={faits}>
+    <p class="fiche__accroche">{data.accroche}</p>
+    <div class="fiche__texte"><Content /></div>
+    {
+      occasions.length > 0 && (
+        <p class="fiche__occ">
+          Cette pièce convient pour{' '}
+          {occasions.map((o, i) => (
+            <>
+              {i > 0 && (i === occasions.length - 1 ? ' et ' : ', ')}
+              {o.lien ? <a href={o.lien}>{o.nom}</a> : o.nom}
+            </>
+          ))}
+          .
+        </p>
+      )
+    }
+    <div class="fiche__prix"><LigneFaits faits={prixPiece} label="Prix et réalisation" /></div>
+
+    <a slot="actions" class="btn btn--wa btn--grand" href={wa}>
       <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d={icoWa} /></svg>
-      Je veux la même
+      {LIBELLES.laMeme}
     </a>
-    <a slot="actions" class="btn btn--creux btn--grand" href={devis}>Demander un devis</a>
+    <a slot="actions" class="btn btn--creux btn--grand" href={devis}>{LIBELLES.devis}</a>
   </HautDePage>
 
   {
@@ -197,7 +208,7 @@ const occasionsSansPage = occasions.filter((o) => !o.lien).map((o) => o.nom.toLo
             <li>
               <Image
                 src={p}
-                alt={`${data.titre}, vue ${i + 2}`}
+                alt={`${typo(data.titre)}, vue ${i + 2}`}
                 widths={[320, 480, 620]}
                 sizes="(max-width: 48rem) 46vw, 22vw"
                 loading="lazy"
@@ -209,51 +220,6 @@ const occasionsSansPage = occasions.filter((o) => !o.lien).map((o) => o.nom.toLo
       </section>
     )
   }
-
-  <!-- ===================== LE TEXTE + LES LIENS ===================== -->
-  <section class="bande detail">
-    <div class="grille">
-      <div class="detail__texte">
-        <h2>À propos de cette pièce</h2>
-        <div class="prose mesure">
-          <Content />
-        </div>
-        <p class="detail__rassure">
-          Motif soumis pour validation avant broderie. Emballage cadeau compris. {ATELIER.zones}.
-        </p>
-      </div>
-
-      <aside class="detail__cote" aria-labelledby="cote-titre">
-        <h3 id="cote-titre">Occasions et liens utiles</h3>
-        {occasionsSansPage.length > 0 && (
-          <p class="detail__occ">Elle convient aussi pour {occasionsSansPage.join(', ')}.</p>
-        )}
-        <ListeLignes lignes={liens} />
-      </aside>
-    </div>
-  </section>
-
-  <!-- ===================== DÉROULEMENT ===================== -->
-  <section class="bande deroule loin">
-    <TeteSection titre="Le déroulement d'une commande" />
-    <Etapes
-      etapes={[
-        {
-          titre: 'Votre demande',
-          texte: "Indiquez-moi le prénom, la couleur souhaitée et la date. Le lien de cette fiche suffit pour que je sache de quelle pièce il s'agit.",
-        },
-        {
-          titre: 'La validation du motif',
-          texte: "Je vous envoie le motif et le prix définitif. Rien n'est brodé avant votre accord, et chaque détail peut être modifié jusque-là.",
-          cle: true,
-        },
-        {
-          titre: 'La remise',
-          texte: `La pièce vous est remise en main propre à ${SITE.ville} ou à Rennes, ou envoyée soigneusement emballée partout en France.`,
-        },
-      ]}
-    />
-  </section>
 
   <!-- ===================== AUTRES PIÈCES ===================== -->
   {
@@ -271,85 +237,103 @@ const occasionsSansPage = occasions.filter((o) => !o.lien).map((o) => o.nom.toLo
     )
   }
 
-  <AppelFinal titre="Une question sur cette pièce" messageWa={`Bonjour ${SITE.nom}, j'ai vu « ${data.titre} » sur votre site et j'aimerais un modèle similaire. ${urlAbsolue}`} lienDevis={devis}>
+  <AppelFinal titre="Une question sur cette pièce" messageWa={`${messageWa} ${urlAbsolue}`} lienDevis={devis}>
     <p>
       Indiquez-moi le prénom, la couleur et la date souhaitée. Je vous réponds avec une proposition,
       un prix et un délai, sans engagement de votre part.
     </p>
+    <p><a href="/sur-mesure/">Prix, délais, entretien&nbsp;: le déroulement d’une commande</a></p>
   </AppelFinal>
 
   <!-- ===================== BARRE D'ACTION (téléphone) =====================
-       Collante en bas d'écran tant que la page défile. Elle remplace le
-       bouton flottant du gabarit. -->
-  <div class="barre-action">
+       Fixe en bas d'écran, affichée seulement quand ni les boutons du haut
+       de page ni l'appel final ne sont visibles. Sans JavaScript, elle reste
+       masquée : les boutons du haut et l'appel final suffisent. -->
+  <div class="barre-action" data-visible="false">
     <p class="barre-action__prix mono" aria-hidden="true">
       {data.prixDepart ? <>dès <b>{data.prixDepart}&nbsp;€</b></> : <b>sur devis</b>}
     </p>
-    <a class="btn btn--wa" href={wa}>
+    <a class="btn btn--wa" href={wa} tabindex="-1">
       <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d={icoWa} /></svg>
-      Je veux la même
+      {LIBELLES.laMeme}
     </a>
-    <a class="btn btn--creux" href={devis}>Devis</a>
+    <a class="btn btn--creux" href={devis} tabindex="-1">{LIBELLES.devis}</a>
   </div>
 </Base>
 
-<style>
-  /* Le bouton flottant du gabarit est remplacé ici par la barre d'action. */
-  :global(.flottant) { display: none !important; }
-  /* La barre suit le bouton WhatsApp du haut de page : portée posée sur <main>. */
-  :global(#contenu) { timeline-scope: --cta-fiche; }
-  .fiche__cta { view-timeline: --cta-fiche block; }
+<script>
+  /* La barre n'apparaît qu'entre le haut de page et l'appel final. */
+  const barre = document.querySelector<HTMLElement>('.barre-action');
+  const haut = document.querySelector('.hdp .actions');
+  const fin = document.querySelector('.final');
+  if (barre && haut && fin && 'IntersectionObserver' in window) {
+    let hautVisible = true;
+    let finAtteinte = false;
+    const liens = barre.querySelectorAll('a');
+    const maj = () => {
+      const visible = !hautVisible && !finAtteinte;
+      barre.dataset.visible = String(visible);
+      /* Masquée = hors de l'ordre de tabulation. */
+      liens.forEach((a) => (visible ? a.removeAttribute('tabindex') : a.setAttribute('tabindex', '-1')));
+    };
+    new IntersectionObserver(([e]) => {
+      hautVisible = e.isIntersecting;
+      maj();
+    }).observe(haut);
+    new IntersectionObserver(([e]) => {
+      /* Visible, ou déjà dépassé (on lit le pied de page). */
+      finAtteinte = e.isIntersecting || e.boundingClientRect.top < 0;
+      maj();
+    }).observe(fin);
+  }
+</script>
 
+<style>
   .vues { padding-block: 0 var(--serre); }
   .vues li { grid-column: span 6; }
   .vues li :global(img) { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--r-m); }
   @media (min-width: 48rem) { .vues li { grid-column: span 3; } }
 
-  /* ============================ DÉTAIL : col. 1-6 / 8-12 ============================ */
-  .detail { padding-block: var(--serre); }
-  .detail .grille { row-gap: 3rem; align-items: start; }
-  .detail__texte, .detail__cote { display: grid; gap: 1.25rem; align-content: start; }
-  .prose { display: grid; gap: 1.1rem; color: var(--encre-doux); }
-  .prose :global(strong) { font-weight: 500; color: var(--encre); }
-  .prose :global(ul), .prose :global(ol) { display: grid; gap: 0.4rem; padding-inline-start: 1.2rem; list-style: disc; }
-  .detail__rassure, .detail__occ { font-size: var(--t-petit); color: var(--encre-doux); }
-  @media (min-width: 48rem) {
-    .detail__texte { grid-column: 1 / span 6; }
-    .detail__cote { grid-column: 8 / -1; }
-  }
+  /* ============================ HAUT DE PAGE : texte de la pièce ============================ */
+  .fiche__texte { font-size: var(--t-petit); color: var(--encre-doux); }
+  .fiche__texte, .fiche__occ, .fiche__prix { margin-block-start: 0.8em; }
+  .fiche__texte :global(p + p) { margin-block-start: 0.6em; }
+  .fiche__occ { font-size: var(--t-petit); color: var(--encre-doux); }
+  .fiche__occ a { color: var(--encre); }
+  .fiche__prix :global(.faits) { font-family: var(--f-mono); font-size: var(--t-petit); color: var(--encre); }
 
-  .deroule { padding-block: var(--serre); }
   .suite { padding-block: var(--serre) var(--respire); }
 
   /* ============================ BARRE D'ACTION ============================ */
   .barre-action {
-    position: sticky; inset-block-end: 0; z-index: 80;
+    position: fixed; inset-inline: 0; inset-block-end: 0; z-index: 80;
     display: grid;
-    grid-template-columns: minmax(0, auto) minmax(0, 1.5fr) minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
     align-items: center; gap: 0.5rem;
     padding: 0.6rem max(var(--marge), env(safe-area-inset-right)) calc(0.6rem + env(safe-area-inset-bottom)) max(var(--marge), env(safe-area-inset-left));
     background: color-mix(in oklab, var(--lin-haut) 92%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-block-start: 1px solid color-mix(in oklab, var(--encre) 18%, transparent);
+    transition: transform 300ms var(--sortie), visibility 300ms;
   }
-  .barre-action .btn { min-height: 3rem; padding: 0.5rem 0.9rem; white-space: nowrap; }
+  .barre-action[data-visible='false'] { transform: translateY(110%); visibility: hidden; }
+  .barre-action .btn { min-height: 3rem; padding: 0.5rem 0.7rem; font-size: var(--t-petit); white-space: nowrap; }
+  .barre-action .ico { width: 1.1rem; height: 1.1rem; }
   .barre-action__prix { font-size: var(--t-micro); color: var(--gris); line-height: 1.1; }
-  .barre-action__prix b { display: block; font-weight: 400; font-size: 1.2rem; color: var(--encre); }
-  @media (max-width: 23rem) {
-    .barre-action { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
-    .barre-action__prix, .barre-action .ico { display: none; }
+  .barre-action__prix b { display: block; font-weight: 400; font-size: 1.15rem; color: var(--encre); }
+  /* Téléphone courant : le prix laisse la place aux deux boutons. */
+  @media (max-width: 29.999rem) {
+    .barre-action { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .barre-action__prix { display: none; }
+  }
+  /* Petit téléphone : sans icône, libellé sur deux lignes au besoin. */
+  @media (max-width: 23.999rem) {
+    .barre-action .ico { display: none; }
+    .barre-action .btn { white-space: normal; line-height: 1.15; text-align: center; padding-inline: 0.5rem; }
   }
   @media (min-width: 64rem) { .barre-action { display: none; } }
-
-  /* La barre s'efface tant que le bouton du haut de page est à l'écran. */
-  @supports (animation-timeline: view()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .barre-action { animation: barre-cta linear both; animation-timeline: --cta-fiche; animation-range: entry 0% exit 100%; }
-    }
-  }
-  @keyframes barre-cta {
-    0%, 100% { transform: none; visibility: visible; }
-    12%, 88% { transform: translateY(110%); visibility: hidden; }
-  }
+  /* Paysage bas : la barre mangerait l'écran. */
+  @media (orientation: landscape) and (max-height: 30rem) { .barre-action { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .barre-action { transition: none; } }
 </style>

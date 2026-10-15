@@ -3,16 +3,20 @@
  * /contact/ — la page de conversion du site.
  *
  * Formulaire Netlify Forms (`name="demande"`), honeypot `bot-field`,
- * `action="/merci/"`.
+ * `action="/merci/"`. Tous les champs sont écrits dans le HTML statique :
+ * Netlify les détecte au build.
  *
  * ⚠️ RÈGLE D'OR : le formulaire fonctionne SANS JavaScript. Le découpage en
- * étapes courtes est une amélioration progressive ajoutée par le script en bas
- * de page. Si le script ne s'exécute pas, tous les groupes restent visibles,
- * la validation native du navigateur s'applique et l'envoi fonctionne.
+ * quatre étapes est une amélioration progressive ajoutée par le script en bas
+ * de page. Sans script, tous les groupes restent visibles, la validation
+ * native du navigateur s'applique et l'envoi fonctionne.
  *
- * Pré-remplissage depuis une création : `?creation=<id>`. Le site est statique,
- * donc c'est lu côté client. Les vignettes sont pré-rendues dans un <template>
- * (inerte : aucune image n'est téléchargée tant qu'elle n'est pas clonée).
+ * Pré-remplissage côté client (le site est statique) :
+ *  - `?creation=<id>` : vignette de la pièce, champs cachés, type « catalogue »
+ *    coché, occasion cochée si la pièce n'en a qu'une → on démarre à l'étape 2 ;
+ *  - `?occasion=<slug>` : occasion cochée (liens des pages occasions).
+ * Les vignettes sont pré-rendues dans un <template> (inerte : aucune image
+ * n'est téléchargée tant qu'elle n'est pas clonée).
  *
  * ⚠️ MAQUETTE — numéro, e-mail, délais et fourchettes de budget provisoires.
  */
@@ -20,11 +24,26 @@ import { Image, getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import HautDePage from '../components/HautDePage.astro';
-import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
+import TeteSection from '../components/TeteSection.astro';
+import ListeLignes from '../components/ListeLignes.astro';
+import LigneFaits from '../components/LigneFaits.astro';
+import { SITE, CONTACT, ATELIER, LIBELLES, lienWhatsApp, telephoneLisible } from '../config';
 
 import ogSource from '../assets/creations/og/atelier-mur-bobines-fil-broderie-vitre.webp';
 
 const og = await getImage({ src: ogSource, format: 'webp', width: 1200 });
+
+/* Les occasions proposées, avec le slug utilisé dans les URL du site. */
+const OCCASIONS_FORM = [
+  { slug: 'naissance', v: 'Une naissance' },
+  { slug: 'mariage', v: 'Un mariage' },
+  { slug: 'fete-des-meres', v: 'La fête des mères' },
+  { slug: 'noel', v: 'Noël' },
+  { slug: 'anniversaire', v: 'Un anniversaire' },
+  { slug: 'bapteme', v: 'Un baptême' },
+  { slug: 'retraite', v: 'Un départ, une retraite' },
+  { slug: 'aucune', v: 'Pas d’occasion particulière' },
+];
 
 /* ---------------------------------------------------------------------------
    Les créations, pour le pré-remplissage depuis une fiche.
@@ -48,6 +67,7 @@ const indexCreations = Object.fromEntries(
       titre: c.data.titre,
       url: `/creations/${c.id}/`,
       image: img.src,
+      occasions: c.data.occasions ?? [],
     },
   ])
 );
@@ -61,37 +81,30 @@ const BUDGETS = [
   'Je ne sais pas encore',
 ];
 
+/* Particuliers uniquement : pas d'option « logo de club ou d'entreprise ». */
 const TYPES = [
   { v: 'Une pièce du catalogue', d: 'Doudou, drap de bain, cadre de naissance, chaussette de Noël…' },
   { v: 'Un vêtement ou du linge que je vous apporte', d: 'Sweat, polo, serviette, linge de maison' },
   { v: 'Un sac, une trousse ou un tablier à coudre', d: 'Cousu main, puis brodé' },
   { v: 'De la dentelle libre', d: 'Broderie sans tissu de support : arbre de vie, papillon, initiale' },
-  { v: "Un logo de club, d'association ou d'entreprise", d: 'Polos, sweats, serviettes' },
   { v: 'Je ne sais pas encore', d: 'Décrivez-moi votre idée, je vous ferai une proposition' },
-];
-
-const OCCASIONS_FORM = [
-  'Une naissance',
-  'Un mariage',
-  'La fête des mères',
-  'Noël',
-  'Un anniversaire',
-  'Un baptême',
-  'Un départ, une retraite',
-  'Pas d’occasion particulière',
 ];
 
 const fil = [{ nom: 'Contact', url: '/contact/' }];
 const titre = `Contact et devis · broderie personnalisée à ${SITE.ville} | ${SITE.nom}`;
-const description = `Décrivez votre projet de broderie personnalisée ou de couture sur mesure en quelques questions courtes : je vous réponds avec un prix et un délai. WhatsApp, e-mail ou téléphone. ${SITE.ville}, Rennes et toute la France.`;
+const description = `Décrivez votre projet de broderie personnalisée ou de couture sur mesure en quatre étapes courtes : je vous réponds avec un prix et un délai. WhatsApp, e-mail ou téléphone. ${SITE.ville}, Rennes et toute la France.`;
+
+const lieuRemise = `Je travaille à domicile et ne reçois pas de public : remise en main propre sur rendez-vous, dans un lieu public, à ${SITE.ville} ou à Rennes. Envoi soigné partout en France.`;
+
+const autresMoyens = [
+  { titre: 'WhatsApp', texte: LIBELLES.whatsapp, href: lienWhatsApp() },
+  { titre: 'Téléphone', texte: telephoneLisible(), href: `tel:${CONTACT.telephone}` },
+  { titre: 'E-mail', texte: CONTACT.email, href: `mailto:${CONTACT.email}` },
+  { titre: 'Instagram', texte: `@${CONTACT.instagram}, où les pièces récentes sont publiées en premier`, href: CONTACT.instagramUrl },
+];
 ---
 
-<Base
-  titre={titre}
-  description={description}
-  imageOg={og.src}
-  fil={fil}
->
+<Base titre={titre} description={description} imageOg={og.src} fil={fil} flottant={false}>
   {/* Données de pré-remplissage : lues par le script en bas de page. */}
   <script
     type="application/json"
@@ -118,29 +131,37 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
     }
   </template>
 
-  <HautDePage
-    titre="Contact et demande de devis"
-    fil={fil}
-    faits={[ATELIER.delaiReponse, `Délai actuel : ${ATELIER.delaiActuel}`, 'Sans engagement']}
-  >
+  <HautDePage titre="Contact et demande de devis" fil={fil}>
     <p>
-      Décrivez-moi votre projet de broderie personnalisée ou de couture sur mesure en quelques
-      questions courtes. Je vous réponds avec un prix, un délai de réalisation et une
-      proposition. Atelier à {SITE.ville}&nbsp;(35), remise en main propre à {SITE.ville} et à
-      Rennes, envoi dans toute la France.
+      Quatre étapes courtes suffisent&nbsp;: je vous réponds avec un prix, un délai de réalisation
+      et une proposition de motif.
     </p>
-    <a slot="actions" class="lien-fleche" href={lienWhatsApp()}>Je préfère écrire sur WhatsApp</a>
-  </HautDePage>
+    <div class="ct-faits">
+      <LigneFaits faits={[ATELIER.delaiReponse, `Délai actuel : ${ATELIER.delaiActuel}`, 'Sans engagement']} />
+    </div>
+    <p class="ct-wa"><a class="lien-fleche" href={lienWhatsApp()}>{LIBELLES.whatsapp}</a></p>
 
-  <section class="bande ct" id="devis" aria-label="Formulaire de demande de devis">
-    <div class="grille">
+    {/* Grand écran : les autres moyens remplissent la colonne face au
+        formulaire. Téléphone : ils passent sous le formulaire (section
+        .ct-autres), pour que le formulaire suive directement le chapô. */}
+    <div class="ct-coord">
+      <p class="ct-coord__titre">Autres moyens de me joindre</p>
+      <dl>
+        <div><dt>Téléphone</dt><dd><a href={`tel:${CONTACT.telephone}`}>{telephoneLisible()}</a></dd></div>
+        <div><dt>E-mail</dt><dd><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></dd></div>
+        <div><dt>Instagram</dt><dd><a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">@{CONTACT.instagram}</a></dd></div>
+        <div><dt>Remise</dt><dd>{lieuRemise}</dd></div>
+      </dl>
+      <p><a class="lien-fleche" href="/sur-mesure/#faq-titre">Questions fréquentes</a></p>
+    </div>
+
     <!-- ===================== LE FORMULAIRE ===================== -->
-    <div class="ct-form__hote">
+    <div slot="aside" class="ct-hote" id="devis">
       {
         ATELIER.commandes !== 'ouvertes' && (
           <p class="ct-alerte">
             {ATELIER.commandes === 'conges'
-              ? `Je suis en congés${ATELIER.retourLe ? ` jusqu'au ${ATELIER.retourLe}` : ''}. Vous pouvez néanmoins m'écrire : je vous répondrai à mon retour.`
+              ? `Je suis en congés${ATELIER.retourLe ? ` jusqu’au ${ATELIER.retourLe}` : ''}. Vous pouvez néanmoins m’écrire : je vous répondrai à mon retour.`
               : 'Mon planning est actuellement complet. Vous pouvez néanmoins m’écrire : je vous indiquerai à partir de quelle date je peux réaliser votre commande.'}
           </p>
         )
@@ -155,6 +176,7 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
         enctype="multipart/form-data"
         data-netlify="true"
         data-netlify-honeypot="bot-field"
+        aria-label="Demande de devis"
       >
         {/* Netlify l'injecte au déploiement ; on l'écrit quand même, pour que
             l'envoi fonctionne à l'identique en local et en prévisualisation. */}
@@ -181,7 +203,7 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
             <p class="ct-piece__liens">
               <a id="ct-piece-lien" href="/creations/">Voir la fiche</a>
               <button type="button" class="ct-piece__non" id="ct-piece-non">
-                Ce n'est pas cette pièce
+                Ce n’est pas cette pièce
               </button>
             </p>
           </div>
@@ -190,11 +212,10 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
         <!-- Jauge d'avancement : révélée par le script uniquement -->
         <p class="ct-jauge" id="ct-jauge" hidden aria-live="polite"></p>
 
-        <!-- ÉTAPE 1 — type de projet -->
-        <div class="ct-pas" data-pas>
-          <fieldset class="ct-champ" tabindex="-1">
+        <!-- ÉTAPE 1 — type de projet + occasion -->
+        <div class="ct-pas" data-pas data-titre="Votre projet">
+          <fieldset class="ct-champ" id="ct-type" tabindex="-1">
             <legend>Quel type de pièce souhaitez-vous&nbsp;?</legend>
-            <p class="ct-aide">Une seule réponse&nbsp;; nous préciserons ensemble.</p>
             <div class="ct-options">
               {
                 TYPES.map((t, i) => (
@@ -213,21 +234,15 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
               }
             </div>
           </fieldset>
-        </div>
 
-        <!-- ÉTAPE 2 — occasion -->
-        <div class="ct-pas" data-pas>
           <fieldset class="ct-champ" tabindex="-1">
             <legend>Pour quelle occasion&nbsp;?</legend>
-            <p class="ct-aide">
-              Cette information m'aide à vous proposer le support et l'écriture adaptés.
-            </p>
             <div class="ct-options ct-options--serre">
               {
                 OCCASIONS_FORM.map((o) => (
                   <label class="ct-opt ct-opt--court">
-                    <input type="radio" name="occasion" value={o} required />
-                    <span class="ct-opt__nom">{o}</span>
+                    <input type="radio" name="occasion" value={o.v} data-slug={o.slug} required />
+                    <span class="ct-opt__nom">{o.v}</span>
                   </label>
                 ))
               }
@@ -235,35 +250,27 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
           </fieldset>
         </div>
 
-        <!-- ÉTAPE 3 — date -->
-        <div class="ct-pas" data-pas>
+        <!-- ÉTAPE 2 — date + budget -->
+        <div class="ct-pas" data-pas data-titre="Date et budget">
           <fieldset class="ct-champ" tabindex="-1">
             <legend>Pour quelle date&nbsp;?</legend>
-            <p class="ct-aide">
-              La date souhaitée détermine le planning. Si elle est proche, indiquez-le&nbsp;: je
-              vérifierai ce qui est réalisable.
+            <p class="ct-ligne">
+              <label for="date_souhaitee">Date à laquelle vous souhaitez recevoir la pièce</label>
+              <input type="date" id="date_souhaitee" name="date_souhaitee" aria-describedby="note-date" />
+              <span class="ct-note" id="note-date">
+                Si elle est proche, indiquez-la tout de même&nbsp;: je vérifierai ce qui est
+                réalisable.
+              </span>
             </p>
-            <div class="ct-duo">
-              <p class="ct-ligne">
-                <label for="date_souhaitee">Date à laquelle vous souhaitez recevoir la pièce</label>
-                <input type="date" id="date_souhaitee" name="date_souhaitee" />
-              </p>
-            </div>
             <label class="ct-case">
               <input type="checkbox" name="date_souple" value="Pas de date précise" />
-              <span>Je n'ai pas de date précise</span>
+              <span>Je n’ai pas de date précise</span>
             </label>
           </fieldset>
-        </div>
 
-        <!-- ÉTAPE 4 — budget -->
-        <div class="ct-pas" data-pas>
           <fieldset class="ct-champ" tabindex="-1">
             <legend>Quel budget envisagez-vous&nbsp;?</legend>
-            <p class="ct-aide">
-              Cette indication ne vous engage pas. Elle me permet de vous proposer un support et
-              une taille de motif adaptés.
-            </p>
+            <p class="ct-aide">Une indication sans engagement, pour vous proposer un support adapté.</p>
             <div class="ct-options ct-options--serre">
               {
                 BUDGETS.map((b) => (
@@ -277,12 +284,12 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
           </fieldset>
         </div>
 
-        <!-- ÉTAPE 5 — texte à broder + précisions -->
-        <div class="ct-pas" data-pas>
+        <!-- ÉTAPE 3 — texte à broder + photo d'inspiration -->
+        <div class="ct-pas" data-pas data-titre="Le texte et l’inspiration">
           <fieldset class="ct-champ" tabindex="-1">
             <legend>Quel texte souhaitez-vous faire broder&nbsp;?</legend>
             <p class="ct-ligne">
-              <label for="texte_broder">Texte à broder</label>
+              <label for="texte_broder">Texte à broder <span class="ct-facultatif">facultatif</span></label>
               <input
                 type="text"
                 id="texte_broder"
@@ -292,61 +299,84 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
                 placeholder="Ambre, 16 janvier 2026, 3,85 kg"
                 aria-describedby="note-texte"
               />
-              <span class="ct-note" id="note-texte">
-                Prénom, date, mesures ou courte phrase. Vous pouvez laisser ce champ vide si vous
-                hésitez encore.
-              </span>
+              <span class="ct-note" id="note-texte">Prénom, date, mesures ou courte phrase.</span>
             </p>
             <p class="ct-ligne">
               <label for="precisions">Précisions <span class="ct-facultatif">facultatif</span></label>
               <textarea
                 id="precisions"
                 name="precisions"
-                rows="5"
+                rows="4"
                 maxlength="2000"
-                placeholder="Couleur du tissu et du fil, écriture cursive ou capitales, dimensions, éléments à éviter…"
+                placeholder="Couleur du tissu et du fil, écriture cursive ou capitales, dimensions…"
               ></textarea>
             </p>
           </fieldset>
-        </div>
 
-        <!-- ÉTAPE 6 — photo d'inspiration -->
-        <div class="ct-pas" data-pas>
           <fieldset class="ct-champ" tabindex="-1">
-            <legend>Avez-vous une photo d'inspiration&nbsp;? <span class="ct-facultatif">facultatif</span></legend>
-            <p class="ct-aide">
-              Une capture d'écran, un dessin ou la photo du vêtement à broder&nbsp;: une image est
-              souvent plus parlante qu'une longue description.
-            </p>
+            <legend>Une photo d’inspiration&nbsp;? <span class="ct-facultatif">facultatif</span></legend>
             <p class="ct-ligne">
-              <label for="inspiration">Choisir une photo</label>
+              <label for="inspiration">Capture d’écran, dessin ou photo du vêtement à broder</label>
               <input type="file" id="inspiration" name="inspiration" accept="image/*" aria-describedby="note-photo" />
               <span class="ct-note" id="note-photo">
-                Une seule photo, de moins de 8&nbsp;Mo. Vous pourrez aussi me l'envoyer ensuite
-                sur WhatsApp.
+                Une seule photo, de moins de 8&nbsp;Mo. Vous pourrez aussi me l’envoyer ensuite sur
+                WhatsApp.
               </span>
             </p>
           </fieldset>
         </div>
 
-        <!-- ÉTAPE 7 — coordonnées -->
-        <div class="ct-pas" data-pas>
+        <!-- ÉTAPE 4 — canal de réponse, puis coordonnées -->
+        <div class="ct-pas" data-pas data-titre="Vos coordonnées">
+          <fieldset class="ct-champ" tabindex="-1">
+            <legend>Comment préférez-vous être recontacté·e&nbsp;?</legend>
+            <div class="ct-options ct-options--trois">
+              <label class="ct-opt ct-opt--court">
+                <input type="radio" name="canal" value="WhatsApp" required />
+                <span class="ct-opt__nom">WhatsApp</span>
+              </label>
+              <label class="ct-opt ct-opt--court">
+                <input type="radio" name="canal" value="E-mail" required />
+                <span class="ct-opt__nom">E-mail</span>
+              </label>
+              <label class="ct-opt ct-opt--court">
+                <input type="radio" name="canal" value="Téléphone" required />
+                <span class="ct-opt__nom">Téléphone</span>
+              </label>
+            </div>
+          </fieldset>
+
           <fieldset class="ct-champ" tabindex="-1">
             <legend>Vos coordonnées</legend>
             <div class="ct-duo">
               <p class="ct-ligne">
                 <label for="prenom">Prénom <span class="ct-oblig">obligatoire</span></label>
-                <input
-                  type="text"
-                  id="prenom"
-                  name="prenom"
-                  required
-                  autocomplete="given-name"
-                  maxlength="80"
-                />
+                <input type="text" id="prenom" name="prenom" required autocomplete="given-name" maxlength="80" />
               </p>
               <p class="ct-ligne">
-                <label for="ville">Ville</label>
+                <label for="telephone">
+                  Téléphone <span class="ct-oblig" id="tel-oblig" hidden>obligatoire</span>
+                </label>
+                <input
+                  type="tel"
+                  id="telephone"
+                  name="telephone"
+                  autocomplete="tel"
+                  inputmode="tel"
+                  pattern="\+?[0-9 .]{9,19}"
+                  maxlength="20"
+                  aria-describedby="note-tel"
+                />
+                <span class="ct-note" id="note-tel">
+                  Nécessaire pour une réponse par WhatsApp ou par téléphone.
+                </span>
+              </p>
+              <p class="ct-ligne">
+                <label for="email">Adresse e-mail <span class="ct-oblig">obligatoire</span></label>
+                <input type="email" id="email" name="email" required autocomplete="email" />
+              </p>
+              <p class="ct-ligne">
+                <label for="ville">Ville <span class="ct-facultatif">facultatif</span></label>
                 <input
                   type="text"
                   id="ville"
@@ -356,38 +386,6 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
                   placeholder="Vitré, Rennes…"
                 />
               </p>
-              <p class="ct-ligne">
-                <label for="email">Adresse e-mail <span class="ct-oblig">obligatoire</span></label>
-                <input type="email" id="email" name="email" required autocomplete="email" />
-              </p>
-              <p class="ct-ligne">
-                <label for="telephone">Téléphone</label>
-                <input type="tel" id="telephone" name="telephone" autocomplete="tel" aria-describedby="note-tel" />
-                <span class="ct-note" id="note-tel">
-                  Nécessaire si vous souhaitez une réponse par WhatsApp ou par téléphone.
-                </span>
-              </p>
-            </div>
-          </fieldset>
-        </div>
-
-        <!-- ÉTAPE 8 — canal de réponse -->
-        <div class="ct-pas" data-pas>
-          <fieldset class="ct-champ" tabindex="-1">
-            <legend>Comment préférez-vous être recontacté·e&nbsp;?</legend>
-            <div class="ct-options ct-options--serre">
-              <label class="ct-opt ct-opt--court">
-                <input type="radio" name="canal" value="WhatsApp" required />
-                <span class="ct-opt__nom">Par WhatsApp</span>
-              </label>
-              <label class="ct-opt ct-opt--court">
-                <input type="radio" name="canal" value="E-mail" required />
-                <span class="ct-opt__nom">Par e-mail</span>
-              </label>
-              <label class="ct-opt ct-opt--court">
-                <input type="radio" name="canal" value="Téléphone" required />
-                <span class="ct-opt__nom">Par téléphone</span>
-              </label>
             </div>
 
             <label class="ct-case ct-case--large">
@@ -401,67 +399,34 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
           </fieldset>
         </div>
 
-        <!-- Navigation par étapes : révélée par le script uniquement -->
-        <div class="ct-nav" id="ct-nav" hidden>
-          <button type="button" class="btn btn--creux" id="ct-prec">Précédent</button>
-          <button type="button" class="btn btn--wa" id="ct-suiv">Suivant</button>
-        </div>
-
         <!-- Envoi : toujours présent dans le HTML, donc utilisable sans JS -->
         <div class="ct-envoi" id="ct-envoi">
           <button type="submit" class="btn btn--wa btn--grand ct-envoi__btn">Envoyer ma demande</button>
           <p class="ct-rgpd">
-            Vos réponses servent uniquement à traiter votre demande et à préparer votre commande.
-            Elles ne sont ni revendues ni transmises.{' '}
+            Vos réponses servent uniquement à traiter votre demande. Elles ne sont ni revendues ni
+            transmises.{' '}
             <a href="/politique-de-confidentialite/">Politique de confidentialité</a>
           </p>
         </div>
+
+        <!-- Navigation par étapes : révélée par le script uniquement.
+             « Suivant » est le premier dans le DOM : pleine largeur et en
+             premier sur téléphone, à droite sur grand écran. -->
+        <div class="ct-nav" id="ct-nav" hidden>
+          <button type="button" class="btn btn--wa" id="ct-suiv">Suivant</button>
+          <button type="button" class="btn btn--creux" id="ct-prec">Précédent</button>
+        </div>
       </form>
     </div>
+  </HautDePage>
 
-    <!-- ===================== AUTRES MOYENS ===================== -->
-    <aside class="ct-aside" aria-labelledby="ct-aside-titre">
-      <h2 id="ct-aside-titre">Autres moyens</h2>
-      <p class="ct-aside__p">
-        Le formulaire n'est pas obligatoire&nbsp;: un simple message suffit pour commencer.
-      </p>
-
-      <p class="ct-canaux">
-        <a class="btn btn--wa" href={lienWhatsApp()}>Écrire sur WhatsApp</a>
-        <a class="btn btn--creux" href={`tel:${CONTACT.telephone}`}>Appeler le {CONTACT.telephone}</a>
-        <a class="btn btn--creux" href={`mailto:${CONTACT.email}`}>Envoyer un e-mail</a>
-      </p>
-
-      <dl class="ct-infos">
-        <div>
-          <dt>Atelier</dt>
-          <dd>
-            {SITE.ville} ({SITE.codePostal}), {SITE.departement}. Je travaille à domicile et ne
-            reçois pas de public&nbsp;; un rendez-vous peut être convenu dans un lieu public.
-          </dd>
-        </div>
-        <div>
-          <dt>Livraison</dt>
-          <dd>{ATELIER.zones}. Remise en main propre sur rendez-vous.</dd>
-        </div>
-        <div>
-          <dt>Réponse</dt>
-          <dd>{ATELIER.delaiReponse}. Délai de réalisation actuel&nbsp;: {ATELIER.delaiActuel}.</dd>
-        </div>
-        <div>
-          <dt>Instagram</dt>
-          <dd>
-            <a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">@{CONTACT.instagram}</a>,
-            où les pièces récentes sont publiées en premier.
-          </dd>
-        </div>
-      </dl>
-
-      <p>
-        <a class="lien-fleche" href="/sur-mesure/#faq-titre">Questions fréquentes</a>
-      </p>
-    </aside>
-    </div>
+  <!-- ===================== AUTRES MOYENS (téléphone et tablette portrait) ===================== -->
+  <section class="bande ct-autres" aria-labelledby="ct-autres-titre">
+    <TeteSection titre="Autres moyens de me joindre" id="ct-autres-titre">
+      <p>Un simple message suffit aussi pour commencer. {lieuRemise}</p>
+      <a slot="lien" class="lien-fleche" href="/sur-mesure/#faq-titre">Questions fréquentes</a>
+    </TeteSection>
+    <ListeLignes lignes={autresMoyens} />
   </section>
 </Base>
 
@@ -469,19 +434,18 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
   /* ==========================================================================
      /contact/ — amélioration progressive du formulaire.
 
-     Tout ce qui suit est facultatif : sans ce script, les huit groupes du
+     Tout ce qui suit est facultatif : sans ce script, tous les groupes du
      formulaire restent visibles, la validation native du navigateur s'applique
-     et le bouton « Envoyer ma demande » fonctionne. Le script ne fait que
-     découper le parcours en étapes courtes et rattacher une création.
+     et le bouton « Envoyer ma demande » fonctionne. Le script découpe le
+     parcours en quatre étapes, rattache une création ou une occasion, et rend
+     le téléphone obligatoire si l'on choisit WhatsApp ou le téléphone.
      ========================================================================== */
 
   const form = document.getElementById('demande') as HTMLFormElement | null;
 
   if (form) {
-    /* ----------------------------------------------------------------------
-       1. Rattachement à une création (?creation=<id>)
-    ---------------------------------------------------------------------- */
-    type Fiche = { titre: string; url: string; image: string };
+    type Fiche = { titre: string; url: string; image: string; occasions: string[] };
+    type Champ = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
     const brut = document.getElementById('ct-creations')?.textContent ?? '{}';
     let fiches: Record<string, Fiche> = {};
@@ -491,17 +455,24 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
       fiches = {};
     }
 
-    const bloc = document.getElementById('ct-piece');
-    const hoteImg = document.getElementById('ct-piece-img');
-    const hoteTitre = document.getElementById('ct-piece-titre');
-    const hoteLien = document.getElementById('ct-piece-lien') as HTMLAnchorElement | null;
-    const boutonNon = document.getElementById('ct-piece-non');
-    const modeles = document.getElementById('ct-vignettes') as HTMLTemplateElement | null;
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T | null;
+    const bloc = $('ct-piece');
+    const hoteImg = $('ct-piece-img');
+    const hoteTitre = $('ct-piece-titre');
+    const hoteLien = $<HTMLAnchorElement>('ct-piece-lien');
+    const boutonNon = $('ct-piece-non');
+    const modeles = $<HTMLTemplateElement>('ct-vignettes');
+    const groupeType = $<HTMLFieldSetElement>('ct-type');
+    const catalogue = $<HTMLInputElement>('type-catalogue');
 
-    const champ = (nom: string) =>
-      form.querySelector<HTMLInputElement>(`input[name="${nom}"]`);
+    const champ = (nom: string) => form.querySelector<HTMLInputElement>(`input[name="${nom}"]`);
+    const occasion = (slug: string) =>
+      form.querySelector<HTMLInputElement>(`input[name="occasion"][data-slug="${CSS.escape(slug)}"]`);
 
-    function rattache(slug: string, f: Fiche) {
+    /* Ce que le script a coché lui-même, pour pouvoir le défaire. */
+    let occasionAuto: HTMLInputElement | null = null;
+
+    function rattache(slug: string, f: Fiche): boolean {
       champ('creation_slug')!.value = slug;
       champ('creation_titre')!.value = f.titre;
       champ('creation_url')!.value = new URL(f.url, location.origin).href;
@@ -512,18 +483,23 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
 
       /* La vignette est clonée depuis le <template> : aucune image n'a été
          téléchargée avant ce moment. */
-      const source = modeles?.content.querySelector(`[data-creation="${slug}"] img`);
-      if (source && hoteImg) {
-        hoteImg.replaceChildren(source.cloneNode(true));
-      }
-
+      const source = modeles?.content.querySelector(`[data-creation="${CSS.escape(slug)}"] img`);
+      if (source && hoteImg) hoteImg.replaceChildren(source.cloneNode(true));
       if (bloc) bloc.hidden = false;
 
-      /* Le type de projet est alors connu : on le coche. */
-      const catalogue = document.getElementById('type-catalogue') as HTMLInputElement | null;
-      if (catalogue && !form.querySelector('input[name="type_projet"]:checked')) {
-        catalogue.checked = true;
+      /* Le type de projet est connu : coché, et la question disparaît. */
+      if (catalogue) catalogue.checked = true;
+      if (groupeType) groupeType.hidden = true;
+
+      /* Une seule occasion pour la pièce : on la coche aussi. */
+      if (f.occasions.length === 1 && !form.querySelector('input[name="occasion"]:checked')) {
+        const o = occasion(f.occasions[0]);
+        if (o) {
+          o.checked = true;
+          occasionAuto = o;
+        }
       }
+      return !!form.querySelector('input[name="occasion"]:checked');
     }
 
     function detache() {
@@ -533,26 +509,69 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
       }
       if (bloc) bloc.hidden = true;
       if (hoteImg) hoteImg.replaceChildren();
+      if (catalogue) catalogue.checked = false;
+      if (groupeType) groupeType.hidden = false;
+      if (occasionAuto) occasionAuto.checked = false;
+      occasionAuto = null;
       const url = new URL(location.href);
       url.searchParams.delete('creation');
       history.replaceState(null, '', url.pathname + url.search + url.hash);
     }
 
-    const demande = new URLSearchParams(location.search).get('creation');
-    if (demande && Object.prototype.hasOwnProperty.call(fiches, demande)) {
-      rattache(demande, fiches[demande]);
+    const params = new URLSearchParams(location.search);
+    let depart = 0;
+
+    const slugOccasion = params.get('occasion');
+    if (slugOccasion) {
+      const o = occasion(slugOccasion);
+      if (o) o.checked = true;
     }
-    boutonNon?.addEventListener('click', detache);
+
+    const demande = params.get('creation');
+    if (demande && Object.prototype.hasOwnProperty.call(fiches, demande)) {
+      /* Type et occasion connus : on démarre à l'étape 2. */
+      if (rattache(demande, fiches[demande])) depart = 1;
+    }
 
     /* ----------------------------------------------------------------------
-       2. Découpage en étapes courtes
+       Téléphone obligatoire pour WhatsApp et le téléphone
+    ---------------------------------------------------------------------- */
+    const tel = $<HTMLInputElement>('telephone');
+    const telOblig = $('tel-oblig');
+    function regleTelephone() {
+      const canal = form.querySelector<HTMLInputElement>('input[name="canal"]:checked')?.value;
+      const requis = canal === 'WhatsApp' || canal === 'Téléphone';
+      if (tel) tel.required = requis;
+      if (telOblig) telOblig.hidden = !requis;
+    }
+    form.addEventListener('change', (e) => {
+      if ((e.target as HTMLInputElement).name === 'canal') regleTelephone();
+    });
+    regleTelephone();
+
+    /* Date : pas dans le passé. */
+    const date = $<HTMLInputElement>('date_souhaitee');
+    if (date) {
+      const j = new Date();
+      date.min = new Date(j.getTime() - j.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    }
+
+    /* Photo : Netlify Forms refuse les fichiers de plus de 8 Mo. */
+    const photo = $<HTMLInputElement>('inspiration');
+    photo?.addEventListener('change', () => {
+      const f = photo.files?.[0];
+      photo.setCustomValidity(f && f.size > 8 * 1024 * 1024 ? 'Cette photo dépasse 8 Mo : choisissez-en une plus légère, ou envoyez-la ensuite sur WhatsApp.' : '');
+    });
+
+    /* ----------------------------------------------------------------------
+       Découpage en étapes courtes
     ---------------------------------------------------------------------- */
     const pas = Array.from(form.querySelectorAll<HTMLElement>('[data-pas]'));
-    const nav = document.getElementById('ct-nav');
-    const jauge = document.getElementById('ct-jauge');
-    const envoi = document.getElementById('ct-envoi');
-    const prec = document.getElementById('ct-prec') as HTMLButtonElement | null;
-    const suiv = document.getElementById('ct-suiv') as HTMLButtonElement | null;
+    const nav = $('ct-nav');
+    const jauge = $('ct-jauge');
+    const envoi = $('ct-envoi');
+    const prec = $<HTMLButtonElement>('ct-prec');
+    const suiv = $<HTMLButtonElement>('ct-suiv');
 
     if (pas.length > 1 && nav && jauge && envoi && prec && suiv) {
       /* À partir d'ici c'est nous qui validons : on coupe la validation
@@ -565,37 +584,39 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
 
       let courant = 0;
       const doux = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      /* Une zone de message par étape, créée à la demande. */
-      function zoneErreur(etape: HTMLElement): HTMLParagraphElement {
-        let z = etape.querySelector<HTMLParagraphElement>('.ct-err');
-        if (!z) {
-          z = document.createElement('p');
-          z.className = 'ct-err';
-          z.id = `ct-err-${pas.indexOf(etape)}`;
-          z.setAttribute('role', 'alert');
-          etape.querySelector('fieldset')?.appendChild(z);
-        }
-        return z;
-      }
+      const defile = (el: Element) => el.scrollIntoView({ behavior: doux ? 'smooth' : 'auto', block: 'start' });
 
       function nettoie(etape: HTMLElement) {
-        etape.querySelector('.ct-err')?.remove();
+        etape.querySelectorAll('.ct-err').forEach((z) => z.remove());
         for (const c of etape.querySelectorAll('[aria-invalid="true"]')) {
           c.removeAttribute('aria-invalid');
-          c.removeAttribute('aria-describedby');
+          c.removeAttribute('aria-errormessage');
         }
       }
 
-      /** Valide une étape et affiche le premier problème rencontré. */
-      function valide(etape: HTMLElement): boolean {
-        nettoie(etape);
-        const champs = Array.from(
-          etape.querySelectorAll<
-            HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-          >('input, select, textarea')
-        ).filter((c) => c.name !== 'bot-field' && c.type !== 'hidden');
+      function message(c: Champ): string {
+        if (c.type === 'radio') return 'Choisissez une réponse pour continuer.';
+        if (c.name === 'telephone') {
+          return c.validity.valueMissing
+            ? 'Indiquez votre numéro de téléphone pour être recontacté·e par WhatsApp ou par téléphone.'
+            : 'Ce numéro de téléphone n’a pas l’air complet.';
+        }
+        if (c.name === 'email') {
+          return c.validity.valueMissing
+            ? 'Indiquez votre adresse e-mail.'
+            : 'Cette adresse e-mail n’a pas l’air valide.';
+        }
+        if (c.name === 'prenom') return 'Indiquez votre prénom.';
+        if (c.name === 'date_souhaitee') return 'Choisissez une date à venir.';
+        return c.validationMessage || 'Ce champ est à compléter.';
+      }
 
+      /** Valide une étape ; affiche le premier problème et y conduit. */
+      function valide(etape: HTMLElement, conduire = true): boolean {
+        nettoie(etape);
+        const champs = Array.from(etape.querySelectorAll<Champ>('input, select, textarea')).filter(
+          (c) => c.name !== 'bot-field' && c.type !== 'hidden' && !c.closest('fieldset[hidden]')
+        );
         const vus = new Set<string>();
         for (const c of champs) {
           /* Pour un groupe de boutons radio, un seul passage suffit. */
@@ -605,16 +626,23 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
           }
           if (c.checkValidity()) continue;
 
-          const z = zoneErreur(etape);
-          z.textContent =
-            c.type === 'radio'
-              ? 'Choisissez une réponse pour continuer.'
-              : c.validity.typeMismatch && c.type === 'email'
-                ? "Cette adresse e-mail n'a pas l'air valide."
-                : c.validationMessage || 'Ce champ est à compléter.';
-          c.setAttribute('aria-invalid', 'true');
-          c.setAttribute('aria-describedby', z.id);
-          c.focus({ preventScroll: false });
+          const groupe = c.closest('fieldset')!;
+          const z = document.createElement('p');
+          z.className = 'ct-err';
+          z.id = `ct-err-${c.name}`;
+          z.setAttribute('role', 'alert');
+          z.textContent = message(c);
+          /* Sous la légende : le message, puis le champ. */
+          groupe.querySelector('legend')!.after(z);
+          const cibles = c.type === 'radio' ? etape.querySelectorAll<Champ>(`input[name="${c.name}"]`) : [c];
+          cibles.forEach((x) => {
+            x.setAttribute('aria-invalid', 'true');
+            x.setAttribute('aria-errormessage', z.id);
+          });
+          if (conduire) {
+            c.focus({ preventScroll: true });
+            defile(groupe);
+          }
           return false;
         }
         return true;
@@ -629,16 +657,14 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
         prec.hidden = courant === 0;
         suiv.hidden = dernier;
         envoi.classList.toggle('ct-envoi--pret', dernier);
-        jauge.textContent = `Étape ${courant + 1} sur ${pas.length}`;
+        jauge.textContent = `Étape ${courant + 1} sur ${pas.length} · ${pas[courant].dataset.titre ?? ''}`;
         jauge.style.setProperty('--part', String((courant + 1) / pas.length));
 
         if (focalise) {
-          const cible = pas[courant].querySelector<HTMLElement>('fieldset');
+          const cible = pas[courant].querySelector<HTMLElement>('fieldset:not([hidden])');
           cible?.focus({ preventScroll: true });
           const haut = form.getBoundingClientRect().top;
-          if (haut < 0 || haut > window.innerHeight * 0.5) {
-            form.scrollIntoView({ behavior: doux ? 'smooth' : 'auto', block: 'start' });
-          }
+          if (haut < 0 || haut > window.innerHeight * 0.5) defile(form);
         }
       }
 
@@ -648,6 +674,21 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
       prec.addEventListener('click', () => {
         nettoie(pas[courant]);
         affiche(courant - 1);
+      });
+
+      /* Une erreur s'efface dès que la réponse change. */
+      form.addEventListener('change', (e) => {
+        const c = e.target as Champ;
+        if (c.getAttribute('aria-invalid') === 'true' || c.type === 'radio') {
+          const groupe = c.closest('fieldset');
+          if (groupe?.querySelector('.ct-err') && (c.type === 'radio' || c.checkValidity())) {
+            groupe.querySelectorAll('.ct-err').forEach((z) => z.remove());
+            groupe.querySelectorAll('[aria-invalid="true"]').forEach((x) => {
+              x.removeAttribute('aria-invalid');
+              x.removeAttribute('aria-errormessage');
+            });
+          }
+        }
       });
 
       /* Entrée dans un champ texte fait avancer, pas envoyer. */
@@ -661,38 +702,37 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
         if (valide(pas[courant])) affiche(courant + 1);
       });
 
-      /* Dernier filet : si un champ d'une étape précédente est incomplet,
-         on y retourne au lieu d'envoyer une demande inutilisable. */
+      /* Dernier filet : si un champ d'une étape est incomplet, on y retourne
+         au lieu d'envoyer une demande inutilisable. */
       form.addEventListener('submit', (e) => {
         for (let i = 0; i < pas.length; i += 1) {
-          const etaitMasque = pas[i].hidden;
-          pas[i].hidden = false;
-          const bon = valide(pas[i]);
-          if (!bon) {
+          if (!valide(pas[i], false)) {
             e.preventDefault();
             affiche(i, false);
-            const z = pas[i].querySelector<HTMLElement>('.ct-err');
-            pas[i].querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
-            z?.scrollIntoView({ behavior: doux ? 'smooth' : 'auto', block: 'center' });
+            valide(pas[i]);
             return;
           }
-          pas[i].hidden = etaitMasque;
         }
       });
 
-      affiche(0, false);
+      /* Ce n'est pas cette pièce : retour à la première question. */
+      boutonNon?.addEventListener('click', () => {
+        detache();
+        nettoie(pas[courant]);
+        affiche(0);
+      });
+
+      affiche(depart, false);
+    } else {
+      boutonNon?.addEventListener('click', detache);
     }
   }
 </script>
+
 <style>
   /* /contact/ — préfixe `ct-`. Chaque bloc masquable a sa règle [hidden]
      explicite (un `display` l'écraserait sinon). */
-  .ct { padding-block: 0 var(--respire); }
-  .ct .grille { row-gap: var(--serre); align-items: start; }
-  @media (min-width: 64rem) {
-    .ct-aside { grid-column: 1 / span 4; grid-row: 1; }
-    .ct-form__hote { grid-column: 6 / -1; grid-row: 1; }
-  }
+  .ct-hote { scroll-margin-block-start: 6rem; }
 
   /* --- Le formulaire ---------------------------------------------------- */
   .ct-alerte {
@@ -705,12 +745,12 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
   .ct-form {
     position: relative;
     display: grid;
-    gap: clamp(1.3rem, 3vw, 1.9rem);
-    padding: clamp(1.25rem, 4vw, 2.5rem);
+    gap: clamp(1.3rem, 3vw, 1.75rem);
+    padding: clamp(1.1rem, 3.5vw, 2.25rem);
     background: var(--papier);
     border-radius: var(--r-m);
     /* L'en-tête est collant : le haut du formulaire ne doit pas passer dessous. */
-    scroll-margin-block-start: 5.5rem;
+    scroll-margin-block-start: 6rem;
   }
   .ct-leurre { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
@@ -735,7 +775,7 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
   .ct-piece__liens a:hover, .ct-piece__non:hover { color: var(--coquelicot-fonce); }
 
   /* Jauge : barre pleine et fine */
-  .ct-jauge { --part: 0.125; display: grid; gap: 0.6rem; font-size: var(--t-petit); color: var(--encre-doux); }
+  .ct-jauge { --part: 0.25; display: grid; gap: 0.6rem; font-size: var(--t-petit); color: var(--encre-doux); }
   .ct-jauge[hidden] { display: none; }
   .ct-jauge::before, .ct-jauge::after { content: ''; grid-area: 2 / 1; height: 2px; }
   .ct-jauge::before { background: color-mix(in oklab, var(--encre) 15%, transparent); }
@@ -745,10 +785,11 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
     transition: transform 400ms var(--sortie);
   }
 
-  /* Une étape */
-  .ct-pas { display: grid; min-width: 0; }
+  /* Une étape : une ou deux questions */
+  .ct-pas { display: grid; gap: clamp(1.75rem, 4vw, 2.25rem); min-width: 0; scroll-margin-block-start: 6rem; }
   .ct-pas[hidden] { display: none; }
-  .ct-champ { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 0.9rem; }
+  .ct-champ { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 0.9rem; scroll-margin-block-start: 6rem; }
+  .ct-champ[hidden] { display: none; }
   .ct-champ:focus { outline: none; }
   .ct-champ > legend {
     padding: 0; margin-block-end: 0.3rem;
@@ -757,16 +798,19 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
   }
   .ct-facultatif, .ct-oblig { font-family: var(--f-texte); font-size: var(--t-petit); color: var(--gris); margin-inline-start: 0.35rem; }
   .ct-oblig { color: var(--coquelicot-fonce); }
+  .ct-oblig[hidden] { display: none; }
   .ct-aide { color: var(--encre-doux); max-width: 36rem; }
 
   /* Choix : rangées cliquables, bouton radio natif conservé */
   .ct-options { display: grid; gap: 0.5rem; }
+  /* Réponses courtes : deux colonnes dès que la place le permet (pas à 320 px). */
+  .ct-options--serre { grid-template-columns: repeat(auto-fit, minmax(max(9rem, calc(50% - 0.25rem)), 1fr)); }
   @media (min-width: 34rem) {
-    .ct-options--serre { grid-template-columns: repeat(auto-fit, minmax(min(13rem, 100%), 1fr)); }
+    .ct-options--trois { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
   .ct-opt {
     display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.1rem 0.85rem; align-items: start;
-    min-height: 3.25rem; padding: 0.85rem 1rem;
+    min-height: 3.25rem; padding: 0.8rem 1rem;
     border: 1px solid color-mix(in oklab, var(--encre) 18%, transparent);
     border-radius: var(--r-s);
     background: var(--lin-haut);
@@ -775,6 +819,7 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
   .ct-opt:hover { border-color: var(--encre); }
   .ct-opt:has(input:checked) { border-color: var(--coquelicot); background: color-mix(in oklab, var(--rose) 45%, var(--lin-haut)); }
   .ct-opt:has(input:focus-visible) { outline: 2px solid var(--coquelicot); outline-offset: 2px; }
+  .ct-opt:has(input[aria-invalid='true']) { border-color: var(--coquelicot-fonce); }
   .ct-opt input, .ct-case input { accent-color: var(--coquelicot-fonce); width: 1.25rem; height: 1.25rem; margin: 0.15rem 0 0; }
   .ct-opt input { grid-row: 1 / span 2; }
   .ct-opt--court { align-items: center; }
@@ -785,9 +830,9 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
   /* Champs texte */
   .ct-duo { display: grid; gap: 1rem; }
   @media (min-width: 34rem) {
-    .ct-duo { grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr)); }
+    .ct-duo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
-  .ct-ligne { display: grid; gap: 0.35rem; min-width: 0; }
+  .ct-ligne { display: grid; gap: 0.35rem; min-width: 0; align-content: start; }
   .ct-ligne label { font-weight: 500; }
   .ct-note { font-size: var(--t-petit); color: var(--gris); }
   .ct-ligne input, .ct-ligne textarea {
@@ -796,8 +841,9 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
     border: 1px solid color-mix(in oklab, var(--encre) 25%, transparent);
     border-radius: var(--r-s);
     padding: 0.75rem 0.9rem; min-height: 3.1rem; width: 100%;
+    scroll-margin-block-start: 6rem;
   }
-  .ct-ligne textarea { resize: vertical; min-height: 8rem; }
+  .ct-ligne textarea { resize: vertical; min-height: 7rem; }
   .ct-ligne input:focus-visible, .ct-ligne textarea:focus-visible { outline: 2px solid var(--coquelicot); outline-offset: 1px; }
   .ct-ligne [aria-invalid='true'] { border-color: var(--coquelicot-fonce); }
   .ct-ligne input[type='file'] { background: var(--lin-haut); cursor: pointer; }
@@ -820,27 +866,43 @@ const description = `Décrivez votre projet de broderie personnalisée ou de cou
     background: color-mix(in oklab, var(--rose) 45%, #fff);
   }
 
-  /* Navigation et envoi */
-  .ct-nav { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: center; }
+  /* Navigation et envoi : pleine largeur sur téléphone */
+  .ct-nav { display: grid; gap: 0.6rem; }
   .ct-nav[hidden], .ct-nav button[hidden] { display: none; }
-  .ct-nav .btn { font-size: 1rem; }
-  .ct-nav #ct-suiv { margin-inline-start: auto; min-width: 9rem; }
-  .ct-envoi { display: grid; gap: 0.9rem; justify-items: start; }
+  .ct-nav .btn { font-size: 1rem; width: 100%; }
+  .ct-envoi { display: grid; gap: 0.9rem; }
+  .ct-envoi__btn { width: 100%; }
   .ct-rgpd { font-size: var(--t-petit); color: var(--gris); max-width: 40rem; }
-  /* Sans JS, .ct-form--etapes n'est jamais posée : le bouton reste visible. */
-  .ct-form--etapes .ct-envoi__btn { display: none; }
-  .ct-form--etapes .ct-envoi--pret .ct-envoi__btn { display: inline-flex; }
+  /* Sans JS, .ct-form--etapes n'est jamais posée : l'envoi reste visible. */
+  .ct-form--etapes .ct-envoi:not(.ct-envoi--pret) { display: none; }
+  @media (min-width: 34rem) {
+    .ct-nav { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 0.7rem; align-items: center; }
+    .ct-nav .btn { width: auto; }
+    .ct-nav #ct-suiv { min-width: 10rem; margin-inline-start: auto; }
+    .ct-envoi { justify-items: start; }
+    .ct-envoi__btn { width: auto; }
+  }
 
   /* --- Autres moyens ---------------------------------------------------- */
-  .ct-aside { display: grid; gap: 1.1rem; justify-items: start; }
-  .ct-aside__p { color: var(--encre-doux); }
-  .ct-canaux { display: grid; gap: 0.6rem; width: 100%; }
-  .ct-infos { width: 100%; }
-  .ct-infos > div {
-    display: grid; gap: 0.15rem; padding-block: 0.85rem;
-    border-block-start: 1px solid color-mix(in oklab, currentColor 18%, transparent);
+  .ct-autres { padding-block: var(--serre); }
+  .ct-faits { margin-block-start: 1rem; }
+  .ct-wa { margin-block-start: 0.5rem; }
+  .ct-coord { display: none; }
+  @media (min-width: 48rem) {
+    .ct-autres { display: none; }
+    .ct-coord { display: grid; gap: 1rem; margin-block-start: clamp(2rem, 4vw, 3.5rem); font-size: var(--t-petit); color: var(--encre); }
+    .ct-coord__titre { font-family: var(--f-titre); font-size: var(--t-h3); line-height: 1.1; }
+    .ct-coord dl { border-block-start: 1px solid color-mix(in oklab, currentColor 18%, transparent); }
+    .ct-coord dl > div {
+      display: grid; grid-template-columns: minmax(0, 7rem) minmax(0, 1fr); gap: 0.2rem 1rem;
+      padding-block: 0.8rem;
+      border-block-end: 1px solid color-mix(in oklab, currentColor 18%, transparent);
+    }
+    .ct-coord dt { font-family: var(--f-mono); font-size: var(--t-micro); color: var(--gris); padding-block-start: 0.2em; }
+    .ct-coord dd { margin: 0; color: var(--encre-doux); overflow-wrap: anywhere; }
+    .ct-coord dd a { color: var(--encre); text-underline-offset: 3px; display: inline-flex; align-items: center; min-height: 2.75rem; }
   }
-  .ct-infos dt { font-family: var(--f-mono); font-size: var(--t-micro); color: var(--gris); }
-  .ct-infos dd { margin: 0; font-size: var(--t-petit); color: var(--encre-doux); }
-  .ct-infos dd a { color: var(--encre); text-underline-offset: 3px; }
+  @media (min-width: 48rem) and (max-width: 63.999rem) {
+    .ct-coord dl > div { grid-template-columns: minmax(0, 1fr); }
+  }
 </style>
