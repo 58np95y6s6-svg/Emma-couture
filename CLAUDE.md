@@ -186,6 +186,11 @@ Organisation :
 - Traitement par script (`sharp`) pour être reproductible ; journal des retouches par photo.
 - Grosse volumétrie : travailler dossier par dossier (Claude Code en local), pas tout d'un coup.
 
+### Références pour les contenus visuels
+Avant de produire un visuel (post Instagram, bannière événement, image OG, affiche, étiquette),
+relire `docs/references-visuelles/` : grille « logo → branding → marketing » et pistes transposées
+à Emma. Les nouvelles références s'y ajoutent (une note + un dossier d'images par série).
+
 ## Stratégie SEO & plan de site
 ### Ce qu'Emma fait réellement (constaté sur ses photos, septembre 2026)
 ⚠️ **Emma fait de la broderie MACHINE, pas de la broderie main.** Matériel professionnel visible

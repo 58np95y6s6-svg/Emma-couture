@@ -369,6 +369,12 @@ Le client attend qu'on voie le savoir-faire. En utiliser **au moins six**, et di
 - **Aucune bibliothèque JS d'animation.** Le poids compte pour Lighthouse.
 - Images en `loading="lazy"` sauf le hero, avec `width`/`height` pour éviter les sauts de mise en page.
 
+## Références pour les contenus visuels
+Avant tout visuel hors site (post Instagram, bannière, image OG, affiche de marché) : lire
+`docs/references-visuelles/README.md`. La grille « logo → branding → marketing » impose une seule
+idée par visuel et une mise en scène d'objets réels (fil, bobine, tambour, dentelle libre),
+jamais une broderie générée.
+
 ## Images disponibles
 
 Produites par `scripts/traiter-photos.mjs` dans `src/assets/creations/`, EXIF supprimées,
