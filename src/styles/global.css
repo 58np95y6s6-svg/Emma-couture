@@ -452,7 +452,7 @@ blockquote p { font-family: var(--f-texte); }
 }
 .rangee > * { scroll-snap-align: start; }
 @media (min-width: 40rem) { .rangee { grid-auto-columns: minmax(16rem, 44%); } }
-@media (min-width: 64rem) { .rangee { grid-auto-columns: minmax(18rem, 24rem); } }
+@media (min-width: 64rem) { .rangee { grid-auto-columns: minmax(15rem, 18rem); } }
 @media (min-width: 64rem) {
   .rangee--grille {
     grid-column: large-d / large-f;
@@ -461,6 +461,20 @@ blockquote p { font-family: var(--f-texte); }
   }
 }
 .rangee:focus-visible { outline-offset: -3px; }
+@media (prefers-reduced-motion: no-preference) { .rangee { scroll-behavior: smooth; } }
+
+/* Flèches de la rangée : ordinateur et tablette uniquement (au doigt, on glisse). */
+.defile { display: none; gap: 0.5rem; }
+.defile button {
+  display: grid; place-items: center;
+  width: 3rem; height: 3rem; border-radius: 50%;
+  border: 2px solid var(--encre); background: transparent; color: var(--encre);
+  cursor: pointer; transition: background-color 200ms ease, color 200ms ease, opacity 200ms ease;
+}
+.defile button:hover:not(:disabled) { background: var(--encre); color: var(--papier); }
+.defile button:disabled { opacity: 0.3; cursor: default; }
+.defile svg { width: 1.4rem; height: 1.4rem; }
+@media (min-width: 48rem) and (hover: hover) { .defile { display: flex; } }
 
 /* Couleur de carte selon la catégorie (jamais selon la position). */
 .carte {
@@ -624,7 +638,7 @@ blockquote p { font-family: var(--f-texte); }
   margin-block-end: 0.4rem;
 }
 .pied__nav a, .pied__nav p { display: flex; align-items: center; min-height: 44px; font-size: var(--t-petit); }
-.pied__nav p { min-height: 0; padding-block: 0.3rem; }
+.pied__nav p { display: block; min-height: 0; padding-block: 0.3rem; }
 .pied__bas {
   display: flex; flex-wrap: wrap; gap: 0.2rem 1.4rem; align-items: center;
   margin-block-start: var(--serre);

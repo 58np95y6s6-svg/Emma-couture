@@ -118,18 +118,24 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
         indiqués correspondent au modèle présenté.
       </p>
     </TeteSection>
+    <div class="creations__barre">
+      <a class="lien-fleche" href="/creations/">Voir toutes les créations</a>
+      <p class="defile" data-defile="rangee-accueil">
+        <button type="button" data-sens="-1" aria-label="Créations précédentes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H6m5-6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button type="button" data-sens="1" aria-label="Créations suivantes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13m-5-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </p>
+    </div>
 
-    <div class="rangee rangee--grille" tabindex="0" role="region" aria-label="Créations récentes" data-reglage="accueil-creations">
+    <div class="rangee" id="rangee-accueil" tabindex="0" role="region" aria-label="Créations récentes" data-reglage="accueil-creations">
       {toutes.map((c, i) => (
         <CarteCreation
           creation={c}
           prioritaire={i === 0}
           cachee={i >= 6}
-          tailles="(max-width: 40rem) 78vw, (max-width: 64rem) 44vw, 28rem"
+          tailles="(max-width: 40rem) 78vw, (max-width: 64rem) 44vw, 18rem"
         />
       ))}
     </div>
-    <p><a class="lien-fleche" href="/creations/">Voir toutes les créations</a></p>
   </section>
 
   <!-- ===================== DENTELLE LIBRE ===================== -->
@@ -269,6 +275,30 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
   <AppelFinal />
 </Base>
 
+<script>
+  /* Flèches de la rangée : défilent d'une largeur de carte, se grisent aux bouts. */
+  document.querySelectorAll<HTMLElement>('[data-defile]').forEach((nav) => {
+    const rangee = document.getElementById(nav.dataset.defile ?? '');
+    if (!rangee) return;
+    const boutons = nav.querySelectorAll<HTMLButtonElement>('button');
+    const pas = () => {
+      const carte = rangee.querySelector<HTMLElement>(':scope > :not([hidden])');
+      return carte ? carte.offsetWidth + parseFloat(getComputedStyle(rangee).columnGap || '0') : rangee.clientWidth;
+    };
+    const etat = () => {
+      const max = rangee.scrollWidth - rangee.clientWidth - 2;
+      boutons[0].disabled = rangee.scrollLeft <= 2;
+      boutons[1].disabled = rangee.scrollLeft >= max;
+    };
+    boutons.forEach((b) => b.addEventListener('click', () => {
+      rangee.scrollBy({ left: Number(b.dataset.sens) * pas() });
+    }));
+    rangee.addEventListener('scroll', etat, { passive: true });
+    window.addEventListener('resize', etat);
+    etat();
+  });
+</script>
+
 <style>
   /* ============================ HAUT DE PAGE ============================ */
   .haut { padding-block: clamp(1rem, 2.4vw, 2rem) var(--gout); }
@@ -314,7 +344,10 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
   /* ============================ CRÉATIONS ============================ */
   .creations { padding-block: var(--serre); }
   .creations :global(.ts) { margin-block-end: clamp(1.5rem, 3vw, 2.5rem); }
-  .creations > p { margin-block-start: 1rem; }
+  .creations__barre {
+    display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    margin-block-end: 0.75rem;
+  }
 
   /* ============================ DENTELLE ============================ */
   .dentelle { padding-block: var(--serre); }

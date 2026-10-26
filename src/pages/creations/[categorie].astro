@@ -559,5 +559,7 @@ const waTissu = lienWhatsApp('Bonjour Emma, je vous envoie la photo d’un tissu
 
   .technique { padding-block: var(--serre); }
   .continuer { padding-block: var(--serre); }
-  @media (min-width: 48rem) { .continuer__liste { grid-column: 1 / span 8; } }
+  /* Pleine largeur : les lignes n'ont qu'un titre ; en 8 colonnes elles se
+     cassaient en deux lignes et laissaient un grand vide à droite. */
+  .continuer__liste { grid-column: 1 / -1; }
 </style>
