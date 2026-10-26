@@ -1,9 +1,9 @@
 ---
 /**
  * ÉTAPES — le seul composant pour toutes les séquences du site.
- * Colonnes égales sur grand écran, verticales sur téléphone. Filet plein au
- * dessus de chaque étape, numéro en chasse fixe. Fond uni : pas de couleur
- * par position. Seule l'étape `cle` (la validation du motif) porte le rouge.
+ * Colonnes égales sur grand écran, verticales sur téléphone. Cartes papier,
+ * grand chiffre en couleur de fil. L'étape `cle` (la validation du motif)
+ * porte le prune.
  */
 interface Etape {
   titre: string;
@@ -20,7 +20,7 @@ const { etapes } = Astro.props;
   {
     etapes.map((e, i) => (
       <li class:list={{ 'etp--cle': e.cle }}>
-        <p class="etp__n mono">{String(i + 1).padStart(2, '0')}</p>
+        <span class="etp__n" aria-hidden="true">{i + 1}</span>
         <h3>{e.titre}</h3>
         <p class="etp__texte">{e.texte}</p>
       </li>
@@ -29,19 +29,25 @@ const { etapes } = Astro.props;
 </ol>
 
 <style>
-  .etp { display: grid; gap: 0 clamp(1rem, 2vw, 2rem); counter-reset: none; }
+  /* Cartes papier, grand chiffre aux couleurs des fils. L'étape clé (la
+     validation du motif) prend le prune. */
+  .etp { display: grid; gap: var(--gout); }
   .etp > li {
-    display: grid; gap: 0.6rem; align-content: start;
-    padding-block: 1.1rem 1.8rem;
-    border-block-start: 1px solid color-mix(in oklab, currentColor 22%, transparent);
+    display: flex; flex-direction: column; gap: 0.85rem;
+    padding: clamp(1.4rem, 2.6vw, 2.25rem);
+    border-radius: var(--r-carte);
+    background: var(--papier);
+    color: var(--encre);
   }
-  .etp__n { font-size: var(--t-micro); opacity: 0.7; }
+  .etp__n {
+    font-family: var(--f-titre); font-weight: 800; font-stretch: 140%;
+    font-size: clamp(3rem, 2.3rem + 3vw, 5.2rem); line-height: 0.85; letter-spacing: -0.03em;
+    color: var(--fil-bleu);
+  }
+  .etp > li:first-child .etp__n { color: var(--fil-rose); }
+  .etp--cle .etp__n { color: var(--prune) !important; }
   .etp h3 { font-size: var(--t-h3); }
-  .etp__texte { font-size: var(--t-petit); line-height: 1.55; opacity: 0.85; max-width: 34ch; }
-  .etp--cle { border-block-start: 2px solid var(--coquelicot); }
-  .etp--cle .etp__n { color: var(--coquelicot-fonce); opacity: 1; }
-  :global(.tapis) .etp--cle .etp__n { color: var(--rose); }
-  :global(.tapis) .etp--cle { border-block-start-color: var(--rose); }
+  .etp__texte { color: var(--encre-doux); max-width: 38ch; }
   @media (min-width: 48rem) {
     .etp { grid-template-columns: repeat(min(var(--n), 3), minmax(0, 1fr)); }
   }

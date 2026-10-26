@@ -6,13 +6,13 @@ import CarteCreation from '../components/CarteCreation.astro';
 import TeteSection from '../components/TeteSection.astro';
 import Etapes from '../components/Etapes.astro';
 import AppelFinal from '../components/AppelFinal.astro';
-import LigneFaits from '../components/LigneFaits.astro';
 import { SITE, ATELIER, OCCASIONS, LIBELLES, ETAPES_COMMANDE, lienWhatsApp } from '../config';
 
 import portrait from '../assets/creations/hero-mobile/emma-brodeuse-vitre-portrait.webp';
 import bobines from '../assets/creations/bandeau/atelier-mur-bobines-fil-broderie-vitre.webp';
 import machine from '../assets/creations/galerie/machine-a-broder-en-cours-atelier-vitre.webp';
 import arbre from '../assets/creations/galerie/arbre-de-vie-brode-dentelle-ajouree-fil-dore.webp';
+import papillon from '../assets/creations/plein-ecran/papillon-brode-dentelle-ajouree-coquelicots.webp';
 
 /* Photos des quatre occasions, dans l'ordre de config.OCCASIONS. */
 import occNaissance from '../assets/creations/galerie/doudou-plat-brode-prenom-keanu-naissance.webp';
@@ -33,172 +33,150 @@ const creations = (await getCollection('creations', ({ data }) => !data.masquee)
   .sort((a, b) => a.data.ordre - b.data.ordre)
   .slice(0, 6);
 
-/*
-  Le carrousel du haut de page : des prénoms de CLIENTES, avec une légende
-  qui les ancre dans une vraie commande. Ce sont les prénoms lisibles sur
-  les photos d'Emma.
-  ⚠️ EXEMPLES : légendes et poids à faire valider par Emma, et accord des
-  clientes à confirmer avant mise en ligne.
-*/
-const prenoms = [
-  { prenom: 'Ambre', legende: 'cadre de naissance · prénom, date, poids et taille' },
-  { prenom: 'Malo', legende: "sac à dos d'école · brodé au prénom" },
-  { prenom: 'Lisa', legende: 'trousse cousue main · brodée au prénom' },
-  { prenom: 'Alicia', legende: 'drap de bain rose · fil mauve', fil: '#6B5560' },
-];
 
 
-
-const titre = `${SITE.nom} · broderie personnalisée & couture sur mesure à ${SITE.ville} (35)`;
+const titre = `Brodeuse et couturière à ${SITE.ville} (35) · broderie personnalisée | ${SITE.nom}`;
 const description =
-  'Broderie personnalisée au prénom et couture sur mesure à Vitré (35) : cadeaux de naissance, linge de bain, dentelle libre, sacs et trousses. Remise en main propre à Vitré et Rennes, envoi partout en France.';
+  'Broderie personnalisée au prénom et couture sur mesure à Vitré (35) : cadeaux de naissance, linge de bain, dentelle libre, sacs et trousses. Vitré, Rennes, Châteaubourg et alentours, envoi en France.';
 
 const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity));
 ---
 
 <Base titre={titre} description={description}>
   {/*
-    ⚠️ CONTENU D'EXEMPLE : prix, délais, légendes, numéro WhatsApp, téléphone
-    et e-mail sont provisoires (voir src/config.ts).
+    ⚠️ CONTENU D'EXEMPLE : prix, délais, numéro WhatsApp, téléphone et e-mail
+    sont provisoires (voir src/config.ts).
     Vocabulaire : broderie MACHINE. Ne jamais écrire « brodé à la main ».
-    Règles de mise en page : grille à 12 colonnes, aucune rotation, aucun
-    chevauchement, aucun décalage en escalier (voir le SKILL).
+    Direction « Bobines » : blocs de couleur arrondis sur la grille à 12
+    colonnes, aucune rotation, aucun décalage en escalier (voir le SKILL).
   */}
 
-  <!-- ===================== HAUT DE PAGE ===================== -->
-  <section class="ouv bande">
-    <div class="grille">
-      <div class="ouv__texte">
-        <p class="ouv__lieu">Brodeuse et couturière à {SITE.ville}, Ille-et-Vilaine</p>
-        <h1>Broderie personnalisée et couture sur mesure</h1>
-        <p class="chapo">
-          Je réalise dans mon atelier de {SITE.ville} des pièces brodées au prénom ou au motif de
-          votre choix&nbsp;: linge de bain, cadeaux de naissance, décoration en dentelle libre. Je
-          confectionne également sacs, trousses et tabliers. Chaque motif vous est soumis avant
-          réalisation.
-        </p>
+  <!-- ===================== HAUT DE PAGE : le bento ===================== -->
+  <section class="haut bande" aria-labelledby="titre-accueil">
+    <div class="haut__grille">
+      <div class="haut__texte">
+        <div class="haut__dire">
+          <p class="haut__lieu">Brodeuse et couturière à {SITE.ville}, Ille-et-Vilaine</p>
+          <h1 id="titre-accueil">Broderie personnalisée et couture sur mesure</h1>
+          <p class="chapo">
+            Je réalise dans mon atelier de {SITE.ville} des pièces brodées au prénom ou au motif de
+            votre choix&nbsp;: linge de bain, cadeaux de naissance, décoration en dentelle libre. Je
+            confectionne également sacs, trousses et tabliers. Chaque motif vous est soumis avant
+            réalisation.
+          </p>
+        </div>
         <p class="actions">
-          <a class="btn btn--wa btn--grand" href={lienWhatsApp()}>{LIBELLES.whatsapp}</a>
+          <a class="btn btn--wa btn--grand" href={lienWhatsApp()}>
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"/></svg>
+            {LIBELLES.whatsapp}
+          </a>
           <a class="btn btn--creux btn--grand" href="/contact/#devis">{LIBELLES.devis}</a>
         </p>
-        <LigneFaits
-          faits={[
-            ATELIER.delaiReponse,
-            `Délai actuel : ${ATELIER.delaiActuel}`,
-            `À partir de ${prixMin} €`,
-            'Vitré, Rennes, envoi en France',
-          ]}
-        />
       </div>
 
-      <figure class="ouv__portrait">
+      <figure class="haut__portrait">
         <Image
           src={portrait}
-          alt="Emma, brodeuse et couturière à Vitré, souriante"
+          alt="Emma, brodeuse et couturière à Vitré, souriante, en extérieur"
           widths={[400, 600, 800, 1000]}
-          sizes="(max-width: 48rem) 92vw, 36vw"
+          sizes="(max-width: 56rem) 92vw, 40vw"
           loading="eager"
           fetchpriority="high"
           decoding="async"
         />
-        <figcaption class="mono">Emma, votre seule interlocutrice, de la demande à l'envoi.</figcaption>
+        <figcaption><span>Emma, votre seule interlocutrice</span></figcaption>
       </figure>
+
+      {/* ⚠️ Délai, prix et temps de réponse d'exemple, à faire valider par Emma. */}
+      <ul class="tuiles haut__faits" aria-label="En bref">
+        <li class="tuile" style="--c:var(--menthe)"><strong>Dans la journée</strong><span>Réponse à votre message</span></li>
+        <li class="tuile" style="--c:var(--beurre)"><strong>{ATELIER.delaiActuel}</strong><span>Délai de réalisation actuel</span></li>
+        <li class="tuile" style="--c:var(--bleu)"><strong>Dès {prixMin}&nbsp;€</strong><span>Pièce personnalisée au prénom</span></li>
+        <li class="tuile tuile--prune" style="--c:var(--prune)"><strong>Vitré, Rennes</strong><span>En main propre, ou envoi en France</span></li>
+      </ul>
     </div>
   </section>
 
-  <!-- ===================== SUR LE MÉTIER : la signature ===================== -->
-  <section class="metier bande" aria-labelledby="metier-titre">
-    <div class="grille">
-      <div
-        class="tambour"
-        data-broderie="carrousel"
-        data-prenoms={JSON.stringify(prenoms)}
-        data-fil="#D93D28"
-        data-duree="2600"
-        data-legende="legende-prenom"
-      >
-        <p class="tambour__scene" data-scene aria-hidden="true">{prenoms[0].prenom}</p>
-        <p class="lu-seulement">Exemples de prénoms brodés pour des clientes.</p>
-      </div>
-      <div class="metier__dire">
-        <h2 id="metier-titre">Sur le métier</h2>
-        <p class="metier__legende mono" aria-hidden="true">
-          <span id="legende-prenom">{prenoms[0].legende}</span>
-        </p>
-        <p class="mesure">
-          Chaque prénom est numérisé, puis brodé point par point par la machine. Avant de lancer la
-          broderie, je vous envoie le motif : l'écriture, la taille et la couleur du fil restent
-          modifiables jusqu'à votre accord.
-        </p>
-      </div>
-    </div>
-  </section>
+  <!-- La signature : les cinq fils des bobines se brodent au défilement. -->
+  <div class="fils bande" aria-hidden="true">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path pathLength="1" d="M0 30 C 150 30, 200 90, 360 90 S 560 30, 720 30 S 920 90, 1080 90 S 1170 60, 1200 60"/>
+      <path pathLength="1" d="M0 45 C 150 45, 200 99, 360 99 S 560 45, 720 45 S 920 99, 1080 99 S 1170 72, 1200 72"/>
+      <path pathLength="1" d="M0 60 C 150 60, 200 108, 360 108 S 560 60, 720 60 S 920 108, 1080 108 S 1170 84, 1200 84"/>
+      <path pathLength="1" d="M0 15 C 150 15, 200 81, 360 81 S 560 15, 720 15 S 920 81, 1080 81 S 1170 48, 1200 48"/>
+      <path pathLength="1" d="M0 0 C 150 0, 200 72, 360 72 S 560 0, 720 0 S 920 72, 1080 72 S 1170 36, 1200 36"/>
+    </svg>
+  </div>
 
   <!-- ===================== CRÉATIONS ===================== -->
-  <section class="bande creations" id="creations">
-    <TeteSection titre="Créations récentes" variante="duo">
+  <section class="bande creations" id="creations" aria-labelledby="creations-titre">
+    <TeteSection titre="Créations récentes" variante="duo" id="creations-titre">
       <p>
-        Chaque pièce est personnalisée : le tissu, l'écriture et la couleur du fil sont choisis avec
-        vous. Toutes les créations présentées peuvent être réalisées à votre nom.
+        Chaque pièce se commande au prénom, aux couleurs et aux dimensions de votre choix. Les prix
+        indiqués correspondent au modèle présenté.
       </p>
-      <a slot="lien" class="lien-fleche" href="/creations/">Voir toutes les créations</a>
     </TeteSection>
 
-    <div class="rangee" tabindex="0" role="region" aria-label="Créations récentes, rangée défilante">
-      {creations.map((c, i) => <CarteCreation creation={c} prioritaire={i === 0} />)}
+    <div class="rangee rangee--grille" tabindex="0" role="region" aria-label="Créations récentes">
+      {creations.map((c, i) => (
+        <CarteCreation
+          creation={c}
+          prioritaire={i === 0}
+          tailles="(max-width: 40rem) 78vw, (max-width: 64rem) 44vw, 28rem"
+        />
+      ))}
     </div>
-    <div class="creations__barre" aria-hidden="true"><span></span></div>
+    <p><a class="lien-fleche" href="/creations/">Voir toutes les créations</a></p>
   </section>
 
-  <!-- ===================== BANDEAU BOBINES (seule occurrence du site) ===================== -->
-  <figure class="bandeau">
-    <Image
-      src={bobines}
-      alt="Mur de l'atelier couvert de bobines de fil à broder de toutes les couleurs"
-      widths={[800, 1400, 2000, 2400]}
-      sizes="100vw"
-      loading="lazy"
-      decoding="async"
-    />
-  </figure>
-
-  <!-- ===================== DENTELLE LIBRE (le seul tapis de la page) ===================== -->
-  <section class="bande tapis dentelle" id="dentelle" aria-labelledby="dentelle-titre">
-    <div class="grille">
-      <div class="dentelle__dire">
-        <h2 id="dentelle-titre">La dentelle libre</h2>
-        <p class="chapo">
-          Une broderie machine réalisée sans tissu : le motif est brodé sur un support soluble, qui
-          disparaît au rinçage. Il ne reste que le fil, ajouré et autoportant.
-        </p>
-        <p class="mesure">
-          Arbre de vie, papillon, initiale, napperon : ces pièces se présentent sous cadre, se
-          suspendent à une fenêtre ou se cousent sur une robe de mariée. C'est une technique encore
-          rare en Ille-et-Vilaine, et celle que je pratique avec le plus de plaisir.
-        </p>
-        <p class="actions">
-          <a class="btn btn--or" href="/creations/decoration-ajouree/">Découvrir la dentelle libre</a>
-        </p>
-      </div>
-      <figure class="dentelle__fig">
+  <!-- ===================== DENTELLE LIBRE ===================== -->
+  <section class="bande dentelle" id="dentelle" aria-labelledby="dentelle-titre">
+    <div class="dentelle__grille">
+      <figure class="dentelle__photo">
         <Image
-          src={arbre}
-          alt="Arbre de vie brodé en dentelle ajourée fil doré, pièce autoportante sans support tissu"
-          widths={[400, 640, 900]}
-          sizes="(max-width: 48rem) 92vw, 36vw"
+          src={papillon}
+          alt="Papillon et fleurs rouges en dentelle libre, brodés sans tissu, posés sur un feuillage"
+          widths={[480, 800, 1200, 1600]}
+          sizes="(max-width: 56rem) 92vw, 56vw"
           loading="lazy"
           decoding="async"
         />
-        <figcaption class="mono">Arbre de vie, fil doré, sans support tissu</figcaption>
       </figure>
+      <div class="dentelle__texte">
+        <h2 id="dentelle-titre">La dentelle libre</h2>
+        <p>
+          Une broderie machine réalisée sans tissu&nbsp;: le motif est brodé sur un support soluble,
+          qui disparaît au rinçage. Il ne reste que le fil, ajouré et autoportant.
+        </p>
+        <p class="actions">
+          <a class="btn btn--creux" href="/creations/decoration-ajouree/">Découvrir la dentelle libre</a>
+        </p>
+      </div>
+      <figure class="dentelle__arbre">
+        <Image
+          src={arbre}
+          alt="Arbre de vie brodé en dentelle ajourée fil doré, pièce autoportante sans support tissu"
+          widths={[320, 480, 640]}
+          sizes="(max-width: 56rem) 46vw, 16vw"
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+      <div class="dentelle__legende">
+        <p>
+          Arbre de vie, papillon, initiale, napperon&nbsp;: ces pièces se présentent sous cadre, se
+          suspendent à une fenêtre ou se cousent sur une robe de mariée.
+        </p>
+        <p class="mono">Une technique encore rare en Ille-et-Vilaine</p>
+      </div>
     </div>
   </section>
 
   <!-- ===================== OCCASIONS ===================== -->
-  <section class="bande occasions loin" id="occasions">
-    <TeteSection titre="Pour chaque occasion" variante="duo">
+  <section class="bande occasions" id="occasions" aria-labelledby="occasions-titre">
+    <TeteSection titre="Pour chaque occasion" variante="duo" id="occasions-titre">
       <p>
-        Indiquez-moi la date de votre événement : je vous confirme aussitôt si le délai de
+        Indiquez-moi la date de votre événement&nbsp;: je vous confirme aussitôt si le délai de
         réalisation le permet. Baptêmes, anniversaires et départs en retraite sont également les
         bienvenus.
       </p>
@@ -207,21 +185,21 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
     <ul class="occ">
       {
         OCCASIONS.map((o, i) => (
-          <li style={`--f:${o.fil}`}>
-            <a class="occ__lien" href={`/cadeaux/${o.slug}/`}>
+          <li>
+            <a class:list={['occ__lien', { 'occ__lien--sombre': o.fil === 'prune' }]} style={`--c:var(--${o.fil})`} href={`/cadeaux/${o.slug}/`}>
               <span class="occ__img">
                 <Image
                   src={photosOccasions[i]}
                   alt={altOccasions[i]}
                   widths={[320, 480, 640]}
-                  sizes="(max-width: 48rem) 46vw, 22vw"
+                  sizes="(max-width: 64rem) 46vw, 22vw"
                   loading="lazy"
                   decoding="async"
                 />
               </span>
-              <span class="occ__bas">
-                <span class="occ__nom">{o.nom}</span>
-                <span class="occ__fleche" aria-hidden="true">→</span>
+              <span class="occ__nom">
+                {o.nom}
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13m-5-6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </span>
             </a>
           </li>
@@ -231,38 +209,57 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
   </section>
 
   <!-- ===================== DÉROULEMENT ===================== -->
-  <section class="bande methode loin" id="methode">
-    <TeteSection titre="Le déroulement d'une commande">
-      <p>Aucune réalisation n'est lancée sans votre accord sur le motif.</p>
+  <section class="bande bloc methode loin" id="methode" aria-labelledby="methode-titre">
+    <TeteSection titre="Le déroulement d'une commande" variante="duo" id="methode-titre">
+      <p>
+        Trois étapes, de votre premier message à la remise de la pièce. Rien n'est brodé tant que le
+        motif n'a pas reçu votre accord.
+      </p>
     </TeteSection>
     <Etapes etapes={ETAPES_COMMANDE} />
   </section>
 
   <!-- ===================== ATELIER ===================== -->
   <section class="bande atelier loin" id="atelier" aria-labelledby="atelier-titre">
-    <div class="grille">
-      <figure class="atelier__fig">
+    <figure class="atelier__bobines">
+      <Image
+        src={bobines}
+        alt="Mur de l'atelier couvert de bobines de fil à broder : jaune, bleu ciel, turquoise, rose, prune, menthe"
+        widths={[640, 1200, 1800]}
+        sizes="(max-width: 85rem) 92vw, 85rem"
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+    <div class="atelier__bas">
+      <div class="atelier__dire">
+        <h2 id="atelier-titre">Un atelier, une seule interlocutrice</h2>
+        <p>
+          Je lis personnellement chacun de vos messages, je choisis les fils parmi mon mur de bobines,
+          je réalise la broderie et je prépare l'envoi. Du premier échange à la remise, vous traitez
+          avec la personne qui réalise votre pièce.
+        </p>
+        <p>
+          Je travaille pour les particuliers de Vitré, de Rennes et des communes voisines&nbsp;:
+          Pocé-les-Bois, Châteaubourg, Étrelles, Argentré-du-Plessis, Cesson-Sévigné. Remise en main
+          propre à Vitré et à Rennes, envoi soigné partout en France.
+        </p>
+        <p class="actions">
+          <a class="lien-fleche" href="/l-atelier/">Découvrir l'atelier</a>
+          <a class="lien-fleche" href="/brodeuse-vitre/">À Vitré</a>
+          <a class="lien-fleche" href="/broderie-personnalisee-rennes/">À Rennes</a>
+        </p>
+      </div>
+      <figure class="atelier__machine">
         <Image
           src={machine}
           alt="Broderie en cours sous la tête de la machine : cerisiers en fleurs et colibri en fil de couleur"
-          widths={[400, 640, 900]}
-          sizes="(max-width: 48rem) 92vw, 40vw"
+          widths={[480, 800, 1200]}
+          sizes="(max-width: 56rem) 92vw, 46vw"
           loading="lazy"
           decoding="async"
         />
       </figure>
-      <div class="atelier__dire">
-        <h2 id="atelier-titre">Un atelier, une seule interlocutrice</h2>
-        <p class="mesure">
-          Je lis personnellement chacun de vos messages, je choisis les fils parmi mon mur de
-          bobines, je réalise la broderie et je prépare l'envoi. Du premier échange à la remise,
-          vous traitez avec la personne qui réalise votre pièce.
-        </p>
-        <p class="actions">
-          <a class="lien-fleche" href="/l-atelier/">Découvrir l'atelier</a>
-          <a class="lien-fleche" href="/sur-mesure/">Tarifs et délais</a>
-        </p>
-      </div>
     </div>
   </section>
 
@@ -271,151 +268,123 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
 
 <style>
   /* ============================ HAUT DE PAGE ============================ */
-  .ouv { padding-block: clamp(1.5rem, 4vw, 3.5rem) var(--serre); }
-  .ouv .grille { row-gap: 2rem; align-items: center; }
-  .ouv__texte { display: grid; gap: 1.25rem; justify-items: start; }
-  .ouv__lieu { font-size: var(--t-petit); color: var(--coquelicot-fonce); }
-  .ouv h1 { font-size: var(--t-h1-accueil); max-width: 13ch; }
-
-  /* Sur téléphone, le visage d'abord : c'est le gage de confiance. */
-  .ouv__portrait { display: grid; gap: 0.6rem; order: -1; }
-  .ouv__portrait :global(img) {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    object-position: 50% 38%;
-    border-radius: var(--r-m);
+  .haut { padding-block: clamp(1rem, 2.4vw, 2rem) var(--gout); }
+  .haut__grille {
+    display: grid; gap: var(--gout);
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'portrait' 'texte' 'faits';
   }
-  .ouv__portrait figcaption { font-size: var(--t-micro); color: var(--gris); }
-
-  @media (min-width: 48rem) {
-    .ouv__texte { grid-column: 1 / span 7; }
-    .ouv__portrait { grid-column: 8 / -1; order: 0; }
-    .ouv__portrait :global(img) { aspect-ratio: 4 / 5; }
+  .haut__texte {
+    grid-area: texte;
+    display: flex; flex-direction: column; justify-content: space-between; gap: clamp(1.25rem, 2vw, 1.75rem);
+    padding: clamp(24px, 4vw, 64px);
+    border-radius: var(--r-l);
+    background: var(--rose);
   }
-  @media (min-width: 64rem) {
-    .ouv { min-height: calc(100svh - 5rem); display: grid; align-content: center; }
+  .haut__dire { display: flex; flex-direction: column; gap: clamp(0.9rem, 1.6vw, 1.4rem); }
+  .haut__lieu { font-weight: 700; font-size: var(--t-chapo); color: var(--prune); }
+  .haut h1 { font-size: var(--t-h1-accueil); max-width: 15ch; }
+  .haut .chapo { color: var(--encre); max-width: 58ch; }
+  .haut__portrait {
+    grid-area: portrait; position: relative; margin: 0;
+    border-radius: var(--r-l); overflow: hidden;
+    background: var(--bleu); aspect-ratio: 5 / 4;
   }
-
-  /* ============================ SUR LE MÉTIER ============================ */
-  .metier {
-    padding-block: var(--serre);
-    border-block: 1px solid color-mix(in oklab, var(--encre) 12%, transparent);
+  .haut__portrait :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; }
+  .haut__portrait figcaption { position: absolute; inset: auto 14px 14px; display: flex; }
+  .haut__portrait figcaption span {
+    background: var(--papier); border-radius: 999px; padding: 0.45em 1em;
+    font-size: var(--t-micro); font-weight: 500;
   }
-  .metier .grille { row-gap: 2rem; align-items: center; }
-
-  /* Le tambour à broder : la seule occurrence du site. */
-  .tambour {
-    --bois: #C9A97E;
-    --bois-fonce: #8A6A46;
-    /* l'anneau de bois (17 px de chaque côté) compte dans la largeur */
-    width: min(calc(100% - 34px), 15rem);
-    aspect-ratio: 1;
-    border-radius: 50%;
-    display: grid; place-items: center;
-    container-type: inline-size;
-    background:
-      radial-gradient(70% 60% at 35% 30%, color-mix(in oklab, #fff 55%, transparent), transparent 70%),
-      repeating-linear-gradient(0deg, color-mix(in oklab, var(--encre) 4%, transparent) 0 1px, transparent 1px 3px),
-      repeating-linear-gradient(90deg, color-mix(in oklab, var(--encre) 4%, transparent) 0 1px, transparent 1px 3px),
-      var(--rose);
-    box-shadow:
-      0 0 0 10px var(--bois),
-      0 0 0 12px var(--bois-fonce),
-      0 0 0 17px var(--bois);
-    margin: 17px;
+  .haut__faits { grid-area: faits; }
+  @media (min-width: 56rem) {
+    .haut__grille {
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      grid-template-areas:
+        'texte texte texte texte texte texte texte portrait portrait portrait portrait portrait'
+        'faits faits faits faits faits faits faits portrait portrait portrait portrait portrait';
+    }
+    .haut__portrait { aspect-ratio: auto; min-height: 100%; }
   }
-  /* Taille fixe : les prénoms n'ont pas la même longueur, rien ne saute. */
-  .tambour__scene {
-    width: 80%;
-    height: 32cqi;
-    display: grid; place-items: center;
-    font-family: var(--f-titre);
-    font-size: 24cqi;
-    line-height: 1;
-    color: var(--coquelicot);
-  }
-  .tambour__scene :global(.broderie-prenom-pret) { line-height: 0; }
-  .tambour__scene :global(.broderie-prenom) { height: 32cqi; max-width: 100%; vertical-align: middle; }
-  .tambour__scene :global(.broderie-trace path) { stroke: var(--coquelicot); }
-
-  .metier__dire { display: grid; gap: 1rem; justify-items: start; }
-  .metier__legende { font-size: var(--t-micro); color: var(--coquelicot-fonce); min-height: 1.5em; }
-
-  @media (min-width: 48rem) {
-    .tambour { grid-column: 1 / span 5; justify-self: center; width: min(calc(100% - 34px), 26rem); }
-    .metier__dire { grid-column: 7 / -1; }
-  }
+  @media (min-width: 56rem) and (max-height: 760px) { .haut__texte { padding: 40px; } }
 
   /* ============================ CRÉATIONS ============================ */
-  .creations { padding-block: var(--serre); timeline-scope: --rangee; }
-  .creations__barre {
-    height: 2px;
-    background: color-mix(in oklab, var(--encre) 12%, transparent);
-    max-width: 20rem;
-    margin-block-start: 0.5rem;
-  }
-  .creations__barre span {
-    display: block; height: 100%;
-    background: var(--coquelicot);
-    transform-origin: 0 50%;
-    transform: scaleX(0.15);
-  }
-  @supports (animation-timeline: scroll()) {
-    @media (prefers-reduced-motion: no-preference) {
-      .creations__barre span { animation: barre linear both; animation-timeline: --rangee; }
-    }
-  }
-  @keyframes barre { from { transform: scaleX(0.15); } to { transform: scaleX(1); } }
-
-  .bandeau { margin: 0; }
+  .creations { padding-block: var(--serre); }
+  .creations :global(.ts) { margin-block-end: clamp(1.5rem, 3vw, 2.5rem); }
+  .creations > p { margin-block-start: 1rem; }
 
   /* ============================ DENTELLE ============================ */
-  .dentelle .grille { row-gap: 2.5rem; align-items: center; }
-  .dentelle__dire { display: grid; gap: 1.25rem; justify-items: start; }
-  .dentelle__fig { display: grid; gap: 0.6rem; }
-  .dentelle__fig :global(img) { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--r-m); }
-  .dentelle figcaption { font-size: var(--t-micro); color: var(--tapis-trait); }
-  @media (min-width: 48rem) {
-    .dentelle__dire { grid-column: 1 / span 6; }
-    .dentelle__fig { grid-column: 8 / -1; }
+  .dentelle { padding-block: var(--serre); }
+  .dentelle__grille { display: grid; gap: var(--gout); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dentelle__photo, .dentelle__texte { grid-column: 1 / -1; }
+  .dentelle__photo { border-radius: var(--r-l); overflow: hidden; aspect-ratio: 16 / 10; background: var(--papier-2); }
+  .dentelle__photo :global(img), .dentelle__arbre :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .dentelle__texte {
+    display: flex; flex-direction: column; gap: 1.25rem; align-items: flex-start;
+    padding: clamp(24px, 4vw, 56px);
+    border-radius: var(--r-l);
+    background: var(--prune); color: #fff;
+  }
+  .dentelle__texte h2 { color: #fff; }
+  .dentelle__texte p { font-size: var(--t-chapo); line-height: 1.55; color: color-mix(in oklab, #fff 92%, transparent); }
+  .dentelle__texte .btn--creux { --texte: #fff; --bord: #fff; --survol: #fff; --survol-texte: var(--prune); }
+  .dentelle__texte :focus-visible { outline-color: #fff; }
+  .dentelle__arbre { border-radius: var(--r-carte); overflow: hidden; background: #1f1f22; aspect-ratio: 4 / 5; }
+  .dentelle__legende {
+    display: flex; flex-direction: column; justify-content: space-between; gap: 1rem;
+    padding: 1.4rem; border-radius: var(--r-carte); background: var(--beurre);
+  }
+  .dentelle__legende .mono { font-size: var(--t-micro); }
+  @media (max-width: 29.999rem) { .dentelle__arbre, .dentelle__legende { grid-column: 1 / -1; } .dentelle__arbre { aspect-ratio: 4 / 3; } }
+  @media (min-width: 56rem) {
+    .dentelle__grille { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+    .dentelle__photo { grid-column: 1 / span 7; grid-row: 1 / span 2; aspect-ratio: auto; min-height: 34rem; }
+    .dentelle__texte { grid-column: 8 / -1; }
+    .dentelle__arbre { grid-column: 8 / span 2; aspect-ratio: auto; min-height: 13rem; }
+    .dentelle__legende { grid-column: 10 / -1; }
   }
 
   /* ============================ OCCASIONS ============================ */
-  .occasions { padding-block: var(--respire) var(--serre); }
+  .occasions { padding-block: var(--serre); }
   .occ { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gout); }
   @media (min-width: 64rem) { .occ { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   .occ__lien {
-    display: grid;
-    border-radius: var(--r-m);
-    overflow: hidden;
-    color: #fff;
-    text-decoration: none;
-    background: var(--f);
+    display: flex; flex-direction: column; height: 100%;
+    border-radius: var(--r-carte); overflow: hidden;
+    background: var(--c); color: var(--encre); text-decoration: none;
   }
-  .occ__img { display: block; aspect-ratio: 4 / 3; overflow: hidden; }
-  .occ__img :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 700ms var(--sortie); }
-  .occ__lien:hover .occ__img :global(img) { transform: scale(1.04); }
-  .occ__bas {
-    display: flex; justify-content: space-between; align-items: center; gap: 0.75rem;
-    min-height: 3.75rem;
-    padding: 0.9rem 1rem;
+  .occ__lien--sombre { color: #fff; }
+  .occ__img { display: block; aspect-ratio: 1; overflow: hidden; }
+  .occ__img :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 600ms var(--sortie); }
+  .occ__nom {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.6rem;
+    min-height: 3.5rem; padding: 1rem 1.1rem 1.1rem;
+    font-family: var(--f-titre); font-weight: 740; font-stretch: 110%;
+    font-size: clamp(1.05rem, 0.95rem + 0.6vw, 1.4rem); line-height: 1.1;
   }
-  .occ__nom { font-family: var(--f-titre); font-size: var(--t-h3); line-height: 1.05; }
-  .occ__fleche { transition: transform 300ms var(--sortie); }
-  .occ__lien:hover .occ__fleche { transform: translateX(4px); }
-  .occ__lien:focus-visible { outline-color: var(--encre); }
+  .occ__nom svg { width: 26px; height: 26px; flex: none; transition: transform 300ms ease; }
+  @media (hover: hover) {
+    .occ__lien:hover .occ__img :global(img) { transform: scale(1.05); }
+    .occ__lien:hover .occ__nom svg { transform: translateX(4px); }
+  }
 
   /* ============================ DÉROULEMENT ============================ */
-  .methode { padding-block: var(--serre); }
+  .methode :global(.ts__chapo) { color: var(--encre); }
 
   /* ============================ ATELIER ============================ */
-  .atelier { padding-block: 0 var(--respire); }
-  .atelier .grille { row-gap: 2rem; align-items: center; }
-  .atelier__fig :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-m); }
-  .atelier__dire { display: grid; gap: 1.25rem; justify-items: start; }
-  @media (min-width: 48rem) {
-    .atelier__fig { grid-column: 1 / span 6; }
-    .atelier__dire { grid-column: 8 / -1; }
+  .atelier { padding-block: var(--serre); }
+  .atelier__bobines { border-radius: var(--r-l); overflow: hidden; aspect-ratio: 1800 / 465; min-height: 11rem; background: var(--papier-2); }
+  .atelier__bobines :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .atelier__bas { margin-block-start: var(--gout); display: grid; gap: var(--gout); grid-template-columns: minmax(0, 1fr); }
+  .atelier__dire { display: flex; flex-direction: column; gap: 1.1rem; align-items: flex-start; padding-block: clamp(0.5rem, 2vw, 1.5rem); }
+  .atelier__dire p:not(.actions) { font-size: var(--t-chapo); max-width: 52ch; }
+  .atelier__dire .actions { gap: 0.25rem 1.5rem; }
+  .atelier__machine { border-radius: var(--r-carte); overflow: hidden; aspect-ratio: 16 / 10; }
+  .atelier__machine :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 37.5rem) { .atelier__bobines { aspect-ratio: 4 / 3; } }
+  @media (min-width: 56rem) {
+    .atelier__bas { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+    .atelier__dire { grid-column: 1 / span 6; }
+    .atelier__machine { grid-column: 7 / -1; align-self: start; }
   }
 </style>

@@ -27,9 +27,18 @@ const { data, id } = creation;
 const urlFiche = `/creations/${id}/`;
 /* Apostrophe typographique à l'affichage. */
 const titre = data.titre.replace(/'/g, '’');
+/* Étiquette courte de la catégorie ; la couleur de la carte en découle. */
+const NOMS_CATEGORIES: Record<string, string> = {
+  naissance: 'Naissance',
+  'linge-de-bain': 'Linge de bain',
+  vetements: 'Vêtements',
+  couture: 'Couture',
+  'decoration-ajouree': 'Dentelle libre',
+  noel: 'Noël',
+};
 ---
 
-<article class="carte">
+<article class={`carte carte--${data.categorie}`}>
   <a class="carte__lien" href={urlFiche}>
     <figure class="carte__img">
       <Image
@@ -42,33 +51,26 @@ const titre = data.titre.replace(/'/g, '’');
       />
     </figure>
     <div class="carte__txt">
+      <p class="carte__cat mono">{NOMS_CATEGORIES[data.categorie]}</p>
       <h3 class="carte__titre">{titre}</h3>
       {/* ⚠️ Prix et délais d'exemple, à valider par Emma (repli de l'admin). */}
       <p class="carte__ligne" data-reglage-creation={id}>
         <span class="prix carte__prix">
-          {data.prixDepart ? <>dès <b>{data.prixDepart}&nbsp;€</b></> : <b>sur devis</b>}
+          {data.prixDepart ? <>dès <b>{data.prixDepart}&nbsp;€</b></> : <b>Sur devis</b>}
         </span>
-        {data.delaiJours && <span class="carte__delai mono">réalisation {data.delaiJours}&nbsp;j</span>}
+        {data.delaiJours && <span class="carte__delai mono">{data.delaiJours}&nbsp;jours</span>}
       </p>
     </div>
   </a>
 </article>
 
 <style>
-  /* Les règles de base (.carte, .carte__img, survol de la photo) sont dans
-     global.css § 9 ; ici, ce qui fait la carte produit. */
-  .carte__lien { gap: 0.8rem; }
-  .carte__txt { gap: 0.35rem; }
+  /* Les règles de base (.carte, couleur par catégorie, survol) sont dans
+     global.css § 9 ; ici, le détail de la carte produit. */
   .carte__titre { line-height: 1.1; text-wrap: balance; }
-  .carte__lien:hover .carte__titre,
-  .carte__lien:focus-visible .carte__titre {
-    text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.15em;
-  }
-  .carte__ligne {
-    margin-block-start: auto;
-    flex-wrap: wrap;
-  }
-  .carte__prix { color: var(--encre-doux); }
-  .carte__prix b { color: var(--encre); }
-  .carte__delai { font-size: var(--t-micro); color: var(--gris); }
+  .carte__lien:hover .carte__titre { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.15em; }
+  .carte__cat { font-size: var(--t-micro); }
+  .carte__ligne { flex-wrap: wrap; }
+  .carte__prix, .carte__prix :global(b) { color: inherit; }
+  .carte__delai { font-size: var(--t-micro); }
 </style>

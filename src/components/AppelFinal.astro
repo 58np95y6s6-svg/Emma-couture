@@ -1,9 +1,9 @@
 ---
 /**
  * APPEL FINAL — la dernière section de chaque page, et la seule.
- * Bande coquelicot pleine largeur, grille 7/5 :
- *   gauche : H2, chapô (slot), deux boutons ;
- *   droite : les coordonnées directes, en liste à filets.
+ * Bloc beurre arrondi, grille 7/4 :
+ *   gauche : les cinq bobines en tranche, H2, chapô (slot), coordonnées ;
+ *   droite : les deux boutons.
  */
 import { CONTACT, ATELIER, LIBELLES, lienWhatsApp, telephoneLisible } from '../config';
 
@@ -22,8 +22,9 @@ const {
 ---
 
 <section class="final bande" aria-labelledby="final-titre">
-  <div class="grille">
+  <div class="af grille">
     <div class="af__dire">
+      <div class="af__tranche" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b></div>
       <h2 id="final-titre">{titre}</h2>
       <div class="chapo">
         <slot>
@@ -33,48 +34,44 @@ const {
           </p>
         </slot>
       </div>
-      <p class="actions">
-        <a class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>{LIBELLES.whatsapp}</a>
-        <a class="btn btn--creux btn--grand" href={lienDevis}>{LIBELLES.devis}</a>
+      <p class="af__coord mono">
+        <a href={`tel:${CONTACT.telephone}`}>{telephoneLisible()}</a>
+        <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+        <span>{ATELIER.delaiReponse}</span>
       </p>
     </div>
 
-    <dl class="af__coord">
-      <div><dt>Téléphone</dt><dd><a href={`tel:${CONTACT.telephone}`}>{telephoneLisible()}</a></dd></div>
-      <div class="af__large"><dt>E-mail</dt><dd><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></dd></div>
-      <div class="af__large"><dt>Réponse</dt><dd>{ATELIER.delaiReponse}</dd></div>
-      <div class="af__large"><dt>Délai actuel</dt><dd>{ATELIER.delaiActuel}</dd></div>
-      <div class="af__large"><dt>Remise</dt><dd>Vitré, Rennes, envoi en France</dd></div>
-    </dl>
+    <p class="af__actions">
+      <a class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.2 1.2-1.9 1.2-1.5 0-3.9-1.2-5.6-3S7 10.4 7 9.3c0-.8.5-1.6 1-1.9.3-.2.9-.2 1.1.1l.9 1.5c.1.3.1.5-.1.8l-.4.5c-.2.2-.2.4 0 .7.4.7 1.7 2 2.5 2.3.3.1.5.1.7-.1l.6-.6c.2-.2.5-.3.7-.2l1.6.8c.4.2.5.6.4.9Z"/></svg>
+        {LIBELLES.whatsapp}
+      </a>
+      <a class="btn btn--creux btn--grand" href={lienDevis}>{LIBELLES.devis}</a>
+    </p>
   </div>
 </section>
 
 <style>
-  .af__dire { grid-column: 1 / -1; display: grid; gap: 1.3rem; justify-items: start; }
-  .af__dire h2 { font-size: var(--t-h2); line-height: 0.98; letter-spacing: -0.025em; max-width: 14ch; }
-  .af__dire .chapo { max-width: 32rem; }
+  .final { padding-block: clamp(2.5rem, 5vw, 5rem); }
+  .af { row-gap: 1.75rem; }
+  .af__dire { grid-column: 1 / -1; display: grid; gap: 1.25rem; justify-items: start; }
+  .af__tranche { display: flex; gap: 8px; height: 12px; width: min(100%, 22rem); }
+  .af__tranche b { flex: 1; border-radius: 6px; }
+  .af__tranche b:nth-child(1) { background: var(--fil-rose); }
+  .af__tranche b:nth-child(2) { background: var(--fil-menthe); }
+  .af__tranche b:nth-child(3) { background: var(--prune); }
+  .af__tranche b:nth-child(4) { background: var(--fil-bleu); }
+  .af__tranche b:nth-child(5) { background: var(--papier); }
+  .af__dire h2 { max-width: 14ch; }
+  .af__dire .chapo { max-width: 34rem; }
   .af__dire .chapo :global(p + p) { margin-block-start: 0.8em; }
-  .af__coord {
-    grid-column: 1 / -1;
-    margin-block-start: 2.5rem;
-    border-block-start: 1px solid color-mix(in oklab, #fff 40%, transparent);
-  }
-  .af__coord > div {
-    display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 1rem;
-    padding-block: 0.9rem;
-    border-block-end: 1px solid color-mix(in oklab, #fff 40%, transparent);
-  }
-  .af__coord dt { font-family: var(--f-mono); font-size: var(--t-micro); opacity: 0.85; }
-  .af__coord dd { margin: 0; overflow-wrap: anywhere; }
-  .af__coord dt { opacity: 1; }
-  /* Sur téléphone, seul le téléphone : le reste est déjà dit plus haut. */
-  @media (max-width: 63.999rem) {
-    .af__large { display: none !important; }
-    .af__coord { margin-block-start: 1.5rem; }
-  }
-  .af__coord a { color: #fff; }
+  .af__coord { display: flex; flex-wrap: wrap; gap: 0 1.75rem; font-size: var(--t-petit); }
+  .af__coord > * { display: inline-flex; align-items: center; min-height: 44px; }
+  .af__coord a { text-underline-offset: 4px; overflow-wrap: anywhere; }
+  .af__actions { grid-column: 1 / -1; display: grid; gap: 0.75rem; }
+  @media (min-width: 40rem) { .af__actions { display: flex; flex-wrap: wrap; } }
   @media (min-width: 64rem) {
     .af__dire { grid-column: 1 / span 7; }
-    .af__coord { grid-column: 9 / -1; margin-block-start: 0; align-self: end; }
+    .af__actions { grid-column: 9 / -1; display: grid; align-self: end; }
   }
 </style>

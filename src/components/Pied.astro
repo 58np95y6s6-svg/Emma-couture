@@ -5,7 +5,7 @@ import { SITE, CONTACT, ATELIER } from '../config';
 <footer class="pied bande">
   <div class="pied__in">
     <div class="pied__nav">
-      <h2>Emma Broderie</h2>
+      <h2 class="pied__marque-nom"><span class="marque__bobines" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b></span>Emma Broderie</h2>
       <p>Broderie machine et couture sur mesure, à {SITE.ville} ({SITE.departement}).</p>
       <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
       <a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">Instagram @{CONTACT.instagram}</a>
@@ -42,3 +42,7 @@ import { SITE, CONTACT, ATELIER } from '../config';
     <a href="/politique-de-confidentialite/">Confidentialité</a>
   </p>
 </footer>
+
+<style>
+  .pied__marque-nom { display: flex; align-items: center; gap: 0.6rem; }
+</style>

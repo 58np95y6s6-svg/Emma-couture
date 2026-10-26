@@ -26,6 +26,7 @@ const statut = {
 <header class="entete">
   <div class="entete__in">
     <a class="marque" href="/" aria-label={`${SITE.nom}, accueil`}>
+      <span class="marque__bobines" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b></span>
       <span class="marque__nom">Emma Broderie</span>
     </a>
 
@@ -56,4 +57,5 @@ const statut = {
     </p>
     <p class={`statut statut--menu ${statut.classe}`}>{statut.texte}</p>
   </nav>
+  <div class="progression" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b></div>
 </header>

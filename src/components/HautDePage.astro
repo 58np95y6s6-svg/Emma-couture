@@ -22,7 +22,7 @@ interface Props {
   /** Cadrage de la photo, ex. '50% 30%'. */
   cadrage?: string;
   faits?: string[];
-  /** Couleur de fond d'occasion (#hex). Le texte passe en clair. */
+  /** Couleur du bloc : 'rose' | 'menthe' | 'beurre' | 'bleu' | 'prune' | 'papier'. */
   fond?: string;
 }
 
@@ -31,11 +31,13 @@ const aActions = Astro.slots.has('actions');
 /* Sans photo, la colonne de droite peut recevoir un contenu utile
    (filtres, formulaire, coordonnées) plutôt que rester vide. */
 const aAside = !image && Astro.slots.has('aside');
+const teinte = fond ?? (image ? 'rose' : 'papier');
+const sombre = teinte === 'prune';
 ---
 
 <header
-  class:list={['hdp bande', { 'hdp--fond': fond, 'hdp--seul': !image, 'hdp--aside': aAside }]}
-  style={fond ? `--hdp-fond:${fond}` : undefined}
+  class:list={['hdp bande', { 'hdp--seul': !image, 'hdp--aside': aAside, 'hdp--sombre': sombre }]}
+  style={`--hdp-fond:var(--${teinte === 'papier' ? 'papier-2' : teinte})`}
 >
   <div class="grille">
     <div class="hdp__fil"><FilAriane fil={fil} /></div>
@@ -44,7 +46,7 @@ const aAside = !image && Astro.slots.has('aside');
       <h1>{titre}</h1>
       <div class="hdp__chapo chapo"><slot /></div>
       {aActions && <p class="actions"><slot name="actions" /></p>}
-      {faits.length > 0 && <LigneFaits faits={faits} clair={!!fond} />}
+      {faits.length > 0 && <LigneFaits faits={faits} clair={sombre} />}
     </div>
 
     {aAside && <div class="hdp__aside"><slot name="aside" /></div>}
@@ -69,53 +71,46 @@ const aAside = !image && Astro.slots.has('aside');
 </header>
 
 <style>
-  .hdp {
-    padding-block: clamp(1rem, 2vw, 1.5rem) var(--serre);
-  }
-  .hdp--fond {
-    background: var(--hdp-fond);
-    color: #fff;
-    margin-block-start: -4.5rem;           /* passe sous l'en-tête flottant */
-    padding-block-start: calc(4.5rem + clamp(1rem, 2vw, 1.5rem));
-  }
-  .hdp--fond :global(.ariane), .hdp--fond :global(.ariane [aria-current]) { color: color-mix(in oklab, #fff 85%, transparent); }
-  .hdp--fond .hdp__chapo { color: color-mix(in oklab, #fff 90%, transparent); }
-  .hdp--fond :global(.btn--wa) { --fond: #fff; --texte: var(--encre); --survol: var(--encre); }
-  .hdp--fond :global(.btn--wa:hover) { color: #fff; }
-  .hdp--fond :global(.btn--creux) { --texte: #fff; --survol: #fff; border-color: color-mix(in oklab, #fff 55%, transparent); }
-  .hdp--fond :global(.btn--creux:hover) { color: var(--encre); }
-  .hdp--fond :global(:focus-visible) { outline-color: #fff; }
-
+  /* Le bento de la maquette « Bobines » : le texte dans un grand bloc de
+     couleur, la photo arrondie à côté, à la même hauteur. */
+  .hdp { padding-block: clamp(0.5rem, 1.5vw, 1rem) var(--serre); }
+  .hdp .grille { row-gap: var(--gout); }
   .hdp__fil { grid-column: 1 / -1; }
   .hdp__texte {
     grid-column: 1 / -1;
-    display: grid; gap: 1.25rem; align-content: start; justify-items: start;
-    padding-block-start: clamp(1rem, 3vw, 2.5rem);
+    display: grid; gap: 1.25rem; align-content: space-between; justify-items: start;
+    padding: clamp(24px, 4vw, 56px);
+    border-radius: var(--r-l);
+    background: var(--hdp-fond);
   }
-  .hdp h1 { font-size: var(--t-h1); max-width: 16ch; }
-  .hdp__chapo { max-width: 34rem; }
+  .hdp h1 { font-size: var(--t-h1); max-width: 18ch; }
+  .hdp__chapo { max-width: 36rem; color: var(--encre); }
   .hdp__chapo :global(p + p) { margin-block-start: 0.8em; }
+  .hdp--sombre .hdp__texte { color: #fff; }
+  .hdp--sombre .hdp__chapo { color: color-mix(in oklab, #fff 92%, transparent); }
+  .hdp--sombre :global(.btn--wa) { --fond: #fff; --bord: #fff; --texte: var(--prune); --survol: var(--beurre); --survol-texte: var(--encre); }
+  .hdp--sombre :global(.btn--creux) { --texte: #fff; --bord: #fff; --survol: #fff; --survol-texte: var(--prune); }
+  .hdp--sombre :global(:focus-visible) { outline-color: #fff; }
+  .hdp :global(.faits) { color: inherit; }
 
-  .hdp__aside { grid-column: 1 / -1; margin-block-start: 1.5rem; }
+  .hdp__aside { grid-column: 1 / -1; }
   .hdp__photo {
     grid-column: 1 / -1;
-    margin-block-start: 1rem;
-    border-radius: var(--r-m);
+    border-radius: var(--r-l);
     overflow: hidden;
-    aspect-ratio: 4 / 3;
-    background: var(--lin-bas);
+    aspect-ratio: 5 / 4;
+    background: var(--papier-2);
   }
   .hdp__photo :global(img) { width: 100%; height: 100%; object-fit: cover; }
 
   @media (min-width: 48rem) {
     .hdp__texte { grid-column: 1 / span 7; }
-    .hdp--seul .hdp__texte { grid-column: 1 / span 9; }
-    .hdp--aside .hdp__texte { grid-column: 1 / span 5; }
-    .hdp__aside { grid-column: 7 / -1; padding-block-start: clamp(1rem, 3vw, 2.5rem); }
-    .hdp__photo {
-      grid-column: 8 / -1;
-      margin-block-start: clamp(1rem, 3vw, 2.5rem);
-      aspect-ratio: 4 / 5;
-    }
+    .hdp--seul .hdp__texte { grid-column: 1 / -1; }
+    .hdp--aside .hdp__texte { grid-column: 1 / span 5; align-self: start; }
+    .hdp__aside { grid-column: 6 / -1; }
+    .hdp__photo { grid-column: 8 / -1; aspect-ratio: auto; min-height: 100%; }
+  }
+  @media (min-width: 48rem) {
+    .hdp--seul:not(.hdp--aside) .hdp__texte { padding-inline-end: max(clamp(24px, 4vw, 56px), 25%); }
   }
 </style>

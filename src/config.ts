@@ -102,8 +102,8 @@ export const ETAPES_COMMANDE = [
 
 /** Les quatre occasions mises en avant, dans l'ordre d'affichage. */
 export const OCCASIONS = [
-  { slug: 'naissance', nom: 'Une naissance', liste: 'Doudou, cadre de naissance, bavoir, cape de bain', fil: '#4A6047' },
-  { slug: 'mariage', nom: 'Un mariage', liste: 'Pochettes des témoins, mouchoir, dentelle cousue sur la robe', fil: '#6B5560' },
-  { slug: 'fete-des-meres', nom: 'La fête des mères', liste: 'Trousse, tablier, serviettes de plage, tambour décoratif', fil: '#A8492A' },
-  { slug: 'noel', nom: 'Noël', liste: 'Chaussette de cheminée, pyjama, plaid, boule brodée', fil: '#B03A52' },
+  { slug: 'naissance', nom: 'Une naissance', liste: 'Doudou, cadre de naissance, bavoir, cape de bain', fil: 'rose' },
+  { slug: 'mariage', nom: 'Un mariage', liste: 'Pochettes des témoins, mouchoir, dentelle cousue sur la robe', fil: 'bleu' },
+  { slug: 'fete-des-meres', nom: 'La fête des mères', liste: 'Trousse, tablier, serviettes de plage, tambour décoratif', fil: 'menthe' },
+  { slug: 'noel', nom: 'Noël', liste: 'Chaussette de cheminée, pyjama, plaid, boule brodée', fil: 'prune' },
 ] as const;
