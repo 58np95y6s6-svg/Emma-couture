@@ -155,70 +155,66 @@ Son monde matériel, à puiser pour toute décision visuelle : un mur de centain
 une machine à broder, un tapis de coupe vert quadrillé en centimètres, des cadres (tambours) en
 millimètres, du fil polyester 40, des densités de points, des prénoms en lettres cursives.
 
-## Direction en place : « le tapis de coupe » (octobre 2026)
+## Direction en place : « les bobines » (choisie le 26 octobre 2026)
 
-Refonte complète demandée par le client : « très moderne, très performant, pas de l'IA slop ».
-Trois motifs, tous pris dans l'atelier réel d'Emma, structurent tout le site :
-1. **Le tapis de coupe** : sections de rupture vert profond, quadrillées au centimètre
-   (`.tapis`, et `.regle` pour les graduations). Le quadrillage s'éteint vers les bords.
-2. **Le tambour à broder** : cercle de toile dans un anneau de bois avec sa vis de serrage
-   (`.tambour` sur l'accueil) ; c'est là que le prénom se brode. Le portrait d'Emma est dans
-   un petit tambour accroché au grand. Les photos d'occasions s'ouvrent depuis un cercle.
-3. **La fiche d'atelier** : toutes les étiquettes techniques (prix, délais, légendes, fil
-   d'Ariane, statut) en chasse fixe `DM Mono`, minuscules, précédées d'un point avant.
+Le client a comparé trois maquettes (Galerie, Bobines, Maison) et a retenu **Bobines**, « de loin
+mon favori ». Référence : la maquette `b/index.html` reproduite dans `src/pages/index.astro`.
+Les directions précédentes (« tapis de coupe » vert quadrillé + coquelicot + Instrument Serif)
+sont abandonnées : n'en réintroduire aucun élément.
+
+L'idée : **le mur de bobines d'Emma**. Un papier clair, et les cinq couleurs de ses fils posées en
+grands blocs arrondis, façon bento. Moderne, joyeux, lisible par une femme de 58 ans comme par
+ses clientes.
+1. **Les blocs** : `.bloc` (+ `--rose`, `--beurre`, `--bleu`, `--papier`), `.tapis` (bloc prune,
+   texte blanc), haut de page `HautDePage` (texte dans un bloc de couleur + photo arrondie),
+   `.tuiles` (quatre faits en blocs de couleur).
+2. **Les cinq fils** : logo à cinq barres, fil de progression en cinq couleurs sous l'en-tête,
+   tranche de bobines dans l'appel final, et la **signature** : cinq fils qui se brodent au
+   défilement (`.fils`, accueil uniquement).
+3. **Les cartes produit colorées** : la couleur dépend de la **catégorie** (`.carte--naissance`
+   rose, `--linge-de-bain` menthe, `--couture`/`--vetements` bleu, `--decoration-ajouree` beurre,
+   `--noel` prune), jamais de la position.
 
 ## Couleur
 
-Le fond blanc clinique est **banni**. Les valeurs vivent dans `src/styles/global.css` (§ 1) ;
-les anciens noms (`--sable`, `--rouille`, `--vert`…) y sont des alias, ne pas en créer de nouveaux.
+Valeurs dans `src/styles/global.css` (§ 1). Les anciens noms (`--lin`, `--tapis`, `--coquelicot`…)
+sont des alias vers la nouvelle palette : ne pas en créer d'autres, utiliser les nouveaux noms.
 
 | Rôle | Jeton | Valeur | Usage |
 |---|---|---|---|
-| Fond | `--lin` | `#F1E9E1` | lin chaud + grain, halo rosé en haut de page |
-| Encre | `--encre` | `#1D1916` | texte, pied de page |
-| Tapis | `--tapis` | `#1F3A2F` | sections de rupture quadrillées |
-| **Coquelicot** | `--coquelicot` | `#D93D28` | LA couleur qui parle : CTA, fil du prénom. Blanc dessus = 4,5:1 |
-| Coquelicot foncé | `--coquelicot-fonce` | `#B5321E` | petit texte rouge sur le lin (AA) |
-| Rose poudré | `--rose` | `#EFC7BE` | toile du tambour, accents sur le tapis |
-| Doré | `--dore` | `#D9B26A` | dentelle, survol des boutons clairs |
-| Gris | `--gris` | `#6B5F58` | texte secondaire, 5,1:1 sur le lin |
+| Fond | `--papier` | `#FBF7F3` | fond uni, sans grain ni dégradé |
+| Surface | `--papier-2` | `#F4EDE8` | blocs discrets, pages légales |
+| Encre | `--encre` | `#241820` | texte |
+| Encre douce | `--encre-doux` | `#5E4D57` | texte secondaire (7,6:1) |
+| **Prune** | `--prune` | `#5A2244` | LA couleur qui agit : boutons, liens, un bloc fort par page au plus |
+| Rose | `--rose` | `#F4C3CF` | haut de page de l'accueil, naissance |
+| Menthe | `--menthe` | `#A9DFC5` | déroulement, linge de bain |
+| Beurre | `--beurre` | `#F5D978` | appel final, dentelle libre |
+| Bleu ciel | `--bleu` | `#ADCBEB` | couture, mariage |
+| Fils | `--fil-rose`, `--fil-menthe`, `--fil-beurre`, `--fil-bleu`, `--fil-prune` | | tracés, chiffres d'étapes, petits signes |
 
-Couleurs des occasions (panneaux pleins) : `OCCASIONS` dans `src/config.ts`.
-Le rouge s'utilise avec parcimonie sur le lin ; l'appel final est la seule grande surface rouge.
+Couleur des occasions : `OCCASIONS[].fil` dans `src/config.ts` (nom d'un jeton : `rose`, `bleu`,
+`menthe`, `prune`), utilisé par `HautDePage fond=…` et les cartes d'occasion.
+Texte sur les teintes claires : encre. Texte sur prune : blanc. Focus : `--fil-bleu`.
+Une page = un rythme papier / blocs, pas un arc-en-ciel : deux ou trois blocs de couleur par page.
 
-Le neutre doit être **choisi**, jamais un gris pur : le biaiser vers l'accent de la page.
-
-⚠️ **Combinaison interdite**, parce qu'elle signe un site généré : crème `#F4F1EA` + serif display
-+ accent terracotta. Également bannis : dégradé violet-bleu, Inter, Space Grotesk, emoji en puces
-de section, tout centré, un seul `border-radius` partout, cartes à liseré coloré.
+⚠️ **Combinaisons interdites** (signature d'un site généré) : crème `#F4F1EA` + serif display +
+terracotta ; quasi-noir + un seul accent acide ; dégradé violet-bleu ; Inter, Space Grotesk ;
+emoji en puces ; tout centré ; cartes à liseré coloré.
 
 ## Typographie
 
-⚠️ **Aucun passage romain → italique dans un titre** (retour client du 13 octobre 2026 : « les
-typos qui passent de basique à italique, c'est très IA »). Un titre = un seul style, une seule
-couleur. Pas de dernier mot en italique de couleur, pas de prénom ni de signature en italique
-décoratif, pas de frise qui alterne romain et italique. La feuille globale neutralise `em` dans
-les titres ; ne pas en mettre dans le balisage.
+⚠️ **Aucun passage romain → italique dans un titre** (retour client du 13 octobre 2026). Un titre =
+un seul style, une seule couleur. La feuille globale neutralise `em` dans les titres.
 
-Google Fonts est le seul hébergeur autorisé (contrainte CSP des artefacts, et performance).
-Trois familles exactement : Instrument Serif, Jost, DM Mono.
+Google Fonts uniquement. Trois familles exactement :
+- **Titres** : `Anybody`, graisse 760, axe de largeur : 100 % sur téléphone, 110 % (H1) et 114 %
+  (H2) sur grand écran. Large et gras : surveiller la longueur des titres (max ~15-18 ch).
+- **Texte courant** : `Atkinson Hyperlegible Next` (conçue pour la lisibilité ; retour client
+  « polices illisibles » sur une maquette précédente).
+- **Données** : `Atkinson Hyperlegible Mono` (`.mono`, prix, délais, fil d'Ariane, statut).
 
-- **Titres** : `Instrument Serif` — choisie par le client en remplacement de Fraunces.
-  Serif à très fort contraste, registre studio de design plutôt que boutique de créateur ;
-  ⚠️ Elle n'existe qu'en **une seule graisse (400)**, romain et
-  italique : la hiérarchie se fait donc par la **taille**, jamais par la graisse ni par l'italique.
-  Ne pas écrire de `font-weight` ni de `font-variation-settings` dessus.
-  ⚠️ **Fraunces est abandonnée** : trop identifiable comme la police par défaut de l'artisanal
-  généré, avec ses axes `SOFT` et `WONK` exhibés.
-- **Texte courant** : `Jost`.
-- **Étiquettes et chiffres techniques** : `DM Mono` 400/500 (`.mono`, `.sourcil`, `.prix`).
-  Le « sourcil » n'est plus en capitales espacées : c'est une étiquette mono en minuscules,
-  à poser avec parcimonie (pas une par section).
-
-Règles : texte courant proche de 65 caractères par ligne, échelle fluide en `clamp()` sans points
-de rupture brutaux, `text-wrap: balance` sur les titres, interlettrage léger sur les capitales.
-Les **ruptures d'échelle franches** font partie de la direction : un mot énorme contre un texte
-minuscule.
+Échelle fermée : `--t-h1-accueil`, `--t-h1`, `--t-h2`, `--t-h3`, `--t-chapo` ; texte ≥ 16 px.
 
 ## ⚠️ Règles de composition (audit d'octobre 2026, retour client « décalages non logiques »)
 
@@ -234,34 +230,30 @@ Un audit indépendant a montré que le site était « 16 maquettes, pas un syst�
 - **R4. Tout aligné à gauche**, au même x que le logo. Aucun titre à droite.
 - **R5. Échelle fermée** : `--t-h1-accueil` (le plus grand), `--t-h1` (toutes les pages internes),
   `--t-h2`, `--t-h3`. Aucun `font-size` de titre dans le CSS d'une page.
-- **R6. Une signature par page** : le tambour à broder n'existe que sur l'accueil (prénom brodé) ;
-  une section `.tapis` au plus par page ; un bandeau photo au plus par page, sans slogan ; la photo
-  du mur de bobines est réservée à l'accueil.
+- **R6. Une signature par page** : les cinq fils brodés n'existent que sur l'accueil ; un bloc
+  prune (`.tapis`) au plus par page ; la photo du mur de bobines est réservée à l'accueil.
 - **R7. Aucun faux objet** : ticket, étiquette carton, épingle, ficelle, colis, guirlande, règle
   graduée, texte sur cercle, ruban de chantier, bordure pointillée « couture ».
-- **R8. Deux formes** : `--r-m` pour photos et cartes (0 en plein écran), pilule pour boutons et
-  filtres. Ni arche, ni cercle, ni rayons asymétriques sur les photos.
+- **R8. Une forme par rôle** : `--r-l` grands blocs, `--r-carte` cartes, `--r-m` photo dans une
+  carte, `--r-s` champs, pilule pour boutons et filtres. Ni arche, ni cercle, ni rayons asymétriques.
 - **R9. Le mono pour les données** (prix, délais, légendes), en une ligne. Pas de pilules en série :
   `LigneFaits`.
 - **R10. Un seul filet** : trait plein 1 px à 15-20 % de l'encre. Pas de pointillés décoratifs.
-- **R11. Pas de couleur par position.** Une couleur d'occasion vit sur sa page et sa carte.
+- **R11. Pas de couleur par position.** La couleur dit quelque chose : la catégorie d'une carte,
+  l'occasion d'une page. Seules exceptions : les tuiles de faits et les chiffres d'étapes.
 - **R12. Une seule fin de page** : `AppelFinal`.
-- **R13. Espacements** : `--serre` ou `--respire` ; changement de fond OU filet, pas les deux.
+- **R13. Espacements** : `--serre` ou `--respire` entre sections ; `--gout` entre deux blocs voisins.
 
 **Composants canoniques** (`src/components/`), à utiliser au lieu de recréer : `HautDePage`,
 `FilAriane`, `TeteSection` (simple | duo), `Etapes`, `FAQ` (émet son JSON-LD), `ListeLignes`,
 `LigneFaits`, `AppelFinal`, `CarteCreation`.
 
-## Mise en page : le plein écran est la norme
+## Mise en page : des blocs posés dans la colonne
 
-Le conteneur centré étroit est **réservé aux blocs de texte long**. Tout le reste — images, bandes
-de couleur, galerie, hero, séparateurs — touche les deux bords de l'écran.
-
-Rythme attendu : pleine largeur → colonne étroite → pleine largeur → section sombre en rupture.
-C'est cette respiration qui distingue un vrai site d'une page de gabarit.
-
-Sur l'accueil seulement : une bande photo pleine largeur, une galerie qui déborde
-du bord droit avec `scroll-snap`, une section sombre pleine largeur au milieu.
+Tout tient dans la zone `large` (85rem max, gouttière `--marge`). Les aplats de couleur ne
+touchent pas les bords de l'écran : ce sont des blocs arrondis alignés sur la colonne, le
+contenu rentré de `--dedans`. Les photos aussi sont arrondies et alignées sur la grille.
+Rythme attendu : section sur papier → bloc de couleur → section sur papier → appel final beurre.
 
 ## Chaleur : quatre leviers, à utiliser ensemble
 
