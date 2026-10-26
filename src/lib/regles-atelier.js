@@ -28,6 +28,25 @@ export function texte(valeur, { min = 0, max, nom }) {
   return propre;
 }
 
+/**
+ * Délai de réalisation : un nombre de jours (10) ou un intervalle (« 8 à 15 »).
+ * Accepte « 8-15 », « 8 a 15 jours », « 8 à 15 j ». Renvoie 10 ou « 8 à 15 ».
+ */
+export function delai(valeur, { nom = 'Le délai', vide = false } = {}) {
+  if (vide && (valeur === null || valeur === '' || valeur === undefined)) return null;
+  if (typeof valeur === 'number') return entier(valeur, { min: 1, max: 365, nom });
+  if (typeof valeur !== 'string') refuser(`${nom} : écrivez un nombre de jours, ou deux nombres comme « 8 à 15 ».`);
+  const v = valeur.trim().toLowerCase().replace(/\s*(jours?|j)\s*$/, '');
+  if (vide && !v) return null;
+  const m = v.match(/^(\d{1,3})(?:\s*(?:à|a|-|–|au)\s*(\d{1,3}))?$/);
+  if (!m) refuser(`${nom} : écrivez un nombre de jours, ou deux nombres comme « 8 à 15 ».`);
+  const a = Number(m[1]); const b = m[2] ? Number(m[2]) : null;
+  if (a < 1 || (b ?? a) > 365) refuser(`${nom} doit être compris entre 1 et 365 jours.`);
+  if (b === null || b === a) return a;
+  if (b < a) refuser(`${nom} : le premier nombre doit être le plus petit (« 8 à 15 »).`);
+  return `${a} à ${b}`;
+}
+
 export function entier(valeur, { min, max, nom, vide = false }) {
   if (vide && (valeur === null || valeur === '' || valeur === undefined)) return null;
   if (typeof valeur !== 'number' || !Number.isInteger(valeur)) refuser(`${nom} doit être un nombre entier, sans virgule.`);
@@ -124,7 +143,7 @@ export function validerCreations(valeur, titres) {
     sortie[slug] = {
       titre: texte(c.titre, { min: 2, max: 70, nom: `Le nom de ${nom}` }),
       prix: entier(c.prix, { min: 1, max: 5000, nom: `Le prix de ${nom}`, vide: true }),
-      delai: entier(c.delai, { min: 1, max: 365, nom: `Le délai de ${nom}`, vide: true }),
+      delai: delai(c.delai, { nom: `Le délai de ${nom}`, vide: true }),
       visible: booleen(c.visible, `${nom} visible sur l'accueil`),
       ordre: entier(c.ordre, { min: 0, max: 999, nom: `L'ordre de ${nom}` }),
       photo: photo(c.photo, nom),

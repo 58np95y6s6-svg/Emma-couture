@@ -4,6 +4,7 @@
  * de cartes de l'accueil (actuelle / après), mis à jour à chaque frappe.
  */
 import { atelierPret } from '../coquille.js';
+import { delai } from '../../lib/regles-atelier.js';
 import * as etat from '../etat.js';
 import { h, duo, rangeeAccueil, image, carte, ACCUEIL_MAX } from '../apercus.js';
 import { barreEnregistrement } from '../enregistrement.js';
@@ -21,6 +22,12 @@ const modifiees = () => {
 };
 const identique = () =>
   modifiees().size === 0 && etat.creationsEnLigne().map((c) => c.slug).join() === brouillon.map((c) => c.slug).join();
+
+/** « 10 » → 10 ; « 8 à 15 » → « 8 à 15 » ; « » → null. */
+function lireDelai(valeur) {
+  try { return { valeur: delai(valeur, { nom: 'Le délai', vide: true }) }; }
+  catch (e) { return { erreur: e.message }; }
+}
 
 /** « 32 » → 32 ; « » → null ; « 32,50 » → erreur. */
 function lireEntier(valeur, { min, max }) {
@@ -121,10 +128,10 @@ function ligne(c) {
         },
       }),
       champ({
-        nom: 'Délai de réalisation (en jours)', aide: 'Laissez vide pour ne rien afficher.', valeur: c.delai,
-        attrs: { inputmode: 'numeric', autocomplete: 'off' },
+        nom: 'Délai de réalisation (en jours)', aide: 'Un nombre (10) ou un intervalle (8 à 15). Laissez vide pour ne rien afficher.', valeur: c.delai,
+        attrs: { autocomplete: 'off' },
         surSaisie: (v) => {
-          const r = lireEntier(v, { min: 1, max: 365 });
+          const r = lireDelai(v);
           if (r.erreur) c.erreurs.delai = r.erreur; else { delete c.erreurs.delai; c.delai = r.valeur; }
           rendreApercu();
           return r.erreur;

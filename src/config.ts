@@ -36,7 +36,7 @@ export const CONTACT = {
 /** Piloté par l'admin. */
 export const ATELIER = {
   /** Affiché en réassurance sur tout le site. */
-  delaiActuel: '2 semaines', // [À CONFIRMER]
+  delaiActuel: '8 à 15 jours', // donné par Emmanuelle le 26/10/2026
   delaiReponse: 'Réponse dans la journée', // [À CONFIRMER]
   /** 'ouvertes' | 'complet' | 'conges' */
   commandes: 'ouvertes' as 'ouvertes' | 'complet' | 'conges',

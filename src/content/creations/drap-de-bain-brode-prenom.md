@@ -1,12 +1,12 @@
 ---
-titre: "Le drap de bain au prénom"
-accroche: "Coton épais, prénom en lettres cursives."
+titre: "Serviettes et linge au prénom"
+accroche: "Drap de bain, serviette, linge de maison : brodés au prénom."
 categorie: linge-de-bain
 occasions: [fete-des-meres, anniversaire]
 photo: ../../assets/creations/galerie/serviette-brodee-prenom-alicia-rose.webp
 alt: "Drap de bain rose poudré brodé au prénom en lettres cursives violettes"
-prixDepart: 24
-delaiJours: 7
+prixDepart: 8
+delaiJours: "8 à 15"
 ordre: 30
 ---
 

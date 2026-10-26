@@ -48,8 +48,8 @@ const creations = defineCollection({
 
       /** Repli si l'admin ne répond pas. En euros, « à partir de ». */
       prixDepart: z.number().optional(),
-      /** Repli. Exprimé en jours ouvrés. */
-      delaiJours: z.number().optional(),
+      /** Repli. En jours ouvrés : un nombre (10) ou un intervalle (« 8 à 15 »). */
+      delaiJours: z.union([z.number(), z.string()]).optional(),
 
       /** Vrai si la pièce est cousue par Emma, pas seulement brodée. */
       cousuMain: z.boolean().default(false),

@@ -1,12 +1,12 @@
 ---
-titre: "La chaussette de Noël"
-accroche: "Une par personne, prénom brodé sur le revers."
+titre: "Fêtes et évènements"
+accroche: "Noël, anniversaire, fête des mères : une pièce brodée au prénom."
 categorie: noel
 occasions: [noel]
 photo: ../../assets/creations/galerie/chaussette-de-noel-brodee-prenom.webp
 alt: "Chaussette de Noël rouge bordée de fourrure blanche, brodée au prénom et à un motif de canne à sucre"
-prixDepart: 26
-delaiJours: 10
+prixDepart: 10
+delaiJours: "8 à 15"
 ordre: 50
 ---
 

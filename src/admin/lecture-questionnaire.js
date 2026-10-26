@@ -8,8 +8,7 @@
 import { dateExcel, heureExcel } from './xlsx.js';
 import { telephoneLisible, dateLongue } from '../scripts/reglages-commun.js';
 import {
-  validerInfos, validerHoraires, validerAvis, normaliserSiret, JOURS,
-} from '../lib/regles-atelier.js';
+  validerInfos, validerHoraires, validerAvis, normaliserSiret, JOURS, delai } from '../lib/regles-atelier.js';
 
 const ONGLETS = { coord: 'Mes coordonnées', creations: 'Mes créations', avis: 'Mes avis', horaires: 'Mes horaires', questions: 'Questions' };
 
@@ -221,7 +220,7 @@ export function lireQuestionnaire(classeur, actuel, titres) {
       return t;
     }));
     if (l.D !== undefined) changer('prix', 'prix', essai('prix', () => prix(l.D)));
-    if (l.E !== undefined) changer('delai', 'délai (jours)', essai('délai', () => { const n = entierPositif(l.E, 'le délai'); if (n > 365) throw new Error('365 jours au maximum.'); return n; }));
+    if (l.E !== undefined) changer('delai', 'délai (jours)', essai('délai', () => delai(typeof l.E === 'number' ? l.E : texte(l.E), { nom: 'Le délai' })));
     if (l.F !== undefined) changer('visible', 'sur l’accueil', essai('accueil', () => ouiNon(l.F)));
     if (l.G !== undefined) { const o = essai('ordre', () => entierPositif(l.G, 'l’ordre')); if (o !== undefined) ordres.set(slug, o); }
     if (l.H !== undefined && texte(l.H)) {

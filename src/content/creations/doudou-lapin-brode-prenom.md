@@ -1,12 +1,12 @@
 ---
-titre: "Le doudou de naissance"
-accroche: "Prénom, date, heure, taille et poids brodés sur les oreilles."
+titre: "Doudou et cadre de naissance"
+accroche: "Doudou, cadre de naissance : prénom, date et mesures brodés."
 categorie: naissance
 occasions: [naissance]
 photo: ../../assets/creations/galerie/doudou-lapin-brode-prenom-naissance-vitre.webp
 alt: "Doudou lapin en peluche beige, brodé au prénom et à la date de naissance sur les oreilles, posé devant un bouquet de roses blanches"
-prixDepart: 32
-delaiJours: 10
+prixDepart: 8
+delaiJours: "8 à 15"
 ordre: 10
 enAvant: true
 accordClient: false

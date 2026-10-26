@@ -127,7 +127,7 @@ for f in sorted(glob.glob('src/content/creations/*.md')):
     g = lambda k: (re.search(rf'^{k}:\s*"?(.*?)"?\s*$', t, re.M) or [None, None])[1]
     slug = os.path.basename(f)[:-3]
     ligne(ws, r, [slug, g('titre'), g('titre'), int(g('prixDepart')) if g('prixDepart') else None,
-                  int(g('delaiJours')) if g('delaiJours') else None, 'Oui', int(g('ordre') or 100) // 10, None],
+                  (int(g('delaiJours')) if (g('delaiJours') or '').isdigit() else g('delaiJours')), 'Oui', int(g('ordre') or 100) // 10, None],
           reponses=(2, 3, 4, 5, 6, 7))
     r += 1
 liste(ws, f'F4:F{r - 1}', ['Oui', 'Non'])
