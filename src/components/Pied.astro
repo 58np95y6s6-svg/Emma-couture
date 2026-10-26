@@ -6,9 +6,11 @@ import { SITE, CONTACT, ATELIER } from '../config';
   <div class="pied__in">
     <div class="pied__nav">
       <h2 class="pied__marque-nom"><span class="marque__bobines" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b></span>Emma Broderie</h2>
-      <p>Broderie machine et couture sur mesure, à {SITE.ville} ({SITE.departement}).</p>
-      <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+      {/* data-reglage : valeurs pilotées par l'admin (src/scripts/reglages.js). */}
+      <p>Broderie machine et couture sur mesure, à <span data-reglage="ville">{SITE.ville}</span> ({SITE.departement}).</p>
+      <a href={`mailto:${CONTACT.email}`} data-reglage="email">{CONTACT.email}</a>
       <a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">Instagram @{CONTACT.instagram}</a>
+      <a href="https://www.facebook.com/" rel="me noopener" target="_blank" data-reglage="facebook" hidden>Facebook</a>
     </div>
 
     <nav class="pied__nav pied__nav--large" aria-label="Créations">
@@ -30,7 +32,7 @@ import { SITE, CONTACT, ATELIER } from '../config';
 
     <div class="pied__nav">
       <h2>Où me trouver</h2>
-      <p>{ATELIER.zones}.</p>
+      <p><span data-reglage="zones">{ATELIER.zones}</span>.</p>
       <a href="/brodeuse-vitre/">Brodeuse à Vitré</a>
       <a href="/broderie-personnalisee-rennes/">Broderie à Rennes</a>
     </div>
@@ -45,4 +47,5 @@ import { SITE, CONTACT, ATELIER } from '../config';
 
 <style>
   .pied__marque-nom { display: flex; align-items: center; gap: 0.6rem; }
+  .pied__nav a[hidden] { display: none; }
 </style>

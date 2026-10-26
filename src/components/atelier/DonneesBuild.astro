@@ -1,0 +1,66 @@
+---
+/**
+ * Valeurs du build, embarquées dans chaque page de l'atelier : ce que le site
+ * affiche quand Emmanuelle n'a rien modifié. L'admin s'en sert pour
+ * l'aperçu « Actuellement sur le site » et comme point de départ des
+ * formulaires. Uniquement des données déjà publiques.
+ */
+import { getImage } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import { SITE, CONTACT, ATELIER } from '../../config';
+import portrait from '../../assets/creations/hero-mobile/emma-brodeuse-vitre-portrait.webp';
+
+const toutes = (await getCollection('creations', ({ data }) => !data.masquee)).sort((a, b) => a.data.ordre - b.data.ordre);
+
+const vignette = async (src: ImageMetadata, largeurs: number[]) => {
+  const img = await getImage({ src, widths: largeurs, format: 'webp' });
+  return { src: img.src, srcset: img.srcSet.attribute, largeur: src.width, hauteur: src.height };
+};
+
+const creations = await Promise.all(
+  toutes.map(async (c, i) => ({
+    slug: c.id,
+    titre: c.data.titre.replace(/'/g, '’'),
+    categorie: c.data.categorie,
+    prix: c.data.prixDepart ?? null,
+    delai: c.data.delaiJours ?? null,
+    /* Ordre et visibilité du build : les 6 premières sont sur l'accueil. */
+    ordre: i,
+    visible: i < 6,
+    alt: c.data.alt,
+    photo: await vignette(c.data.photo, [320, 480, 640]),
+  })),
+);
+
+const donnees = {
+  creations,
+  accueil: {
+    portrait: { ...(await vignette(portrait, [400, 800])), alt: 'Emma, brodeuse et couturière à Vitré, souriante, en extérieur' },
+  },
+  infos: {
+    telephone: CONTACT.telephone,
+    whatsapp: CONTACT.whatsapp === CONTACT.telephone.replace(/\D/g, '') ? '' : `+${CONTACT.whatsapp}`,
+    email: CONTACT.email,
+    facebook: '',
+    ville: SITE.ville,
+    delaiReponse: ATELIER.delaiReponse.replace(/^Réponse /, '').replace(/^./, (c) => c.toUpperCase()),
+    delaiActuel: ATELIER.delaiActuel,
+    commandes: ATELIER.commandes,
+    retourLe: '',
+    dateLimiteNoel: '',
+    remiseVitre: true,
+    remiseRennes: true,
+    remiseAutres: '',
+    envoiFrance: true,
+    fraisEnvoi: '',
+    emballageCadeau: true,
+    paiement: '',
+    acompte: '',
+    marches: '',
+  },
+  instagram: CONTACT.instagram,
+  departement: SITE.departement,
+};
+---
+
+<script type="application/json" id="donnees-build" set:html={JSON.stringify(donnees).replace(/</g, "\\u003c")} />

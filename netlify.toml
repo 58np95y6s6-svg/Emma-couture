@@ -10,12 +10,16 @@
 # --- Espace d'administration secret ---
 # Le chemin n'est volontairement PAS dans robots.txt (fichier public).
 # On empêche l'indexation par en-tête HTTP + balise meta dans les pages.
-# ⚠️ Remplacer /atelier-dev-local/* par le vrai chemin secret au lancement.
+# Le questionnaire vierge (questionnaire.xlsx), le manifeste et le service
+# worker vivent sous ce même chemin : mêmes en-têtes.
+# ⚠️ Le dépôt est public : ce chemin y est lisible. La vraie protection est
+# côté serveur (toutes les fonctions de données exigent une session).
 [[headers]]
-  for = "/atelier-dev-local/*"
+  for = "/atelier-mqu3gf/*"
   [headers.values]
     X-Robots-Tag = "noindex, nofollow, noarchive"
     Cache-Control = "no-store"
+    Referrer-Policy = "no-referrer"
 
 # ⚠️ PROVISOIRE — à retirer au passage sur emma-broderie.fr
 # Le site tourne sur le sous-domaine netlify.app avec des valeurs d'exemple

@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 const SITE_URL = process.env.PUBLIC_SITE_URL ?? 'https://emma-broderie.fr';
 
 // Chemin secret de l'espace d'administration : jamais dans le sitemap.
-const ADMIN_PATH = process.env.ADMIN_PATH ?? 'atelier-dev-local';
+const ADMIN_PATH = process.env.ADMIN_PATH ?? 'atelier-mqu3gf';
 
 /**
  * Pages catégorie en `noindex` (moins de 3 pièces) : hors du sitemap.

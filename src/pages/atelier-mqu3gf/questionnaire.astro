@@ -1,0 +1,39 @@
+---
+import Atelier from '../../layouts/Atelier.astro';
+---
+
+<Atelier titre="Importer le questionnaire" largeur="etroite">
+  <p class="at-intro">
+    Choisissez le questionnaire Excel rempli. Rien ne change sur le site avant que vous ayez vérifié
+    la liste des changements et appuyé sur « Tout appliquer ».
+  </p>
+  <p class="at-erreur" id="erreur-chargement" role="alert" hidden></p>
+
+  <div id="section" hidden>
+    <section class="at-carte" aria-labelledby="t-fichier">
+      <h2 id="t-fichier">1. Le fichier</h2>
+      <div class="at-boutons">
+        <label class="btn btn--wa btn--grand at-fichier">
+          <input type="file" id="fichier" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+          Choisir le questionnaire rempli
+        </label>
+      </div>
+      <p class="at-aide" id="nom-fichier" role="status"></p>
+      <p class="at-erreur" id="erreur-fichier" role="alert" hidden></p>
+      <p class="at-aide">Pas encore de questionnaire ? <a href="/atelier-mqu3gf/questionnaire.xlsx" download>Télécharger le questionnaire vierge</a>.</p>
+    </section>
+
+    <section class="at-carte" id="verification" aria-labelledby="t-verif" hidden>
+      <h2 id="t-verif">2. Voici ce qui va changer</h2>
+      <p class="at-compte" id="bilan"></p>
+      <p class="at-aide">Les cases vides du questionnaire ne changent rien. Les valeurs signalées en rouge ne sont pas importées : le reste s'applique quand même.</p>
+      <div id="diff"></div>
+    </section>
+
+    <div id="zone-enregistrer"></div>
+  </div>
+</Atelier>
+
+<script>
+  import '../../admin/pages/questionnaire.js';
+</script>

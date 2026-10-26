@@ -1,0 +1,100 @@
+---
+/**
+ * Gabarit de l'atelier (espace d'administration secret, PWA).
+ *
+ * ⚠️ Jamais lié depuis le site public, absent du sitemap et de robots.txt.
+ * noindex par balise ici et par en-tête X-Robots-Tag (netlify.toml).
+ * N'importe aucun composant public (en-tête, pied, JSON-LD) ni aucun script
+ * public : son code vit dans src/admin/ et n'est chargé que par ces pages.
+ * La protection réelle est côté serveur : chaque fonction de données exige
+ * une session valide.
+ */
+import '../styles/global.css';
+import '../styles/atelier.css';
+import DonneesBuild from '../components/atelier/DonneesBuild.astro';
+
+export const CHEMIN_ATELIER = '/atelier-mqu3gf/';
+
+interface Props {
+  titre: string;
+  /** Faux sur l'accueil de l'atelier (pas de lien retour). */
+  retour?: boolean;
+  /** Largeur de la colonne : 'etroite' pour les formulaires simples. */
+  largeur?: 'etroite' | 'large';
+}
+const { titre, retour = true, largeur = 'large' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="no-referrer" />
+    <title>{titre} · Mon atelier</title>
+    <meta name="theme-color" content="#5A2244" />
+    <link rel="manifest" href={`${CHEMIN_ATELIER}manifest.webmanifest`} />
+    <link rel="icon" href={`${CHEMIN_ATELIER}icone.svg`} type="image/svg+xml" />
+    <link rel="apple-touch-icon" href={`${CHEMIN_ATELIER}icone-180.png`} />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Mon atelier" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@75..150,600..800&family=Atkinson+Hyperlegible+Mono:wght@400;500&family=Atkinson+Hyperlegible+Next:ital,wght@0,400;0,500;0,700;1,400&display=swap"
+    />
+  </head>
+
+  <body class="at">
+    <header class="at-tete">
+      <a class="at-marque" href={CHEMIN_ATELIER}>
+        <span class="marque__bobines" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b></span>
+        <span>Mon atelier</span>
+      </a>
+      <a class="at-voir" href="/" target="_blank" rel="noopener">Voir mon site</a>
+    </header>
+
+    <!-- Bandeau d'état : hors ligne, erreurs générales. -->
+    <p class="at-alerte" id="at-hors-ligne" role="status" hidden>
+      Pas de connexion internet. Vos modifications ne pourront pas être enregistrées tant que la
+      connexion n'est pas revenue.
+    </p>
+
+    <main class:list={['at-page', `at-page--${largeur}`]} id="contenu">
+      {retour && <p class="at-retour"><a href={CHEMIN_ATELIER}>Retour au menu</a></p>}
+      <h1 class="at-titre">{titre}</h1>
+
+      <!-- Tant que la session n'est pas vérifiée, rien d'autre ne s'affiche. -->
+      <p class="at-chargement" id="at-chargement">Ouverture de votre atelier…</p>
+
+      <section class="at-connexion" id="at-connexion" hidden aria-labelledby="at-connexion-titre">
+        <h2 id="at-connexion-titre">Entrez votre mot de passe</h2>
+        <p class="at-aide" id="at-connexion-intro">Votre téléphone restera connecté pendant 30 jours.</p>
+        <form id="at-connexion-form" novalidate>
+          <label class="at-champ">
+            <span class="at-champ__nom">Mot de passe</span>
+            <input type="password" name="motDePasse" autocomplete="current-password" required />
+          </label>
+          <label class="at-coche">
+            <input type="checkbox" id="at-voir-mdp" />
+            <span>Afficher le mot de passe</span>
+          </label>
+          <p class="at-erreur" id="at-connexion-erreur" role="alert" hidden></p>
+          <button class="btn btn--wa btn--grand at-plein" type="submit">Entrer dans mon atelier</button>
+        </form>
+      </section>
+
+      <div class="at-contenu" id="at-contenu" hidden>
+        <slot />
+      </div>
+    </main>
+
+    <DonneesBuild />
+
+    <script>
+      import '../admin/coquille.js';
+    </script>
+  </body>
+</html>

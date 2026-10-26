@@ -1,0 +1,47 @@
+---
+import Atelier from '../../layouts/Atelier.astro';
+---
+
+<Atelier titre="Mes horaires" largeur="large">
+  <p class="at-intro">
+    Quand vous répondez aux messages, jour par jour. Votre domicile n'est jamais présenté comme
+    une boutique : votre adresse n'apparaît nulle part.
+  </p>
+  <p class="at-pas-encore">Enregistrés et servis au site ; leur affichage sur les pages publiques et dans les données pour Google arrive avec la prochaine mise à jour du site.</p>
+  <p class="at-erreur" id="erreur-chargement" role="alert" hidden></p>
+
+  <div id="section" class="info-grille" hidden>
+    <div class="at-contenu">
+      <section class="at-carte" aria-labelledby="t-mode">
+        <h2 id="t-mode">Ces horaires signifient</h2>
+        <fieldset class="at-choix">
+          <legend class="lu-seulement">Ces horaires signifient</legend>
+          <div class="at-choix__options" id="mode">
+            <label><input type="radio" name="mode" value="messages" /> Je réponds aux messages</label>
+            <label><input type="radio" name="mode" value="rendez-vous" /> Retrait sur rendez-vous</label>
+          </div>
+        </fieldset>
+        <p class="at-aide">« Retrait sur rendez-vous » : l'adresse n'est communiquée qu'après votre accord.</p>
+      </section>
+
+      <section class="at-carte" aria-labelledby="t-jours">
+        <h2 id="t-jours">Jour par jour</h2>
+        <div class="at-boutons">
+          <button class="btn btn--creux" type="button" id="copier">Copier lundi sur mardi → vendredi</button>
+        </div>
+        <ul class="jours" id="jours"></ul>
+      </section>
+    </div>
+
+    <section class="at-carte at-carte--apercu info-apercu" aria-labelledby="t-apercu">
+      <h2 id="t-apercu">Aperçu</h2>
+      <div id="apercu"></div>
+    </section>
+
+    <div id="zone-enregistrer" class="info-plein"></div>
+  </div>
+</Atelier>
+
+<script>
+  import '../../admin/pages/horaires.js';
+</script>

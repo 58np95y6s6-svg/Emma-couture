@@ -1,0 +1,28 @@
+{
+  "creations": [
+    {
+      "slug": "arbre-de-vie-dentelle",
+      "titre": "L'arbre de vie en dentelle"
+    },
+    {
+      "slug": "cadre-naissance-brode",
+      "titre": "Le cadre de naissance"
+    },
+    {
+      "slug": "chaussette-noel-brodee",
+      "titre": "La chaussette de Noël"
+    },
+    {
+      "slug": "doudou-lapin-brode-prenom",
+      "titre": "Le doudou de naissance"
+    },
+    {
+      "slug": "drap-de-bain-brode-prenom",
+      "titre": "Le drap de bain au prénom"
+    },
+    {
+      "slug": "trousse-cousue-brodee",
+      "titre": "La trousse cousue main"
+    }
+  ]
+}

@@ -424,7 +424,8 @@ const faits = ['Motif validé avant broderie', 'Emballage cadeau compris', 'Remi
      carte produit (global.css § 9). */
   .fiche__infos {
     --c: var(--rose); --c-texte: var(--encre);
-    display: grid; gap: 1.1rem; align-content: start; justify-items: start;
+    display: grid; grid-template-columns: minmax(0, 1fr);
+    gap: 1.1rem; align-content: start; justify-items: start;
     padding: clamp(24px, 3.5vw, 48px);
     border-radius: var(--r-l);
     background: var(--c); color: var(--c-texte);
@@ -440,7 +441,9 @@ const faits = ['Motif validé avant broderie', 'Emballage cadeau compris', 'Remi
 
   .fiche__cat { font-size: var(--t-micro); }
   .fiche__cat a { color: inherit; display: inline-flex; align-items: center; min-height: 44px; text-underline-offset: 4px; }
-  .fiche__infos h1 { text-wrap: balance; max-width: 14ch; }
+  /* Colonne étroite : le H1 descend d'un cran pour que les mots longs
+     (« chaussette ») tiennent sans déborder. */
+  .fiche__infos h1 { text-wrap: balance; max-width: 14ch; font-size: clamp(2rem, 1rem + 2.6vw, 3.6rem); overflow-wrap: break-word; }
   .fiche__prix, .fiche__prix :global(b) { color: inherit; }
   .fiche__prix { font-size: var(--t-petit); }
   .fiche__prix b { font-size: 2.4em; line-height: 1; }

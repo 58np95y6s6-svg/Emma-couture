@@ -28,10 +28,12 @@ const altOccasions = [
   'Chaussette de Noël rouge, prénom brodé sur le revers',
 ];
 
-/* Les créations mises en avant. L'ordre viendra de l'admin ; ici, du build. */
-const creations = (await getCollection('creations', ({ data }) => !data.masquee))
-  .sort((a, b) => a.data.ordre - b.data.ordre)
-  .slice(0, 6);
+/* Les créations mises en avant : les 6 premières selon l'ordre du build.
+   Les suivantes sont présentes mais masquées, pour que l'admin puisse les
+   afficher sans redéploiement (ordre et visibilité : src/scripts/reglages.js). */
+const toutes = (await getCollection('creations', ({ data }) => !data.masquee))
+  .sort((a, b) => a.data.ordre - b.data.ordre);
+const creations = toutes.slice(0, 6);
 
 
 
@@ -74,7 +76,7 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
         </p>
       </div>
 
-      <figure class="haut__portrait">
+      <figure class="haut__portrait" data-reglage="portrait">
         <Image
           src={portrait}
           alt="Emma, brodeuse et couturière à Vitré, souriante, en extérieur"
@@ -89,10 +91,10 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
 
       {/* ⚠️ Délai, prix et temps de réponse d'exemple, à faire valider par Emma. */}
       <ul class="tuiles haut__faits" aria-label="En bref">
-        <li class="tuile" style="--c:var(--menthe)"><strong>Dans la journée</strong><span>Réponse à votre message</span></li>
-        <li class="tuile" style="--c:var(--beurre)"><strong>{ATELIER.delaiActuel}</strong><span>Délai de réalisation actuel</span></li>
-        <li class="tuile" style="--c:var(--bleu)"><strong>Dès {prixMin}&nbsp;€</strong><span>Pièce personnalisée au prénom</span></li>
-        <li class="tuile tuile--prune" style="--c:var(--prune)"><strong>Vitré, Rennes</strong><span>En main propre, ou envoi en France</span></li>
+        <li class="tuile" style="--c:var(--menthe)"><strong data-reglage="delai-reponse">{ATELIER.delaiReponse.replace(/^Réponse /, '').replace(/^./, (c) => c.toUpperCase())}</strong><span>Réponse à votre message</span></li>
+        <li class="tuile" style="--c:var(--beurre)"><strong data-reglage="delai-actuel">{ATELIER.delaiActuel}</strong><span>Délai de réalisation actuel</span></li>
+        <li class="tuile" style="--c:var(--bleu)"><strong data-reglage="prix-min">Dès {prixMin}&nbsp;€</strong><span>Pièce personnalisée au prénom</span></li>
+        <li class="tuile tuile--prune" style="--c:var(--prune)"><strong data-reglage="remise-titre">Vitré, Rennes</strong><span data-reglage="remise-texte">En main propre, ou envoi en France</span></li>
       </ul>
     </div>
   </section>
@@ -117,11 +119,12 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
       </p>
     </TeteSection>
 
-    <div class="rangee rangee--grille" tabindex="0" role="region" aria-label="Créations récentes">
-      {creations.map((c, i) => (
+    <div class="rangee rangee--grille" tabindex="0" role="region" aria-label="Créations récentes" data-reglage="accueil-creations">
+      {toutes.map((c, i) => (
         <CarteCreation
           creation={c}
           prioritaire={i === 0}
+          cachee={i >= 6}
           tailles="(max-width: 40rem) 78vw, (max-width: 64rem) 44vw, 28rem"
         />
       ))}

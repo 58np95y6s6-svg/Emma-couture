@@ -1,0 +1,125 @@
+---
+import Atelier from '../../layouts/Atelier.astro';
+const pasEncore = 'Enregistré, pas encore affiché sur le site';
+---
+
+<Atelier titre="Mes informations">
+  <p class="at-intro">
+    Vos coordonnées, vos délais et vos conditions. Les boutons « WhatsApp » et « Appeler » de tout le
+    site suivent les numéros enregistrés ici.
+  </p>
+  <p class="at-erreur" id="erreur-chargement" role="alert" hidden></p>
+
+  <div id="section" class="info-grille" hidden>
+    <form id="form" class="info-champs" novalidate>
+      <div class="at-contenu">
+        <section class="at-carte" aria-labelledby="t-joindre">
+          <h2 id="t-joindre">Pour vous joindre</h2>
+          <div class="at-grille-champs">
+            <label class="at-champ">
+              <span class="at-champ__nom">Numéro de téléphone</span>
+              <input type="tel" data-cle="telephone" autocomplete="tel" inputmode="tel" placeholder="06 12 34 56 78" />
+              <span class="at-champ__erreur" data-erreur="telephone" role="alert"></span>
+            </label>
+            <label class="at-champ">
+              <span class="at-champ__nom">Numéro WhatsApp</span>
+              <span class="at-champ__aide">Laissez vide si c'est le même que le téléphone.</span>
+              <input type="tel" data-cle="whatsapp" inputmode="tel" placeholder="Le même que le téléphone" />
+              <span class="at-champ__erreur" data-erreur="whatsapp" role="alert"></span>
+            </label>
+            <label class="at-champ">
+              <span class="at-champ__nom">Adresse e-mail pour les demandes</span>
+              <input type="email" data-cle="email" autocomplete="email" inputmode="email" />
+              <span class="at-champ__erreur" data-erreur="email" role="alert"></span>
+            </label>
+            <label class="at-champ">
+              <span class="at-champ__nom">Page Facebook (si vous en avez une)</span>
+              <input type="url" data-cle="facebook" inputmode="url" placeholder="https://www.facebook.com/…" />
+              <span class="at-champ__erreur" data-erreur="facebook" role="alert"></span>
+            </label>
+          </div>
+        </section>
+
+        <section class="at-carte" aria-labelledby="t-commandes">
+          <h2 id="t-commandes">Vos commandes et vos délais</h2>
+          <fieldset class="at-choix">
+            <legend>Prenez-vous des commandes en ce moment ?</legend>
+            <div class="at-choix__options">
+              <label><input type="radio" name="commandes" value="ouvertes" /> Oui, ouvertes</label>
+              <label><input type="radio" name="commandes" value="complet" /> Carnet complet</label>
+              <label><input type="radio" name="commandes" value="conges" /> En congés</label>
+            </div>
+          </fieldset>
+          <label class="at-champ" id="champ-retour">
+            <span class="at-champ__nom">Date de votre retour</span>
+            <input type="date" data-cle="retourLe" />
+            <span class="at-champ__erreur" data-erreur="retourLe" role="alert"></span>
+          </label>
+          <div class="at-grille-champs">
+            <label class="at-champ">
+              <span class="at-champ__nom">Délai de réponse aux messages</span>
+              <input type="text" data-cle="delaiReponse" maxlength="40" placeholder="Dans la journée" />
+            </label>
+            <label class="at-champ">
+              <span class="at-champ__nom">Délai de réalisation actuel</span>
+              <input type="text" data-cle="delaiActuel" maxlength="40" placeholder="2 semaines" />
+            </label>
+            <label class="at-champ at-large">
+              <span class="at-champ__nom">Date limite pour commander pour Noël</span>
+              <span class="at-pas-encore">{pasEncore}</span>
+              <input type="text" data-cle="dateLimiteNoel" maxlength="40" placeholder="1er décembre" />
+            </label>
+          </div>
+        </section>
+
+        <section class="at-carte" aria-labelledby="t-remise">
+          <h2 id="t-remise">Remise et livraison</h2>
+          <label class="at-champ">
+            <span class="at-champ__nom">Ville affichée sur le site</span>
+            <input type="text" data-cle="ville" maxlength="60" />
+          </label>
+          <label class="at-coche at-coche--grande"><input type="checkbox" data-cle="remiseVitre" /><span>Remise en main propre à Vitré</span></label>
+          <label class="at-coche at-coche--grande"><input type="checkbox" data-cle="remiseRennes" /><span>Remise en main propre à Rennes</span></label>
+          <label class="at-champ">
+            <span class="at-champ__nom">Autres communes pour une remise en main propre</span>
+            <span class="at-champ__aide">Séparées par des virgules. Laissez vide si aucune.</span>
+            <input type="text" data-cle="remiseAutres" maxlength="200" placeholder="Châteaubourg, Pocé-les-Bois" />
+          </label>
+          <label class="at-coche at-coche--grande"><input type="checkbox" data-cle="envoiFrance" /><span>Envoi par la poste partout en France</span></label>
+          <label class="at-coche at-coche--grande"><input type="checkbox" data-cle="emballageCadeau" /><span>Emballage cadeau proposé</span></label>
+          <p class="at-pas-encore">Les champs ci-dessous : {pasEncore.toLowerCase()} (page « Sur-mesure » à venir).</p>
+          <div class="at-grille-champs">
+            <label class="at-champ">
+              <span class="at-champ__nom">Frais d'envoi</span>
+              <input type="text" data-cle="fraisEnvoi" maxlength="160" placeholder="Lettre suivie : 5 €" />
+            </label>
+            <label class="at-champ">
+              <span class="at-champ__nom">Moyens de paiement</span>
+              <input type="text" data-cle="paiement" maxlength="160" placeholder="Virement, espèces, chèque" />
+            </label>
+            <label class="at-champ">
+              <span class="at-champ__nom">Acompte</span>
+              <input type="text" data-cle="acompte" maxlength="160" placeholder="30 % à la validation du motif" />
+            </label>
+            <label class="at-champ at-large">
+              <span class="at-champ__nom">Marchés et salons</span>
+              <textarea data-cle="marches" maxlength="300" placeholder="Marché de Noël de Vitré (décembre)"></textarea>
+            </label>
+          </div>
+        </section>
+      </div>
+    </form>
+
+    <section class="at-carte at-carte--apercu info-apercu" aria-labelledby="t-apercu">
+      <h2 id="t-apercu">Aperçu</h2>
+      <p class="at-aide">Le haut de l'accueil, la fin de chaque page et le pied de page.</p>
+      <div id="apercu"></div>
+    </section>
+
+    <div id="zone-enregistrer" class="info-plein"></div>
+  </div>
+</Atelier>
+
+<script>
+  import '../../admin/pages/informations.js';
+</script>

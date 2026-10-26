@@ -8,12 +8,17 @@
   },
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "node scripts/catalogue-creations.mjs",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "mot-de-passe": "node scripts/mot-de-passe.mjs",
+    "essai:fonctions": "node scripts/banc-essai-fonctions.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
+    "@netlify/blobs": "^11.1.6",
+    "@netlify/functions": "^6.0.3",
     "astro": "^7.3.5"
   },
   "devDependencies": {

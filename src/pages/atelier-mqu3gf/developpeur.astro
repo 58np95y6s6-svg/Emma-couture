@@ -1,0 +1,68 @@
+---
+import Atelier from '../../layouts/Atelier.astro';
+---
+
+<Atelier titre="Pour le développeur" largeur="etroite">
+  <p class="at-intro">
+    Ces informations ne sont jamais publiées par l'atelier. Copiez-les et envoyez-les à la personne qui
+    s'occupe de votre site : les mentions légales demandent une mise à jour du site, et vos réponses
+    aux questions servent à ajuster les textes.
+  </p>
+  <p class="at-erreur" id="erreur-chargement" role="alert" hidden></p>
+
+  <div id="section" hidden>
+    <section class="at-carte" aria-labelledby="t-prive">
+      <h2 id="t-prive">Mentions légales et réponses au questionnaire</h2>
+      <p class="at-aide" id="date-prive"></p>
+      <pre class="code" id="prive" tabindex="0"></pre>
+      <div class="at-boutons">
+        <button class="btn btn--wa" type="button" data-copier="prive">Copier</button>
+        <span class="at-aide" role="status" data-copie="prive"></span>
+      </div>
+    </section>
+
+    <section class="at-carte" aria-labelledby="t-reglages">
+      <h2 id="t-reglages">Tous les réglages en ligne</h2>
+      <p class="at-aide">Sauvegarde : prix, photos, informations, horaires et avis, tels qu'ils sont sur le site.</p>
+      <pre class="code" id="reglages" tabindex="0"></pre>
+      <div class="at-boutons">
+        <button class="btn btn--creux" type="button" data-copier="reglages">Copier</button>
+        <span class="at-aide" role="status" data-copie="reglages"></span>
+      </div>
+    </section>
+  </div>
+</Atelier>
+
+<script>
+  import { atelierPret } from '../../admin/coquille.js';
+  import * as etat from '../../admin/etat.js';
+
+  const $ = (id) => document.getElementById(id);
+  document.addEventListener('click', async (e) => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('[data-copier]');
+    if (!b) return;
+    const cle = b.dataset.copier!;
+    const zone = document.querySelector(`[data-copie="${cle}"]`)!;
+    try {
+      await navigator.clipboard.writeText($(cle)!.textContent ?? '');
+      zone.textContent = 'Copié. Vous pouvez le coller dans un message.';
+    } catch {
+      getSelection()?.selectAllChildren($(cle)!);
+      zone.textContent = 'Le texte est sélectionné : appuyez longuement dessus, puis « Copier ».';
+    }
+  });
+
+  (async () => {
+    await atelierPret;
+    try {
+      const s = await etat.charger();
+      $('prive')!.textContent = s.prive ? JSON.stringify(s.prive, null, 2) : 'Rien pour l’instant : importez le questionnaire rempli.';
+      $('date-prive')!.textContent = s.prive?.majLe ? `Mis à jour le ${new Date(s.prive.majLe).toLocaleString('fr-FR')}.` : '';
+      $('reglages')!.textContent = JSON.stringify(s.reglages, null, 2);
+      $('section')!.hidden = false;
+    } catch (err) {
+      $('erreur-chargement')!.textContent = (err as Error).message;
+      $('erreur-chargement')!.hidden = false;
+    }
+  })();
+</script>

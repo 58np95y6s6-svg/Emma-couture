@@ -1,0 +1,67 @@
+---
+import Atelier from '../../layouts/Atelier.astro';
+const C = '/atelier-mqu3gf/';
+---
+
+<Atelier titre="Bonjour Emmanuelle" retour={false}>
+  <p class="at-intro">Que souhaitez-vous changer sur votre site ? Chaque changement est en ligne dès que vous l'enregistrez.</p>
+
+  <nav aria-label="Menu de l'atelier">
+    <ul class="menu-at">
+      <li>
+        <a class="menu-at__lien" style="--c:var(--beurre)" href={`${C}questionnaire/`}>
+          <strong>Importer le questionnaire</strong>
+          <span>Le fichier Excel rempli : tout se met à jour d'un coup, après vérification.</span>
+        </a>
+      </li>
+      <li>
+        <a class="menu-at__lien" style="--c:var(--rose)" href={`${C}photo-accueil/`}>
+          <strong>Photo d'accueil</strong>
+          <span>La grande photo en haut de la page d'accueil.</span>
+        </a>
+      </li>
+      <li>
+        <a class="menu-at__lien" style="--c:var(--bleu)" href={`${C}creations/`}>
+          <strong>Créations mises en avant</strong>
+          <span>Noms, prix, délais, photos et ordre des cartes de l'accueil.</span>
+        </a>
+      </li>
+      <li>
+        <a class="menu-at__lien" style="--c:var(--menthe)" href={`${C}informations/`}>
+          <strong>Mes informations</strong>
+          <span>Téléphone, e-mail, délais, commandes ouvertes ou en congés, livraison.</span>
+        </a>
+      </li>
+      <li>
+        <a class="menu-at__lien" style="--c:var(--blanc)" href={`${C}horaires/`}>
+          <strong>Mes horaires</strong>
+          <span>Quand vous répondez aux messages, jour par jour.</span>
+        </a>
+      </li>
+      <li>
+        <a class="menu-at__lien" style="--c:var(--blanc)" href={`${C}avis/`}>
+          <strong>Avis de clientes</strong>
+          <span>Ajouter, masquer ou supprimer un avis.</span>
+        </a>
+      </li>
+      <li>
+        <div class="menu-at__lien menu-at__lien--bientot" aria-disabled="true">
+          <strong>Textes du site — bientôt</strong>
+          <span>Titres et paragraphes de chaque page. Pas encore disponible.</span>
+        </div>
+      </li>
+      <li>
+        <a class="menu-at__lien menu-at__lien--prune" style="--c:var(--prune)" href={`${C}aide/`}>
+          <strong>Comment faire ?</strong>
+          <span>Trois fiches courtes, pas à pas.</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="menu-at__pied">
+    <a class="lien-fleche" href={`${C}questionnaire.xlsx`} download>Télécharger le questionnaire vierge</a>
+    <a class="lien-fleche" href={`${C}developpeur/`}>Pour le développeur</a>
+    <button class="btn btn--creux" type="button" data-deconnexion>Me déconnecter</button>
+  </div>
+</Atelier>

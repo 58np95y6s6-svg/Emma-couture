@@ -1,0 +1,63 @@
+---
+import Atelier from '../../layouts/Atelier.astro';
+---
+
+<Atelier titre="Avis de clientes">
+  <p class="at-intro">
+    Uniquement de vrais avis, avec l'accord de la personne. Le prénom seul ou une initiale suffit.
+  </p>
+  <p class="at-pas-encore">Enregistrés et servis au site ; la section « avis » des pages publiques arrive avec la prochaine mise à jour du site.</p>
+  <p class="at-erreur" id="erreur-chargement" role="alert" hidden></p>
+
+  <div id="section" class="info-grille" hidden>
+    <div class="at-contenu">
+      <section class="at-carte" aria-labelledby="t-ajout">
+        <h2 id="t-ajout">Ajouter un avis</h2>
+        <form id="ajout" class="at-grille-champs" novalidate>
+          <label class="at-champ">
+            <span class="at-champ__nom">Prénom ou initiale</span>
+            <input type="text" name="prenom" maxlength="40" required />
+          </label>
+          <label class="at-champ">
+            <span class="at-champ__nom">Ville (facultatif)</span>
+            <input type="text" name="ville" maxlength="40" />
+          </label>
+          <label class="at-champ at-large">
+            <span class="at-champ__nom">Ce que la cliente a écrit</span>
+            <textarea name="texte" maxlength="600" required></textarea>
+          </label>
+          <label class="at-champ">
+            <span class="at-champ__nom">Date (facultatif)</span>
+            <input type="date" name="date" />
+          </label>
+          <label class="at-champ">
+            <span class="at-champ__nom">Création concernée (facultatif)</span>
+            <select name="creation" id="choix-creation"><option value="">Aucune en particulier</option></select>
+          </label>
+          <label class="at-coche at-coche--grande at-large">
+            <input type="checkbox" name="accord" />
+            <span>La cliente m'a donné son accord pour publier cet avis</span>
+          </label>
+          <p class="at-erreur at-large" id="erreur-ajout" role="alert" hidden></p>
+          <p class="at-large"><button class="btn btn--wa" type="submit">Ajouter cet avis</button></p>
+        </form>
+      </section>
+
+      <section class="at-carte" aria-labelledby="t-liste">
+        <h2 id="t-liste">Vos avis</h2>
+        <ul class="avis-liste" id="liste"></ul>
+      </section>
+    </div>
+
+    <section class="at-carte at-carte--apercu info-apercu" aria-labelledby="t-apercu">
+      <h2 id="t-apercu">Aperçu des avis affichés</h2>
+      <div id="apercu"></div>
+    </section>
+
+    <div id="zone-enregistrer" class="info-plein"></div>
+  </div>
+</Atelier>
+
+<script>
+  import '../../admin/pages/avis.js';
+</script>

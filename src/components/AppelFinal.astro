@@ -35,9 +35,10 @@ const {
         </slot>
       </div>
       <p class="af__coord mono">
-        <a href={`tel:${CONTACT.telephone}`}>{telephoneLisible()}</a>
-        <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
-        <span>{ATELIER.delaiReponse}</span>
+        {/* data-reglage : valeurs pilotées par l'admin (src/scripts/reglages.js). */}
+        <a href={`tel:${CONTACT.telephone}`} data-reglage="telephone">{telephoneLisible()}</a>
+        <a href={`mailto:${CONTACT.email}`} data-reglage="email">{CONTACT.email}</a>
+        <span data-reglage="delai-reponse-phrase">{ATELIER.delaiReponse}</span>
       </p>
     </div>
 

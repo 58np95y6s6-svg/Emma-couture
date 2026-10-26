@@ -1,0 +1,47 @@
+---
+import Atelier from '../../layouts/Atelier.astro';
+---
+
+<Atelier titre="Photo d'accueil">
+  <p class="at-intro">
+    C'est la grande photo en haut de la page d'accueil, la première chose que voient les visiteuses.
+    Rien n'est publié avant que vous appuyiez sur « Enregistrer ».
+  </p>
+  <p class="at-erreur" id="erreur-chargement" role="alert" hidden></p>
+
+  <div id="section" hidden>
+    <section class="at-carte" aria-labelledby="t-photo">
+      <h2 id="t-photo">La photo</h2>
+      <p class="at-aide" id="etat-photo" role="status"></p>
+      <div class="at-boutons">
+        <label class="btn btn--wa btn--grand at-fichier">
+          <input type="file" id="fichier" accept="image/*" />
+          Choisir une nouvelle photo
+        </label>
+        <button class="btn btn--creux" type="button" id="origine" hidden>Revenir à la photo d'origine</button>
+      </div>
+      <p class="at-erreur" id="erreur-photo" role="alert" hidden></p>
+      <p class="at-conseil">
+        Conseil : une photo lumineuse, prise à la lumière du jour, où votre visage est bien au centre.
+        Le site la recadre selon l'écran : vérifiez les deux aperçus ci-dessous.
+      </p>
+
+      <label class="at-champ">
+        <span class="at-champ__nom">Décrivez la photo en une phrase</span>
+        <span class="at-champ__aide" id="aide-alt">Ce texte est lu à voix haute aux personnes malvoyantes, et Google s'en sert.</span>
+        <input type="text" id="alt" maxlength="200" aria-describedby="aide-alt" placeholder="Ex. : Emma devant sa machine à broder, dans son atelier" />
+      </label>
+    </section>
+
+    <section class="at-carte at-carte--apercu" aria-labelledby="t-apercu">
+      <h2 id="t-apercu">Aperçu</h2>
+      <div id="apercu"></div>
+    </section>
+
+    <div id="zone-enregistrer"></div>
+  </div>
+</Atelier>
+
+<script>
+  import '../../admin/pages/photo-accueil.js';
+</script>

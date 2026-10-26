@@ -1,0 +1,50 @@
+---
+import Atelier from '../../layouts/Atelier.astro';
+const C = '/atelier-mqu3gf/';
+---
+
+<Atelier titre="Comment faire ?">
+  <p class="at-intro">Trois fiches courtes. Chaque changement s'affiche d'abord dans un aperçu : rien n'est publié avant « Enregistrer ».</p>
+
+  <div class="fiches">
+    <section class="at-carte fiche" aria-labelledby="f1">
+      <h2 id="f1">Changer la photo d'accueil</h2>
+      <ol>
+        <li>Ouvrez <a href={`${C}photo-accueil/`}>Photo d'accueil</a>.</li>
+        <li>Appuyez sur « Choisir une nouvelle photo » et prenez-la dans votre galerie.</li>
+        <li>Regardez les deux aperçus, téléphone et ordinateur : votre visage doit rester entier.</li>
+        <li>Décrivez la photo en une phrase, puis appuyez sur « Enregistrer ».</li>
+      </ol>
+      <p class="at-aide">Un doute ? « Annuler ce changement » remet l'ancienne photo.</p>
+    </section>
+
+    <section class="at-carte fiche" aria-labelledby="f2">
+      <h2 id="f2">Changer un prix</h2>
+      <ol>
+        <li>Ouvrez <a href={`${C}creations/`}>Créations mises en avant</a>.</li>
+        <li>Sur la création concernée, appuyez sur « Modifier ».</li>
+        <li>Écrivez le nouveau prix en chiffres, sans « € ». Laissez vide pour « Sur devis ».</li>
+        <li>Vérifiez la carte dans l'aperçu, puis appuyez sur « Enregistrer ».</li>
+      </ol>
+    </section>
+
+    <section class="at-carte fiche" aria-labelledby="f3">
+      <h2 id="f3">Mettre une création en avant</h2>
+      <ol>
+        <li>Ouvrez <a href={`${C}creations/`}>Créations mises en avant</a>.</li>
+        <li>Appuyez sur « Modifier » et cochez « Afficher sur la page d'accueil ».</li>
+        <li>Avec « Monter », placez-la en haut de la liste : la première s'affiche en premier.</li>
+        <li>L'accueil montre six créations au plus. Appuyez sur « Enregistrer ».</li>
+      </ol>
+    </section>
+  </div>
+
+  <section class="at-carte" aria-labelledby="f4">
+    <h2 id="f4">Installer l'atelier sur votre téléphone</h2>
+    <p>
+      Sur iPhone : ouvrez cette page dans Safari, touchez le bouton de partage (le carré avec une
+      flèche), puis « Sur l'écran d'accueil ». Sur Android : menu ⋮ de Chrome, puis « Ajouter à
+      l'écran d'accueil ». L'icône « Mon atelier » apparaît alors avec vos applications.
+    </p>
+  </section>
+</Atelier>
