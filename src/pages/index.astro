@@ -37,9 +37,9 @@ const creations = toutes.slice(0, 6);
 
 
 
-const titre = `Brodeuse et couturière à ${SITE.ville} (35) · broderie personnalisée | ${SITE.nom}`;
+const titre = `Broderie personnalisée et couture près de ${SITE.ville} | ${SITE.nom}`;
 const description =
-  'Broderie personnalisée au prénom et couture sur mesure à Vitré (35) : cadeaux de naissance, linge de bain, dentelle libre, sacs et trousses. Vitré, Rennes, Châteaubourg et alentours, envoi en France.';
+  'Brodeuse et couturière à Pocé-les-Bois, près de Vitré (35) : broderie personnalisée sur tout tissu, motif ou logo d’après photo, sacs et trousses cousus main. Envoi en France.';
 
 const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity));
 ---
@@ -58,13 +58,15 @@ const prixMin = Math.min(...creations.map((c) => c.data.prixDepart ?? Infinity))
     <div class="haut__grille">
       <div class="haut__texte">
         <div class="haut__dire">
-          <p class="haut__lieu">Brodeuse et couturière à {SITE.ville}, Ille-et-Vilaine</p>
-          <h1 id="titre-accueil">Broderie personnalisée et couture sur mesure</h1>
+          <p class="haut__lieu">Brodeuse et couturière à {SITE.commune}, près de {SITE.ville} (Ille-et-Vilaine)</p>
+          <h1 id="titre-accueil">Broderie personnalisée et couture</h1>
           <p class="chapo">
-            Je réalise dans mon atelier de {SITE.ville} des pièces brodées au prénom ou au motif de
-            votre choix&nbsp;: linge de bain, cadeaux de naissance, décoration en dentelle libre. Je
-            confectionne également sacs, trousses et tabliers. Chaque motif vous est soumis avant
-            réalisation.
+            {/* Texte d'Emmanuelle (mail du 26/10/2026), mis en forme. */}
+            Je réalise dans mon atelier de {SITE.commune} des broderies personnalisées sur tout type
+            de tissu (linge de maison, sacs, vêtements…), avec le motif de votre choix. Je peux
+            numériser votre motif ou votre logo en broderie d'après une simple photo. Je confectionne
+            également des sacs, des trousses et des tabliers, avec ou sans broderie. Chaque
+            réalisation vous est soumise avant d'être lancée.
           </p>
         </div>
         <p class="actions">

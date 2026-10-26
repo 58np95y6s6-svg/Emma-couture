@@ -17,7 +17,10 @@ export const SITE = {
   baseline: 'Broderie machine & couture · Vitré',
   url: 'https://emma-broderie.fr',
   langue: 'fr',
+  /** Ville de référence pour le référencement et la zone desservie. */
   ville: 'Vitré',
+  /** Commune de l'atelier (donnée par Emmanuelle, 26/10/2026). Jamais l'adresse. */
+  commune: 'Pocé-les-Bois',
   codePostal: '35500', // [À CONFIRMER]
   departement: 'Ille-et-Vilaine',
   /** L'adresse précise n'est PAS publiée : Emma travaille chez elle. */

@@ -7,7 +7,7 @@ import { SITE, CONTACT, ATELIER } from '../config';
     <div class="pied__nav">
       <h2 class="pied__marque-nom"><span class="marque__bobines" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b></span>Emma Broderie</h2>
       {/* data-reglage : valeurs pilotées par l'admin (src/scripts/reglages.js). */}
-      <p>Broderie machine et couture sur mesure, à <span data-reglage="ville">{SITE.ville}</span> ({SITE.departement}).</p>
+      <p>Broderie et couture à {SITE.commune}, près de <span data-reglage="ville">{SITE.ville}</span> ({SITE.departement}).</p>
       <a href={`mailto:${CONTACT.email}`} data-reglage="email">{CONTACT.email}</a>
       <a href={CONTACT.instagramUrl} rel="me noopener" target="_blank">Instagram @{CONTACT.instagram}</a>
       <a href="https://www.facebook.com/" rel="me noopener" target="_blank" data-reglage="facebook" hidden>Facebook</a>
