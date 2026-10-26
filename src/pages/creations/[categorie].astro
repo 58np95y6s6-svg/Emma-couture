@@ -9,22 +9,50 @@
  * Présentation « catalogue », comme /creations/ : barre en tête (nombre de
  * pièces + filtres, catégorie active en aria-current), puis grille régulière
  * de cartes produit, quel que soit le nombre de pièces.
- * La dentelle libre (decoration-ajouree) est l'angle différenciant : photo
- * dans le haut de page et technique expliquée en trois étapes réelles.
+ *
+ * Deux catégories ont des sections en plus :
+ *  - la dentelle libre (decoration-ajouree), angle différenciant : photo dans
+ *    le haut de page et technique expliquée en trois étapes réelles ;
+ *  - la couture, PAGE D'ATTERRISSAGE « couture sur mesure à Vitré » : ce que
+ *    je couds, le tissu, le déroulement, une FAQ. Elle est indexée quel que
+ *    soit le nombre de pièces, parce que son texte suffit à en faire une vraie
+ *    page (voir astro.config.mjs, CATEGORIES_NOINDEX).
+ *    ⚠️ N'y annoncer AUCUNE prestation non attestée : pas de retouches,
+ *    d'ourlets ni de vêtements sur mesure tant qu'Emma ne l'a pas confirmé.
  */
 import type { GetStaticPaths } from 'astro';
+import type { ImageMetadata } from 'astro';
 import { getCollection } from 'astro:content';
-import { getImage } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import CarteCreation from '../../components/CarteCreation.astro';
 import HautDePage from '../../components/HautDePage.astro';
 import TeteSection from '../../components/TeteSection.astro';
 import Etapes from '../../components/Etapes.astro';
 import ListeLignes from '../../components/ListeLignes.astro';
+import FAQ from '../../components/FAQ.astro';
 import AppelFinal from '../../components/AppelFinal.astro';
-import { SITE } from '../../config';
+import { SITE, ETAPES_COMMANDE, LIBELLES, lienWhatsApp } from '../../config';
 
 import papillon from '../../assets/creations/plein-ecran/papillon-brode-dentelle-ajouree-coquelicots.webp';
+import sacBanane from '../../assets/creations/galerie/sac-banane-cousu-main-broderie-chats.webp';
+import sacSport from '../../assets/creations/galerie/sac-de-sport-cousu-brode-baskets.webp';
+
+interface Categorie {
+  court: string;
+  h1: string;
+  /** Sans le nom du site : ≤ 44 caractères, pour un <title> ≤ 60. */
+  titre: string;
+  /** ≤ 155 caractères. */
+  description: string;
+  chapo: string;
+  note: string;
+  /** Couleur du haut de page : celle des cartes de la catégorie (global.css § 9). */
+  fond: 'rose' | 'menthe' | 'beurre' | 'bleu' | 'prune';
+  occasion: { slug: string; nom: string } | null;
+  /** Page rédigée : indexée même avec peu de pièces. */
+  atterrissage?: boolean;
+}
 
 export const getStaticPaths: GetStaticPaths = async () => {
   /**
@@ -35,85 +63,92 @@ export const getStaticPaths: GetStaticPaths = async () => {
    * ⚠️ Défini DANS getStaticPaths : Astro isole cette fonction dans son propre
    * module au build. Les textes voyagent donc par les props.
    */
-  const CATEGORIES = {
+  const CATEGORIES: Record<string, Categorie> = {
     naissance: {
       court: 'Naissance',
-      h1: 'Cadeaux de naissance brodés au prénom',
-      titre: 'Doudou, cadre & bavoir brodés au prénom — créations naissance',
+      /* H1 et titre « catalogue » : /cadeaux/naissance/ porte déjà
+         « cadeau de naissance brodé » (pas de cannibalisation). */
+      h1: 'Créations pour une naissance',
+      titre: 'Créations naissance : doudou, cadre, bavoir',
       description:
-        'Toutes mes créations de naissance brodées au prénom : doudou, cadre, bavoir, cape de bain, sac à dos. Prix à partir de, délais et photos — brodé à Vitré (35).',
+        'Doudou, cadre de naissance, bavoir et cape de bain brodés au prénom à Vitré (35) : prénom, date, poids et taille. Motif validé avant broderie.',
       chapo:
         'Doudou, cadre de naissance, bavoir, cape de bain. Vous me transmettez les informations du faire-part : prénom, date, heure, poids et taille. Je compose la mise en page et vous la soumets avant broderie. Le fil résiste au lavage à 30 °C ; ces pièces sont faites pour servir.',
       note: 'Vous pouvez commander avant la naissance et me transmettre les informations ensuite. Le support est préparé à l’avance et la broderie est réalisée dès réception de votre message.',
+      fond: 'rose',
       occasion: { slug: 'naissance', nom: 'Idées de cadeaux de naissance' },
     },
     'linge-de-bain': {
       court: 'Linge de bain',
       h1: 'Linge de bain brodé au prénom',
-      titre: 'Drap de bain & serviette brodés au prénom — Vitré (35)',
+      titre: 'Drap de bain et serviette brodés au prénom',
       description:
-        'Draps de bain, serviettes et capes brodés au prénom en lettres cursives, brodés à Vitré (35). Vous choisissez la couleur du linge, celle du fil et l’écriture. Envoi partout en France.',
+        'Draps de bain, serviettes et capes brodés au prénom en lettres cursives à Vitré (35). Vous choisissez le linge, le fil et l’écriture. Envoi en France.',
       chapo:
         'Draps de bain, serviettes et capes de bain en coton épais, brodés au prénom en lettres cursives. Vous choisissez la couleur du linge, celle du fil et le style d’écriture ; je vous soumets le rendu avant broderie. Un cadeau personnel qui sert au quotidien.',
       note: 'Pour un ensemble familial, avec un prénom par pièce, indiquez-moi le nombre de pièces : je vous établis un prix pour l’ensemble.',
+      fond: 'menthe',
       occasion: { slug: 'fete-des-meres', nom: 'Idées pour la fête des mères' },
     },
     vetements: {
       court: 'Vêtements',
       h1: 'Broderie personnalisée sur vêtement',
-      titre: 'Broderie sur vêtement : prénom, initiale, motif — Vitré (35)',
+      titre: 'Broderie sur vêtement : prénom, motif, Vitré',
       description:
-        'Pyjamas, tabliers, blouses, vestes : je brode le prénom, l’initiale ou un motif à Vitré (35). Sur votre vêtement ou sur un vêtement que je fournis.',
+        'Pyjamas, tabliers, blouses, vestes : je brode le prénom, l’initiale ou un motif à Vitré (35), sur votre vêtement ou sur un vêtement que je fournis.',
       chapo:
         'Pyjama, tablier, blouse, veste : je brode le prénom, l’initiale ou un motif à l’endroit de votre choix. Vous pouvez me confier votre vêtement, ou je le fournis. Je vérifie au préalable que le tissu se prête à la broderie.',
       note: '',
+      fond: 'bleu',
       occasion: null,
     },
     couture: {
       court: 'Couture',
-      h1: 'Sacs et trousses cousus main, puis brodés',
-      titre: 'Sacs & trousses cousus main et brodés — Vitré (35)',
+      h1: 'Couture sur mesure à Vitré',
+      titre: 'Couture sur mesure à Vitré : sacs, trousses',
       description:
-        'Sacs, trousses et tabliers cousus main puis brodés au prénom à Vitré (35). Vous choisissez dans mes coupons ou vous apportez votre tissu. Devis dans la journée.',
+        'Sacs, trousses, pochettes, tabliers et bavoirs cousus main à Vitré, puis brodés au prénom. Votre tissu ou le mien. Main propre à Vitré, Rennes ou envoi.',
       chapo:
-        'Sacs, trousses et tabliers : je confectionne ces pièces avant de les broder. Vous choisissez parmi mes coupons, ou vous me confiez votre propre tissu, par exemple un linge de famille ou un coupon trouvé au marché. Ce sont les seules pièces du site que je peux dire cousues main.',
-      note: 'Un tissu qui a une histoire fait souvent le plus beau cadeau. Envoyez-moi une photo du coupon : je vous indique ce qu’il est possible d’en faire.',
+        'Je couds dans mon atelier de Vitré des sacs, des trousses, des pochettes, des tabliers et des bavoirs, que je brode ensuite au prénom ou au motif de votre choix. Le tissu se choisit parmi mes coupons, ou vous me confiez le vôtre.',
+      note: '',
+      fond: 'bleu',
       occasion: { slug: 'fete-des-meres', nom: 'Idées pour la fête des mères' },
+      atterrissage: true,
     },
     'decoration-ajouree': {
       court: 'Dentelle libre',
       h1: 'La dentelle libre',
-      titre: 'Dentelle libre : broderie ajourée sans support — Vitré (35)',
+      titre: 'Dentelle libre, broderie ajourée à Vitré',
       description:
-        'Dentelle libre brodée à Vitré (35) : arbre de vie, papillon, initiale, napperon. Des pièces ajourées sans support tissu, qui se tiennent seules. À encadrer, à suspendre ou à coudre.',
+        'Dentelle libre brodée à Vitré (35) : arbre de vie, papillon, initiale, napperon. Des pièces ajourées sans tissu, à encadrer, à suspendre ou à coudre.',
       chapo:
         'Broderie ajourée réalisée à Vitré (35) : arbre de vie, papillon, initiale, napperon. Ces pièces de dentelle libre sont brodées sans support tissu et tiennent seules. Elles s’encadrent, se suspendent à une fenêtre ou se cousent sur une robe.',
       note: 'Un dessin, une initiale, un motif que vous avez remarqué : envoyez-moi l’image. Je vous dirai si la dentelle peut tenir seule et sous quelle forme.',
+      fond: 'beurre',
       occasion: { slug: 'mariage', nom: 'Idées pour un mariage' },
     },
     noel: {
       court: 'Noël',
-      h1: 'Cadeaux de Noël brodés au prénom',
-      titre: 'Cadeaux de Noël brodés au prénom — Vitré (35)',
+      /* « Chaussette de Noël brodée » appartient à /cadeaux/noel/. */
+      h1: 'Créations de Noël',
+      titre: 'Créations de Noël brodées au prénom',
+      /* ⚠️ « mi-novembre » : date limite d'exemple, à confirmer par Emma. */
       description:
-        'Chaussettes de cheminée, pyjamas, plaids et boules brodés au prénom à Vitré (35). Une pièce par personne. À commander avant la mi-novembre pour être livré le 24.',
+        'Chaussettes de cheminée, pyjamas, plaids et boules brodés au prénom à Vitré (35), une pièce par personne. Commande avant la mi-novembre pour Noël.',
       chapo:
         'Chaussettes de cheminée, pyjamas, plaids et boules, brodés au prénom de chacun. Ces pièces ressortent chaque année : je vous soumets le motif avant broderie, afin que tout soit juste dès la première fois.',
       /* ⚠️ Date limite d'exemple, à confirmer par Emma. */
       note: 'Pour une livraison avant le 24 décembre, je vous recommande de commander avant la mi-novembre.',
+      fond: 'prune',
       occasion: { slug: 'noel', nom: 'Idées de cadeaux de Noël' },
     },
-  } as const;
-
-  type Slug = keyof typeof CATEGORIES;
+  };
 
   const creations = (await getCollection('creations', ({ data }) => !data.masquee)).sort(
     (a, b) => a.data.ordre - b.data.ordre,
   );
 
-  const remplies = (Object.keys(CATEGORIES) as Slug[]).filter((s) =>
-    creations.some((c) => c.data.categorie === s),
-  );
+  const remplies = Object.keys(CATEGORIES).filter((s) => creations.some((c) => c.data.categorie === s));
 
   return remplies.map((slug) => ({
     params: { categorie: slug },
@@ -131,16 +166,19 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 const { categorie } = Astro.params;
-const { cat, pieces, filtres } = Astro.props;
+const { cat, pieces, filtres } = Astro.props as {
+  cat: Categorie;
+  pieces: Awaited<ReturnType<typeof getCollection<'creations'>>>;
+  filtres: { slug: string; court: string; nombre: number }[];
+};
 const estDentelle = categorie === 'decoration-ajouree';
-
-/* Apostrophe typographique à l'affichage (les titres du contenu gardent l'apostrophe droite). */
-const typo = (t: string) => t.replace(/'/g, '’');
+const estCouture = categorie === 'couture';
 
 /* [CONTENU EMMA] Une catégorie de moins de 3 pièces reste hors de l'index
-   (page trop mince pour Google). Elle s'indexera d'elle-même dès qu'Emma
-   aura ajouté des pièces. */
-const tropMince = pieces.length < 3;
+   (page trop mince pour Google), sauf si c'est une page d'atterrissage
+   rédigée (la couture). Les autres s'indexeront d'elles-mêmes dès qu'Emma
+   aura ajouté des pièces ; penser alors à astro.config.mjs. */
+const tropMince = pieces.length < 3 && !cat.atterrissage;
 
 /* Prix d'appel de la catégorie : le plus bas réellement présent. */
 const prix = pieces.map((c) => c.data.prixDepart).filter((p): p is number => typeof p === 'number');
@@ -148,10 +186,20 @@ const prixMini = prix.length > 0 ? Math.min(...prix) : null;
 
 /* ⚠️ Prix : exemple à valider par Emma. Le délai actuel de l'atelier n'est
    affiché que dans l'appel final. */
-const faits = [
-  ...(prixMini ? [`Dès ${prixMini} €`] : []),
-  `Réalisé à ${SITE.ville}, ${SITE.departement}`,
-];
+const faits = estCouture
+  ? [...(prixMini ? [`Dès ${prixMini} €`] : []), 'Cousu main à Vitré', 'Votre tissu ou le mien']
+  : [...(prixMini ? [`Dès ${prixMini} €`] : []), `Réalisé à ${SITE.ville}, ${SITE.departement}`];
+
+/* Image du haut de page : la dentelle et la couture en ont une. */
+const photoHaut: { image: ImageMetadata; alt: string; cadrage?: string } | null = estDentelle
+  ? { image: papillon, alt: 'Papillon brodé en dentelle libre, ailes rouges et noires, surmonté de coquelicots brodés' }
+  : estCouture
+    ? {
+        image: sacBanane,
+        alt: 'Sac banane en toile ocre cousu à l’atelier, trois têtes de chats brodées en fil gris et blanc',
+        cadrage: '50% 45%',
+      }
+    : null;
 
 /* Image de partage : la première pièce, recadrée en 1200×630, sans
    agrandissement. */
@@ -172,14 +220,95 @@ const fil = [
   { nom: cat.court, url: `/creations/${categorie}/` },
 ];
 
-/* Pour continuer : trois liens au plus (l'occasion liée, la galerie, le sur-mesure). */
+/* Pour continuer : l'occasion liée, la galerie, le sur-mesure ; la couture
+   renvoie en plus vers les deux pages locales (maillage local). */
 const suite = [
   ...(cat.occasion ? [{ titre: cat.occasion.nom, href: `/cadeaux/${cat.occasion.slug}/` }] : []),
+  ...(estCouture
+    ? [
+        { titre: 'Brodeuse et couturière à Vitré', href: '/brodeuse-vitre/' },
+        { titre: 'Broderie et couture pour Rennes', href: '/broderie-personnalisee-rennes/' },
+      ]
+    : []),
   { titre: 'Toutes les créations', href: '/creations/' },
   { titre: 'Le déroulement d’une commande', href: '/sur-mesure/' },
 ];
 
-const messageWa = `Bonjour Emma, je souhaiterais une création dans la catégorie « ${cat.court} ».`;
+const messageWa = estCouture
+  ? 'Bonjour Emma, j’aimerais vous faire coudre une pièce sur mesure (sac, trousse ou tablier).'
+  : `Bonjour Emma, je souhaiterais une création dans la catégorie « ${cat.court} ».`;
+
+/* ---------------------------------------------------------------------------
+   COUTURE — contenu de la page d'atterrissage.
+   Tout ce qui suit est attesté par les photos d'Emma (docs/inventaire-photos.md :
+   tote bags, sacs banane, trousses, sacs de sport, tabliers adulte et enfant,
+   bavoirs) ou par les textes déjà validés du site. Rien sur les retouches.
+--------------------------------------------------------------------------- */
+const trousse = pieces.find((c) => c.data.cousuMain) ?? null;
+
+/* Tant que la couture compte une ou deux pièces, leurs cartes se rangent à
+   côté de « Ce que je couds » au lieu de flotter seules dans la grille. */
+const fusion = estCouture && pieces.length <= 2;
+
+const couds = [
+  {
+    titre: 'Trousses et pochettes',
+    texte: 'Trousse de toilette, trousse d’école, pochette : cousues à l’atelier, puis brodées au prénom ou aux initiales.',
+    meta: trousse?.data.prixDepart ? `dès ${trousse.data.prixDepart} €` : 'sur devis',
+    href: trousse ? `/creations/${trousse.id}/` : undefined,
+  },
+  {
+    titre: 'Sacs',
+    texte: 'Sac banane, sac de sport, sac cabas : un prénom, des initiales ou un motif brodé sur la toile.',
+    meta: 'sur devis',
+  },
+  {
+    titre: 'Tabliers',
+    texte: 'Pour adulte ou pour enfant, avec un prénom ou un motif brodé.',
+    meta: 'sur devis',
+  },
+  {
+    titre: 'Bavoirs et doudous plats',
+    texte: 'Pour une naissance : cousus, puis brodés au prénom de l’enfant.',
+    meta: 'sur devis',
+    href: '/cadeaux/naissance/',
+  },
+];
+
+const etapesCouture = [
+  {
+    titre: 'Votre demande',
+    texte: 'Indiquez-moi la pièce souhaitée, son usage et le prénom ou le motif à broder. Si vous fournissez le tissu, joignez-en une photo.',
+  },
+  ETAPES_COMMANDE.find((e) => e.cle)!,
+  {
+    titre: 'La couture, puis la broderie',
+    texte: 'Je coupe le tissu, j’assemble la pièce, puis je la brode. Elle vous est remise emballée, en main propre à Vitré ou à Rennes, ou par envoi suivi.',
+  },
+];
+
+const faqCouture = [
+  {
+    q: 'Puis-je fournir mon propre tissu ?',
+    r: 'Oui. Envoyez-moi d’abord une photo du tissu, avec ses dimensions si vous les connaissez : je vous indique les pièces qu’il permet de réaliser. Un tissu très fin ou extensible demande un renfort adapté pour recevoir la broderie.',
+  },
+  {
+    q: 'Combien coûte une pièce cousue sur mesure ?',
+    r: trousse?.data.prixDepart
+      ? `La trousse présentée est proposée à partir de ${trousse.data.prixDepart} €. Pour un sac, un tablier ou une pochette, le prix dépend du modèle, du tissu et de la broderie : je vous communique un prix ferme avant toute réalisation.`
+      : 'Le prix dépend du modèle, du tissu et de la broderie : je vous communique un prix ferme avant toute réalisation.',
+  },
+  {
+    q: 'Pouvez-vous broder un sac ou un vêtement que j’ai déjà ?',
+    r: 'Oui. Je brode alors directement sur votre pièce, et seule la broderie est facturée. Précisez-moi la matière dès votre premier message.',
+  },
+  {
+    q: 'Comment récupérer ma pièce ?',
+    r: 'En main propre à Vitré ou à Rennes, sur rendez-vous, ou par envoi suivi partout en France, emballée et prête à offrir. Mon atelier se trouve à mon domicile : l’adresse précise n’est communiquée qu’après accord.',
+  },
+];
+
+const waTissu = lienWhatsApp('Bonjour Emma, je vous envoie la photo d’un tissu : pourriez-vous m’en faire une pièce cousue sur mesure ?');
 ---
 
 <Base titre={titre} description={cat.description} imageOg={og.src} fil={fil} noindex={tropMince} messageWa={messageWa}>
@@ -193,11 +322,15 @@ const messageWa = `Bonjour Emma, je souhaiterais une création dans la catégori
     titre={cat.h1}
     fil={fil}
     faits={faits}
-    image={estDentelle ? papillon : undefined}
-    alt="Papillon brodé en dentelle libre, ailes rouges et noires, surmonté de coquelicots brodés"
+    fond={cat.fond}
+    image={photoHaut?.image}
+    alt={photoHaut?.alt}
+    cadrage={photoHaut?.cadrage}
   >
     <p>{cat.chapo}</p>
     {cat.note && <p>{cat.note}</p>}
+    {estCouture && <a slot="actions" class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>{LIBELLES.whatsapp}</a>}
+    {estCouture && <a slot="actions" class="btn btn--creux btn--grand" href="/contact/#devis">{LIBELLES.devis}</a>}
   </HautDePage>
 
   <!-- ===================== LE CATALOGUE =====================
@@ -220,18 +353,96 @@ const messageWa = `Bonjour Emma, je souhaiterais une création dans la catégori
       </ul>
     </nav>
 
-    <ul class="grille cartes">
+    {!fusion && <ul class="grille cartes">
       {pieces.map((c, i) => (
         <li>
           <CarteCreation
             creation={c}
-            prioritaire={!estDentelle && i < 2}
+            prioritaire={!photoHaut && i < 2}
             tailles="(max-width: 34rem) 92vw, (max-width: 64rem) 46vw, (max-width: 80rem) 30vw, 20rem"
           />
         </li>
       ))}
-    </ul>
+    </ul>}
   </section>
+
+  <!-- ===================== COUTURE : ce que je couds ===================== -->
+  {
+    estCouture && (
+      <section class="bande cou-section" aria-labelledby="couds-titre">
+        <TeteSection titre="Ce que je couds" variante="duo" id="couds-titre">
+          <p>
+            Chaque pièce est cousue à l’unité, à la taille et dans le tissu choisis ensemble, puis
+            brodée. Ces quatre familles donnent un aperçu&nbsp;; d’autres pièces se discutent.
+          </p>
+        </TeteSection>
+        {fusion ? (
+          <div class="grille cou-couds">
+            <ul class="cou-couds__cartes" aria-label="Pièces cousues présentées">
+              {pieces.map((c) => (
+                <li>
+                  <CarteCreation creation={c} tailles="(max-width: 48rem) 92vw, (max-width: 64rem) 40vw, 22rem" />
+                </li>
+              ))}
+            </ul>
+            <div class="cou-couds__liste"><ListeLignes lignes={couds} /></div>
+          </div>
+        ) : (
+          <ListeLignes lignes={couds} />
+        )}
+      </section>
+    )
+  }
+
+  <!-- ===================== COUTURE : le tissu ===================== -->
+  {
+    estCouture && (
+      <section class="bande cou-section" aria-labelledby="tissu-titre">
+        <div class="grille cou-tissu">
+          <div class="cou-tissu__dire">
+            <h2 id="tissu-titre">Votre tissu ou le mien</h2>
+            <p class="mesure">
+              Pour les sacs, les trousses et les tabliers, je dispose de coupons parmi lesquels vous
+              pouvez choisir. Vous pouvez aussi me confier votre propre tissu&nbsp;: un linge de
+              famille, un coupon trouvé au marché, une toile qui a une histoire.
+            </p>
+            <p class="mesure">
+              Envoyez-moi une photo avant de me l’apporter ou de me l’expédier. Je vous indique ce
+              qu’il est possible d’en faire, et s’il se prête à la broderie.
+            </p>
+            <p class="actions">
+              <a class="btn btn--wa" href={waTissu}>Envoyer une photo de mon tissu</a>
+            </p>
+          </div>
+          <figure class="cou-tissu__fig">
+            <Image
+              src={sacSport}
+              alt="Sac de sport en toile grise cousu à l’atelier, brodé d’escarpins colorés, anses bleu marine"
+              widths={[400, 640, 900]}
+              sizes="(max-width: 48rem) 92vw, 36vw"
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption class="mono">Sac de sport cousu et brodé à l’atelier</figcaption>
+          </figure>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ===================== COUTURE : le déroulement (bloc menthe) ===================== -->
+  {
+    estCouture && (
+      <section class="bande bloc cou-etapes" aria-labelledby="cou-etapes-titre">
+        <TeteSection titre="Le déroulement d’une commande" variante="duo" id="cou-etapes-titre">
+          <p>Rien n’est coupé ni brodé tant que le motif n’a pas reçu votre accord.</p>
+        </TeteSection>
+        <Etapes etapes={etapesCouture} />
+      </section>
+    )
+  }
+
+  {estCouture && <FAQ titre="Questions sur la couture" questions={faqCouture} />}
 
   <!-- ===================== DENTELLE : la technique (seule section tapis) ===================== -->
   {
@@ -260,17 +471,25 @@ const messageWa = `Bonjour Emma, je souhaiterais une création dans la catégori
     </div>
   </nav>
 
-  <AppelFinal titre="Une demande sur mesure" messageWa={messageWa}>
-    <p>
-      Indiquez-moi le prénom, l’objet et la date souhaitée. Je vous réponds avec un prix et un délai
-      de réalisation, et je vous soumets le motif pour validation avant toute broderie.
-    </p>
+  <AppelFinal titre={estCouture ? 'Votre pièce cousue sur mesure' : 'Une demande sur mesure'} messageWa={messageWa}>
+    {estCouture ? (
+      <p>
+        Indiquez-moi la pièce, son usage et le prénom à broder, avec une photo de votre tissu si
+        vous en avez un. Je vous réponds avec un prix et un délai, et je vous soumets le motif avant
+        toute réalisation.
+      </p>
+    ) : (
+      <p>
+        Indiquez-moi le prénom, l’objet et la date souhaitée. Je vous réponds avec un prix et un délai
+        de réalisation, et je vous soumets le motif pour validation avant toute broderie.
+      </p>
+    )}
   </AppelFinal>
 </Base>
 
 <style>
   /* ============================ BARRE DU CATALOGUE (même que /creations/) ============================ */
-  .catalogue { padding-block: 0 var(--respire); }
+  .catalogue { padding-block: 0 var(--serre); }
   .cat-barre {
     display: grid; gap: 0.6rem;
     padding-block: 0.9rem;
@@ -297,7 +516,7 @@ const messageWa = `Bonjour Emma, je souhaiterais une création dans la catégori
     white-space: nowrap;
     transition: background 200ms ease, color 200ms ease;
   }
-  .filtre:hover, .filtre[aria-current] { background: var(--encre); border-color: var(--encre); color: var(--lin-haut); }
+  .filtre:hover, .filtre[aria-current] { background: var(--encre); border-color: var(--encre); color: var(--papier); }
   @media (min-width: 48rem) {
     .cat-barre { grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 1.5rem; }
     .cat-barre__filtres { flex-wrap: wrap; overflow: visible; }
@@ -309,6 +528,34 @@ const messageWa = `Bonjour Emma, je souhaiterais une création dans la catégori
   @media (min-width: 34rem) { .cartes > li { grid-column: span 6; } }
   @media (min-width: 64rem) { .cartes > li { grid-column: span 4; } }
   @media (min-width: 80rem) { .cartes > li { grid-column: span 3; } }
+
+  /* ============================ COUTURE ============================ */
+  .cou-section { padding-block: var(--serre); }
+  .cou-couds { row-gap: clamp(2rem, 4vw, 3rem); }
+  .cou-couds__cartes { display: grid; gap: var(--gout); align-content: start; }
+  .cou-couds__cartes > li { display: grid; }
+  @media (min-width: 34rem) and (max-width: 47.999rem) { .cou-couds__cartes { max-width: 24rem; } }
+  @media (min-width: 48rem) {
+    .cou-couds__cartes { grid-column: 1 / span 5; }
+    .cou-couds__liste { grid-column: 7 / -1; }
+  }
+  @media (min-width: 64rem) {
+    .cou-couds__cartes { grid-column: 1 / span 4; }
+    .cou-couds__liste { grid-column: 6 / -1; }
+  }
+  .cou-tissu__dire .mesure + .mesure { margin-block-start: 0; }
+  .cou-tissu { row-gap: var(--gout); align-items: center; }
+  .cou-tissu__dire { display: grid; gap: 1.1rem; justify-items: start; }
+  .cou-tissu__dire .mesure { color: var(--encre-doux); }
+  .cou-tissu__fig { display: grid; gap: 0.6rem; }
+  .cou-tissu__fig :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-l); }
+  .cou-tissu__fig figcaption { font-size: var(--t-micro); color: var(--gris); }
+  @media (min-width: 48rem) {
+    .cou-tissu__dire { grid-column: 1 / span 6; }
+    .cou-tissu__fig { grid-column: 8 / -1; }
+    .cou-tissu__fig :global(img) { aspect-ratio: 4 / 5; }
+  }
+  .cou-etapes :global(.ts__chapo) { color: var(--encre); }
 
   .technique { padding-block: var(--serre); }
   .continuer { padding-block: var(--serre); }

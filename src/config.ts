@@ -46,6 +46,33 @@ export const ATELIER = {
 } as const;
 
 /**
+ * Communes desservies, citées dans les deux pages locales et dans le JSON-LD
+ * `areaServed` (Base.astro). Une seule source : la liste ne peut pas diverger
+ * entre le texte visible et les données structurées.
+ *
+ * ⚠️ RÈGLE SEO (CLAUDE.md) : jamais une page par commune. Ces noms vivent
+ * dans /brodeuse-vitre/ et /broderie-personnalisee-rennes/, nulle part ailleurs.
+ * ⚠️ PROMESSE : la remise en main propre n'est annoncée qu'à Vitré et à
+ * Rennes. Pour ces communes, on écrit « envoi suivi ou rendez-vous à Vitré »,
+ * jamais une tournée ni un point de retrait. [À CONFIRMER PAR EMMA]
+ */
+export const COMMUNES = {
+  /** Autour de Vitré : citées dans /brodeuse-vitre/. */
+  autourDeVitre: [
+    'Pocé-les-Bois',
+    'Saint-Aubin-des-Landes',
+    'Étrelles',
+    'Argentré-du-Plessis',
+    'Balazé',
+    'Montreuil-sous-Pérouse',
+    'Champeaux',
+    'La Guerche-de-Bretagne',
+  ],
+  /** Entre Vitré et Rennes : citées dans /broderie-personnalisee-rennes/. */
+  versRennes: ['Châteaubourg', 'Servon-sur-Vilaine', 'Noyal-sur-Vilaine', 'Cesson-Sévigné'],
+} as const;
+
+/**
  * Message WhatsApp pré-rempli.
  *
  * Depuis une création, on passe l'URL de la fiche : WhatsApp affiche alors

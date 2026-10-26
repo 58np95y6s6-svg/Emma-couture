@@ -3,7 +3,7 @@
  * Gabarit de toutes les pages publiques.
  * En-tête, pied, bouton WhatsApp flottant, SEO et données structurées.
  */
-import { SITE, CONTACT, ATELIER, lienWhatsApp } from '../config';
+import { SITE, CONTACT, ATELIER, COMMUNES, lienWhatsApp } from '../config';
 import Entete from '../components/Entete.astro';
 import Pied from '../components/Pied.astro';
 import '../styles/broderie.css';
@@ -42,8 +42,12 @@ const donneesLocalBusiness = {
   '@type': 'LocalBusiness',
   '@id': `${SITE.url}/#atelier`,
   name: SITE.nom,
+  /* Particuliers uniquement : pas de « logos » (positionnement CLAUDE.md).
+     Broderie MACHINE ; « cousu main » ne vaut que pour la couture. */
   description:
-    'Broderie machine personnalisée et couture sur mesure à Vitré : prénoms, motifs, logos, dentelle ajourée, sacs et trousses.',
+    'Brodeuse et couturière à Vitré (Ille-et-Vilaine) : broderie machine personnalisée au prénom ou au motif sur linge de bain, vêtements et cadeaux de naissance, dentelle libre, et couture sur mesure de sacs, trousses, pochettes et tabliers cousus main.',
+  /* Uniquement ce qu'Emma pratique réellement (constaté sur ses photos). */
+  knowsAbout: ['Broderie machine', 'Broderie personnalisée', 'Dentelle libre', 'Couture'],
   url: SITE.url,
   email: CONTACT.email,
   telephone: CONTACT.telephone,
@@ -55,9 +59,12 @@ const donneesLocalBusiness = {
     addressRegion: SITE.departement,
     addressCountry: 'FR',
   },
+  /* Mêmes communes que les pages locales (config.COMMUNES). Pas
+     d'AggregateRating : aucun avis réel publié à ce jour. */
   areaServed: [
     { '@type': 'City', name: 'Vitré' },
     { '@type': 'City', name: 'Rennes' },
+    ...[...COMMUNES.autourDeVitre, ...COMMUNES.versRennes].map((name) => ({ '@type': 'City', name })),
     { '@type': 'AdministrativeArea', name: 'Ille-et-Vilaine' },
     { '@type': 'Country', name: 'France' },
   ],

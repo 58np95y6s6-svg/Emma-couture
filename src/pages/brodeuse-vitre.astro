@@ -2,18 +2,24 @@
 /**
  * Page locale principale : Vitré.
  *
- * Intention : c'est le terrain d'Emma. L'angle est la présence sur place :
- * la remise en main propre sur rendez-vous, les communes alentour, les
- * marchés. Rien de ce texte ne doit pouvoir être recopié sur la page Rennes
- * en changeant la ville : là-bas, l'angle est la distance.
+ * Intention : c'est le terrain d'Emma. L'angle est la PRÉSENCE : la personne
+ * (brodeuse ET couturière), la remise en main propre sur rendez-vous, les
+ * communes autour de Vitré. Rien de ce texte ne doit pouvoir être recopié sur
+ * la page Rennes en changeant la ville : là-bas, l'angle est la distance et
+ * l'axe Vitré-Rennes.
  *
- * Cible : « brodeuse Vitré », « broderie Vitré », « cadeau personnalisé Vitré ».
+ * Cible : « brodeuse Vitré », « couturière Vitré », « broderie Vitré »,
+ * « cadeau personnalisé Vitré ». La page /creations/couture/ porte « couture
+ * sur mesure Vitré » (l'offre) ; celle-ci porte la personne et le lieu.
  *
  * ⚠️ Emma travaille CHEZ ELLE : jamais d'adresse, jamais d'invitation à
  * passer. Retrait sur rendez-vous, adresse communiquée après accord.
+ * ⚠️ Remise en main propre annoncée à Vitré seulement sur cette page ; pour
+ * les communes voisines : rendez-vous à Vitré ou envoi suivi. Pas de tournée.
  * ⚠️ CONTENU D'EXEMPLE : prix, délais, numéro WhatsApp, e-mail et téléphone
  * sont provisoires (src/config.ts). Vocabulaire : broderie MACHINE.
  */
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import HautDePage from '../components/HautDePage.astro';
 import TeteSection from '../components/TeteSection.astro';
@@ -21,44 +27,25 @@ import ListeLignes from '../components/ListeLignes.astro';
 import LigneFaits from '../components/LigneFaits.astro';
 import FAQ from '../components/FAQ.astro';
 import AppelFinal from '../components/AppelFinal.astro';
-import { SITE, ATELIER, LIBELLES, lienWhatsApp } from '../config';
+import { SITE, ATELIER, COMMUNES, LIBELLES, lienWhatsApp } from '../config';
 
 import sacAdos from '../assets/creations/galerie/sac-a-dos-enfant-brode-prenom-malo.webp';
 import ogPage from '../assets/creations/og/emma-brodeuse-vitre-portrait.webp';
+import trousse from '../assets/creations/galerie/trousse-cousue-main-brodee-prenom-lisa.webp';
+import doudou from '../assets/creations/galerie/doudou-plat-brode-prenom-keanu-naissance.webp';
 
 import pLinge from '../assets/creations/galerie/serviette-brodee-prenom-alicia-rose.webp';
 import pNaissance from '../assets/creations/galerie/doudou-lapin-brode-prenom-naissance-vitre.webp';
-import pCouture from '../assets/creations/galerie/trousse-cousue-main-brodee-prenom-lisa.webp';
+import pCouture from '../assets/creations/galerie/sac-banane-cousu-main-broderie-chats.webp';
 import pDeco from '../assets/creations/galerie/tambour-decoratif-brode-fee-rouge.webp';
 
-const titre = `Brodeuse à Vitré (35) · broderie personnalisée et couture | ${SITE.nom}`;
+const titre = `Brodeuse et couturière à ${SITE.ville} (35) | ${SITE.nom}`;
 const description =
-  'Brodeuse à Vitré (35) : broderie machine personnalisée au prénom, dentelle libre, sacs et trousses cousus main. Remise en main propre sur rendez-vous à Vitré, envoi partout en France.';
-const fil = [{ nom: 'Brodeuse à Vitré', url: '/brodeuse-vitre/' }];
+  'Brodeuse et couturière à Vitré : broderie personnalisée au prénom, dentelle libre, sacs et trousses cousus main. Remise en main propre sur rendez-vous.';
+const fil = [{ nom: 'Brodeuse et couturière à Vitré', url: '/brodeuse-vitre/' }];
 
 const messageWa =
-  'Bonjour Emma, j’habite à Vitré ou dans les environs et j’aimerais vous confier un projet de broderie.';
-
-/*
-  ⚠️ À CONFIRMER AVEC EMMA — liste plausible, non validée.
-  Jusqu'où accepte-t-elle de se déplacer ? Ces communes sont celles du pays
-  de Vitré ; elles sont citées ici, et seulement ici, pour ne pas créer une
-  page par commune (Google traite la série de pages « ville » comme du spam).
-*/
-const communes = [
-  'Châteaubourg',
-  'Argentré-du-Plessis',
-  'La Guerche-de-Bretagne',
-  'Étrelles',
-  'Val-d’Izé',
-  'Torcé',
-  'Domalain',
-  'Balazé',
-  'Pocé-les-Bois',
-  'Erbrée',
-  'Montreuil-sous-Pérouse',
-  'Saint-M’Hervé',
-];
+  'Bonjour Emma, j’habite à Vitré ou dans les environs et j’aimerais vous confier un projet de broderie ou de couture.';
 
 /*
   ⚠️ CONTENU À VALIDER — les quatre familles de pièces sont un exemple ;
@@ -77,13 +64,13 @@ const pieces = [
     alt: 'Lapin en peluche, prénom et date brodés sur les oreilles, cadeau de naissance',
     titre: 'Les cadeaux de naissance',
     texte: 'Doudou, bavoir, cadre de naissance avec le prénom, la date et le poids.',
-    href: '/creations/naissance/',
+    href: '/cadeaux/naissance/',
   },
   {
     image: pCouture,
-    alt: 'Trousse en tissu cousue main, prénom Lisa brodé sur le rabat',
-    titre: 'Les sacs et trousses',
-    texte: 'Cousus main à l’atelier, puis brodés. Le tissu et la doublure se choisissent ensemble.',
+    alt: 'Sac banane en toile ocre cousu à l’atelier, trois têtes de chats brodées',
+    titre: 'La couture sur mesure',
+    texte: 'Sacs, trousses, pochettes et tabliers cousus à l’atelier, puis brodés.',
     href: '/creations/couture/',
   },
   {
@@ -95,130 +82,177 @@ const pieces = [
   },
 ];
 
-/* FAQ locale. Le composant FAQ affiche ces questions et émet le JSON-LD. */
+/* FAQ locale. Le composant FAQ affiche ces questions et émet le JSON-LD.
+   Questions différentes de celles de la page Rennes. */
 const faq = [
   {
     q: 'Où récupérer ma commande à Vitré ?',
     r: 'Nous convenons ensemble d’un lieu et d’un horaire par message, dans Vitré. Mon atelier se trouve à mon domicile et n’est pas ouvert au public : la remise se fait sur rendez-vous, et l’adresse précise n’est communiquée qu’après accord.',
   },
   {
-    q: 'Quel est le délai de réalisation d’une broderie ?',
-    r: 'Le délai court à compter de la validation du motif, et je vous l’indique précisément dès ma première réponse. Si vous avez une date impérative (naissance, mariage, anniversaire), indiquez-la dès votre premier message : je vous confirme aussitôt si elle peut être tenue.',
+    q: 'Faites-vous aussi de la couture ?',
+    r: 'Oui. Je couds des sacs, des trousses, des pochettes, des tabliers et des bavoirs, que je brode ensuite au prénom ou au motif de votre choix. Le tissu se choisit parmi mes coupons, ou vous me confiez le vôtre.',
   },
   {
-    q: 'Est-il possible d’être livré dans une commune proche de Vitré ?',
-    r: 'Indiquez-moi votre commune : selon le cas, nous convenons d’un point de rendez-vous à Vitré ou je vous adresse la pièce par envoi suivi, sous emballage cadeau.',
+    q: 'J’habite à Étrelles, Balazé ou La Guerche-de-Bretagne : comment recevoir ma pièce ?',
+    r: 'Deux solutions : un rendez-vous à Vitré, ou un envoi suivi à votre domicile, sous emballage cadeau. Précisez votre commune dans votre premier message, je vous indique la plus simple.',
   },
   {
     q: 'Puis-je voir le motif avant la réalisation ?',
     r: 'Oui, c’est systématique. Je vous soumets le motif (écriture, taille, emplacement, couleurs de fil) et la broderie n’est lancée qu’après votre validation.',
   },
 ];
-
 ---
 
 <Base titre={titre} description={description} imageOg={ogPage.src} fil={fil} messageWa={messageWa}>
   <HautDePage
-    titre="Brodeuse à Vitré"
+    titre="Brodeuse et couturière à Vitré"
     fil={fil}
     image={sacAdos}
-    alt="Sac à dos d’enfant brodé au prénom Malo"
+    alt="Sac à dos d’enfant bleu marine, prénom Malo et étoiles brodés en fil argenté sur le rabat"
+    fond="menthe"
     faits={[ATELIER.delaiReponse, 'Remise en main propre sur rendez-vous', 'Envoi partout en France']}
   >
     <p>
-      Je réalise à {SITE.ville} des broderies machine personnalisées&nbsp;: prénoms, motifs et
-      dentelle libre, sur le linge, les vêtements et les cadeaux de naissance. Je couds aussi les
-      sacs, les trousses et les tabliers que je brode. Pour un cadeau personnalisé à Vitré, la
-      pièce vous est remise en main propre, sur rendez-vous, dans un lieu convenu par message.
+      Je brode et je couds à {SITE.ville}, en Ille-et-Vilaine. En broderie machine, je
+      personnalise au prénom ou au motif le linge de bain, les vêtements et les cadeaux de
+      naissance, et je réalise de la dentelle libre. En couture, je confectionne des sacs, des
+      trousses et des tabliers, que je brode ensuite.
+    </p>
+    <p>
+      À {SITE.ville}, la pièce vous est remise en main propre, sur rendez-vous, dans un lieu convenu
+      par message.
     </p>
     <a slot="actions" class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>{LIBELLES.whatsapp}</a>
     <a slot="actions" class="btn btn--creux btn--grand" href="/contact/#devis">{LIBELLES.devis}</a>
   </HautDePage>
 
-  <!-- ===================== RECEVOIR VOTRE PIÈCE ===================== -->
-  <section class="bande vi-section" id="recevoir">
-    <TeteSection titre="Recevoir votre pièce" />
-    <div class="grille">
-      <div class="vi-col">
-        <h3>En main propre, à Vitré</h3>
-        {/* ⚠️ À CONFIRMER : point de rendez-vous habituel à Vitré. */}
-        <p class="mesure">
-          Nous fixons ensemble le lieu et l’horaire par message. Vous découvrez la pièce avant de
-          l’offrir, sans frais de port ni délai d’acheminement. Mon atelier se trouve à mon
-          domicile&nbsp;: l’adresse précise n’est communiquée qu’après accord.
+  <!-- ===================== LES DEUX MÉTIERS ===================== -->
+  <section class="bande vi-section" aria-labelledby="metiers-titre">
+    <TeteSection titre="Deux métiers, un seul atelier" id="metiers-titre">
+      <p>
+        La même personne coud la pièce et la brode. Vous n’avez qu’une interlocutrice, du premier
+        message à la remise.
+      </p>
+    </TeteSection>
+    <div class="grille vi-metiers">
+      <article class="vi-metier">
+        <figure class="vi-metier__fig">
+          <Image
+            src={doudou}
+            alt="Doudou plat blanc à pois avec une tête d’ourson, prénom brodé au centre en fil vert"
+            widths={[400, 640, 900]}
+            sizes="(max-width: 48rem) 92vw, 44vw"
+            loading="lazy"
+            decoding="async"
+          />
+        </figure>
+        <h3>La broderie personnalisée</h3>
+        <p>
+          Prénoms, dates, initiales et motifs, brodés à la machine sur le support de votre choix&nbsp;:
+          linge de bain, vêtement, doudou, cadre de naissance. Je vous soumets le motif avant de
+          lancer la machine.
         </p>
-      </div>
-      <div class="vi-col">
-        <h3>Par envoi suivi</h3>
-        {/* ⚠️ À CONFIRMER : frais de port et transporteur. */}
-        <p class="mesure">
-          J’expédie la pièce en colis suivi, sous emballage cadeau, partout en France, y compris
-          directement à la personne à qui vous l’offrez. Les frais d’envoi sont indiqués dans le
-          devis.
+        <a class="lien-fleche" href="/creations/">Voir les créations brodées</a>
+      </article>
+      <article class="vi-metier">
+        <figure class="vi-metier__fig">
+          <Image
+            src={trousse}
+            alt="Trousse matelassée blanche à motif de feuillage, cousue à l’atelier, prénom Lisa brodé en fil doré"
+            widths={[400, 640, 900]}
+            sizes="(max-width: 48rem) 92vw, 44vw"
+            loading="lazy"
+            decoding="async"
+            style="object-position: 50% 70%"
+          />
+        </figure>
+        <h3>La couture sur mesure</h3>
+        <p>
+          Sacs, trousses, pochettes, tabliers et bavoirs, cousus à l’atelier dans un tissu choisi
+          parmi mes coupons, ou dans le vôtre. Chaque pièce est ensuite brodée au prénom.
         </p>
-      </div>
+        <a class="lien-fleche" href="/creations/couture/">La couture sur mesure à Vitré</a>
+      </article>
     </div>
   </section>
 
   <!-- ===================== CE QUE JE RÉALISE ===================== -->
-  <section class="bande vi-section" id="pieces">
-    <TeteSection titre="Ce que je réalise" variante="duo">
+  <section class="bande vi-section" aria-labelledby="pieces-titre">
+    <TeteSection titre="Ce que je réalise" variante="duo" id="pieces-titre">
       <p>
-        Chaque pièce est brodée à l’unité, au prénom ou au motif de votre choix. Ces quatre
+        Chaque pièce est réalisée à l’unité, au prénom ou au motif de votre choix. Ces quatre
         familles donnent un aperçu&nbsp;; le reste se décide ensemble.
       </p>
     </TeteSection>
     <ListeLignes lignes={pieces} />
   </section>
 
-  <!-- ===================== AUTOUR DE VITRÉ (le seul tapis de la page) ===================== -->
-  <section class="bande tapis loin" id="environs">
+  <!-- ===================== AUTOUR DE VITRÉ (le seul bloc prune de la page) ===================== -->
+  <section class="bande tapis vi-autour" aria-labelledby="autour-titre">
     <div class="grille">
-      <div class="vi-autour">
-        <h2>Vitré et ses environs</h2>
+      <div class="vi-autour__dire">
+        <h2 id="autour-titre">Autour de Vitré</h2>
+        {/* ⚠️ À CONFIRMER : périmètre réel accepté par Emma (voir config.COMMUNES). */}
         <p class="mesure mesure--clair">
-          Je travaille pour les particuliers de {SITE.ville} et des communes voisines. Indiquez-moi
-          d’où vous êtes&nbsp;: nous choisissons ensemble le point de rendez-vous le plus pratique,
-          ou je vous adresse la pièce par envoi suivi. Je participe aussi à des marchés de
-          créateurs du pays de Vitré, où l’on peut voir les pièces et commander de vive voix.
+          Je travaille pour les particuliers de {SITE.ville} et du pays de Vitré&nbsp;: à
+          Pocé-les-Bois et Saint-Aubin-des-Landes, à Étrelles et Argentré-du-Plessis, à Balazé,
+          Montreuil-sous-Pérouse ou Champeaux, et plus au sud jusqu’à La Guerche-de-Bretagne.
+        </p>
+        <p class="mesure mesure--clair">
+          Pour ces communes, la remise se fait sur rendez-vous à {SITE.ville}, ou la pièce vous est
+          adressée par envoi suivi, sous emballage cadeau. Précisez votre commune dans votre premier
+          message&nbsp;: je vous indique la solution la plus simple.
         </p>
         {/*
-          ⚠️ À CONFIRMER : marchés habituels (lesquels, quand, à quelle fréquence).
-          Les dates viendront des réglages de l'admin (CLAUDE.md § 5 « Prochains marchés »),
-          sans rebuild Netlify.
+          ⚠️ À CONFIRMER : marchés de créateurs fréquentés par Emma (lesquels, quand).
+          Ne rien affirmer avant. Les dates viendront des réglages de l'admin
+          (CLAUDE.md § 5 « Prochains marchés »), sans rebuild Netlify.
         */}
+        <p class="actions">
+          <a class="btn btn--wa" href={lienWhatsApp(messageWa)}>{LIBELLES.whatsapp}</a>
+        </p>
       </div>
-      {/* ⚠️ À CONFIRMER : périmètre réel de déplacement d'Emma (voir const communes). */}
-      <div class="vi-communes">
-        <h3>Communes desservies</h3>
-        <LigneFaits faits={communes} clair label="Communes proches de Vitré" />
+      <div class="vi-autour__communes">
+        <h3>Communes voisines</h3>
+        <LigneFaits faits={[SITE.ville, ...COMMUNES.autourDeVitre]} clair label="Vitré et communes voisines" />
+        <p class="mesure mesure--clair vi-autour__rennes">
+          Vous êtes plutôt du côté de Châteaubourg ou de Rennes&nbsp;?{' '}
+          <a href="/broderie-personnalisee-rennes/">Broderie et couture pour Rennes</a>.
+        </p>
       </div>
     </div>
   </section>
 
-  <FAQ questions={faq} />
+  <FAQ titre="Questions fréquentes à Vitré" questions={faq} />
 
   <AppelFinal messageWa={messageWa}>
     <p>
       Indiquez-moi le prénom, l’occasion et la date souhaitée. Je vous réponds avec un prix, un
-      délai et une proposition de motif, sans engagement de votre part. Vous habitez à
-      Rennes&nbsp;? Consultez la page <a href="/broderie-personnalisee-rennes/">broderie personnalisée à Rennes</a>.
+      délai et une proposition de motif, sans engagement de votre part. Le déroulement complet est
+      détaillé sur la page <a href="/sur-mesure/">commander sur mesure</a>.
     </p>
   </AppelFinal>
 </Base>
 
 <style>
   .vi-section { padding-block: var(--serre); }
-  .tapis .grille, .vi-section .grille { row-gap: 2rem; }
-  .vi-col, .vi-autour, .vi-communes { display: grid; gap: 1rem; align-content: start; }
-  .vi-col {
-    padding-block-start: 1.25rem;
-    border-block-start: 1px solid color-mix(in oklab, currentColor 18%, transparent);
-  }
-  .vi-col .mesure { color: var(--encre-doux); }
+
+  /* Les deux métiers : 6/6 sur grand écran, l'un sous l'autre sur téléphone. */
+  .vi-metiers { row-gap: clamp(2rem, 4vw, 3rem); }
+  .vi-metier { display: grid; gap: 1rem; align-content: start; justify-items: start; }
+  .vi-metier p { color: var(--encre-doux); max-width: var(--mesure); }
+  .vi-metier__fig { width: 100%; border-radius: var(--r-l); overflow: hidden; aspect-ratio: 4 / 3; background: var(--papier-2); }
+  .vi-metier__fig :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  @media (min-width: 48rem) { .vi-metier { grid-column: span 6; } }
+
+  /* Autour de Vitré : texte col. 1-6, communes col. 8-12. */
+  .vi-autour .grille { row-gap: 2rem; }
+  .vi-autour__dire, .vi-autour__communes { display: grid; gap: 1.1rem; align-content: start; justify-items: start; }
+  .vi-autour__rennes a { color: #fff; text-underline-offset: 4px; }
   @media (min-width: 48rem) {
-    .vi-col { grid-column: span 6; }
-    .vi-autour { grid-column: 1 / span 6; }
-    .vi-communes { grid-column: 8 / -1; }
+    .vi-autour__dire { grid-column: 1 / span 6; }
+    .vi-autour__communes { grid-column: 8 / -1; }
   }
+  .vi-autour__dire .mesure + .mesure { margin-block-start: 0; }
 </style>

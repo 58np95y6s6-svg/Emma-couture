@@ -11,8 +11,10 @@ const ADMIN_PATH = process.env.ADMIN_PATH ?? 'atelier-dev-local';
  * Pages catégorie en `noindex` (moins de 3 pièces) : hors du sitemap.
  * ⚠️ À tenir à jour avec la règle de src/pages/creations/[categorie].astro :
  * retirer une catégorie de cette liste dès qu'elle compte 3 pièces.
+ * « couture » n'y figure pas : c'est une page d'atterrissage rédigée
+ * (« couture sur mesure à Vitré »), indexée quel que soit le nombre de pièces.
  */
-const CATEGORIES_NOINDEX = ['naissance', 'linge-de-bain', 'vetements', 'couture', 'decoration-ajouree', 'noel'];
+const CATEGORIES_NOINDEX = ['naissance', 'linge-de-bain', 'vetements', 'decoration-ajouree', 'noel'];
 
 export default defineConfig({
   site: SITE_URL,

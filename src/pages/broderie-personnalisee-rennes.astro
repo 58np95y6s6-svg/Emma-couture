@@ -7,16 +7,21 @@
  * est la proximité : l'atelier est à Vitré, et tout se règle par message.
  *
  * Construite autrement que /brodeuse-vitre/ :
- *   Vitré  → la présence sur place, les communes autour, les marchés.
- *   Rennes → la distance (trois ordres de grandeur), les façons de recevoir la pièce,
- *            la pièce à l'unité face aux ateliers de marquage (offrir à distance
- *            est traité dans « Recevoir votre commande »).
+ *   Vitré  → la personne (brodeuse et couturière), la présence sur place,
+ *            les communes autour de Vitré.
+ *   Rennes → la distance, les façons de recevoir la pièce, l'axe Vitré-Rennes
+ *            (Châteaubourg, Servon, Noyal, Cesson), la pièce à l'unité face
+ *            aux ateliers de marquage.
  *
  * Positionnement : particuliers uniquement (CLAUDE.md). Pas de clubs, pas
  * d'associations, pas de logos d'entreprise sur cette page.
  *
- * Cible : « broderie personnalisée Rennes », « cadeau personnalisé Rennes ».
+ * Cible : « broderie personnalisée Rennes », « couture personnalisée Rennes »,
+ * « cadeau personnalisé Rennes ».
  *
+ * ⚠️ Remise en main propre à Rennes : annoncée sous condition (« lorsque j'ai
+ * un déplacement prévu »), [À CONFIRMER PAR EMMA]. Pour les communes de l'axe :
+ * rendez-vous à Vitré ou envoi suivi, jamais de tournée ni de point de retrait.
  * ⚠️ CONTENU D'EXEMPLE : délais, numéro WhatsApp, e-mail et téléphone sont
  * provisoires (src/config.ts). Vocabulaire : broderie MACHINE.
  */
@@ -24,20 +29,22 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import HautDePage from '../components/HautDePage.astro';
 import TeteSection from '../components/TeteSection.astro';
+import LigneFaits from '../components/LigneFaits.astro';
 import FAQ from '../components/FAQ.astro';
 import AppelFinal from '../components/AppelFinal.astro';
-import { SITE, LIBELLES, lienWhatsApp } from '../config';
+import { SITE, COMMUNES, LIBELLES, lienWhatsApp } from '../config';
 
 import cadre from '../assets/creations/galerie/cadre-naissance-brode-prenom-chambre-bebe.webp';
 import machine from '../assets/creations/galerie/machine-a-broder-en-cours-atelier-vitre.webp';
 import ogPage from '../assets/creations/og/atelier-mur-bobines-fil-broderie-vitre.webp';
 
-const titre = `Broderie personnalisée à Rennes · réalisée à Vitré | ${SITE.nom}`;
+const titre = `Broderie et couture personnalisées à Rennes | ${SITE.nom}`;
 const description =
-  'Broderie personnalisée pour Rennes : prénoms et motifs brodés à la machine, à l’unité, avec validation du motif. Atelier à Vitré (35), remise en main propre sur rendez-vous ou envoi suivi.';
-const fil = [{ nom: 'Broderie personnalisée à Rennes', url: '/broderie-personnalisee-rennes/' }];
+  'Broderie au prénom et couture sur mesure pour Rennes et Cesson-Sévigné, réalisées à Vitré : une pièce à l’unité, motif validé avant broderie, envoi suivi.';
+const fil = [{ nom: 'Broderie et couture pour Rennes', url: '/broderie-personnalisee-rennes/' }];
 
-const messageWa = 'Bonjour Emma, j’habite à Rennes et j’aimerais vous confier un projet de broderie.';
+const messageWa =
+  'Bonjour Emma, j’habite à Rennes ou dans les environs et j’aimerais vous confier un projet de broderie ou de couture.';
 
 /*
   ⚠️ [À CONFIRMER] VALEURS À VÉRIFIER (ordres de grandeur, volontairement approximatifs),
@@ -46,11 +53,7 @@ const messageWa = 'Bonjour Emma, j’habite à Rennes et j’aimerais vous confi
   durée en voiture par la N157 (~ 40 min).
   Ne jamais afficher de chiffre précis non vérifié.
 */
-const mesures = [
-  { valeur: '≈ 38 km', dire: 'entre Vitré et Rennes' },
-  { valeur: '≈ 30 min', dire: 'en train, ligne directe' },
-  { valeur: '≈ 40 min', dire: 'en voiture, par la N157' },
-];
+const mesures = ['≈ 38 km entre Vitré et Rennes', '≈ 30 min en train', '≈ 40 min par la N157'];
 
 /*
   Les façons de recevoir la commande. Pas une séquence : pas de numéros.
@@ -59,11 +62,11 @@ const mesures = [
 const recevoir = [
   {
     nom: 'Par envoi suivi',
-    dire: 'La pièce part de Vitré en colis suivi, sous emballage cadeau. Elle peut être adressée chez vous ou directement à la personne à qui vous l’offrez, sans passer par chez vous.',
+    dire: 'La pièce part de Vitré en colis suivi, sous emballage cadeau. Elle peut être adressée chez vous, ou directement à la personne à qui vous l’offrez.',
   },
   {
     nom: 'En main propre à Rennes',
-    dire: 'Lorsque j’ai un déplacement prévu à Rennes, nous convenons d’un lieu et d’un horaire. Indiquez-moi votre date limite dès le premier message.',
+    dire: 'Lorsque j’ai un déplacement prévu à Rennes, nous convenons d’un lieu public et d’un horaire. Indiquez-moi votre date limite dès le premier message.',
   },
   {
     nom: 'En main propre à Vitré',
@@ -83,39 +86,44 @@ const faq = [
     r: 'Oui, lorsque j’ai un déplacement prévu à Rennes. Indiquez-moi votre date limite dès votre premier message : je vous dirai si une remise en main propre est envisageable, sinon la pièce vous est expédiée.',
   },
   {
+    q: 'Cousez-vous aussi des pièces sur mesure ?',
+    r: 'Oui. Je couds des sacs, des trousses, des pochettes et des tabliers, puis je les brode au prénom. Vous pouvez m’envoyer votre propre tissu, ou choisir parmi mes coupons.',
+  },
+  {
     q: 'Quel délai prévoir entre ma demande et la réception ?',
     r: 'Le délai de réalisation court à compter de la validation du motif, et je vous l’indique précisément dès ma première réponse. S’y ajoute le délai d’acheminement en cas d’envoi.',
   },
   {
     q: 'Puis-je commander une seule pièce ?',
-    r: 'Oui. Je brode à l’unité : un doudou, une serviette, une trousse. Il n’y a aucune quantité minimum.',
+    r: 'Oui. Je travaille à l’unité : un doudou, une serviette, une trousse. Il n’y a aucune quantité minimum.',
   },
 ];
-
 ---
 
 <Base titre={titre} description={description} imageOg={ogPage.src} fil={fil} messageWa={messageWa}>
   {/* ⚠️ Valeurs des faits à vérifier : voir const mesures. */}
   <HautDePage
-    titre="Broderie personnalisée à Rennes"
+    titre="Broderie et couture personnalisées à Rennes"
     fil={fil}
     image={cadre}
     alt="Cadre de naissance brodé au prénom, accroché au mur d’une chambre de bébé"
-    faits={mesures.map((m) => `${m.valeur} ${m.dire}`)}
+    fond="rose"
+    faits={mesures}
   >
     <p>
-      Mon atelier se trouve à {SITE.ville}, à proximité de Rennes. J’y réalise des broderies
-      machine personnalisées pour les particuliers&nbsp;: prénoms et motifs sur le linge de bain,
-      les vêtements, les cadeaux de naissance, ainsi que des sacs et trousses cousus main. Tout se
-      règle par message, et vous choisissez la façon de recevoir votre pièce.
+      Mon atelier se trouve à {SITE.ville}, à l’est de Rennes. J’y réalise pour les
+      particuliers rennais des broderies machine personnalisées&nbsp;: prénoms et motifs sur le
+      linge de bain, les vêtements et les cadeaux de naissance. Je couds aussi des sacs, des
+      trousses et des tabliers, que je brode ensuite.
     </p>
+    <p>Tout se règle par message, et vous choisissez la façon de recevoir votre pièce.</p>
     <a slot="actions" class="btn btn--wa btn--grand" href={lienWhatsApp(messageWa)}>{LIBELLES.whatsapp}</a>
     <a slot="actions" class="btn btn--creux btn--grand" href="/contact/#devis">{LIBELLES.devis}</a>
   </HautDePage>
 
   <!-- ===================== RECEVOIR ===================== -->
-  <section class="bande re-section" id="recevoir">
-    <TeteSection titre="Recevoir votre commande">
+  <section class="bande re-section" aria-labelledby="recevoir-titre">
+    <TeteSection titre="Recevoir votre commande" variante="duo" id="recevoir-titre">
       <p>
         Vous choisissez au moment du devis. Les frais d’envoi éventuels y sont indiqués, avant
         toute validation.
@@ -134,70 +142,112 @@ const faq = [
     </ul>
   </section>
 
-  <!-- ===================== L'UNITÉ ET LA VALIDATION ===================== -->
-  <section class="bande re-section loin" id="unite">
-    <div class="grille re-unite">
-      <figure class="re-unite__fig">
-        <Image
-          src={machine}
-          alt="Broderie en cours sous la tête de la machine : cerisiers en fleurs et colibri en fil de couleur"
-          widths={[400, 640, 900]}
-          sizes="(max-width: 48rem) 92vw, 46vw"
-          loading="lazy"
-          decoding="async"
-        />
-      </figure>
-      <div class="re-unite__dire">
-        <h2>Une pièce à l’unité, un motif validé avant la réalisation</h2>
+  <!-- ===================== ENTRE VITRÉ ET RENNES ===================== -->
+  <section class="bande re-section" aria-labelledby="axe-titre">
+    <div class="grille re-axe">
+      <div class="re-axe__dire">
+        <h2 id="axe-titre">Entre Vitré et Rennes</h2>
+        {/* ⚠️ À CONFIRMER : solutions acceptées par Emma pour ces communes. */}
         <p class="mesure">
-          À Rennes, la broderie est surtout proposée par des ateliers de marquage, qui travaillent
-          sur des vêtements professionnels, par lots et avec un minimum de commande.
-          {/* ⚠️ Constat issu de la recherche concurrentielle de CLAUDE.md. À faire relire par
-               Emma : on décrit un marché, on ne dénigre personne. */}
+          Je travaille aussi pour les communes situées entre les deux villes&nbsp;: Châteaubourg,
+          Servon-sur-Vilaine, Noyal-sur-Vilaine et Cesson-Sévigné. Selon votre commune, un
+          rendez-vous à {SITE.ville} est parfois plus simple qu’au centre de Rennes&nbsp;; sinon, la
+          pièce vous est adressée par envoi suivi.
         </p>
         <p class="mesure">
-          Je travaille différemment&nbsp;: je brode une seule pièce, pour une personne. Avant de
-          lancer la machine, je vous soumets le motif (écriture du prénom, taille, emplacement,
-          couleurs de fil). Tant que la broderie n’est pas lancée, tout peut encore être ajusté.
+          Indiquez votre commune dans votre premier message&nbsp;: je vous propose la solution la
+          plus pratique.
         </p>
-        <p class="actions">
-          <a class="lien-fleche" href="/sur-mesure/">Le déroulement d’une commande</a>
-          <a class="lien-fleche" href="/l-atelier/">L’atelier</a>
+      </div>
+      <div class="re-axe__communes">
+        <h3>Communes de l’axe Vitré-Rennes</h3>
+        <LigneFaits faits={[...COMMUNES.versRennes, 'Rennes']} label="Communes entre Vitré et Rennes" />
+        <p class="re-axe__vitre">
+          Vous habitez plus près de Vitré&nbsp;? <a href="/brodeuse-vitre/">Brodeuse et couturière à Vitré</a>.
         </p>
       </div>
     </div>
   </section>
 
-  {/* ⚠️ À CONFIRMER avec Emma : envoi direct au destinataire, mot d'accompagnement. */}
+  <!-- ===================== L'UNITÉ ET LA VALIDATION (le seul bloc prune) ===================== -->
+  <section class="bande tapis re-unite" aria-labelledby="unite-titre">
+    <div class="grille">
+      <figure class="re-unite__fig">
+        <Image
+          src={machine}
+          alt="Broderie en cours sous la tête de la machine : cerisiers en fleurs et colibri en fil de couleur"
+          widths={[400, 640, 900]}
+          sizes="(max-width: 48rem) 92vw, 40vw"
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+      <div class="re-unite__dire">
+        <h2 id="unite-titre">Une pièce à l’unité, un motif validé</h2>
+        <p class="mesure mesure--clair">
+          À Rennes, la broderie est surtout proposée par des ateliers de marquage, qui travaillent
+          sur des vêtements professionnels, par lots et avec un minimum de commande.
+          {/* ⚠️ Constat issu de la recherche concurrentielle de CLAUDE.md. À faire relire par
+               Emma : on décrit un marché, on ne dénigre personne. */}
+        </p>
+        <p class="mesure mesure--clair">
+          Je travaille différemment&nbsp;: je brode ou je couds une seule pièce, pour une personne.
+          Avant de lancer la machine, je vous soumets le motif (écriture du prénom, taille,
+          emplacement, couleurs de fil). Tant que la broderie n’est pas lancée, tout peut encore
+          être ajusté.
+        </p>
+        <p class="actions">
+          <a class="lien-fleche" href="/sur-mesure/">Le déroulement d’une commande</a>
+          <a class="lien-fleche" href="/creations/couture/">La couture sur mesure</a>
+        </p>
+      </div>
+    </div>
+  </section>
 
   <FAQ titre="Questions fréquentes depuis Rennes" questions={faq} />
 
-  <AppelFinal titre="Votre projet de broderie" messageWa={messageWa}>
+  <AppelFinal titre="Votre projet, depuis Rennes" messageWa={messageWa}>
     <p>
       Indiquez-moi le prénom, l’occasion et la date souhaitée. Je vous réponds avec un prix, un
-      délai et une proposition de motif, sans engagement. Vous habitez près de {SITE.ville}&nbsp;?
-      Consultez la page <a href="/brodeuse-vitre/">brodeuse à Vitré</a>.
+      délai et une proposition de motif, sans engagement. Pour voir les pièces déjà réalisées,
+      consultez les <a href="/creations/">créations</a>.
     </p>
   </AppelFinal>
 </Base>
 
 <style>
   .re-section { padding-block: var(--serre); }
-  .re-voies { row-gap: 2rem; }
+
+  /* Les trois façons de recevoir : trois cartes discrètes, 4/4/4
+     (pas de couleur par position, R11). */
+  .re-voies { row-gap: var(--gout); }
   .re-voies > li {
     display: grid; gap: 0.8rem; align-content: start;
-    padding-block-start: 1.25rem;
-    border-block-start: 1px solid color-mix(in oklab, currentColor 18%, transparent);
+    padding: clamp(1.4rem, 2.6vw, 2.25rem);
+    border-radius: var(--r-carte);
+    background: var(--papier-2);
   }
-  .re-voies p { color: var(--encre-doux); max-width: var(--mesure); }
-  .re-unite { row-gap: 2rem; align-items: center; }
-  .re-unite__fig :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-m); }
-  .re-unite__dire { display: grid; gap: 1.25rem; justify-items: start; }
-  .re-unite__dire .mesure { color: var(--encre-doux); }
+  .re-voies p { max-width: var(--mesure); }
+  @media (min-width: 48rem) { .re-voies > li { grid-column: span 4; } }
+
+  /* Entre Vitré et Rennes : texte col. 1-6, communes col. 8-12. */
+  .re-axe { row-gap: 2rem; }
+  .re-axe__dire, .re-axe__communes { display: grid; gap: 1.1rem; align-content: start; }
+  .re-axe__dire .mesure, .re-axe__vitre { color: var(--encre-doux); }
+  .re-axe__vitre a { color: var(--prune); text-underline-offset: 4px; }
   @media (min-width: 48rem) {
-    .re-voies > li { grid-column: span 4; }
-    .re-unite__fig { grid-column: 1 / span 6; }
-    .re-unite__fig :global(img) { aspect-ratio: 4 / 5; }
-    .re-unite__dire { grid-column: 8 / -1; }
+    .re-axe__dire { grid-column: 1 / span 6; }
+    .re-axe__communes { grid-column: 8 / -1; }
   }
+
+  /* L'unité : photo col. 1-5, texte col. 7-12, sur le bloc prune. */
+  .re-unite .grille { row-gap: 2rem; align-items: center; }
+  .re-unite__fig { border-radius: var(--r-l); overflow: hidden; aspect-ratio: 4 / 3; }
+  .re-unite__fig :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .re-unite__dire { display: grid; gap: 1.25rem; justify-items: start; }
+  @media (min-width: 48rem) {
+    .re-unite__fig { grid-column: 1 / span 5; aspect-ratio: 4 / 5; }
+    .re-unite__dire { grid-column: 7 / -1; }
+  }
+  .re-axe__dire .mesure + .mesure, .re-unite__dire .mesure + .mesure { margin-block-start: 0; }
 </style>
