@@ -56,7 +56,7 @@ const outils = [
   },
   {
     titre: 'Le tapis de coupe',
-    texte: 'Celui qui sert de fond à cette section. J’y coupe les tissus des sacs, des trousses et des tabliers avant de les assembler.',
+    texte: 'J’y coupe les tissus des sacs, des trousses et des tabliers avant de les assembler.',
     meta: 'quadrillé au centimètre',
   },
 ];
@@ -134,7 +134,7 @@ const etapes = [
   </section>
 
   <!-- ===================== FABRICATION ===================== -->
-  <section class="bande at-section" id="fabrication">
+  <section class="bande bloc at-section" id="fabrication">
     <TeteSection titre="Les étapes de fabrication" />
     <Etapes etapes={etapes} />
   </section>
@@ -197,11 +197,12 @@ const etapes = [
 
 <style>
   .at-section { padding-block: var(--serre); }
+  .at-section.bloc { padding-block: var(--respire); }
   .grille { row-gap: 2rem; }
 
   .at-materiel { align-items: start; }
   .at-materiel__fig :global(img) {
-    width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-m);
+    width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-carte);
   }
 
   .at-duo { row-gap: var(--serre); }
@@ -209,7 +210,7 @@ const etapes = [
   .at-duo__col p { color: var(--encre-doux); max-width: 34rem; }
   .at-fig { width: 100%; margin-block-end: 0.5rem; }
   .at-fig :global(img) {
-    width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-m);
+    width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-l);
   }
 
   @media (min-width: 48rem) {

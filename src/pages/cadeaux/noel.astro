@@ -125,7 +125,7 @@ const menu = [
   </HautDePage>
 
   <!-- ===================== LA SÉRIE (le seul tapis de la page) ===================== -->
-  <section class="bande tapis oc-a" aria-labelledby="serie-titre">
+  <section class="bande bloc bloc--papier oc-a" aria-labelledby="serie-titre">
     <div class="grille">
       <div class="oc-a__dire">
         <h2 id="serie-titre">Une série pour toute la famille</h2>
@@ -133,7 +133,7 @@ const menu = [
           C’est la commande de Noël la plus fréquente&nbsp;: la même chaussette pour chaque membre
           de la famille, avec un prénom différent sur chacune.
         </p>
-        <p class="mesure mesure--clair">
+        <p class="mesure">
           Vous validez le motif une seule fois, je réalise ensuite toute la série. Merci de
           m’envoyer la liste complète des prénoms en une fois, avec leur orthographe exacte.
         </p>
@@ -152,7 +152,7 @@ const menu = [
   </section>
 
   <!-- ===================== LE CALENDRIER ===================== -->
-  <section class="bande oc-etapes">
+  <section class="bande bloc oc-etapes">
     <TeteSection titre="Le calendrier des commandes de Noël">
       <p>
         Les commandes de Noël se préparent en novembre&nbsp;: en décembre, l’atelier et les services
@@ -200,8 +200,10 @@ const menu = [
   /* Gabarit commun aux pages occasions (mêmes classes oc-* sur les quatre). */
   .oc-a .grille { row-gap: 2.5rem; }
   .oc-a__dire { display: grid; gap: 1.25rem; align-content: start; }
-  .oc-a__note { margin-block-start: 1.25rem; font-size: var(--t-petit); opacity: 0.88; }
-  .oc-etapes { padding-block: var(--respire) var(--serre); }
+  .oc-a .chapo { color: var(--encre); }
+  .oc-a__note { margin-block-start: 1.25rem; font-size: var(--t-petit); color: var(--encre-doux); }
+  .oc-etapes { padding-block: var(--respire); }
+  .oc-etapes :global(.ts__chapo) { color: var(--encre); }
   .oc-etapes__suite { margin-block-start: 1.5rem; }
   .oc-a__lien { margin-block-start: 1rem; }
   @media (min-width: 64rem) {

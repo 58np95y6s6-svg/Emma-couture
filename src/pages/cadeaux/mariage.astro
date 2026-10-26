@@ -166,7 +166,7 @@ const pieces = [
   </section>
 
   <!-- ===================== LE CALENDRIER ===================== -->
-  <section class="bande oc-etapes loin">
+  <section class="bande bloc oc-etapes loin">
     <TeteSection titre="Le calendrier recommandé">
       <p>
         Une série se prépare à l’avance. Voici les étapes d’une commande de mariage, de la première
@@ -218,9 +218,10 @@ const pieces = [
   .oc-b .grille { row-gap: 2.5rem; align-items: center; }
   .oc-b__dire { display: grid; gap: 1.25rem; justify-items: start; }
   .oc-b__fig { display: grid; gap: 0.6rem; }
-  .oc-b__fig :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-m); }
+  .oc-b__fig :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: var(--r-carte); }
   .oc-b figcaption { font-size: var(--t-micro); color: var(--tapis-trait); }
-  .oc-etapes { padding-block: var(--respire) var(--serre); }
+  .oc-etapes { padding-block: var(--respire); }
+  .oc-etapes :global(.ts__chapo) { color: var(--encre); }
   .oc-etapes__suite { margin-block-start: 1.5rem; }
   @media (min-width: 48rem) {
     .oc-b__dire { grid-column: 1 / span 6; }

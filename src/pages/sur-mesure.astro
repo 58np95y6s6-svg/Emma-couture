@@ -159,7 +159,7 @@ const lignesDates = [
   </HautDePage>
 
   <!-- ===================== DÉROULEMENT ===================== -->
-  <section class="bande sm-section" id="etapes">
+  <section class="bande bloc sm-section" id="etapes">
     <TeteSection titre="Le déroulement d’une commande">
       <p>
         Une seule étape vous demande une décision&nbsp;: la validation du motif. Je me charge de
@@ -217,6 +217,7 @@ const lignesDates = [
 
 <style>
   .sm-section { padding-block: var(--serre); }
-  .sm-section.tapis { padding-block: var(--respire); }
+  .sm-section.tapis, .sm-section.bloc { padding-block: var(--respire); }
+  .sm-section.bloc :global(.ts__chapo) { color: var(--encre); }
   .sm-note { margin-block-start: 1.5rem; }
 </style>

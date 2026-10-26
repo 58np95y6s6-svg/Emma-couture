@@ -65,14 +65,14 @@ const avecImages = lignes.some((l) => l.image);
     grid-template-areas: 'img titre fleche' 'img texte texte' 'img meta meta';
     align-items: start;
   }
-  .ll__img { grid-area: img; aspect-ratio: 1; border-radius: var(--r-s); overflow: hidden; background: var(--lin-bas); }
+  .ll__img { grid-area: img; aspect-ratio: 1; border-radius: var(--r-s); overflow: hidden; background: var(--papier-2); }
   .ll__img :global(img) { width: 100%; height: 100%; object-fit: cover; }
-  .ll__titre { grid-area: titre; font-family: var(--f-titre); font-size: var(--t-h3); line-height: 1.1; }
+  .ll__titre { grid-area: titre; font-family: var(--f-titre); font-weight: 700; font-stretch: 108%; font-size: var(--t-h3); line-height: 1.1; letter-spacing: -0.01em; overflow-wrap: anywhere; }
   .ll__texte { grid-area: texte; font-size: var(--t-petit); opacity: 0.8; max-width: 52ch; }
   .ll__meta { grid-area: meta; font-size: var(--t-micro); opacity: 0.85; }
   .ll__fleche { grid-area: fleche; transition: transform 300ms var(--sortie); }
-  a.ll__ligne:hover .ll__titre { color: var(--coquelicot-fonce); }
-  :global(.tapis) a.ll__ligne:hover .ll__titre { color: var(--rose); }
+  a.ll__ligne:hover .ll__titre { color: var(--prune); }
+  :global(.tapis) a.ll__ligne:hover .ll__titre, :global(.hdp--sombre) a.ll__ligne:hover .ll__titre { color: var(--rose); }
   a.ll__ligne:hover .ll__fleche { transform: translateX(4px); }
 
   @container (min-width: 36rem) {

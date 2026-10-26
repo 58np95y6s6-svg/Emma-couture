@@ -46,16 +46,22 @@ const jsonld = {
   summary {
     display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;
     min-height: 3.5rem; padding-block: 1.1rem;
-    font-family: var(--f-titre); font-size: var(--t-h3); line-height: 1.15;
-    cursor: pointer; list-style: none;
+    font-family: var(--f-titre); font-weight: 700; font-stretch: 108%;
+    font-size: var(--t-h3); line-height: 1.15; letter-spacing: -0.01em;
+    cursor: pointer; list-style: none; text-wrap: balance;
   }
   summary::-webkit-details-marker { display: none; }
   summary::after {
     content: '+'; flex: none;
-    font-family: var(--f-texte); font-size: 1.5rem; line-height: 1;
+    display: grid; place-items: center;
+    width: 2.75rem; height: 2.75rem; border-radius: 50%;
+    background: var(--papier-2); color: var(--prune);
+    font-family: var(--f-texte); font-weight: 700; font-size: 1.5rem; line-height: 1;
     transition: transform 300ms var(--sortie);
   }
-  details[open] summary::after { transform: rotate(45deg); }
+  details[open] summary::after { transform: rotate(45deg); background: var(--prune); color: #fff; }
+  summary:hover::after { background: var(--rose); }
+  details[open] summary:hover::after { background: var(--prune-2); }
   details p { padding-block-end: 1.4rem; max-width: 62ch; color: var(--encre-doux); }
   @media (min-width: 64rem) {
     .faq__titre { grid-column: 1 / span 4; position: sticky; top: 7rem; align-self: start; margin: 0; }

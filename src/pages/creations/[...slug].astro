@@ -244,7 +244,7 @@ const faits = ['Motif validé avant broderie', 'Emballage cadeau compris', 'Remi
         }
       </div>
 
-      <div class="fiche__infos">
+      <div class={`fiche__infos fiche__infos--${data.categorie}`}>
         <p class="fiche__cat mono"><a href={`/creations/${data.categorie}/`}>{categorieNom}</a></p>
         <h1>{typo(data.titre)}</h1>
         {/* ⚠️ Prix d'exemple, à valider par Emma (repli de l'admin). */}
@@ -408,36 +408,54 @@ const faits = ['Motif validé avant broderie', 'Emballage cadeau compris', 'Remi
   .fiche__fil { grid-column: 1 / -1; }
 
   .fiche__galerie { display: grid; gap: 0.75rem; }
-  .fiche__photo { border-radius: var(--r-m); overflow: hidden; aspect-ratio: 4 / 5; background: var(--lin-bas); }
+  .fiche__photo { border-radius: var(--r-l); overflow: hidden; aspect-ratio: 4 / 5; background: var(--papier-2); }
   .fiche__photo[hidden] { display: none; }
   .fiche__photo :global(img) { width: 100%; height: 100%; object-fit: cover; }
   .fiche__vignettes { display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .fiche__vignette {
     width: 4.5rem; aspect-ratio: 1; padding: 0;
-    border: 1px solid transparent; border-radius: var(--r-s); overflow: hidden;
-    background: var(--lin-bas); cursor: pointer;
+    border: 3px solid transparent; border-radius: var(--r-s); overflow: hidden;
+    background: var(--papier-2); cursor: pointer;
   }
-  .fiche__vignette[aria-pressed='true'] { border-color: var(--encre); }
+  .fiche__vignette[aria-pressed='true'] { border-color: var(--prune); }
   .fiche__vignette :global(img) { width: 100%; height: 100%; object-fit: cover; }
 
-  .fiche__infos { display: grid; gap: 1.1rem; align-content: start; justify-items: start; }
+  /* La fiche d'achat : un grand bloc à la couleur de la catégorie, comme la
+     carte produit (global.css § 9). */
+  .fiche__infos {
+    --c: var(--rose); --c-texte: var(--encre);
+    display: grid; gap: 1.1rem; align-content: start; justify-items: start;
+    padding: clamp(24px, 3.5vw, 48px);
+    border-radius: var(--r-l);
+    background: var(--c); color: var(--c-texte);
+  }
+  .fiche__infos--linge-de-bain { --c: var(--menthe); }
+  .fiche__infos--vetements, .fiche__infos--couture { --c: var(--bleu); }
+  .fiche__infos--decoration-ajouree { --c: var(--beurre); }
+  .fiche__infos--noel { --c: var(--prune); --c-texte: #fff; }
+  .fiche__infos--noel :global(.btn--wa) { --fond: #fff; --bord: #fff; --texte: var(--prune); --survol: var(--beurre); --survol-texte: var(--encre); }
+  .fiche__infos--noel :global(.btn--creux) { --texte: #fff; --bord: #fff; --survol: #fff; --survol-texte: var(--prune); }
+  .fiche__infos--noel :global(:focus-visible) { outline-color: #fff; }
+  .fiche__infos :global(.faits) { color: inherit; }
+
   .fiche__cat { font-size: var(--t-micro); }
-  .fiche__cat a { color: var(--gris); }
-  .fiche__infos h1 { text-wrap: balance; }
+  .fiche__cat a { color: inherit; display: inline-flex; align-items: center; min-height: 44px; text-underline-offset: 4px; }
+  .fiche__infos h1 { text-wrap: balance; max-width: 14ch; }
+  .fiche__prix, .fiche__prix :global(b) { color: inherit; }
   .fiche__prix { font-size: var(--t-petit); }
   .fiche__prix b { font-size: 2.4em; line-height: 1; }
-  .fiche__accroche { font-size: var(--t-corps); color: var(--encre-doux); max-width: 34rem; }
+  .fiche__accroche { font-size: var(--t-chapo); max-width: 34rem; }
 
-  .fiche__perso { width: 100%; display: grid; gap: 0.4rem; padding-block-start: 1rem; border-block-start: 1px solid color-mix(in oklab, var(--encre) 16%, transparent); }
+  .fiche__perso { width: 100%; display: grid; gap: 0.4rem; padding-block-start: 1rem; border-block-start: 1px solid color-mix(in oklab, currentColor 22%, transparent); }
   .fiche__h { font-size: var(--t-h3); }
-  .fiche__note { font-size: var(--t-petit); color: var(--encre-doux); }
+  .fiche__note { font-size: var(--t-petit); }
   .fiche__liste { display: grid; gap: 0.25rem; padding-inline-start: 1.2rem; list-style: disc; font-size: var(--t-petit); }
   .fiche__delai { font-size: var(--t-petit); }
-  .fiche__delai .mono { font-size: var(--t-micro); color: var(--gris); margin-inline-end: 0.4em; }
+  .fiche__delai .mono { font-size: var(--t-micro); margin-inline-end: 0.4em; }
 
   .fiche__actions { width: 100%; display: grid; gap: 0.6rem; }
   .fiche__actions .btn { width: 100%; justify-content: center; }
-  .fiche__mention { font-size: var(--t-petit); color: var(--gris); }
+  .fiche__mention { font-size: var(--t-petit); }
 
   @media (min-width: 48rem) {
     .fiche__galerie { grid-column: 1 / span 6; }
@@ -450,7 +468,9 @@ const faits = ['Motif validé avant broderie', 'Emballage cadeau compris', 'Remi
   /* ============================ DESCRIPTION + LIVRAISON (6/6) ============================ */
   .infos { padding-block: var(--serre); }
   .infos .grille { row-gap: 2.5rem; }
-  .infos__bloc { display: grid; gap: 1rem; align-content: start; padding-block-start: 1rem; border-block-start: 1px solid color-mix(in oklab, var(--encre) 16%, transparent); }
+  .infos__bloc { display: grid; gap: 1rem; align-content: start; }
+  .infos__bloc + .infos__bloc { padding: clamp(24px, 3.5vw, 40px); border-radius: var(--r-l); background: var(--papier-2); }
+  @media (min-width: 48rem) { .infos__bloc:first-child { padding-block-start: clamp(24px, 3.5vw, 40px); } }
   .infos__texte { color: var(--encre-doux); max-width: var(--mesure); }
   .infos__texte :global(p + p) { margin-block-start: 0.8em; }
   .infos__texte a { color: var(--encre); }
@@ -468,7 +488,7 @@ const faits = ['Motif validé avant broderie', 'Emballage cadeau compris', 'Remi
     grid-template-columns: auto minmax(0, 1.2fr) minmax(0, 1fr);
     align-items: center; gap: 0.5rem;
     padding: 0.6rem max(var(--marge), env(safe-area-inset-right)) calc(0.6rem + env(safe-area-inset-bottom)) max(var(--marge), env(safe-area-inset-left));
-    background: color-mix(in oklab, var(--lin-haut) 92%, transparent);
+    background: color-mix(in oklab, var(--papier) 92%, transparent);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border-block-start: 1px solid color-mix(in oklab, var(--encre) 18%, transparent);
@@ -478,8 +498,8 @@ const faits = ['Motif validé avant broderie', 'Emballage cadeau compris', 'Remi
   .barre-action .btn { min-height: 3rem; padding: 0.5rem 0.7rem; font-size: var(--t-petit); white-space: nowrap; }
   .barre-action .ico { width: 1.1rem; height: 1.1rem; }
   .barre-action__court { display: none; }
-  .barre-action__prix { font-size: var(--t-micro); color: var(--gris); line-height: 1.1; }
-  .barre-action__prix b { display: block; font-weight: 400; font-size: 1.15rem; color: var(--encre); }
+  .barre-action__prix { font-size: var(--t-micro); color: var(--encre-doux); line-height: 1.1; }
+  .barre-action__prix b { display: block; font-family: var(--f-titre); font-weight: 760; font-stretch: 112%; font-size: 1.2rem; color: var(--encre); }
   /* Téléphone courant : le prix laisse la place aux deux boutons, libellé court. */
   @media (max-width: 36rem) {
     .barre-action { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }

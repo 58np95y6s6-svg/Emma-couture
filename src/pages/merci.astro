@@ -47,7 +47,7 @@ const liens = [
 <Base titre={titre} description={description} noindex={true} fil={fil} messageWa={messageWa}>
   {/* ⚠️ MAQUETTE — délai de réponse provisoire (src/config.ts). */}
 
-  <HautDePage titre="Votre demande a bien été reçue" fil={fil}>
+  <HautDePage titre="Votre demande a bien été reçue" fil={fil} fond="rose">
     <p>
       Merci. {ATELIER.delaiReponse}, avec un prix, un délai de réalisation et une proposition de
       motif. Cette demande ne vous engage à rien.
@@ -62,7 +62,7 @@ const liens = [
   </HautDePage>
 
   <!-- ===================== LA SUITE ===================== -->
-  <section class="bande mr-section" aria-labelledby="mr-suite">
+  <section class="bande bloc mr-section" aria-labelledby="mr-suite">
     <TeteSection titre="La suite de votre commande" id="mr-suite">
       <p>Votre demande est la première étape&nbsp;; voici les deux suivantes.</p>
     </TeteSection>
@@ -78,4 +78,6 @@ const liens = [
 
 <style>
   .mr-section { padding-block: var(--serre); }
+  .mr-section.bloc { padding-block: var(--respire); }
+  .mr-section.bloc :global(.ts__chapo) { color: var(--encre); }
 </style>

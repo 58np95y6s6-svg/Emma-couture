@@ -132,7 +132,7 @@ const fiche = [
       machine n'y avait pas sa place). À rétablir avec 2 ou 3 vraies photos 4:5. */}
 
   <!-- ===================== AVANT OU APRÈS LA NAISSANCE ===================== -->
-  <section class="bande oc-etapes">
+  <section class="bande bloc oc-etapes">
     <TeteSection titre="Avant ou après la naissance">
       <p>Les deux sont possibles. Seul le moment de la validation du motif change.</p>
     </TeteSection>
@@ -190,25 +190,37 @@ const fiche = [
   .oc-a { padding-block: var(--respire) var(--serre); }
   .oc-a .grille { row-gap: 2rem; }
   .oc-a__dire { display: grid; gap: 1rem; align-content: start; }
-  .oc-etapes { padding-block: var(--serre); }
+  .oc-etapes { padding-block: var(--respire); }
+  .oc-etapes :global(.ts__chapo) { color: var(--encre); }
   .oc-etapes__suite { margin-block-start: 1.5rem; }
   .oc-creations { padding-block: var(--serre); }
 
-  /* La fiche : grandes valeurs, filets pleins. */
-  .fiche { border-block-start: 1px solid color-mix(in oklab, var(--encre) 20%, transparent); }
+  /* La fiche : une carte papier arrondie, grandes valeurs, filets pleins. */
+  .fiche {
+    padding: clamp(8px, 1.5vw, 16px) clamp(20px, 3.5vw, 44px);
+    border-radius: var(--r-l);
+    background: var(--papier-2);
+  }
   .fiche > div {
     display: grid; gap: 0.2rem 1.5rem; align-items: baseline;
     padding-block: 1rem;
-    border-block-end: 1px solid color-mix(in oklab, var(--encre) 15%, transparent);
   }
-  .fiche dt { font-size: var(--t-micro); color: var(--gris); }
-  .fiche dd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 1.2rem; }
-  .fiche__v { font-family: var(--f-titre); font-size: var(--t-h2); line-height: 1; }
+  .fiche > div + div { border-block-start: 1px solid color-mix(in oklab, var(--encre) 15%, transparent); }
+  .fiche dt { font-size: var(--t-micro); color: var(--encre-doux); }
+  .fiche dd { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 1.2rem; min-width: 0; }
+  .fiche__v {
+    font-family: var(--f-titre); font-weight: 760; font-stretch: 110%;
+    font-size: clamp(1.75rem, 1.1rem + 2.4vw, 3.1rem); line-height: 1; letter-spacing: -0.02em;
+    color: var(--prune);
+  }
   .fiche__n { font-size: var(--t-petit); color: var(--encre-doux); }
 
-  @media (min-width: 48rem) {
-    .oc-a__dire { grid-column: 1 / span 4; }
-    .fiche { grid-column: 5 / -1; }
-    .fiche > div { grid-template-columns: minmax(0, 7rem) minmax(0, 1fr); }
+  @media (min-width: 40rem) {
+    .fiche > div { grid-template-columns: minmax(0, 6rem) minmax(0, 1fr); }
+  }
+  @media (min-width: 64rem) {
+    .oc-a .grille { align-items: start; }
+    .oc-a__dire { grid-column: 1 / span 5; }
+    .fiche { grid-column: 7 / -1; }
   }
 </style>

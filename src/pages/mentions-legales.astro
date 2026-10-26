@@ -310,7 +310,7 @@ const portee = `timeline-scope: ${sommaire.map((s) => tl(s.id)).join(', ')}`;
     display: flex; align-items: center; min-height: 44px;
     font-size: var(--t-petit); color: var(--encre-doux); text-decoration: none; white-space: nowrap;
   }
-  .som a:hover { color: var(--coquelicot-fonce); }
+  .som a:hover { color: var(--prune); }
   @media (min-width: 64rem) {
     .som { position: sticky; inset-block-start: 6.5rem; }
     .som ol {
@@ -321,7 +321,7 @@ const portee = `timeline-scope: ${sommaire.map((s) => tl(s.id)).join(', ')}`;
     /* Repère de la section en cours : un trait plein sur le filet. */
     .som a::before {
       content: ''; position: absolute; inset-block: 0.55rem; inset-inline-start: -1.5px; inline-size: 2px;
-      background: var(--coquelicot);
+      background: var(--prune); border-radius: 2px;
       transform: scaleY(0); transform-origin: 50% 0;
     }
     .som a:hover::before { transform: none; }
@@ -337,7 +337,7 @@ const portee = `timeline-scope: ${sommaire.map((s) => tl(s.id)).join(', ')}`;
       }
     }
   }
-  @keyframes som-actif { from, to { color: var(--coquelicot-fonce); } }
+  @keyframes som-actif { from, to { color: var(--prune); font-weight: 700; } }
   @keyframes som-repere { from, to { transform: none; } }
 
   /* ---------- Sections ---------- */
@@ -346,15 +346,17 @@ const portee = `timeline-scope: ${sommaire.map((s) => tl(s.id)).join(', ')}`;
     border-block-start: 1px solid color-mix(in oklab, currentColor 15%, transparent);
   }
   .sec:first-child { padding-block-start: 0; border: 0; }
-  .sec h2 { text-wrap: balance; margin-block-end: 1rem; }
+  /* Texte long en colonne de 40rem : les H2 restent dans l'échelle mais
+     descendent d'un cran, sinon Anybody casse chaque titre en 3 lignes. */
+  .sec h2 { text-wrap: balance; margin-block-end: 1rem; font-size: calc(var(--t-h3) * 1.45); line-height: 1.02; }
   .sec p { max-width: 38rem; line-height: 1.7; color: var(--encre-doux); }
   .sec p + p { margin-block-start: 1em; }
   .sec a { text-underline-offset: 3px; overflow-wrap: anywhere; }
-  .sec a:hover { color: var(--coquelicot-fonce); }
+  .sec a:hover { color: var(--prune); }
   .sec .note {
-    margin-block-start: 1em; padding-inline-start: 1rem;
-    border-inline-start: 1px solid color-mix(in oklab, currentColor 20%, transparent);
-    font-size: var(--t-petit); color: var(--gris);
+    margin-block-start: 1.25em; padding: 1rem 1.25rem;
+    border-radius: var(--r-m); background: var(--papier-2);
+    font-size: var(--t-petit); color: var(--encre-doux);
   }
 
   /* ---------- Fiche d'identité ---------- */
@@ -374,26 +376,27 @@ const portee = `timeline-scope: ${sommaire.map((s) => tl(s.id)).join(', ')}`;
     border-block-start: 1px solid color-mix(in oklab, currentColor 15%, transparent);
   }
 
-  .manque { padding: 0.1rem 0.5rem; border-radius: var(--r-s); font-size: var(--t-petit); font-weight: 400; color: #fff; background: var(--coquelicot-fonce); }
+  .manque { padding: 0.1rem 0.6rem; border-radius: 999px; font-size: var(--t-petit); font-weight: 400; color: var(--encre); background: var(--beurre); }
   .adresse { display: grid; justify-items: start; font-style: normal; line-height: 1.6; color: var(--encre-doux); }
   .adresse b { font-weight: 500; color: var(--encre); }
   .adresse a { display: inline-flex; align-items: center; min-height: 44px; }
 
-  /* ---------- Encart « à compléter » : filet coquelicot ---------- */
+  /* ---------- Encart « à compléter » : un bloc beurre arrondi ---------- */
   .sec.chantier {
-    padding: clamp(1.2rem, 3vw, 1.75rem);
+    padding: clamp(20px, 4vw, 40px);
     margin-block-end: var(--serre);
     border: 0;
-    border-inline-start: 2px solid var(--coquelicot);
-    background: var(--papier);
+    border-radius: var(--r-l);
+    background: var(--beurre);
   }
+  .chantier p { color: var(--encre); }
   .chantier__liste { margin-block-start: 1rem; }
   .chantier__liste > div {
     display: grid; gap: 0.2rem; padding-block: 0.8rem;
-    border-block-start: 1px solid color-mix(in oklab, currentColor 15%, transparent);
+    border-block-start: 1px solid color-mix(in oklab, currentColor 22%, transparent);
   }
-  .chantier__liste dt { font-weight: 500; }
-  .chantier__liste dd { min-width: 0; font-size: var(--t-petit); color: var(--encre-doux); }
-  .chantier__liste .chantier__etat { font-size: var(--t-micro); color: var(--coquelicot-fonce); overflow-wrap: anywhere; }
+  .chantier__liste dt { font-weight: 700; }
+  .chantier__liste dd { min-width: 0; font-size: var(--t-petit); color: var(--encre); }
+  .chantier__liste .chantier__etat { font-size: var(--t-micro); color: var(--prune); overflow-wrap: anywhere; }
   .chantier + .sec { border: 0; padding-block-start: 0; }
 </style>

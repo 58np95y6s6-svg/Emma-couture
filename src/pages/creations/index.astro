@@ -133,11 +133,9 @@ const fil = [{ nom: 'Créations', url: '/creations/' }];
   .catalogue { padding-block: 0 var(--respire); }
   .cat-barre {
     display: grid; gap: 0.6rem;
-    padding-block: 0.9rem;
-    margin-block-end: clamp(1.5rem, 3vw, 2.5rem);
-    border-block: 1px solid color-mix(in oklab, var(--encre) 16%, transparent);
+    margin-block-end: clamp(1.25rem, 2.5vw, 2rem);
   }
-  .cat-barre__nombre { font-size: var(--t-micro); color: var(--gris); }
+  .cat-barre__nombre { font-size: var(--t-micro); color: var(--encre-doux); }
   .cat-barre__filtres {
     display: flex; gap: 0.5rem;
     overflow-x: auto;
@@ -151,20 +149,22 @@ const fil = [{ nom: 'Créations', url: '/creations/' }];
     min-height: 44px;
     padding: 0.45rem 1.1rem;
     border-radius: 999px;
-    border: 1px solid color-mix(in oklab, var(--encre) 20%, transparent);
+    border: 2px solid var(--encre);
     color: var(--encre);
+    font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
-    transition: background 200ms ease, color 200ms ease;
+    transition: background 200ms ease, color 200ms ease, border-color 200ms ease;
   }
-  .filtre:hover, .filtre[aria-current] { background: var(--encre); border-color: var(--encre); color: var(--lin-haut); }
+  .filtre:hover { background: var(--papier-2); }
+  .filtre[aria-current] { background: var(--encre); border-color: var(--encre); color: var(--papier); }
   @media (min-width: 48rem) {
     .cat-barre { grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 1.5rem; }
     .cat-barre__filtres { flex-wrap: wrap; overflow: visible; }
   }
 
   /* ============================ GRILLE PRODUITS ============================ */
-  .cartes { row-gap: clamp(2rem, 4vw, 3rem); }
+  .cartes { row-gap: var(--gout); }
   .cartes > li { display: grid; }
   @media (min-width: 34rem) { .cartes > li { grid-column: span 6; } }
   @media (min-width: 64rem) { .cartes > li { grid-column: span 4; } }
