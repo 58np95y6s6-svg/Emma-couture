@@ -119,15 +119,19 @@ for k in ('remise_vitre', 'remise_rennes', 'envoi_france', 'emballage_cadeau'):
 # ------------------------------------------------------------- Créations
 ws = wb.create_sheet('Mes créations')
 ws['B1'] = 'Mes créations présentées sur le site'; ws['B1'].font = f_titre
-ws['B2'] = "Corrigez le nom, le prix et le délai. Les valeurs déjà inscrites sont des exemples à vérifier."; ws['B2'].font = f_aide
-entete(ws, ['clé', 'Création', 'Nom à afficher', 'Prix à partir de (€)', 'Délai (jours)', "Sur l'accueil ?", 'Ordre (1 = en premier)', 'Remarque'], [16, 32, 32, 14, 12, 13, 14, 40])
+ws['B2'] = "Une ligne = une carte du site. Ne touchez pas à la colonne « Carte actuelle » : modifiez seulement les cases jaunes de la même ligne."; ws['B2'].font = f_aide
+entete(ws, ['clé', 'Carte actuelle (ne pas modifier)', 'Nom à afficher', 'Prix à partir de (€)', 'Délai (jours)', "Sur l'accueil ?", 'Ordre (1 = en premier)', 'Remarque'], [16, 32, 32, 14, 12, 13, 14, 40])
 r = 4
-for f in sorted(glob.glob('src/content/creations/*.md')):
+def _ordre(f):
+    m = re.search(r'^ordre:\s*(\d+)', open(f, encoding='utf-8').read(), re.M)
+    return int(m.group(1)) if m else 100
+for f in sorted(glob.glob('src/content/creations/*.md'), key=_ordre):
     t = open(f, encoding='utf-8').read()
+    if re.search(r'^masquee:\s*true', t, re.M): continue
     g = lambda k: (re.search(rf'^{k}:\s*"?(.*?)"?\s*$', t, re.M) or [None, None])[1]
     slug = os.path.basename(f)[:-3]
     ligne(ws, r, [slug, g('titre'), g('titre'), int(g('prixDepart')) if g('prixDepart') else None,
-                  (int(g('delaiJours')) if (g('delaiJours') or '').isdigit() else g('delaiJours')), 'Oui', int(g('ordre') or 100) // 10, None],
+                  (int(g('delaiJours')) if (g('delaiJours') or '').isdigit() else g('delaiJours')), 'Oui', r - 3, None],
           reponses=(2, 3, 4, 5, 6, 7))
     r += 1
 liste(ws, f'F4:F{r - 1}', ['Oui', 'Non'])

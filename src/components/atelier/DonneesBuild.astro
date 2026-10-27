@@ -22,6 +22,7 @@ const creations = await Promise.all(
     slug: c.id,
     titre: c.data.titre.replace(/'/g, '’'),
     categorie: c.data.categorie,
+    accroche: c.data.accroche,
     prix: c.data.prixDepart ?? null,
     delai: c.data.delaiJours ?? null,
     /* Ordre et visibilité du build : les 6 premières sont sur l'accueil. */

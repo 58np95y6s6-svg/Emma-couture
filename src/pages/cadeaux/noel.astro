@@ -44,14 +44,14 @@ const prixChaussette = chaussette?.data.prixDepart ?? null;
    ligne (et, à terme, la piloter depuis l'admin, sans rebuild).
    Seule l'ANNÉE est calculée, pour que la page ne périme pas.
 --------------------------------------------------------------------------- */
-const LIMITE_JOUR = 15; // [À CONFIRMER PAR EMMA]
-const LIMITE_MOIS = 'novembre'; // [À CONFIRMER PAR EMMA]
+const LIMITE_JOUR = 10; // donnée par Emmanuelle (questionnaire du 27/10/2026)
+const LIMITE_MOIS = 'décembre';
 const maintenant = new Date();
 const anneeNoel =
   maintenant.getUTCMonth() === 11 && maintenant.getUTCDate() > 24
     ? maintenant.getUTCFullYear() + 1
     : maintenant.getUTCFullYear();
-const isoLimite = `${anneeNoel}-11-${String(LIMITE_JOUR).padStart(2, '0')}`;
+const isoLimite = `${anneeNoel}-12-${String(LIMITE_JOUR).padStart(2, '0')}`;
 const dateLimite = `${LIMITE_JOUR} ${LIMITE_MOIS}`;
 
 const occasion = OCCASIONS.find((o) => o.slug === 'noel')!;
@@ -155,26 +155,24 @@ const menu = [
   <section class="bande bloc oc-etapes">
     <TeteSection titre="Le calendrier des commandes de Noël">
       <p>
-        Les commandes de Noël se préparent en novembre&nbsp;: en décembre, l’atelier et les services
-        postaux sont saturés.
+        Pour Noël, je prends les commandes jusqu’au {dateLimite}&nbsp;: plus tôt vous commandez,
+        plus le choix reste ouvert.
       </p>
     </TeteSection>
-    {/* ⚠️ EXEMPLE : découpage en trois périodes à faire valider par Emma.
-        Seule la « mi-novembre » vient de son propre texte. */}
     <Etapes
       etapes={[
         {
-          titre: `Jusqu’au ${dateLimite}`,
+          titre: 'En novembre',
           texte:
             'Tout est possible : une série de chaussettes, un plaid, un vêtement que vous me confiez. Nous avons le temps de valider le motif et d’y apporter des modifications.',
         },
         {
-          titre: 'Fin novembre',
+          titre: `Jusqu’au ${dateLimite}`,
           texte:
-            'J’étudie chaque demande selon les commandes en cours et je vous réponds clairement, en vous proposant au besoin un autre support plus rapide à réaliser.',
+            'Dernière ligne droite : je vous réponds clairement selon les commandes en cours et vous propose, au besoin, une pièce plus rapide à réaliser.',
         },
         {
-          titre: 'En décembre',
+          titre: `Après le ${dateLimite}`,
           texte:
             'Je ne garantis plus la livraison avant le 24 décembre. Je reste disponible pour les cadeaux du Nouvel An et des fêtes de début d’année.',
         },

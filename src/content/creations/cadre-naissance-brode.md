@@ -10,6 +10,7 @@ delaiJours: "8 à 15"
 ordre: 20
 enAvant: true
 masquee: true
+accordClient: true
 ---
 
 Le cadre de naissance se compose avec les parents : motif, écriture et couleur du fil. Je vous

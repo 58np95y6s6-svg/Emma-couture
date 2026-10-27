@@ -24,11 +24,6 @@ export function h(tag, attrs = {}, ...enfants) {
   return el;
 }
 
-const CATEGORIES = {
-  naissance: 'Naissance', 'linge-de-bain': 'Linge de bain', vetements: 'Vêtements',
-  couture: 'Couture', 'decoration-ajouree': 'Dentelle libre', noel: 'Noël',
-};
-
 /** <img> d'après une photo réglée (admin) ou la photo du build. */
 export function image(reglee, build, { sizes = '200px', alt = '', apercuLocal } = {}) {
   if (apercuLocal) return h('img', { src: apercuLocal, alt, decoding: 'async' });
@@ -47,8 +42,8 @@ export function carte(c, { marque } = {}) {
     h('div', { class: 'carte__lien' },
       h('figure', { class: 'carte__img' }, image(c.photoReglee, c.photo, { sizes: '(max-width: 40rem) 45vw, 14rem', apercuLocal: c.apercuLocal })),
       h('div', { class: 'carte__txt' },
-        h('p', { class: 'carte__cat mono' }, CATEGORIES[c.categorie] ?? ''),
         h('h3', { class: 'carte__titre' }, c.titre || 'Sans nom'),
+        c.accroche ? h('p', { class: 'carte__accroche' }, c.accroche) : null,
         h('p', { class: 'carte__ligne' }, prix(c.prix), c.delai ? h('span', { class: 'carte__delai mono' }, `${c.delai} jours`) : null),
       ),
     ),

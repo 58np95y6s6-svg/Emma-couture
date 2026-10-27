@@ -13,7 +13,7 @@
 export const SITE = {
   nom: 'Emma Broderie',
   /** Nom légal, réservé aux mentions légales. */
-  nomLegal: 'Emmanuelle Wagner', // [À CONFIRMER]
+  nomLegal: 'Emmanuelle Wagner', // questionnaire du 27/10/2026
   baseline: 'Broderie machine & couture · Vitré',
   url: 'https://emma-broderie.fr',
   langue: 'fr',
@@ -21,17 +21,17 @@ export const SITE = {
   ville: 'Vitré',
   /** Commune de l'atelier (donnée par Emmanuelle, 26/10/2026). Jamais l'adresse. */
   commune: 'Pocé-les-Bois',
-  codePostal: '35500', // [À CONFIRMER]
+  codePostal: '35500',
   departement: 'Ille-et-Vilaine',
   /** L'adresse précise n'est PAS publiée : Emma travaille chez elle. */
-  siret: '[À COMPLÉTER]',
+  siret: '900 641 798 00014',
 } as const;
 
 export const CONTACT = {
   /** Format international sans + ni espaces, pour wa.me. */
-  whatsapp: '33600000000', // [À COMPLÉTER]
-  telephone: '+33600000000', // [À COMPLÉTER]
-  email: 'bonjour@emma-broderie.fr', // [À COMPLÉTER]
+  whatsapp: '33658081336',
+  telephone: '+33658081336',
+  email: 'lemondemma35@gmail.com',
   instagram: 'emma_couture_broderie',
   instagramUrl: 'https://www.instagram.com/emma_couture_broderie/',
 } as const;
@@ -40,7 +40,7 @@ export const CONTACT = {
 export const ATELIER = {
   /** Affiché en réassurance sur tout le site. */
   delaiActuel: '8 à 15 jours', // donné par Emmanuelle le 26/10/2026
-  delaiReponse: 'Réponse dans la journée', // [À CONFIRMER]
+  delaiReponse: 'Réponse dans la journée',
   /** 'ouvertes' | 'complet' | 'conges' */
   commandes: 'ouvertes' as 'ouvertes' | 'complet' | 'conges',
   /** Rempli seulement si commandes === 'conges'. */
@@ -101,7 +101,7 @@ export function telephoneLisible(tel: string = CONTACT.telephone): string {
 
 /** Libellés uniques des appels à l'action, sur tout le site. */
 export const LIBELLES = {
-  whatsapp: 'Écrire sur WhatsApp',
+  whatsapp: '33658081336',
   devis: 'Demander un devis',
   laMeme: 'Je veux la même',
   commander: 'Commander sur WhatsApp',
